@@ -1,0 +1,35 @@
+.filter-active {
+  background-color: orange;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 100%;
+  /* Position the submenu below the parent item */
+  left: -100%;
+  /* Position the submenu to the left of the parent item */
+}
+
+.dropdown-submenu:focus>.dropdown-menu {
+  display: block;
+}
+
+#reportTable td {
+  position: relative;
+}
+
+.filterDropdownActive {
+  background-color: #e9ecef;
+  position: relative;
+  padding-right: 20px;
+  /* adjust this value as needed */
+}
+
+.filterDropdownActive::after {
+  content: '\2713';
+  /* Unicode character for checkmark */
+  position: absolute;
+  top: 50%;
+  right: 5px;
+  /* adjust this value as needed */
+  transform: translateY(-50%);
+}

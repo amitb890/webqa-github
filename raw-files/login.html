@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebQA - Login</title>
+    <!-- bootstrap styles -->
+    <link rel="stylesheet" href="./vendor/bootstrap/css/bootstrap.min.css" />
+    <!-- magnific-popup -->
+    <link rel="stylesheet" href="./vendor/magnific-popup/magnific-popup.css">
+    <!-- custom styles -->
+    <link rel="stylesheet" href="./assets/fonts/font-styles.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.res.css" />
+  </head>
+  <body class="body_padding">
+    <!-- header main starts -->
+    <header id="headerMain" class="header_main genarel_header_main">
+      <nav class="navbar_main">
+        <div class="container-fluid">
+          <a href="./index.html" class="navbar-brand">
+            <img
+              src="./assets/images/webQA_logo.png"
+              alt="WebQA"
+              width="78"
+              height="16"
+              class="img-fluid"
+            />
+          </a>
+
+          <ul class="genarel_header_items">
+            <li><a href="#">Tools</a></li>
+            <li><a href="#">Features</a></li>
+            <li>
+              <div class="dropdown">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span>Pricing</span>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="login_area">
+            <a href="#" class="header_login">Login</a>
+            <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+          </div>
+         
+          
+          <button id="header_menuBtn" class="header_menu_btn ms-3" type="button">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+    <!-- header main ends -->
+
+    
+    <!-- main sections starts -->
+    <main class="main-sections">
+      <div class="inner_content">
+        <div class="container-fluid">
+          <div class="login_banner_area login-page">
+             <!-- Modal -->
+          <div class="logIn_modal_area">
+            <div class="login_modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title">Login</h1>
+                  <button type="button" class="btn-close login_close_btn"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Fill your existing account details</p>
+                  <div class="login_modal_form">
+                    <form action="#" method="POST">
+                      <input type="email" placeholder="Email">
+                      <div class="login_input_password">
+                        <label for="login_pass" class="login_input_label">
+                          <span><img src="assets/images/eye.png" alt="icon"></span>
+                        </label>
+                        <input  type="password" placeholder="Password" id="login_pass">
+                      </div>
+                      <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
+                      <a href="#" class="login_forgetPass">Forgotten your password?</a>
+                      <div class="loginOr">
+                        <span>Or</span>
+                      </div>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/google.png" alt="icon">
+                        <span>Login with Google</span>
+                      </a>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/facebook.png" alt="icon">
+                        <span>Login with Facebook</span>
+                      </a>
+                    </form>
+                    <div class="signUp_modal_area">
+                      <span>Need an account?</span>
+                      <a href="#">Sign up</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- main sections ends -->
+
+
+  
+    <!-- jQuery -->
+    <script src="./vendor/jQurey/jquery-3.6.1.min.js"></script>
+    <!-- bootstrap scripts -->
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- font awesome scripts -->
+    <script src="./vendor/fontawesome/js/all.min.js" async defer></script>
+    <!-- magnific-popup -->
+    <script src="./vendor/magnific-js/jquery.magnific-popup.min.js"></script>
+    <!-- custom scripts -->
+    <script src="./js/main.js"></script>
+  </body>
+</html>

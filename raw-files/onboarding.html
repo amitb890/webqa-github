@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Onboarding</title>
+    <!-- bootstrap styles -->
+    <link rel="stylesheet" href="./vendor/bootstrap/css/bootstrap.min.css" />
+    <!-- font awesome styles -->
+    <link rel="stylesheet" href="./vendor/fontawesome/css/all.min.css" />
+    <!-- custom styles -->
+    <link rel="stylesheet" href="./assets/fonts/font-styles.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.res.css" />
+  </head>
+  <body>
+    <div id="app">
+      <!-- header main starts -->
+      <header id="headerMain" class="header_main onbording-header-padding">
+        <nav class="navbar_main">
+          <div class="container-fluid">
+            <a href="./index.html" class="navbar-brand">
+              <img
+                src="./assets/images/webQA_logo.png"
+                alt="WebQA"
+                width="78"
+                height="16"
+                class="img-fluid"
+              />
+            </a>
+            <div class="user_control">
+              <div class="dropdown">
+                <a
+                  class="dropdown-toggle btn btn-outline-gray rounded-pill p-1 pe-2"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span class="profile_icon">JD</span>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end user-dropdown">
+                  <div class="user-dropdown-list">
+                    <li><a class="dropdown-item" href="#"><img src="assets/images/user-pro.png" alt="icon">My Profile
+                      </a></li>
+                    <li><a class="dropdown-item" href="#"><img src="assets/images/logout.png" alt="icon">Logout</a></li>
+                  </div>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </nav>
+      </header>
+      <!-- header main ends -->
+
+      <!-- mobile menu starts -->
+      <aside
+        class="offcanvas offcanvas-start"
+        tabindex="-1"
+        id="offcanvasMobileMenu"
+        aria-labelledby="offcanvasMobileMenuLabel"
+      >
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="offcanvas-body">
+          <div class="user_control">
+            <div class="dropdown">
+              <a
+                class="dropdown-toggle p-2"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span class="icon">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z"
+                      stroke="#6E6E6E"
+                      stroke-width="1.3"
+                      stroke-miterlimit="10"
+                    />
+                    <path
+                      d="M1.45572 6.33333H16.5445"
+                      stroke="#6E6E6E"
+                      stroke-width="1.3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M1.45572 11.6667H16.5443"
+                      stroke="#6E6E6E"
+                      stroke-width="1.3"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M8.99999 16.7852C10.8409 16.7852 12.3333 13.2996 12.3333 8.99993C12.3333 4.70026 10.8409 1.21468 8.99999 1.21468C7.15904 1.21468 5.66666 4.70026 5.66666 8.99993C5.66666 13.2996 7.15904 16.7852 8.99999 16.7852Z"
+                      stroke="#6E6E6E"
+                      stroke-width="1.3"
+                      stroke-miterlimit="10"
+                    />
+                  </svg>
+                </span>
+                Sohanlalso
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="#">Action</a></li>
+                <li><a class="dropdown-item" href="#">Another action</a></li>
+              </ul>
+            </div>
+            <div class="dropdown">
+              <a
+                class="dropdown-toggle btn btn-outline-gray rounded-pill p-1 pe-2"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <span class="profile_icon">JD</span>
+              </a>
+
+              <ul class="dropdown-menu dropdown-menu-end user-dropdown">
+                <div class="user-dropdown-list">
+                  <li><a class="dropdown-item" href="#"><img src="assets/images/user-pro.png" alt="icon">My Profile
+                    </a></li>
+                  <li><a class="dropdown-item" href="#"><img src="assets/images/logout.png" alt="icon">Logout</a></li>
+                </div>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <!-- mobile menu ends -->
+
+      <!-- main sections starts -->
+      <main class="main-sections">
+        <div class="inner_content">
+          <div class="container-fluid">
+            <!-- Onboarding area start  -->
+            <div class="row align-items-center onboard-main-items">
+              <div class="col-md-6">
+                <div class="onboard-form-head">
+                  <h4>Let's create your first project</h4>
+                </div>
+                <div class="form-slider">
+                  <div class="form-slider-range">
+                    <span class="progress-line"></span>
+                    <span class="progress-dot one active"></span>
+                    <span class="progress-dot two"></span>
+                    <span class="progress-dot three"></span>
+                    <span class="progress-dot four"></span>
+                    <span class="progress-dot five"></span>
+                  </div>
+                </div>
+                <div class="onboard-main-form">
+                  <div class="card">
+                    <div class="card-body">
+                      <form action="" method="post">
+                        <div id="formSetp1" class="form-setp active">
+                          <div class="form-card-title">
+                            <h3>Enter your website address</h3>
+                          </div>
+                          <div class="form-card-input">
+                            <input
+                              type="url"
+                              class="form-control"
+                              placeholder="https://www.setmore.com"
+                              required
+                            />
+                            <div class="valid-feedback">URL validated</div>
+                            <div class="invalid-feedback">URL not valid</div>
+                          </div>
+                          <div class="onboard-form-button">
+                            <button
+                              id="formTriggerBtn1"
+                              class="btn btn_primary rounded-pill ms-auto"
+                              type="button"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <div id="formSetp2" class="form-setp">
+                          <div class="form-card-title">
+                            <h3>Enter XML sitemap</h3>
+                          </div>
+                          <div class="form-card-input">
+                            <input
+                              type="url"
+                              class="form-control"
+                              placeholder="https://www.setmore.com/sitemap.xml"
+                              required
+                            />
+                            <div class="valid-feedback">URL validated</div>
+                            <div class="invalid-feedback">URL not valid</div>
+                          </div>
+
+                          <div class="onboard-form-button">
+                            <button
+                              id="BtnPrev1"
+                              class="btn btn_transparent btn_prev rounded-pill"
+                              type="button"
+                            >
+                              <span>
+                                <svg
+                                  width="5"
+                                  height="8"
+                                  viewBox="0 0 5 8"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M4 7L1 4L4 1"
+                                    stroke="#6E6E6E"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              </span>
+                              Previous
+                            </button>
+                            <button
+                              id="BtnSkip1"
+                              class="btn btn_transparent btn_next rounded-pill ms-auto me-3"
+                              type="button"
+                            >
+                              Skip
+                            </button>
+                            <button
+                              id="formTriggerBtn2"
+                              class="btn btn_primary rounded-pill"
+                              type="button"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <div id="formSetp3" class="form-setp">
+                          <div class="form-card-title">
+                            <h3>Enter HTML sitemap</h3>
+                          </div>
+                          <div class="form-card-input">
+                            <input
+                              type="url"
+                              class="form-control"
+                              placeholder="https://www.setmore.com/sitemap.xml"
+                              required
+                            />
+                            <div class="valid-feedback">URL validated</div>
+                            <div class="invalid-feedback">URL not valid</div>
+                          </div>
+
+                          <div class="onboard-form-button">
+                            <button
+                              id="BtnPrev2"
+                              class="btn btn_transparent btn_prev rounded-pill"
+                              type="button"
+                            >
+                              <span>
+                                <svg
+                                  width="5"
+                                  height="8"
+                                  viewBox="0 0 5 8"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M4 7L1 4L4 1"
+                                    stroke="#6E6E6E"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              </span>
+                              Previous
+                            </button>
+                            <button
+                              id="BtnSkip2"
+                              class="btn btn_transparent btn_next rounded-pill ms-auto me-3"
+                              type="button"
+                            >
+                              Skip
+                            </button>
+                            <button
+                              id="formTriggerBtn3"
+                              class="btn btn_primary rounded-pill"
+                              type="button"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <div id="formSetp4" class="form-setp">
+                          <div class="form-card-title">
+                            <h3>Enter URLs list</h3>
+                          </div>
+                          <div class="form-card-input">
+                            <textarea class="form-control" rows="10">
+1.  https://www.setmore.com/industries
+2.  https://www.setmore.com/industries/it-scheduling-software
+3.  https://www.setmore.com/industries/teachers
+4.  https://www.setmore.com/industries/vaccination-scheduling
+5.  https://www.setmore.com/industries/medical-appointment-scheduling-software
+6.  https://www.setmore.com/industries/doctors
+7.  https://www.setmore.com/industries/interview-scheduling
+8.  https://www.setmore.com/industries/wedding-boutiques
+9.  https://www.setmore.com/industries
+10.  https://www.setmore.com/industries/it-scheduling-software
+11.  https://www.setmore.com/industries/teachers
+12.  https://www.setmore.com/industries/vaccination-scheduling
+13.  https://www.setmore.com/industries/medical-appointment-scheduling-software
+                              </textarea
+                            >
+                          </div>
+
+                          <div class="onboard-form-button">
+                            <button
+                              id="BtnPrev3"
+                              class="btn btn_transparent btn_prev rounded-pill"
+                              type="button"
+                            >
+                              <span>
+                                <svg
+                                  width="5"
+                                  height="8"
+                                  viewBox="0 0 5 8"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M4 7L1 4L4 1"
+                                    stroke="#6E6E6E"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              </span>
+                              Previous
+                            </button>
+                            <button
+                              id="BtnSkip3"
+                              class="btn btn_transparent btn_next rounded-pill ms-auto me-3"
+                              type="button"
+                            >
+                              Skip
+                            </button>
+                            <button
+                              id="formTriggerBtn4"
+                              class="btn btn_primary rounded-pill"
+                              type="button"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <div id="formSetp5" class="form-setp">
+                          <div class="form-card-title">
+                            <h3>Enter project name</h3>
+                          </div>
+                          <div class="form-card-input">
+                            <input
+                              type="url"
+                              class="form-control"
+                              placeholder="https://www.setmore.com/sitemap.html"
+                              required
+                            />
+                            <div class="valid-feedback">URL validated</div>
+                            <div class="invalid-feedback">URL not valid</div>
+                          </div>
+
+                          <div class="onboard-form-button">
+                            <button
+                              id="BtnPrev4"
+                              class="btn btn_transparent btn_prev rounded-pill"
+                              type="button"
+                            >
+                              <span>
+                                <svg
+                                  width="5"
+                                  height="8"
+                                  viewBox="0 0 5 8"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <path
+                                    d="M4 7L1 4L4 1"
+                                    stroke="#6E6E6E"
+                                    stroke-width="1.5"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                  />
+                                </svg>
+                              </span>
+                              Previous
+                            </button>
+                            <button
+                              id="formTriggerBtn5"
+                              class="btn btn_primary rounded-pill"
+                              type="button"
+                            >
+                              Next
+                            </button>
+                          </div>
+                        </div>
+                        <div id="formSetp6" class="form-setp">
+                          <div class="form-card-input">
+                            <div class="form-final-content">
+                              <svg
+                                width="68"
+                                height="68"
+                                viewBox="0 0 68 68"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle cx="34" cy="34" r="34" fill="#3D9F3B" />
+                                <path
+                                  d="M45 26L29.875 41L23 34.1818"
+                                  stroke="white"
+                                  stroke-width="5"
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                              <p>Project has been created successfully</p>
+                              <button
+                                class="btn btn_primary rounded-pill"
+                                type="submit"
+                              >
+                                Finish
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-single-text">
+                  <p>
+                    Lorem Ipsum is simply dummy text of the printing and
+                    typesetting industry since the 1500s. Lorem Ipsum is simply
+                    dummy text of the printing and typesetting industry since
+                    the 1500s.
+                  </p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-image">
+                  <img
+                    src="./assets/images/onboarding-img-1.png"
+                    alt=""
+                    class="img-fluid onboarding-img"
+                    id="onboardingImg"
+                  />
+                </div>
+              </div>
+            </div>
+            <!-- Onboarding area end  -->
+          </div>
+        </div>
+      </main>
+      <!-- main sections ends -->
+    </div>
+
+    <!-- jQuery -->
+    <script src="./vendor/jQurey/jquery-3.6.1.min.js"></script>
+    <!-- bootstrap scripts -->
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- custom scripts -->
+    <script src="./js/main.js"></script>
+  </body>
+</html>

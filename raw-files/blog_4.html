@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebQA - Blog</title>
+    <!-- bootstrap styles -->
+    <link rel="stylesheet" href="./vendor/bootstrap/css/bootstrap.min.css" />
+    <!-- custom styles -->
+    <link rel="stylesheet" href="./assets/fonts/font-styles.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.res.css" />
+  </head>
+  <body class="body_padding">
+    <!-- header main starts -->
+    <header id="headerMain" class="header_main genarel_header_main">
+      <nav class="navbar_main">
+        <div class="container-fluid">
+          <a href="./index.html" class="navbar-brand">
+            <img
+              src="./assets/images/webQA_logo.png"
+              alt="WebQA"
+              width="78"
+              height="16"
+              class="img-fluid"
+            />
+          </a>
+
+          <ul class="genarel_header_items">
+            <li><a href="#">Tools</a></li>
+            <li><a href="#">Features</a></li>
+            <li>
+              <div class="dropdown">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span>Pricing</span>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="login_area">
+            <a type="button" class="header_login" data-bs-toggle="modal" data-bs-target="#LoginexampleModal">Login</a>
+            <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+          </div>
+          <!-- Modal -->
+          <div class="modal fade logIn_modal_area" id="LoginexampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"    aria-hidden="true">
+            <div class="modal-dialog login_modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Fill your existing account details</p>
+                  <div class="login_modal_form">
+                    <form action="#" method="POST">
+                      <input type="email" placeholder="Email">
+                      <div class="login_input_password">
+                        <label for="login_pass" class="login_input_label">
+                          <span><img src="assets/images/eye.png" alt="icon"></span>
+                        </label>
+                        <input type="password" placeholder="Password" id="login_pass">
+                      </div>
+                      <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
+                      <a href="#" class="login_forgetPass">Forgotten your password?</a>
+                      <div class="loginOr">
+                        <span>Or</span>
+                      </div>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/google.png" alt="icon">
+                        <span>Login with Google</span>
+                      </a>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/facebook.png" alt="icon">
+                        <span>Login with Facebook</span>
+                      </a>
+                    </form>
+                    <div class="signUp_modal_area">
+                      <span>Need an account?</span>
+                      <a href="#">Sign up</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button id="header_menuBtn" class="header_menu_btn ms-3" type="button">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+    <!-- header main ends -->
+
+    <!-- Blog Title Start -->
+    <section class="blog-title-section post-page-top">
+      <div class="blog-menu">
+        <nav>
+          <a href="#" class="blog-home"><img src="assets/images/blog/home.svg" alt="home"></a>
+          <ul>
+            <li>
+              <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span>Get Inspired</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" style="">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+            <li><a href="#">Learn SEO</a></li>
+            <li>
+              <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span>News</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" style="">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+            <li><a href="#">Look Inside</a></li>
+            <li>
+              <div class="dropdown">
+                <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span>Updates</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end" style="">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <a href="#"><img src="assets/images/blog/search.svg" alt="search"></a>
+          <button id="blog_menuBtn" class="blog_menu_btn" type="button">
+            <span></span><span></span><span></span>
+          </button>
+        </nav>
+      </div>
+    </section>
+    <!-- Blog Title End -->
+    
+    <!-- main sections starts -->
+    <main class="main-sections blog-padding">
+      <div class="inner_content">
+        <div class="container-fluid">
+          <div class="blog-main-area single-post-main">
+            <!-- post page blog start -->
+            <div class="post-page-thump-headline">
+              <div class="post-page-thump">
+              </div>
+              <div class="post-page-headline">
+                <div class="post-category">
+                  <ul>
+                    <li><a href="#">Search Engine</a></li>
+                    <li><a href="#">SEO</a></li>
+                    <li><a href="#">Website Audit</a></li>
+                  </ul>
+                </div>
+                <h1>How to Optimize Search Engine of Your Blog Content in 2023</h1>
+              </div>
+            </div>
+            <div class="single-post-content-main">
+              <div class="single-post-left-sidebar">
+                <ul>
+                  <li><a href="#">How to pass the Robots Meta Tag test?</a></li>
+                  <li><a href="#">What is a Robots Meta Tag?</a></li>
+                  <li><a href="#">Understanding the Directives and Attributes Of Robots Meta Tag</a></li>
+                  <li><a href="#">Name Attribute</a></li>
+                  <li class="list-heading">Content Attribute</li>
+                  <li><a href="#">Understanding NoIndex & NoFollow</a></li>
+                  <li><a href="#">What is the difference between NoFollow and NoIndex?</a></li>
+                  <li><a href="#">Using “NoIndex” and “NoFollow” Separately</a></li>
+                  <li><a href="#">How Can a Page Be Marked as Noindex?</a></li>
+                  <li><a href="#">How to Mark an Already Indexed Page as NoIndex?</a></li>
+                  <li><a href="#">Functions of Robots Meta Tag</a></li>
+                  <li><a href="#">SEO Importance of Robots Meta Tag</a></li>
+                  <li><a href="#">FAQs</a></li>
+                </ul>
+              </div>
+              <div class="single-post-content">
+                <p>When running a website, SEO experts and site owners must be aware of all the web pages that are indexed by search engines. But this information alone is not enough. It’s also critical to know all the pages that aren’t visible.</p>
+                <p>Getting a list of all the web pages of a single website enables you to get a complete overview of that website, and empowers you to clean it up for improved SEO success. In this blog post, we’ll look into why you need to be able to find all the web pages of a website, how exactly you can do that, and what to do once you have a list of all your web pages.
+                </p>
+                <h2>Why do I need to find every single page?</h2>
+                <p>Search engines are constantly introducing new algorithms and applying manual penalties to pages and sites. So if you don’t have a thorough understanding of all your website’s pages — you’re tiptoeing through an SEO minefield.</p>
+                <img src="assets/images/blog/post_1.png" alt="post">
+                <p>In order to avert a serious setback, you must keep a close eye on all the pages that make up your website. Doing so will not only enable you to discover pages you already knew about, but will also help you find forgotten pages, pages you had no idea existed and would otherwise not be able to view.</p>
+                <h2>Common causes of abandoned pages</h2>
+                <p>Let’s look into some of the most common reasons why orphaned, lost and forgotten pages may occur on your site:</p>
+                <div class="list blue-list">
+                  <ul>
+                    <li>Campaign-specific dedicated landing pages;</li>
+                    <li>Test pages created for split tests;</li>
+                    <li>Pages that were removed from the internal link structure, but not deleted;</li>
+                    <li>Pages included in the previous CRM system;</li>
+                    <li>Pages generated as a result of the incorrect use of a CMS;</li>
+                    <li>Pages lost during website migration;</li>
+                    <li>Deleted shop category pages.</li>
+                  </ul>
+                </div>
+                <p>On top of that, if you don’t use http or <span class="span-color">https, www or non-www,</span> as well as trailing slashes consistently on every web page of your site that’s been made public, this may lead to new abandoned pages.</p>
+                <h2>Finding crawlable pages via SE Ranking’s Website Audit</h2>
+                <p>Let’s start by collecting all the URLs that both people and search engine crawlers can visit by following your site’s internal links. Analyzing such pages should be your top priority as they get the most amount of attention.</p>
+                <img src="assets/images/blog/post_2.png" alt="post">
+                <div class="list green-list">
+                  <h3>Do’s</h3>
+                  <ul>
+                    <li>Campaign-specific dedicated landing pages;</li>
+                    <li>Test pages created for split tests;</li>
+                    <li>Pages that were removed from the internal link structure, but not deleted;</li>
+                    <li>Pages included in the previous CRM system;</li>
+                    <li>Pages generated as a result of the incorrect use of a CMS;</li>
+                    <li>Pages lost during website migration;</li>
+                    <li>Deleted shop category pages.</li>
+                  </ul>
+                </div>
+                <div class="list red-list">
+                  <h3>Don’ts</h3>
+                  <ul>
+                    <li>Campaign-specific dedicated landing pages;</li>
+                    <li>Test pages created for split tests;</li>
+                    <li>Pages that were removed from the internal link structure, but not deleted;</li>
+                    <li>Pages included in the previous CRM system;</li>
+                    <li>Pages generated as a result of the incorrect use of a CMS;</li>
+                    <li>Pages lost during website migration;</li>
+                    <li>Deleted shop category pages.</li>
+                  </ul>
+                </div>
+                <p>Luckily, there’s the <a href="#" class="link-border">match function</a> for this that checks to see if every value in the “GA URLs” column is present in the “SE Ranking” column as well. To do this, click on box E2, enter the function, and drag the box all the way down to your last value.</p>
+                <p>To make it easier to figure out the top SEO mistakes made by many sites, we’ve scanned over 40,000 websites with our <a href="#" class="link-border">Website Audit tool</a>. We divided the issues we detected into 10 categories and described them by their frequency of occurrence and severity. You’ll find an additional section at the end where we talk about less critical but still frequently occurring technical SEO issues that also deserve your attention. So we strongly encourage you to read to the end.</p>
+                <h2>Problems with images</h2>
+                <p>Our list of common SEO mistakes starts with images. They make a website more aesthetically pleasing and help users perceive the content better. Plain text without a single image that would visualize information is unlikely to grab the reader’s attention.</p>
+                <p>We definitely recommend using them (but carefully) because unoptimized images can lead to website speed issues, affecting your <a href="#" class="link-border link-border2">SEO and UX</a>.</p>
+                <p>Our research has shown two main image issues: missing alt tags and overly sized image files. Make sure to check your site to see whether you have them, too.</p>
+                <h2>Missing alt text</h2>
+                <p>The most common SEO issues related to images were the missing alt tag in images, with 83.87% of websites having this issue.</p>
+                <p>The alt text (alternative text) is an HTML element designed to explain the meaning of images to search robots and make them more accessible to users. It’s one of the main elements of <a href="#" class="link-border">image optimization</a> that helps search engines better understand what your picture is about and rank it.</p>
+                <p>The alt attributes for images also come in handy for users when (for whatever reason) the picture doesn’t load up. They’re also useful for people with impaired vision who have trouble perceiving visual information.</p>
+                <img src="assets/images/blog/post_3.png" alt="post">
+                <p>If you want to make the most out of your images, add helpful, informative, and contextual alt text to each of them. You can also use keywords but avoid <a href="#"  class="link-border">keyword stuffing</a> as it causes a negative experience for your users and signals spam to search bots.</p>
+                <h2>Meta tag issues</h2>
+                <p>Meta tags are critical for SEO because they tell search engines and users important information about your web page. They also help search engines better understand how to present your pages in the SERPs. <a href="#" class="link-border">Meta tags</a> are core elements of effective optimization. That’s why you wouldn’t want to have problems with them. But some websites do have them, so below is a list of the most common SEO mistakes in terms of meta tags.</p>
+                <h2>Missing description</h2>
+                <p>This issue occurs on 71.11% of websites. But why is it so critical, given that Google neither confirms nor refutes that meta descriptions affect rankings?</p>
+                <p>The answer is that Google can still use them for search result snippets. If you don’t specify a page description, search engines will use the available content on that page to generate a description themselves. Are you really willing to rely on the search engine in this matter? Probably not</p>
+                <img src="assets/images/blog/post_4.png" alt="post">
+                <h2>Duplicate page titles and descriptions</h2>
+                <p>More than half of the analyzed websites have duplicate title tags (52.59%) and duplicate descriptions (50.17%).</p>
+                <p>Multiple pages on your website with duplicate titles and descriptions confuse search engines because they can’t quickly determine which page is relevant to a particular search query. Such pages are less likely to get a good ranking so try to make titles and descriptions as unique as possible.</p>
+                <p>If you’re struggling with rephrasing them, you can use the AI Rewrite feature available in SE Ranking’s new <a href="#" class="link-border">Content Marketing Module</a>. It’ll help you create unique copies in seconds and generally allows you to build SEO-friendly texts faster..</p>
+                <h2>Title and description length issues</h2>
+                <p>22.82% of websites have title tags that are too short, and 21.75% make their descriptions too long.</p>
+                <p>The issue is two-sided:</p>
+                <div class="list blue-list">
+                  <ul>
+                    <li>A too-short title can’t fully describe your page.</li>
+                    <li>A too-long description can be cut by the search engine in the snippet.</li>
+                  </ul>
+                </div>
+                <h2>Missing title tag</h2>
+                <p>A rare but still existing mistake (9.04%) is not including the title tag at all. This way, you lose an opportunity to tell search engines and users what your page is about. Instead, search engines will create the title using the available page content. And it may not always match your goals or your keywords.</p>
+                <h2>Missing internal inbound links</h2>
+                <p>It’s worrisome to see that more than half of the analyzed websites (63.09%) have pages with no links connecting them to other website pages.</p>
+                <p>This is a major issue because <a href="#" class="link-border">inbound internal links</a> enable users and search bots to navigate your website. They structure the website content hierarchy and help distribute link juice.</p>
+                <p>There’re some cases when you can have pages without internal links, like a landing page for a particular promo. They only exist during the period of the sale and can be accessed by the link posted on social media or sent in a newsletter. Other than that, it’s simply wrong from the SEO perspective to have isolated pages. Search engines won’t find them while scanning your website, and users won’t get there when browsing your site.</p>
+                <img src="assets/images/blog/post_5.png" alt="post">
+                <p>A rare but still existing mistake (9.04%) is not including the title tag at all. This way, you lose an opportunity to tell search engines and users what your page is about. Instead, search engines will create the title using the available page content. And it may not always match your goals or your keywords.</p>
+                <h2>Heading issues</h2>
+                <p><a href="#" class="link-border link-border2">HTML heading tags</a> help people and search engines quickly understand page content. They outline the structure of the text and can even affect your page’s ranking.</p>
+                <p>Our research has shown that websites often have technical SEO problems related to H1 and H2 tags, so let’s dive into the essence of these issues.</p>
+                <h2>H1 tag issues</h2>
+                <p>The H1 tag is the top-level page heading that briefly describes page content and helps the reader understand whether they’ll find what they’re looking for here. That’s why we start with it.</p>
+                <h3><span></span>Missing H1 tag</h3>
+                <p>62.85% of websites have pages with no H1 tag. They lack the most important heading on the page that usually serves as the title for that piece of content (don’t mix it up with the title tag!). These pages then lose the chance to provide a better reading experience for users and a better text-scanning experience for search engines.</p>
+                <h3><span></span>Duplicate H1</h3>
+                <p>56.6% of websites have pages with duplicated H1 tags. Like all duplicate content, non-unique H1 headings make it more challenging for search engines to figure out which site page to display in search results for a given query. They can also lead to several of your pages <a href="#" class="link-border">competing for the same keyword</a>, making duplicated H1 tags one of the most insidious errors in SEO.</p>
+                <h3><span></span>Multiple H1 tags</h3>
+                <p>50.25% of websites use multiple H1 tags on their pages. Given that Google’s <a href="#" class="link-border">John Mueller said</a> that you could use H1 tags on a page as often as you want, you might be wondering what the problem is here.</p>
+                <p>Let’s look at it this way. If your page has multiple H1 headings, which one should the search engine give more weight to? You might think the first one, but you can’t be 100% sure that the search engine will follow your logic. They have theirs. What’s more, having too many H1 tags on a single page can look spammy if you use them to place keywords.</p>
+                <div class="list yellow-content">
+                  <h3>Summary</h3>
+                  <p>In order for a search engine bot to fully crawl a website, it needs to follow the internal links one by one. But if a web page is not linked to the site in any way, be it accidentally or on purpose, then neither search engines nor humans will be able to reach the page. And this is not great for the site’s SEO performance.</p>
+                  <p>As a site owner or SEO specialist responsible for a site, seeing all the pages of aparticular site can help you discover valuable pages you might have forgotten about.</p>  
+                </div>
+              </div>
+            </div>
+            <!-- post page blog end -->
+          </div>
+          <!-- share and media start -->
+          <div class="share-and-media">
+            <div class="post-share-area">
+              <h4>Share this article</h4>
+              <div class="post-medias">
+                <a href="#" class="twiter"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="instagram active"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" class="facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" class="tumblr"><i class="fa-brands fa-tumblr"></i></a>
+                <a href="#" class="linkedin"><i class="fa-brands fa-linkedin"></i></a>
+              </div>
+            </div>
+            <div class="post-help-area">
+              <h4>Was this post helpful?</h4>
+              <div class="like-unlike">
+                <div class="like">
+                  <a href="#"><img src="assets/images/blog/like.svg" alt="like"></a>
+                  <p>Yes</p>
+                </div>
+                <div class="unlike">
+                  <a href="#"><img src="assets/images/blog/unlike.svg" alt="unlike"></a>
+                  <p>Not really</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- share and media end -->
+          <!-- Wondering Area Start -->
+          <div class="trial-area blog-wondering-mt">
+            <div class="trial-content">
+              <h2>Wondering why your content isn't
+                showing up on the SERPs?</h2>
+                <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+            </div>
+          </div>
+          <!-- Wondering Area End -->
+          <!-- blog article area start -->
+          <div class="blog-article-area">
+            <div class="blog-article-title">
+              <h2>Related Articles</h2>
+            </div>
+            <div class="blog-list-main">
+              <div class="blog-list-single">
+                <div class="blog-list-single-img">
+                  <img src="assets/images/blog/blog_7.png" alt="blog">
+                </div>
+                <div class="post-category">
+                  <ul>
+                    <li><a href="#">Search Engine</a></li>
+                    <li><a href="#">SEO</a></li>
+                    <li><a href="#">Website Audit</a></li>
+                  </ul>
+                </div>
+                <div class="blog-list-single-heading">
+                  <h4>A 5-step plan to achieve your goals for your next project</h4>
+                </div>
+              </div>
+
+              <div class="blog-list-single">
+                <div class="blog-list-single-img">
+                  <img src="assets/images/blog/blog_8.png" alt="blog">
+                </div>
+                <div class="post-category">
+                  <ul>
+                    <li><a href="#">Website Audit</a></li>
+                  </ul>
+                </div>
+                <div class="blog-list-single-heading">
+                  <h4>9 professional designers’ tips for overcoming creative block</h4>
+                </div>
+              </div>
+
+              <div class="blog-list-single">
+                <div class="blog-list-single-img">
+                  <img src="assets/images/blog/blog_9.png" alt="blog">
+                </div>
+                <div class="post-category">
+                  <ul>
+                    <li><a href="#">SEO</a></li>
+                    <li><a href="#">Website Audit</a></li>
+                  </ul>
+                </div>
+                <div class="blog-list-single-heading">
+                  <h4>An article all about alliteration in brand names</h4>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- blog article area end -->
+        </div>
+      </div>
+    </main>
+    <!-- main sections ends -->
+
+    <!-- Footer Area Start -->
+    <footer class="genarel_footer_area">
+      <div class="container-fluid">
+        <div class="g_footer_main">
+          <div class="single_footer_item footer-fast-item">
+            <img src="assets/images/webQA_logo.png" alt="icon">
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <div class="footer_social">
+              <ul>
+                <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                <li><a href="#"><img src="assets/images/youtube.png" alt="icon"> </a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="single_footer_item">
+            <div class="footer_list_items">
+              <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">7 Day Free Trial</a></li>
+                <li><a href="#">Tools</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Contact Us</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="single_footer_item">
+            <div class="footer_list_items">
+              <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">FAQ’s</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Use</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer_search_item">
+            <h5>Test Your Website’s Performance for Free!</h5>
+            <form class="footer_search_box">
+              <input
+                type="text"
+                class="footer_control"
+                name="search"
+                placeholder="Enter your website url.."
+              />
+              <div class="footer_utils">
+                <a href="#" class="btn btn_primary rounded-pill">Test Now</a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- Footer Area End -->
+
+  
+    <!-- jQuery -->
+    <script src="./vendor/jQurey/jquery-3.6.1.min.js"></script>
+    <!-- bootstrap scripts -->
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- font awesome scripts -->
+    <script src="./vendor/fontawesome/js/all.min.js" async defer></script>
+    <!-- custom scripts -->
+    <script src="./js/main.js"></script>
+  </body>
+</html>

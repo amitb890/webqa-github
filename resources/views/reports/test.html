@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Collapsible Headings Table</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #2b6cb0;
+      color: white;
+    }
+
+    .collapsible {
+      cursor: pointer;
+      color: #2b6cb0;
+      font-weight: bold;
+    }
+
+    .content-row {
+      display: none;
+    }
+
+    .content-row.show {
+      display: table-row;
+    }
+
+    .content-cell {
+      padding-left: 20px;
+      color: #333;
+    }
+
+    .no-tags {
+      background-color: #f8d7da;
+      color: #721c24;
+      padding: 10px;
+      border: 1px solid #f5c6cb;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<table>
+  <thead>
+    <tr>
+      <th>Heading</th>
+      <th>Quantity</th>
+      <th>Content</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- H1 -->
+    <tr>
+      <td>H1</td>
+      <td>7</td>
+      <td><span class="collapsible" onclick="toggleContent('h1')">Show</span></td>
+    </tr>
+    <tr class="content-row" id="h1">
+      <td></td>
+      <td></td>
+      <td class="content-cell">
+        Delhi election 2025 news today
+      </td>
+    </tr>
+
+    <!-- H2 -->
+    <tr>
+      <td>H2</td>
+      <td>12</td>
+      <td><span class="collapsible" onclick="toggleContent('h2')">Show</span></td>
+    </tr>
+    <tr class="content-row" id="h2">
+      <td></td>
+      <td></td>
+      <td class="content-cell">
+        Lifestyle News
+      </td>
+    </tr>
+
+    <!-- H3 -->
+    <tr>
+      <td>H3</td>
+      <td>10</td>
+      <td><span class="collapsible" onclick="toggleContent('h3')">Hide</span></td>
+    </tr>
+    <tr class="content-row show" id="h3">
+      <td></td>
+      <td></td>
+      <td class="content-cell">
+        <ul>
+          <li>India News</li>
+          <li>Review: Breath; The New Science of a Lost Art by James Nestor</li>
+          <li>Born between 1956 to 1996?</li>
+          <li>Lifestyle News</li>
+          <li>Black Friday 2022</li>
+          <li>FIFA World Cup 2022 Schedule</li>
+          <li>Horoscope Today</li>
+          <li>UPSC Civil Services Mains Result 2022</li>
+          <li>Delhi news today</li>
+          <li>Trending News</li>
+        </ul>
+      </td>
+    </tr>
+
+    <!-- H4 -->
+    <tr>
+      <td>H4</td>
+      <td>3</td>
+      <td><span class="collapsible" onclick="toggleContent('h4')">Hide</span></td>
+    </tr>
+    <tr class="content-row show" id="h4">
+      <td></td>
+      <td></td>
+      <td class="content-cell">
+        <ul>
+          <li>India News</li>
+          <li>Review: Breath; The New Science of a Lost Art by James Nestor</li>
+          <li>Born between 1956 to 1996?</li>
+        </ul>
+      </td>
+    </tr>
+
+    <!-- H5 -->
+    <tr>
+      <td>H5</td>
+      <td colspan="2">
+        <div class="no-tags">The page does not contain any H5 heading tags</div>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<script>
+  function toggleContent(id) {
+    const row = document.getElementById(id);
+    const isShown = row.classList.contains('show');
+    row.classList.toggle('show');
+
+    const toggleBtn = row.previousElementSibling.querySelector('.collapsible');
+    toggleBtn.textContent = isShown ? 'Show' : 'Hide';
+  }
+</script>
+
+</body>
+</html>

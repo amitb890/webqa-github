@@ -1,0 +1,2489 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebQA - Home</title>
+    <!-- bootstrap styles -->
+    <link rel="stylesheet" href="./vendor/bootstrap/css/bootstrap.min.css" />
+    <!-- magnific-popup -->
+    <link rel="stylesheet" href="./vendor/magnific-popup/magnific-popup.css" />
+    <!-- custom styles -->
+    <link rel="stylesheet" href="./assets/fonts/font-styles.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.res.css" />
+  </head>
+  <body class="body_padding">
+    <!-- header main starts -->
+    <header id="headerMain" class="header_main genarel_header_main">
+      <nav class="navbar_main">
+        <div class="container-fluid">
+          <a href="./index.html" class="navbar-brand">
+            <img
+              src="./assets/images/webQA_logo.png"
+              alt="WebQA"
+              width="78"
+              height="16"
+              class="img-fluid"
+            />
+          </a>
+
+          <ul class="genarel_header_items">
+            <li><a href="#">Tools</a></li>
+            <li><a href="#">Features</a></li>
+            <li>
+              <div class="dropdown">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span>Pricing</span>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="#">Action</a></li>
+                  <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="login_area">
+            <a
+              type="button"
+              class="header_login"
+              data-bs-toggle="modal"
+              data-bs-target="#LoginexampleModal"
+              >Login</a
+            >
+            <a href="#" class="btn btn_primary rounded-pill"
+              >Start Free Trial</a
+            >
+          </div>
+          <!-- Modal -->
+          <div
+            class="modal fade logIn_modal_area"
+            id="LoginexampleModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog login_modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  <p>Fill your existing account details</p>
+                  <div class="login_modal_form">
+                    <form action="#" method="POST">
+                      <input type="email" placeholder="Email" />
+                      <div class="login_input_password">
+                        <label for="login_pass" class="login_input_label">
+                          <span
+                            ><img src="assets/images/eye.png" alt="icon"
+                          /></span>
+                        </label>
+                        <input
+                          type="password"
+                          placeholder="Password"
+                          id="login_pass"
+                        />
+                      </div>
+                      <input
+                        class="btn btn_primary rounded-pill login_modal_btn"
+                        type="submit"
+                        value="Login"
+                      />
+                      <a href="#" class="login_forgetPass"
+                        >Forgotten your password?</a
+                      >
+                      <div class="loginOr">
+                        <span>Or</span>
+                      </div>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/google.png" alt="icon" />
+                        <span>Login with Google</span>
+                      </a>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/facebook.png" alt="icon" />
+                        <span>Login with Facebook</span>
+                      </a>
+                    </form>
+                    <div class="signUp_modal_area">
+                      <span>Need an account?</span>
+                      <a href="#">Sign up</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button
+            id="header_menuBtn"
+            class="header_menu_btn ms-3"
+            type="button"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+    <!-- header main ends -->
+
+    <!-- main sections starts -->
+    <main class="main-sections">
+      <div class="inner_content">
+        <div class="container-fluid">
+          <div class="home-title">
+            <h1>Test Your Website for <span>Technical SEO</span></h1>
+            <p>
+              Test a webpage for Technical SEO, HTML Code, Pagespeed,
+              Performance, Mobile friendliness best practices and standards.
+            </p>
+          </div>
+          <div class="home-search">
+            <div class="footer_search_item">
+              <form class="footer_search_box">
+                <input
+                  type="text"
+                  class="footer_control"
+                  name="search"
+                  placeholder="Enter upto 100 urls, put each url in seperate line"
+                />
+                <div class="footer_utils">
+                  <a href="#" class="btn btn_primary rounded-pill">Test Now</a>
+                </div>
+              </form>
+            </div>
+            <div class="search-setting">
+              <p id="settingBtn">
+                Test Settings <i class="fa-solid fa-angle-up"></i>
+              </p>
+            </div>
+          </div>
+          <div class="home-setting-wrap">
+            <div class="home-setting-area">
+              <div
+                class="alert alert-warning alert-dismissible fade show"
+                role="alert"
+              >
+                Setting have been saved.
+                <button
+                  type="button"
+                  class="btn-close"
+                  data-bs-dismiss="alert"
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div class="home-setting-container">
+                <!-- home setting tab sidebar start -->
+                <div class="home-setting-sidebar">
+                  <div
+                    class="d-flex align-items-center justify-content-between"
+                  >
+                    <div class="form-check form-switch form-switch-2">
+                      <input
+                        class="form-check-input form-check-switch"
+                        type="checkbox"
+                        role="switch"
+                        id="seeallChecked"
+                        checked
+                      />
+                      <label class="form-check-label" for="seeallChecked"
+                        >Select All</label
+                      >
+                    </div>
+                    <button class="tav-menu-btn">
+                      <i class="fa-solid fa-angle-left"></i>
+                    </button>
+                  </div>
+                  <div
+                    class="accordion accordion-flush"
+                    id="accordionFlushExample"
+                  >
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingOne">
+                        <label
+                          class="accordion-button form-check-label collapsed"
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#flush-collapseOne"
+                          aria-expanded="false"
+                          aria-controls="flush-collapseOne"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value=""
+                          />
+                          Meta Tags
+                        </label>
+                      </h2>
+                      <div
+                        id="flush-collapseOne"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="flush-headingOne"
+                        data-bs-parent="#accordionFlushExample"
+                      >
+                        <div class="accordion-body">
+                          <div class="d-flex align-items-start">
+                            <div
+                              class="nav flex-column nav-pills"
+                              id="v-pills-tab"
+                              role="tablist"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                class="nav-link"
+                                id="v-pills-home-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-home"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-home"
+                                aria-selected="true"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Meta Title
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-profile-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-profile"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-profile"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Meta Description
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-disabled-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-disabled"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-disabled"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Robots Meta Tag
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-messages-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-messages"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-messages"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Canonical URL
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-settings-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-settings"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-settings"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  URL Slug
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-open-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-open"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-open"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  OpenGraph Tag
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-twiter-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-twiter"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-twiter"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Twitter Title
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-twiter-image-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-twiter-image"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-twiter-image"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Twitter Image
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-tw-alt-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-tw-alt"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-tw-alt"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Twitter Image Alt
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-favicon-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-favicon"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-favicon"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Favicon
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-twiter-sitemap-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-twiter-sitemap"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-twiter-sitemap"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  XML sitemap
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-html-sitemap-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-html-sitemap"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-html-sitemap"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  HTML sitemap
+                                </label>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingTwo">
+                        <label
+                          class="accordion-button form-check-label collapsed"
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#flush-collapseTwo"
+                          aria-expanded="false"
+                          aria-controls="flush-collapseTwo"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value=""
+                          />
+                          Images
+                        </label>
+                      </h2>
+                      <div
+                        id="flush-collapseTwo"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="flush-headingTwo"
+                        data-bs-parent="#accordionFlushExample"
+                      >
+                        <div class="accordion-body">
+                          <div class="d-flex align-items-start">
+                            <div
+                              class="nav flex-column nav-pills"
+                              id="v-pills-tab"
+                              role="tablist"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo1-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo1"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo1"
+                                aria-selected="true"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 1
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo2-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo2"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo2"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 2
+                                </label>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingThree">
+                        <label
+                          class="accordion-button form-check-label collapsed"
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#flush-collapseThree"
+                          aria-expanded="false"
+                          aria-controls="flush-collapseThree"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value=""
+                          />
+                          Performance
+                        </label>
+                      </h2>
+                      <div
+                        id="flush-collapseThree"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="flush-headingThree"
+                        data-bs-parent="#accordionFlushExample"
+                      >
+                        <div class="accordion-body">
+                          <div class="d-flex align-items-start">
+                            <div
+                              class="nav flex-column nav-pills"
+                              id="v-pills-tab"
+                              role="tablist"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo3-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo3"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo3"
+                                aria-selected="true"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 1
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo4-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo4"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo4"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 2
+                                </label>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingFour">
+                        <label
+                          class="accordion-button form-check-label collapsed"
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#flush-collapseFour"
+                          aria-expanded="false"
+                          aria-controls="flush-collapseFour"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value=""
+                          />
+                          Coding Practices
+                        </label>
+                      </h2>
+                      <div
+                        id="flush-collapseFour"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="flush-headingFour"
+                        data-bs-parent="#accordionFlushExample"
+                      >
+                        <div class="accordion-body">
+                          <div class="d-flex align-items-start">
+                            <div
+                              class="nav flex-column nav-pills"
+                              id="v-pills-tab"
+                              role="tablist"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo5-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo5"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo5"
+                                aria-selected="true"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 1
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo6-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo6"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo6"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 2
+                                </label>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingFive">
+                        <label
+                          class="accordion-button form-check-label collapsed"
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#flush-collapseFive"
+                          aria-expanded="false"
+                          aria-controls="flush-collapseFive"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value=""
+                          />
+                          HTML Practices
+                        </label>
+                      </h2>
+                      <div
+                        id="flush-collapseFive"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="flush-headingFive"
+                        data-bs-parent="#accordionFlushExample"
+                      >
+                        <div class="accordion-body">
+                          <div class="d-flex align-items-start">
+                            <div
+                              class="nav flex-column nav-pills"
+                              id="v-pills-tab"
+                              role="tablist"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo7-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo7"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo7"
+                                aria-selected="true"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 1
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo8-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo8"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo8"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 2
+                                </label>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="flush-headingSix">
+                        <label
+                          class="accordion-button form-check-label collapsed"
+                          role="button"
+                          data-bs-toggle="collapse"
+                          data-bs-target="#flush-collapseSix"
+                          aria-expanded="false"
+                          aria-controls="flush-collapseSix"
+                        >
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            value=""
+                          />
+                          Others
+                        </label>
+                      </h2>
+                      <div
+                        id="flush-collapseSix"
+                        class="accordion-collapse collapse"
+                        aria-labelledby="flush-headingSix"
+                        data-bs-parent="#accordionFlushExample"
+                      >
+                        <div class="accordion-body">
+                          <div class="d-flex align-items-start">
+                            <div
+                              class="nav flex-column nav-pills"
+                              id="v-pills-tab"
+                              role="tablist"
+                              aria-orientation="vertical"
+                            >
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo9-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo9"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo9"
+                                aria-selected="true"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 1
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
+                                id="v-pills-demo10-tab"
+                                data-bs-toggle="pill"
+                                data-bs-target="#v-pills-demo10"
+                                type="button"
+                                role="tab"
+                                aria-controls="v-pills-demo10"
+                                aria-selected="false"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    value=""
+                                  />
+                                  Demo 2
+                                </label>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-btn">
+                    <button
+                      class="btn btn_primary rounded-pill"
+                      type="button"
+                      id="resetSettingBtn"
+                    >
+                      Reset to Default
+                    </button>
+                  </div>
+                </div>
+                <!-- home setting tab sidebar end -->
+
+                <!-- home setting tab content start -->
+                <div class="home-setting-tab-content">
+                  <div class="tab-content" id="v-pills-tabContent">
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-home"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-home-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle2"
+                              />
+                              <label class="form-check-label" for="metatitle2">
+                                Maximum length of Title tag should be
+                                <input
+                                  type="number"
+                                  value="68"
+                                  min="0"
+                                  max="100"
+                                  id="ex21-input"
+                                />
+                                characters
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle3"
+                              />
+                              <label class="form-check-label" for="metatitle3">
+                                Minimum length of Title tag should be
+                                <input
+                                  type="number"
+                                  value="61"
+                                  min="0"
+                                  max="100"
+                                  id="ex22-input"
+                                />
+                                Characters
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle4"
+                              />
+                              <label class="form-check-label" for="metatitle4">
+                                Title Tag must not be equal to H1 heading tag
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle5"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle5">
+                                Exclude specific words from casing checks
+                                (separate each word with a comma)
+                              </label>
+                            </div>
+                            <textarea
+                              placeholder="Separate each word with a comma"
+                              name=""
+                              id=""
+                              cols="30"
+                              rows="10"
+                            ></textarea>
+                            <div class="form-check form-check-black">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle6"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle6">
+                                Enable Casing Checks
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="flexRadioDefault"
+                                id="metatitle7"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle7">
+                                Title Tag must be either in Camel casing or
+                                Sentence casing
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="flexRadioDefault"
+                                id="metatitle8"
+                              />
+                              <label class="form-check-label" for="metatitle8">
+                                Title Tag must be in Camel casing
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="radio"
+                                name="flexRadioDefault"
+                                id="metatitle9"
+                              />
+                              <label class="form-check-label" for="metatitle9">
+                                Title Tag must be in Sentence casing
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-profile"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-profile-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-disabled"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-disabled-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-messages"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-messages-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-settings"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-settings-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-open"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-open-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-twiter"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-twiter-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-twiter-image"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-twiter-image-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-tw-alt"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-tw-alt-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-favicon"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-favicon-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-twiter-sitemap"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-twiter-sitemap-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-html-sitemap"
+                      role="tabpanel"
+                      aria-labelledby="v-pills-html-sitemap-tab"
+                      tabindex="0"
+                    >
+                      <div class="home-meta-content">
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input
+                                class="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id="metatitle1"
+                                checked=""
+                              />
+                              <label class="form-check-label" for="metatitle1">
+                                Every page must have a meta title tag
+                              </label>
+                            </div>
+                          </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                        <div class="accor-content-button">
+                          <input
+                            class="btn btn_primary rounded-pill"
+                            type="reset"
+                            value="Reset to Default"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- home setting tab content end -->
+              </div>
+            </div>
+          </div>
+
+          <!--  w_area Css Start-->
+          <div class="w_area">
+            <div class="w_content">
+              <img src="assets/images/home/w.png" alt="img" />
+            </div>
+          </div>
+          <!--  w_area Css End -->
+
+          <!--  what_webqa_area Css Start-->
+          <div class="what_webqa_area">
+            <div class="home_section_title">
+              <h2>What is WebQA?</h2>
+              <p>
+                WebQA is a website quality assurance tool which let's you check
+                whether best practices and standards are maintained for a
+                website or not.
+              </p>
+            </div>
+            <div class="what_webqa_content">
+              <div class="single_what_item_main">
+                <div class="single_what_item">
+                  <img src="assets/images/home/check.svg" alt="icon" />
+                  <p>
+                    Have a fully customisable QA Process for your website -
+                    bring developers, marketers, designers and everyone else on
+                    the same page.
+                  </p>
+                </div>
+              </div>
+              <div class="single_what_item_main">
+                <div class="single_what_item">
+                  <img src="assets/images/home/check.svg" alt="icon" />
+                  <p>Periodically Track Page Speed of All your website pages</p>
+                </div>
+              </div>
+              <div class="single_what_item_main">
+                <div class="single_what_item">
+                  <img src="assets/images/home/check.svg" alt="icon" />
+                  <p>
+                    Perform SEO Audits customised to your acceptance criteria
+                  </p>
+                </div>
+              </div>
+              <div class="single_what_item_main">
+                <div class="single_what_item">
+                  <img src="assets/images/home/check.svg" alt="icon" />
+                  <p>
+                    Have an always updating Website Tracker - track every single
+                    detail of your website on a weekly basis
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="Features_btn_area">
+              <a href="#" class="Features_btn">See All Features</a>
+            </div>
+          </div>
+          <!--  what_webqa_area Css End -->
+
+          <!-- Learn More Video Area Start -->
+          <div class="learn_more_video_area">
+            <div class="learn_more_content">
+              <h4>Learn more about WebQA. Watch the video</h4>
+
+              <div class="video-wrapper">
+                <video width="320" height="240" controls>
+                  <source src="/new-assets/assets/images/movie.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+                </video>
+              </div>
+            </div>
+          </div>
+          <!-- Learn More Video Area End -->
+
+          <!-- Designed Area Start -->
+          <div class="Designed_area">
+            <div class="home_section_title">
+              <h2>Designed for teams who conduct meetings at scale</h2>
+              <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry.
+              </p>
+            </div>
+            <div class="Designed_content">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="seoAnalysts-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#seoAnalysts"
+                    type="button"
+                    role="tab"
+                    aria-controls="seoAnalysts"
+                    aria-selected="true"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="34"
+                      height="34"
+                      viewBox="0 0 34 34"
+                      fill="none"
+                    >
+                      <g clip-path="url(#clip0_5397_8007)">
+                        <path
+                          d="M28.9643 14.4661C28.9287 16.6426 28.4127 18.7842 27.4532 20.7377C27.2659 21.1203 27.3258 21.323 27.6124 21.6048C29.3215 23.2898 31.0177 24.9859 32.7013 26.693C33.8913 27.8981 34.2697 29.362 33.8072 30.9714C33.3651 32.5118 32.3038 33.5218 30.7289 33.8776C29.1541 34.2334 27.7602 33.7921 26.6059 32.6304C24.9495 30.9599 23.2626 29.3148 21.6151 27.6239C21.3004 27.3013 21.0762 27.2974 20.6914 27.4811C12.3242 31.4802 2.45612 26.7032 0.36019 17.6504C-1.42358 9.92379 3.60411 1.97533 11.3253 0.329017C19.1446 -1.3377 26.7613 3.48137 28.5413 11.259C28.7846 12.3059 28.8279 13.3962 28.9643 14.4661ZM14.4826 25.5262C20.7067 25.4063 25.5165 20.5643 25.4974 14.4317C25.4795 8.2099 20.5665 3.38573 14.4329 3.4074C8.21771 3.42908 3.39771 8.33742 3.41554 14.4814C3.42956 20.6956 8.33621 25.4369 14.4826 25.5262ZM24.0933 25.2839C25.8057 27.0003 27.4876 28.7027 29.1898 30.3848C29.5338 30.7227 29.9823 30.701 30.3365 30.3592C30.6907 30.0175 30.6754 29.6056 30.3887 29.2115C30.3086 29.113 30.2208 29.0209 30.1263 28.9361C28.6279 27.4339 27.1287 25.9329 25.6286 24.4333C25.5139 24.3185 25.3738 24.2216 25.2464 24.1132L24.0933 25.2839Z"
+                          fill="#7790AE"
+                          stroke="white"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_5397_8007">
+                          <rect width="34" height="34" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    SEO Analysts
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link active"
+                    id="websiteOwners-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#websiteOwners"
+                    type="button"
+                    role="tab"
+                    aria-controls="websiteOwners"
+                    aria-selected="false"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="39"
+                      height="34"
+                      viewBox="0 0 39 34"
+                      fill="none"
+                    >
+                      <g clip-path="url(#clip0_5397_8018)">
+                        <path
+                          d="M26.8933 24.3069C27.7403 22.486 28.5495 20.7489 29.3575 19.0094C29.6768 18.3244 29.9826 17.6333 30.3166 16.9569C30.67 16.2387 31.1526 16.0243 31.9008 16.2177C33.6277 16.6489 35.3558 17.0801 37.0814 17.5113C38.2526 17.807 38.9899 18.7433 38.9911 19.9617C38.9984 23.8219 38.9984 27.6821 38.9911 31.5422C38.9911 32.9824 37.9516 34.0062 36.5196 34.0062C29.7763 34.0062 23.0358 34.0062 16.2982 34.0062C15.333 34.0062 14.8723 33.5516 14.8711 32.5906C14.8711 28.3822 14.8711 24.1746 14.8711 19.9678C14.8711 18.7654 15.5901 17.8156 16.7125 17.5273C18.3955 17.0949 20.0834 16.6736 21.7688 16.251C22.6621 16.028 23.1093 16.251 23.5139 17.1047C24.5766 19.379 25.6369 21.6544 26.6947 23.9311C26.741 24.0149 26.7897 24.1036 26.8933 24.3069ZM36.4233 31.5004C36.4485 31.3908 36.4664 31.2797 36.477 31.1677C36.477 27.5753 36.477 23.9828 36.4892 20.3904C36.4892 20.0036 36.2905 19.9075 35.9944 19.8323C34.8976 19.5551 33.8007 19.2779 32.7039 18.986C32.303 18.8788 32.1056 18.9958 31.924 19.395C30.6834 22.1283 29.4217 24.8518 28.1388 27.5654C28.002 27.8816 27.7877 28.1572 27.5161 28.3662C26.8226 28.8356 26.0841 28.5288 25.6661 27.6332C24.3767 24.8768 23.0951 22.1172 21.8212 19.3543C21.6494 18.9847 21.4458 18.8911 21.0741 18.9934C20.0614 19.2742 19.0487 19.5625 18.0275 19.7917C17.5327 19.9013 17.3389 20.0824 17.3438 20.6343C17.3722 24.0214 17.3722 27.4086 17.3438 30.7957C17.3438 31.3648 17.4986 31.5151 18.0579 31.5127C23.9661 31.493 29.8791 31.5004 35.7848 31.5004H36.4233Z"
+                          fill="#7790AE"
+                          stroke="white"
+                          stroke-width="0.5"
+                        />
+                        <path
+                          d="M26.7112 0C27.6839 0.000566218 28.647 0.19481 29.5455 0.571637C30.4439 0.948464 31.2602 1.50049 31.9476 2.19621C32.635 2.89193 33.1801 3.71772 33.5519 4.62641C33.9236 5.53511 34.1146 6.50892 34.1141 7.49225C34.1135 8.47558 33.9214 9.44916 33.5486 10.3574C33.1758 11.2657 32.6298 12.0908 31.9415 12.7858C31.2533 13.4807 30.4365 14.0317 29.5376 14.4075C28.6387 14.7833 27.6754 14.9764 26.7027 14.9759C22.6079 14.9635 19.2554 11.583 19.2578 7.46945C19.2603 3.3559 22.5909 0 26.7112 0ZM21.8036 7.46206C21.7955 8.11367 21.9158 8.7604 22.1573 9.36458C22.3988 9.96877 22.7569 10.5183 23.2105 10.9813C23.6642 11.4443 24.2044 11.8114 24.7998 12.0613C25.3951 12.3111 26.0337 12.4388 26.6783 12.4368C29.4301 12.4442 31.6676 10.1983 31.642 7.45467C31.6307 6.13745 31.105 4.8781 30.1794 3.95093C29.2538 3.02376 28.0033 2.5039 26.7002 2.5046C26.0558 2.50166 25.4171 2.62794 24.8213 2.87612C24.2254 3.12431 23.6841 3.48948 23.2287 3.9505C22.7734 4.41153 22.4129 4.95926 22.1683 5.56202C21.9237 6.16477 21.7998 6.81057 21.8036 7.46206Z"
+                          fill="#7790AE"
+                          stroke="white"
+                          stroke-width="0.5"
+                        />
+                        <path
+                          d="M11.0524 23.3262L12.1114 22.1201L14.004 23.7623C13.2533 24.6247 12.5636 25.5043 11.7787 26.2854C11.2913 26.7634 10.5308 26.5823 10.0092 25.9786C8.79705 24.5717 7.59178 23.1582 6.39341 21.7382C5.51353 20.6971 5.51841 20.691 4.22296 21.1394C3.6709 21.3304 2.89705 21.3784 2.63869 21.7727C2.3523 22.2026 2.52778 22.9554 2.52656 23.5676C2.52656 25.9688 2.52656 28.3723 2.52656 30.771V31.4991H8.141V33.9988H6.9735C5.47088 33.9988 3.96947 33.9988 2.46441 33.9988C1.04344 33.9914 0.0148743 32.9614 0.0112183 31.5163C0.0014689 28.2311 0.0014689 24.9458 0.0112183 21.6606C0.0112183 20.5518 0.612029 19.7042 1.66131 19.3358C2.86414 18.9133 4.08281 18.5375 5.28076 18.1038C6.01197 17.8377 6.56037 18.0312 7.05028 18.6188C8.1739 19.9678 9.32189 21.2959 10.4626 22.6326C10.6405 22.8543 10.8282 23.0675 11.0524 23.3262Z"
+                          fill="#7790AE"
+                          stroke="white"
+                          stroke-width="0.5"
+                        />
+                        <path
+                          d="M17.5821 11.2812C17.5918 12.1478 17.431 13.0078 17.1089 13.811C16.7869 14.6143 16.31 15.3448 15.7062 15.9601C15.1023 16.5753 14.3835 17.0631 13.5915 17.3949C12.7994 17.7268 11.95 17.8962 11.0927 17.8932C7.45616 17.9092 4.51915 14.9931 4.51184 11.3637C4.50118 9.61206 5.17927 7.92787 6.39696 6.68164C7.61466 5.43541 9.2722 4.72923 11.0049 4.71845C12.7377 4.70767 14.4037 5.39317 15.6365 6.62415C16.8692 7.85513 17.5678 9.53075 17.5785 11.2824L17.5821 11.2812ZM11.0756 7.25508C8.79548 7.25508 6.99915 9.04761 7.00768 11.3206C7.02863 12.395 7.46622 13.418 8.22616 14.1693C8.98611 14.9207 10.0076 15.3401 11.0706 15.3374C12.1335 15.3346 13.1529 14.9099 13.909 14.1546C14.6652 13.3994 15.0976 12.3741 15.1131 11.2997C15.111 10.7658 15.0049 10.2375 14.8009 9.74506C14.5969 9.25262 14.2989 8.80561 13.924 8.42958C13.5491 8.05355 13.1046 7.75586 12.6158 7.55349C12.1271 7.35112 11.6037 7.24805 11.0756 7.25016V7.25508Z"
+                          fill="#7790AE"
+                          stroke="white"
+                          stroke-width="0.5"
+                        />
+                        <path
+                          d="M10.3477 33.9581V31.5447H12.7484V33.9581H10.3477Z"
+                          fill="#7790AE"
+                          stroke="white"
+                          stroke-width="0.5"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_5397_8018">
+                          <rect width="39" height="34" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    Website Owners
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="webDeveloper-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#webDeveloper"
+                    type="button"
+                    role="tab"
+                    aria-controls="webDeveloper"
+                    aria-selected="false"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="40"
+                      height="29"
+                      viewBox="0 0 40 29"
+                      fill="none"
+                    >
+                      <g clip-path="url(#clip0_5397_8032)">
+                        <path
+                          d="M14.5508 27.0299C14.7007 26.4872 14.8955 25.7505 15.1067 25.0165C17.366 17.1643 19.628 9.31253 21.8926 1.46125C22.2088 0.364966 23.119 -0.194031 24.0946 0.0624022C25.1357 0.33376 25.6671 1.31065 25.3415 2.4612C23.8744 7.63419 22.3977 12.8072 20.9116 17.9802C20.0259 21.0736 19.1251 24.163 18.2462 27.2606C18.0132 28.0842 17.6807 28.772 16.7296 28.9634C15.6136 29.1886 14.5685 28.3745 14.5508 27.0299Z"
+                          fill="#7790AE"
+                          stroke="white"
+                        />
+                        <path
+                          d="M4.37543 14.5624C6.35261 16.5203 8.27119 18.4062 10.1707 20.3139C10.4635 20.5921 10.6918 20.9306 10.8397 21.3057C10.9666 21.6848 10.958 22.0959 10.8155 22.4695C10.673 22.8431 10.4052 23.1561 10.0576 23.3558C9.26999 23.8185 8.48511 23.7235 7.76973 23.0234C6.20271 21.4861 4.65342 19.9313 3.0973 18.3832C2.29471 17.5854 1.48802 16.7903 0.693602 15.9857C-0.224811 15.0536 -0.234358 14.055 0.684054 13.1365C3.00325 10.8154 5.32838 8.49986 7.65938 6.1897C8.56281 5.29286 9.64201 5.23995 10.4173 6.03638C11.1545 6.79076 11.0891 7.89654 10.2375 8.74996C8.3148 10.6576 6.38395 12.568 4.37543 14.5624Z"
+                          fill="#7790AE"
+                          stroke="white"
+                        />
+                        <path
+                          d="M35.6146 14.5434C33.6252 12.572 31.7025 10.6562 29.7662 8.75402C29.3043 8.2995 29.0181 7.79206 29.0849 7.13401C29.1028 6.79277 29.2231 6.46474 29.4303 6.19236C29.6376 5.91999 29.9221 5.71581 30.2472 5.60627C31.0144 5.31456 31.6711 5.53029 32.2298 6.08115C33.7914 7.62427 35.3489 9.17101 36.9023 10.7214C37.7049 11.5205 38.5129 12.3129 39.306 13.1202C40.2217 14.0523 40.2325 15.0522 39.3141 15.9694C36.9795 18.3085 34.6376 20.6399 32.2884 22.9637C31.4232 23.8171 30.3344 23.8429 29.5781 23.0654C28.8219 22.288 28.9091 21.2107 29.7635 20.3518C31.6889 18.4456 33.617 16.5338 35.6146 14.5434Z"
+                          fill="#7790AE"
+                          stroke="white"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_5397_8032">
+                          <rect width="40" height="29" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    Web Developers
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="projectManagers-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#projectManagers"
+                    type="button"
+                    role="tab"
+                    aria-controls="projectManagers"
+                    aria-selected="false"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="34"
+                      viewBox="0 0 24 34"
+                      fill="none"
+                    >
+                      <g clip-path="url(#clip0_5397_8037)">
+                        <path
+                          d="M10.3641 23.1934C10.5521 21.8885 10.7454 20.5836 10.9174 19.2766C10.9355 19.1395 10.8441 18.9738 10.7698 18.8399C10.4682 18.3001 10.1475 17.7773 9.84592 17.2322C9.32663 16.3045 9.78221 15.5097 10.8346 15.5033C11.6481 15.5033 12.4626 15.4927 13.2771 15.5033C14.1681 15.5171 14.6236 16.2907 14.2243 17.0972C14.1302 17.3065 14.0161 17.5061 13.8834 17.6933C13.2027 18.5817 12.9638 19.5274 13.2601 20.6474C13.4725 21.4698 13.5234 22.338 13.7666 23.1976C14.1426 22.1655 14.5188 21.133 14.8955 20.1001C15.3426 18.876 15.7875 17.6498 16.2399 16.4267C16.567 15.5448 16.9833 15.3439 17.8795 15.6234C19.0721 15.9932 20.305 16.261 21.3351 17.0345C22.9949 18.2788 23.9263 19.9503 23.9634 22.0075C24.0272 25.6203 23.99 29.2332 23.9836 32.846C23.9836 33.5824 23.5588 34.0021 22.8261 34.0021C15.6049 34.0064 8.38646 34.0064 1.17088 34.0021C0.444513 34.0021 0.017597 33.5771 0.0154731 32.8428C0.00910143 29.2491 -0.0227435 25.6554 0.0292919 22.0617C0.0707078 19.216 1.9408 16.873 4.70186 16.0506C5.19248 15.905 5.68308 15.7626 6.17158 15.6138C7.00096 15.3609 7.43954 15.5639 7.74114 16.3832C8.53123 18.5339 9.31071 20.6877 10.0966 22.8406C10.1433 22.9681 10.2027 23.0935 10.2505 23.2199L10.3641 23.1934ZM21.8735 31.8663V31.2287C21.8735 28.3625 21.8735 25.4967 21.8735 22.6312C21.8735 20.0109 20.5631 18.418 17.9443 17.8878C16.2452 22.5399 14.5461 27.2001 12.847 31.8684L21.8735 31.8663ZM11.1479 31.8578L6.04415 17.8634C3.30008 18.435 2.02576 20.3243 2.10434 22.9277C2.18823 25.7022 2.12345 28.4819 2.12345 31.2596V31.8557L11.1479 31.8578Z"
+                          fill="#7790AE"
+                        />
+                        <path
+                          d="M5.51228 6.47652C5.52715 5.19596 5.92024 3.94841 6.64207 2.89087C7.3639 1.83334 8.38223 1.01307 9.56888 0.533295C10.7555 0.0535231 12.0575 -0.064314 13.3109 0.194614C14.5644 0.453542 15.7133 1.07766 16.613 1.98844C17.5128 2.89921 18.1232 4.05594 18.3675 5.31305C18.6117 6.57016 18.4789 7.87148 17.9858 9.05324C17.4926 10.235 16.6611 11.2444 15.596 11.9544C14.5308 12.6644 13.2796 13.0433 11.9997 13.0434C11.141 13.0447 10.2907 12.8752 9.49803 12.5448C8.7054 12.2143 7.98633 11.7294 7.38266 11.1184C6.779 10.5073 6.30277 9.78224 5.98167 8.98536C5.66058 8.18848 5.50101 7.33567 5.51228 6.47652ZM7.61387 6.29482C7.42272 8.61448 9.28325 10.7514 11.6684 10.9224C14.336 11.1137 16.2995 8.96301 16.4036 6.7443C16.5098 4.45865 14.731 2.31114 12.4372 2.12306C9.59333 1.89035 7.62449 4.13775 7.61387 6.29482Z"
+                          fill="#7790AE"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_5397_8037">
+                          <rect width="24" height="34" fill="white" />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    Project Managers
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div
+                  class="tab-pane fade"
+                  id="seoAnalysts"
+                  role="tabpanel"
+                  aria-labelledby="seoAnalysts-tab"
+                >
+                  <div class="learn_more_tab_content">
+                    <div class="learn_more_left">
+                      <img src="assets/images/home/owner.png" alt="img" />
+                    </div>
+                    <div class="learn_more_right">
+                      <div class="learn_more_right_single">
+                        <h6>Improve lead response times</h6>
+                        <p>
+                          Gain a competitive advantage when you qualify, route,
+                          and book leads instantly.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Drive more retention</h6>
+                        <p>
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Speed up your response times</h6>
+                        <p>
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade show active"
+                  id="websiteOwners"
+                  role="tabpanel"
+                  aria-labelledby="websiteOwners-tab"
+                >
+                  <div class="learn_more_tab_content">
+                    <div class="learn_more_left">
+                      <img src="assets/images/home/owner.png" alt="img" />
+                    </div>
+                    <div class="learn_more_right">
+                      <div class="learn_more_right_single">
+                        <h6>Drive more retention</h6>
+                        <p>
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Improve lead response times</h6>
+                        <p>
+                          Gain a competitive advantage when you qualify, route,
+                          and book leads instantly.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Speed up your response times</h6>
+                        <p>
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="webDeveloper"
+                  role="tabpanel"
+                  aria-labelledby="webDeveloper-tab"
+                >
+                  <div class="learn_more_tab_content">
+                    <div class="learn_more_left">
+                      <img src="assets/images/home/owner.png" alt="img" />
+                    </div>
+                    <div class="learn_more_right">
+                      <div class="learn_more_right_single">
+                        <h6>Speed up your response times</h6>
+                        <p>
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Drive more retention</h6>
+                        <p>
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Improve lead response times</h6>
+                        <p>
+                          Gain a competitive advantage when you qualify, route,
+                          and book leads instantly.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="projectManagers"
+                  role="tabpanel"
+                  aria-labelledby="projectManagers-tab"
+                >
+                  <div class="learn_more_tab_content">
+                    <div class="learn_more_left">
+                      <img src="assets/images/home/owner.png" alt="img" />
+                    </div>
+                    <div class="learn_more_right">
+                      <div class="learn_more_right_single">
+                        <h6>Drive more retention</h6>
+                        <p>
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Speed up your response times</h6>
+                        <p>
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Designed Area Start -->
+
+          <!-- problems Area Start -->
+          <div class="problems_area">
+            <div class="home_section_title">
+              <h2>What problems you can solve?</h2>
+              <p>
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry.
+              </p>
+            </div>
+            <div class="problems_content">
+              <div class="problem_left_content">
+                <div class="accordion" id="accordionExample">
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne"
+                        aria-expanded="false"
+                        aria-controls="collapseOne"
+                      >
+                        Website QA
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseOne"
+                      class="accordion-collapse collapse"
+                      aria-labelledby="headingOne"
+                      data-bs-parent="#accordionExample"
+                    >
+                      <div class="accordion-body">
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </p>
+
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                      <button
+                        class="accordion-button"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo"
+                        aria-expanded="true"
+                        aria-controls="collapseTwo"
+                      >
+                        Website Tracker
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseTwo"
+                      class="accordion-collapse collapse show"
+                      aria-labelledby="headingTwo"
+                      data-bs-parent="#accordionExample"
+                    >
+                      <div class="accordion-body">
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </p>
+
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree"
+                        aria-expanded="false"
+                        aria-controls="collapseThree"
+                      >
+                        Proactive Alerts
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseThree"
+                      class="accordion-collapse collapse"
+                      aria-labelledby="headingThree"
+                      data-bs-parent="#accordionExample"
+                    >
+                      <div class="accordion-body">
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </p>
+
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFore">
+                      <button
+                        class="accordion-button collapsed"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#collapseFore"
+                        aria-expanded="false"
+                        aria-controls="collapseFore"
+                      >
+                        Page Speed Reports
+                      </button>
+                    </h2>
+                    <div
+                      id="collapseFore"
+                      class="accordion-collapse collapse"
+                      aria-labelledby="headingFore"
+                      data-bs-parent="#accordionExample"
+                    >
+                      <div class="accordion-body">
+                        <p>
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
+                        </p>
+
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="problem_right_content">
+                <img src="assets/images/home/problem-img.svg" alt="img" />
+              </div>
+            </div>
+          </div>
+          <!-- problems Area End -->
+
+          <!-- assurance Area Start -->
+          <div class="assurance_area">
+            <div class="assurance_content">
+              <div class="assurance_left_content">
+                <h2>
+                  3 Steps to improve your website quality assurance process
+                </h2>
+                <div class="assurance_left_img">
+                  <img src="assets/images/home/assurance.png" alt="img" />
+                </div>
+              </div>
+              <div class="assurance_right_content">
+                <p>
+                  We give you a completely customisable Quality assurance tool
+                  using which you can design a quality assurance process for
+                  your website. The website quality assurance tool covers
+                  Technical SEO checks,Pagespeed checks, Mobile responsiveness,
+                  and HTML best practices. Apart from this, you can setup a
+                  website tracker and setup alerts for your website, so that
+                  when something is broken you are immediately informed via
+                  email and SMS notifications.
+                </p>
+                <div class="assurance_right_bottom_content">
+                  <img src="assets/images/home/hand.png" alt="img" />
+                  <h3>Bring people on the same page</h3>
+
+                  <p>
+                    The biggest problem in a quality assurance process for a
+                    website is bringing people on the same page. This includes
+                    Web developers, project managers, Marketing Analysts,
+                    Designers and other team members working collaboratively on
+                    a single website.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- assurance Area End -->
+
+          <!-- customisable Area Start -->
+          <div class="customisable_area">
+            <div class="home_section_title">
+              <h2>Everything is customisable to your needs</h2>
+              <p>
+                Most of the SEO tools do not offer any customisation and come
+                with a pre-built acceptance criteria. We do not do that. We
+                understand you might have your own definitions of what is
+                acceptable and what is not acceptable. Hence, we allow you to
+                completely customise the acceptance criteria for all the checks
+                that are made on your webiste. This includes Meta tags, Images,
+                Performance, Page Speed, HTML Best practices. You can find more
+                information about each parameter below.
+              </p>
+            </div>
+            <div class="customisable_tab_content">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="home-meta-tags-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-meta-tags"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-meta-tags"
+                    aria-selected="true"
+                  >
+                    Meta Tags
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link active"
+                    id="home-images-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-images"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-images"
+                    aria-selected="false"
+                  >
+                    Images
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="home-performance-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-performance"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-performance"
+                    aria-selected="false"
+                  >
+                    Performance
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="home-coding-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-coding"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-coding"
+                    aria-selected="false"
+                  >
+                    Coding Practices
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="home-html-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-html"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-html"
+                    aria-selected="false"
+                  >
+                    HTML Practices
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="home-others-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-others"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-others"
+                    aria-selected="false"
+                  >
+                    Others
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-content" id="myTabContent">
+                <div
+                  class="tab-pane fade"
+                  id="home-meta-tags"
+                  role="tabpanel"
+                  aria-labelledby="home-meta-tags-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>Meta Tags</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade show active"
+                  id="home-images"
+                  role="tabpanel"
+                  aria-labelledby="home-images-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>Images</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="home-performance"
+                  role="tabpanel"
+                  aria-labelledby="home-performance-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>Performance</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="home-coding"
+                  role="tabpanel"
+                  aria-labelledby="home-coding-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>Coding Practices</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="home-html"
+                  role="tabpanel"
+                  aria-labelledby="home-html-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>HTML Practices</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
+                <div
+                  class="tab-pane fade"
+                  id="home-others"
+                  role="tabpanel"
+                  aria-labelledby="home-others-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>Others</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- customisable Area End -->
+
+          <!-- Trial Area Css -->
+          <div class="trial-area">
+            <div class="trial-content">
+              <h2>Wondering why your content isn't showing up on the SERPs?</h2>
+              <a href="#" class="btn btn_primary rounded-pill"
+                >Start Free Trial</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- main sections ends -->
+
+    <!-- Footer Area Start -->
+    <footer class="genarel_footer_area">
+      <div class="container-fluid">
+        <div class="g_footer_main">
+          <div class="single_footer_item footer-fast-item">
+            <img src="assets/images/webQA_logo.png" alt="icon" />
+            <p>
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry.
+            </p>
+            <div class="footer_social">
+              <ul>
+                <li>
+                  <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa-brands fa-twitter"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa-brands fa-instagram"></i></a>
+                </li>
+                <li>
+                  <a href="#"><i class="fa-brands fa-linkedin-in"></i></a>
+                </li>
+                <li>
+                  <a href="#"
+                    ><img src="assets/images/youtube.png" alt="icon" />
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="single_footer_item">
+            <div class="footer_list_items">
+              <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">7 Day Free Trial</a></li>
+                <li><a href="#">Tools</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Contact Us</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="single_footer_item">
+            <div class="footer_list_items">
+              <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">FAQ’s</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Use</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer_search_item">
+            <h5>Test Your Website’s Performance for Free!</h5>
+            <form class="footer_search_box">
+              <input
+                type="text"
+                class="footer_control"
+                name="search"
+                placeholder="Enter your website url.."
+              />
+              <div class="footer_utils">
+                <a href="#" class="btn btn_primary rounded-pill">Test Now</a>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="copy_right_area">
+          <p>© WebQA 2022 | All rights reserved</p>
+        </div>
+      </div>
+    </footer>
+    <!-- Footer Area End -->
+
+    <!-- jQuery -->
+    <script src="./vendor/jQurey/jquery-3.6.1.min.js"></script>
+    <!-- bootstrap scripts -->
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- font awesome scripts -->
+    <script src="./vendor/fontawesome/js/all.min.js" async defer></script>
+    <!-- magnific-popup -->
+    <script src="./vendor/magnific-popup/jquery.magnific-popup.min.js"></script>
+    <!-- custom scripts -->
+    <script src="./js/main.js"></script>
+  </body>
+</html>

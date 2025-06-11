@@ -1,0 +1,71 @@
+/* Poppins and Pacifico */
+@import url("https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* Circular Std */
+@font-face {
+  font-family: "Circular Std";
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Book.eot");
+  /* IE9 Compat Modes */
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Book.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Book.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Book.woff")
+      format("woff"),
+    /* Pretty Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Book.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Book.svg#svgFontName") format("svg");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Circular Std";
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Medium.eot");
+  /* IE9 Compat Modes */
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Medium.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Medium.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Medium.woff")
+      format("woff"),
+    /* Pretty Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Medium.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Medium.svg#svgFontName") format("svg");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Circular Std";
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Bold.eot");
+  /* IE9 Compat Modes */
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Bold.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Bold.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Bold.woff")
+      format("woff"),
+    /* Pretty Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Bold.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Bold.svg#svgFontName") format("svg");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Circular Std";
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Black.eot");
+  /* IE9 Compat Modes */
+  src: url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Black.eot?#iefix")
+      format("embedded-opentype"),
+    /* IE6-IE8 */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Black.woff2") format("woff2"),
+    /* Super Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Black.woff")
+      format("woff"),
+    /* Pretty Modern Browsers */ url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Black.ttf")
+      format("truetype"),
+    /* Safari, Android, iOS */
+      url("https://webqa.co/support/wp-content/themes/support/assets/fonts/CircularStd-Black.svg#svgFontName") format("svg");
+  font-weight: 800;
+  font-style: normal;
+}

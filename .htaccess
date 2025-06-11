@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L,QSA]
+
+#Protect Directory
+AuthName "Dialog prompt"
+AuthType Basic
+AuthUserFile /domains/webqa.co/public_html/.htmyxyz
+Require valid-user
+
+php_value max_allowed_packet 500000000M
