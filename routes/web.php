@@ -132,6 +132,7 @@ Route::middleware('auth')->group(function () {
 
     });
     Route::post('check-valid-url', [App\Http\Controllers\ProjectsController::class, 'checkValidUrl'])->name('checkValidUrl');
+    Route::post('check-sitemap-urls', [App\Http\Controllers\ProjectsController::class, 'checkSitemapUrls'])->name('checkSitemapUrls');
        
     Route::post('createProject', [App\Http\Controllers\ProjectsController::class, 'createProject'])->name('createProject');
     Route::post('create-feature-request', [App\Http\Controllers\FeatureRequestController::class, 'store'])->name('createFeatureRequest');

@@ -695,8 +695,6 @@ h6 {
   border: inherit;
   border-bottom-left-radius: 16px;
   border-bottom-right-radius: 16px;
-  border-top: 1px solid var(--border-gray);
-  border-bottom: 1px solid var(--border-gray);
 }
 .accor-single-item:last-child {
   border-bottom-left-radius: 16px;
@@ -3548,7 +3546,7 @@ h6 {
   box-shadow: inset 0 0 0 !important;
 }
 .onboard-main-form .is-invalid ~ .invalid-feedback,
-.is-valid ~ .valid-tooltip,
+.onboard-main-form .is-valid ~ .valid-tooltip,
 .was-validated :valid ~ .invalid-feedback,
 .was-validated :valid ~ .valid-tooltip {
   display: none;
@@ -6196,6 +6194,10 @@ h6 {
   fill: #eca059;
 }
 
+.bulk-headings-message{
+  display: flex;
+}
+
 .showhide-btn {
   background-color: transparent;
   border: 0;
@@ -8111,7 +8113,7 @@ h6 {
 }
 
 .home-setting-sidebar .nav-pills .nav-link.active,
-.nav-pills .show > .nav-link {
+.home-setting-sidebar .nav-pills .show > .nav-link {
   background-color: #3a7cec;
 }
 
@@ -8450,17 +8452,20 @@ h6 {
   width: 16px;
   margin-right: 5px;
 }
-.result_data_body tr td {
+.result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
 	font-size: 13px;
 	line-height: 18px;
 	color: #6E6E6E;
-	text-align: center;
 	padding: 9px 12px;
 	border-bottom: none;
   border-left: none;
-  text-align: center!important;
   vertical-align: middle;
 }
+
+.result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
+  text-align: center!important;
+}
+
 
 .result_data_body tr td a {
 	color: #6E6E6E;
@@ -11073,14 +11078,6 @@ table.bulk-table td:last-child {
   margin-bottom: -3px;
 }
 
-.sidebar_accordion .accordion-body ul {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-  padding-left: 0px;
-  padding-bottom: 23px;
-}
-
 .sidebar_accordion .accordion-collapse.collapse.show .accordion-body ul {
   position: relative;
 }
@@ -12176,6 +12173,11 @@ nav .nav-tabs{
   border-collapse: collapse;
   width: 100%;
   font-family: "Roboto", sans-serif;
+  border: 0 !important;
+}
+
+.table-headings-collapse td, .table-headings-collapse th{
+  border: 0 !important;
 }
 
 .table-headings-collapse th, td {
@@ -12219,6 +12221,7 @@ nav .nav-tabs{
 .content-cell {
   color: #6E6E6E;
   background-color: #FBFBFB;
+  text-align: left!important;
 }
 
 .no-tags {

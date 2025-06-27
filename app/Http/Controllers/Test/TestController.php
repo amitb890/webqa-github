@@ -62,8 +62,12 @@ class TestController extends Controller
             // END HTTP STATUS CODE ---
             
 
+       
             $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
-            $crawler = $goutteClient->request('GET', $data["urlValue"]);
+            $options = [
+                'headers' => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)']
+            ];
+            $crawler = $goutteClient->request('GET', $data["urlValue"], [], [], $options);
             $contentType = $goutteClient->getResponse()->getHeader('Content-Type');
             Session::put('contentType', $contentType);
 

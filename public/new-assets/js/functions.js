@@ -366,7 +366,6 @@ class TableCSVExporter {
         this.table = table;
         $(this.table).find('tr.root-tr').remove();
 
-        console.log(table, 'table')
         if ($('#report-slug').val()) {
             this.fileName = this.prepareCsvName($('#report-slug').val()) + '.csv';
         } else  {
@@ -2227,30 +2226,24 @@ function getGoogleInsightsColorByScore(score) {
 }
 
 
-async function checkSitemapUrls(urls) {
-    console.log(urls)
-    const checkUrl = async (url) => {
-      try {
-        const response = await fetch(url, { method: 'GET' });
-  
-        if (!response.ok) return { url, valid: false };
-  
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('xml')) return { url, valid: false };
-  
-        const text = await response.text();
-        const isSitemap = text.includes('<urlset') || text.includes('<sitemapindex');
-  
-        return { url, valid: isSitemap };
-      } catch (error) {
-        console.warn(`Error checking ${url}:`, error);
-        return { url, valid: false };
-      }
-    };
-  
-    // Run all checks in parallel
-    const results = await Promise.all(urls.map(checkUrl));
-    return results;
+async function checkSitemapUrls(urls) {    
+    try {
+        const response = await $.ajax({
+            url: '/check-sitemap-urls',
+            type: 'POST',
+            data: {
+                urls: urls,
+                "_token": $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json'
+        });
+        
+        return response;
+    } catch (error) {
+        console.warn('Error checking sitemap URLs:', error);
+        // Return all URLs as invalid if there's an error
+        return urls.map(url => ({ url, valid: false }));
+    }
 }
 
 function sendEmail(TABLE){

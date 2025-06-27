@@ -618,6 +618,25 @@ $( document ).ready(function() {
         $(".email-bulk").on( "click", function(e) {
             Controls.emailReport()
         })
+
+        $(".table-headings-collapse").click(function (e) {
+            let target = $(e.target).closest(".collapsible")[0]
+            if(target){
+                if(target.classList.contains("collapsible")){
+                    const id = target.getAttribute("data-id")
+                    const row = $(`[data-val='${id}']`);
+
+                    const isShown = row[0].classList.contains('show');
+                    row.toggleClass('show');
+
+                    const toggleBtn = row[0].previousElementSibling.querySelector('.collapsible span');
+                    toggleBtn.textContent = isShown ? 'Show' : 'Hide';
+                    row[0].previousElementSibling.querySelector('.collapsible').classList.remove('show')
+                    row[0].previousElementSibling.querySelector('.collapsible').classList.remove('hide')
+                    row[0].previousElementSibling.querySelector('.collapsible').classList.add(isShown ? 'show' : 'hide')
+                }
+            }
+        });
         
     }
 
@@ -1710,8 +1729,10 @@ $( document ).ready(function() {
                     tr.innerHTML = `
                     <td>${i+1}</td>
                     <td class="align-left">${result.tested_url}</td>
-                    <td>${result.message}
-                    <button class="showhide-btn collapsed" type="button" data-bs-toggle="collapse"
+                    <td>
+                    <div class="bulk-headings-message">
+                    <span>${result.message}</span>
+                        <button class="showhide-btn showhide-btn-bulk collapsed" type="button" data-bs-toggle="collapse"
                             data-bs-target=".multi-collapse2`+i+`" aria-expanded="false"
                             aria-controls="multiCollapsePerformanceHeadings">
                             <span class="show">Show</span>
@@ -1722,138 +1743,238 @@ $( document ).ready(function() {
                               <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round"
                                 stroke-linejoin="round" />
                             </svg>
-                          </button>
-                        </div>
+                        </button>
+                    </div>
                     <br>
                     <div class="card-inner-content collapse multi-collapse2`+i+`" id="multiCollapsePerformanceHeadings">
-                            <div class="card mb-2" style="background: #ffffff;">
-                                <div class="card-body">
-                                ${result.content}
-                                <div class="row" style="border-bottom: 2px solid #e8e6f6;">
-                                 <div class="col-md-4">
-                                  <h6 class="section-heading" style="padding-left: 1rem;">H1 (${result.headingArray['h1'].length})</h6>
-                                 </div>
-                                 <div class="col-md-4">
-                                   <h6 class="section-heading" style="padding-left: 1rem;">H2 (${result.headingArray['h2'].length})</h6>
-                                 </div>
+                        <table class="table-headings-collapse">
+                          <thead>
+                            <tr>
+                              <th style="width: 60px;">Heading</th>
+                              <th style="width: 60px;">Quantity</th>
+                              <th>Content</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <!-- H1 -->
+                            <tr>
+                              <td style="width: 60px;">H1</td>
+                              ${result.headingArray['h1'].length > 0 ? `
+                              <td style="width: 60px;">${result.headingArray['h1'].length}</td>
+                              <td class="content-cell">
 
-                                 <div class="col-md-4">
-                                   <h6 class="section-heading" style="padding-left: 1rem;">H3 (${result.headingArray['h3'].length})</h6>
-                                 </div>
-                                </div>
-                            <div class="row">
+                                ${result.headingArray['h1'].length > 0 ? 
+                                    `
+                                    <span>${result.headingArray['h1'][0]}</span>
+                                    `
+                                  : ``
+                                }
+                                <button class="show collapsible showhide-btn ${result.headingArray['h1'].length > 12 ? '' : 'd-none'}" data-id="h1" type="button">
+                                <span>Show</span>
+                                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                                  </svg>
+                                </button>
+                              </td>
+
+                              ` :
+                              `
+                              <td style="width: 60px;">0</td>
+                              <td colspan="1" class="p-0">
+                              <div class="no-tags">The page does not contain any H1 heading tags</div>
+                              </td>`}
+                            </tr>
+
+                              ${result.headingArray['h1'].length > 0 ? 
+                                  `
+                                    ${result.headingArray['h1'].slice(1).map(item => `
+                                    <tr class="content-row" data-val="h1">
+                                      <td style="width: 60px;"></td>
+                                      <td style="width: 60px;"></td>
+                                      <td class="content-cell">
+                                      ${item}
+                                      </td>
+                                    </tr>
+                                    `).join('')}` 
+                                : ``
+                              }
+
+                            <!-- H2 -->
+                            <tr>
+                              <td style="width: 60px;">H2</td>
+                              ${result.headingArray['h2'].length > 0 ? `
+                              <td style="width: 60px;">${result.headingArray['h2'].length}</td>
+                              <td class="content-cell">
+
+                                ${result.headingArray['h2'].length > 0 ? 
+                                    `
+                                    <span>${result.headingArray['h2'][0]}</span>
+                                    `
+                                  : ``
+                                }
+                                <button class="show collapsible showhide-btn ${result.headingArray['h2'].length > 12 ? '' : 'd-none'}" data-id="h2" type="button">
+                                <span>Show</span>
+                                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                                  </svg>
+                                </button>
+                              </td>
+                              ` : 
+                              `
+                              <td style="width: 60px;">0</td>
+                              <td colspan="1" class="p-0">
+                              <div class="no-tags">The page does not contain any H2 heading tags</div>
+                              </td>`}
+                            </tr>
                             
-                                <div class="col-md-4 mb-4">
-                                  <div class="p-3">
-                                  ${result.headingArray['h1'].length > 0 ? 
-                                  `<table class="heading_table">
-                                    ${result.headingArray['h1'].map(item => `
-                                        <tr>
-                                            <td style="padding-bottom: 10px">${item}</td>
-                                        </tr>
-                                    `).join('')}
-                                </table>` 
-                                : 
-                                `<b style="color:red">Does not exist</b>`
+                            ${result.headingArray['h2'].length > 0 ? 
+                                  `
+                                    ${result.headingArray['h2'].slice(1).map(item => `
+                                    <tr class="content-row" data-val="h2">
+                                      <td style="width: 60px;"></td>
+                                      <td style="width: 60px;"></td>
+                                      <td class="content-cell">
+                                      ${item}
+                                      </td>
+                                    </tr>
+                                    `).join('')}` 
+                                : ``
                               }
-                                      </div>
-                                </div>
-                                
-                                <div class="col-md-4 mb-4">
-                                  <div class="p-3">
-                                  ${result.headingArray['h2'].length > 0 ? 
-                                  `<table class="heading_table">
-                                    ${result.headingArray['h2'].map(item => `
-                                        <tr>
-                                            <td style="padding-bottom: 10px">${item}</td>
-                                        </tr>
-                                    `).join('')}
-                                </table>` 
-                                : 
-                                `<b style="color:red">Does not exist</b>`
+
+                            <!-- H3 -->
+                            <tr>
+                              <td style="width: 60px;">H3</td>
+                              ${result.headingArray['h3'].length > 0 ? `
+                              <td style="width: 60px;">${result.headingArray['h3'].length}</td>
+                              <td class="content-cell">
+
+                                ${result.headingArray['h3'].length > 0 ? 
+                                    `
+                                    <span>${result.headingArray['h3'][0]}</span>
+                                    `
+                                  : ``
+                                }
+                                <button class="show collapsible showhide-btn ${result.headingArray['h3'].length > 12 ? '' : 'd-none'}" data-id="h3" type="button">
+                                <span>Show</span>
+                                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                                  </svg>
+                                </button>
+                              </td>
+                              ` :
+                              `
+                              <td style="width: 60px;">0</td>
+                              <td colspan="1" class="p-0">
+                              <div class="no-tags">The page does not contain any H3 heading tags</div>
+                              </td>`}
+                            </tr>
+                            
+                            ${result.headingArray['h3'].length > 0 ? 
+                                  `
+                                    ${result.headingArray['h3'].slice(1).map(item => `
+                                    <tr class="content-row" data-val="h3">
+                                      <td style="width: 60px;"></td>
+                                      <td style="width: 60px;"></td>
+                                      <td class="content-cell">
+                                      ${item}
+                                      </td>
+                                    </tr>
+                                    `).join('')}` 
+                                : ``
                               }
-                                        </div>
-                                    </div>
 
-                                    <div class="col-md-4 mb-4">
-                                      <div class="p-3">
-                                      ${result.headingArray['h3'].length > 0 ? 
-                                      `<table class="heading_table">
-                                          ${result.headingArray['h3'].map(item => `
-                                              <tr>
-                                                  <td style="padding-bottom: 10px">${item}</td>
-                                              </tr>
-                                          `).join('')}
-                                      </table>` 
-                                      : 
-                                      `<b style="color:red">Does not exist</b>`
-                                    }
-                                        </div>
-                                        
-                                    </div>
-                                    <div class="row" style="border-bottom: 2px solid #e8e6f6;">
-                                    <div class="col-md-4">
-                                     <h6 class="section-heading" style="padding-left: 1rem;">H4 (${result.headingArray['h4'].length})</h6>
-                                    </div>
-                                    <div class="col-md-4">
-                                      <h6 class="section-heading" style="padding-left: 1rem;">H5 (${result.headingArray['h5'].length})</h6>
-                                    </div>
-   
-                                    <div class="col-md-4">
-                                      <h6 class="section-heading" style="padding-left: 1rem;">H6 (${result.headingArray['h6'].length})</h6>
-                                    </div>
-                                   </div>
-                                    <div class="col-md-4 mb-4">
-                                      <div class="p-3">
-                                            ${result.headingArray['h4'].length > 0 ? 
-                                          `<table class="heading_table">
-                                            ${result.headingArray['h4'].map(item => `
-                                                <tr>
-                                                    <td style="padding-bottom: 10px">${item}</td>
-                                                </tr>
-                                            `).join('')}
-                                        </table>` 
-                                        : 
-                                        `<b style="color:red">Does not exist</b>`
-                                      }
-                                        </div>
-                                    </div>
+                            <!-- H4 -->
+                            <tr>
+                              <td style="width: 60px;">H4</td>
+                              ${result.headingArray['h4'].length > 0 ? `
+                              <td style="width: 60px;">${result.headingArray['h4'].length}</td>
+                              <td class="content-cell">
 
-                                    <div class="col-md-4 mb-4">
-                                      <div class="p-3">
-                                      ${result.headingArray['h5'].length > 0 ? 
-                                      `<table class="heading_table">
-                                        ${result.headingArray['h5'].map(item => `
-                                            <tr>
-                                                <td style="padding-bottom: 10px">${item}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </table>` 
-                                    : 
-                                    `<b style="color:red">Does not exist</b>`
-                                  }
-                                        </div>
-                                    </div>
+                                ${result.headingArray['h4'].length > 0 ? 
+                                    `
+                                    <span>${result.headingArray['h4'][0]}</span>
+                                    `
+                                  : ``
+                                }
+                                <button class="show collapsible showhide-btn ${result.headingArray['h4'].length > 12 ? '' : 'd-none'}" data-id="h4" type="button">
+                                <span>Show</span>
+                                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                                  </svg>
+                                </button>
+                              </td>
+                              ` : 
+                              `
+                              <td style="width: 60px;">0</td>
+                              <td colspan="1" class="p-0">
+                              <div class="no-tags">The page does not contain any H4 heading tags</div>
+                              </td>`}
+                            </tr>
+                            
+                            ${result.headingArray['h4'].length > 0 ? 
+                                  `
+                                    ${result.headingArray['h4'].slice(1).map(item => `
+                                    <tr class="content-row" data-val="h4">
+                                      <td style="width: 60px;"></td>
+                                      <td style="width: 60px;"></td>
+                                      <td class="content-cell">
+                                      ${item}
+                                      </td>
+                                    </tr>
+                                    `).join('')}` 
+                                : ``
+                              }
 
-                                    <div class="col-md-4 mb-4">
-                                     <div class="p-3">
-                                     ${result.headingArray['h6'].length > 0 ? 
-                                          `<table class="heading_table">
-                                            ${result.headingArray['h6'].map(item => `
-                                                <tr>
-                                                    <td style="padding-bottom: 10px">${item}</td>
-                                                </tr>
-                                            `).join('')}
-                                        </table>` 
-                                        : 
-                                        `<b style="color:red">Does not exist</b>`
-                                      }
-                                        </div>
-                                    </div>
+                            <!-- H5 -->
+                            <tr>
+                              <td style="width: 60px;">H5</td>
+                              ${result.headingArray['h5'].length > 0 ? `
+                              <td style="width: 60px;">${result.headingArray['h5'].length}</td>
+                              <td class="content-cell">
 
-                                </div>
-                            </div>
-                        </div>
+                                ${result.headingArray['h5'].length > 0 ? 
+                                    `
+                                    <span>${result.headingArray['h5'][0]}</span>
+                                    `
+                                  : ``
+                                }
+                                <button class="show collapsible showhide-btn ${result.headingArray['h5'].length > 12 ? '' : 'd-none'}" data-id="h5" type="button">
+                                <span>Show</span>
+                                  <svg width="8" height="5" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"></path>
+                                  </svg>
+                                </button>
+                              </td>
+                              ` :
+                              `
+                              <td style="width: 60px;">0</td>
+                              <td colspan="1" class="p-0">
+                              <div class="no-tags">The page does not contain any H5 heading tags</div>
+                              </td>`}
+                            </tr>
+
+                            ${result.headingArray['h5'].length > 0 ? 
+                                  `
+                                    ${result.headingArray['h5'].slice(1).map(item => `
+                                    <tr class="content-row" data-val="h5">
+                                      <td style="width: 60px;"></td>
+                                      <td style="width: 60px;"></td>
+                                      <td class="content-cell">
+                                      ${item}
+                                      </td>
+                                    </tr>
+                                    `).join('')}` 
+                                : ``
+                              }
+
+                          </tbody>
+                        </table>
+                      </div>
                     </td>
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                     `

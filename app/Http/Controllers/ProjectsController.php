@@ -968,4 +968,62 @@ class ProjectsController extends Controller
 
     }
 
+    public function checkSitemapUrls(Request $request)
+    {
+        $urls = $request->input('urls', []);
+        $results = [];
+
+        foreach ($urls as $url) {
+            $url = trim($url);
+            if (empty($url)) {
+                $results[] = ['url' => $url, 'valid' => false];
+                continue;
+            }
+
+            try {
+                $client = new Client([
+                    'timeout' => 10,
+                    'http_errors' => false,
+                    'headers' => [
+                        'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0)',
+                        'Cache-Control' => 'no-cache'
+                    ]
+                ]);
+
+                $response = $client->get($url);
+                $statusCode = $response->getStatusCode();
+                $contentType = $response->getHeaderLine('content-type');
+
+                // Accept 200 and 304 as valid responses
+                if ($statusCode !== 200 && $statusCode !== 304) {
+                    $results[] = ['url' => $url, 'valid' => false];
+                    continue;
+                }
+
+                // Check if content-type is XML
+                if (empty($contentType) || !str_contains(strtolower($contentType), 'xml')) {
+                    $results[] = ['url' => $url, 'valid' => false];
+                    continue;
+                }
+
+                // For 304, assume valid if content-type is XML
+                if ($statusCode === 304) {
+                    $results[] = ['url' => $url, 'valid' => true];
+                    continue;
+                }
+
+                // For 200, check the content
+                $content = $response->getBody()->getContents();
+                $isSitemap = str_contains($content, '<urlset') || str_contains($content, '<sitemapindex');
+                
+                $results[] = ['url' => $url, 'valid' => $isSitemap];
+
+            } catch (\Exception $e) {
+                $results[] = ['url' => $url, 'valid' => false];
+            }
+        }
+
+        return response()->json($results);
+    }
+
 }

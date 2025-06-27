@@ -71,8 +71,6 @@ $( document ).ready(function() {
             const nameVal = input.getAttribute("data-name")
 
             const data = getLabelData(nameVal)
-            console.log(input)
-            console.log(data)
             if(input.checked){
                 const labelObj = {
                     name: data.name,
@@ -329,8 +327,6 @@ $( document ).ready(function() {
     }
 
     function getLabelData(name){
-        console.log(allLabels)
-
         for(var i = 0;i < allLabels.length;i++){
             const label = allLabels[i];
             if(label.name === name){
