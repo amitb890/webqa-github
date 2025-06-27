@@ -1,3 +1,179 @@
+// Alert Manager - Unified alert system for the frontend
+class AlertManager {
+    static types = {
+        SUCCESS: 'success',
+        ERROR: 'error', 
+        WARNING: 'warning',
+        INFO: 'info',
+        CUSTOM: 'custom'
+    };
+
+    static positions = {
+        TOP: 'top',
+        BOTTOM: 'bottom',
+        AFTER: 'after',
+        BEFORE: 'before',
+        REPLACE: 'replace'
+    };
+
+    static defaultConfig = {
+        type: this.types.INFO,
+        position: this.positions.TOP,
+        autoHide: true,
+        duration: 3000,
+        dismissible: true,
+        prepend: true
+    };
+
+    /**
+     * Show an alert with unified configuration
+     * @param {string|HTMLElement} target - CSS selector or DOM element
+     * @param {string} message - Alert message
+     * @param {Object} config - Configuration options
+     */
+    static show(target, message, config = {}) {
+        const finalConfig = { ...this.defaultConfig, ...config };
+        const targetElement = typeof target === 'string' ? document.querySelector(target) : target;
+        
+        if (!targetElement) {
+            console.error('AlertManager: Target element not found', target);
+            return;
+        }
+
+        const alertElement = this.createAlertElement(message, finalConfig);
+        this.positionAlert(targetElement, alertElement, finalConfig);
+        
+        if (finalConfig.autoHide) {
+            this.autoHide(alertElement, finalConfig.duration);
+        }
+
+        return alertElement;
+    }
+
+    /**
+     * Create alert element with proper styling
+     */
+    static createAlertElement(message, config) {
+        const alertElement = document.createElement('div');
+        alertElement.setAttribute('role', 'alert');
+        
+        // Base classes
+        const baseClasses = ['alert', 'webqa__alert', 'alert-dismissible', 'fade', 'show'];
+        
+        // Type-specific classes
+        const typeClasses = {
+            [this.types.SUCCESS]: ['alert-success'],
+            [this.types.ERROR]: ['alert-danger'],
+            [this.types.WARNING]: ['alert-warning'],
+            [this.types.INFO]: ['alert-info'],
+            [this.types.CUSTOM]: ['alert-custom']
+        };
+
+        alertElement.classList.add(...baseClasses, ...typeClasses[config.type]);
+
+        // Build content
+        let content = message;
+        if (config.dismissible) {
+            content += `
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+        }
+
+        alertElement.innerHTML = content;
+        return alertElement;
+    }
+
+    /**
+     * Position alert relative to target element
+     */
+    static positionAlert(targetElement, alertElement, config) {
+        
+        switch (config.position) {
+            case this.positions.TOP:
+                if (config.prepend) {
+                    targetElement.insertBefore(alertElement, targetElement.firstChild);
+                } else {
+                    targetElement.appendChild(alertElement);
+                }
+                break;
+            case this.positions.BOTTOM:
+                targetElement.appendChild(alertElement);
+                break;
+            case this.positions.AFTER:
+                targetElement.parentNode.insertBefore(alertElement, targetElement.nextSibling);
+                break;
+            case this.positions.BEFORE:
+                targetElement.parentNode.insertBefore(alertElement, targetElement);
+                break;
+            case this.positions.REPLACE:
+                targetElement.innerHTML = '';
+                targetElement.appendChild(alertElement);
+                break;
+        }
+    }
+
+    /**
+     * Auto-hide alert after specified duration
+     */
+    static autoHide(alertElement, duration) {
+        setTimeout(() => {
+            if (alertElement && alertElement.parentNode) {
+                $(alertElement).fadeTo(500, 500).slideUp(500, function() {
+                    $(this).remove();
+                });
+            }
+        }, duration);
+    }
+
+    /**
+     * Clear all alerts from a target
+     */
+    static clear(target) {
+        const targetElement = typeof target === 'string' ? document.querySelector(target) : target;
+        if (targetElement) {
+            const alerts = targetElement.querySelectorAll('.alert');
+            alerts.forEach(alert => alert.remove());
+        }
+    }
+
+    /**
+     * Convenience methods for common alert types
+     */
+    static success(target, message, config = {}) {
+        return this.show(target, message, { ...config, type: this.types.SUCCESS });
+    }
+
+    static error(target, message, config = {}) {
+        return this.show(target, message, { ...config, type: this.types.ERROR });
+    }
+
+    static warning(target, message, config = {}) {
+        return this.show(target, message, { ...config, type: this.types.WARNING });
+    }
+
+    static info(target, message, config = {}) {
+        return this.show(target, message, { ...config, type: this.types.INFO });
+    }
+
+    static custom(target, message, config = {}) {
+        return this.show(target, message, { ...config, type: this.types.CUSTOM });
+    }
+
+    /**
+     * Show alert after an element (useful for form validation)
+     */
+    static afterElement(element, message, config = {}) {
+        return this.show(element, message, { ...config, position: this.positions.AFTER });
+    }
+
+    /**
+     * Show alert before an element
+     */
+    static beforeElement(element, message, config = {}) {
+        return this.show(element, message, { ...config, position: this.positions.BEFORE });
+    }
+}
+
 class rememberUrl {
     constructor(message, onDelete) {
         this.message = message;

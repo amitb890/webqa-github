@@ -682,6 +682,12 @@ function displayAlertSwithProject(classVal, data){
             return false
           }
 
+          // Auto-prepend https://www. if needed
+          const formattedUrl = formatHomepageUrl(input.value);
+          if (formattedUrl !== input.value) {
+            input.value = formattedUrl;
+          }
+
           if(!isValidURL(input.value)){
             let msgInvalid = `${input.value} is an incorrect URL format, please enter the URL in the correct format and try again.`
             const alert = buildAlertNew(msgInvalid)
@@ -736,6 +742,24 @@ function displayAlertSwithProject(classVal, data){
       }
 
       return true
+    }
+
+    function formatHomepageUrl(url) {
+      // Remove any existing protocol and www
+      let cleanUrl = url.trim().toLowerCase();
+      
+      // If it already has a protocol, return as is
+      if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+        return cleanUrl;
+      }
+      
+      // If it starts with www., add https://
+      if (cleanUrl.startsWith('www.')) {
+        return 'https://' + cleanUrl;
+      }
+      
+      // Otherwise, add https://www.
+      return 'https://www.' + cleanUrl;
     }
 
     async function checkValidURLOnbording() {

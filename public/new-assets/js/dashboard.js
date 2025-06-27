@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckMax = 20, htmlSitemapData, recheckAllowed = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckMax = 20, htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
   var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {
@@ -532,12 +532,12 @@ $(document).ready(function () {
             case "robots_meta":
                 element =  `
                 <div class="deshboard_inner_description border_bottom">
-                  <p>URL’s with Robots meta tag<span>${data.withRobotsMeta}</span></p>
-                  <p>URL’s without Robots meta tag<span>${data.withoutRobotsMeta}</span></p>
+                  <p>URL's with Robots meta tag<span>${data.withRobotsMeta}</span></p>
+                  <p>URL's without Robots meta tag<span>${data.withoutRobotsMeta}</span></p>
                 </div>
                 <div class="deshboard_inner_description">
-                  <p>URL’s with Noindex, Nofollow<span>${data.withNoIndexNofollow}</span></p>
-                  <p>URL’s with Noindex<span>${data.withNoIndex}</span></p>
+                  <p>URL's with Noindex, Nofollow<span>${data.withNoIndexNofollow}</span></p>
+                  <p>URL's with Noindex<span>${data.withNoIndex}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
                   <a href="#">View Report</a>
@@ -547,11 +547,11 @@ $(document).ready(function () {
                 element =  `
                 <div class="deshboard_inner_description border_bottom">
                   <p>
-                    URL’s with Canonical tag
+                    URL's with Canonical tag
                     <span>${data.withCanonical}</span>
                   </p>
                   <p>
-                    URL’s without Canonical tag<span>${data.withoutCanonical}</span>
+                    URL's without Canonical tag<span>${data.withoutCanonical}</span>
                   </p>
                 </div>
                 <div class="inner_dashboard_footer">
@@ -628,20 +628,20 @@ $(document).ready(function () {
                     <div class="dashboard_graph_title_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
                         <p>
-                          Total URL’s with Open graph title tag<span
+                          Total URL's with Open graph title tag<span
                           class="${data.OGTitleElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.OGTitleElementExists}</span
                           >
                         </p>
                         <p>
-                          URL’s with OG title too long<span class="${data.OGTitleLengthOver > 0 ? 'danger' : 'success'}"
+                          URL's with OG title too long<span class="${data.OGTitleLengthOver > 0 ? 'danger' : 'success'}"
                             >${data.OGTitleLengthOver}</span
                           >
                         </p>
                         <p>
-                          URL’s with OG title too short<span
+                          URL's with OG title too short<span
                             class="${data.OGTitleLengthBelow > 0 ? 'danger' : 'success'}"
                             >${data.OGTitleLengthBelow}</span
                           >
@@ -658,20 +658,20 @@ $(document).ready(function () {
                     <div class="dashboard_graph_description_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
                         <p>
-                          Total URL’s with Open graph description tag<span
+                          Total URL's with Open graph description tag<span
                           class="${data.OGDescElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.OGDescElementExists}</span
                           >
                         </p>
                         <p>
-                          URL’s with OG description too long<span class="${data.OGDescLengthOver > 0 ? 'danger' : 'success'}"
+                          URL's with OG description too long<span class="${data.OGDescLengthOver > 0 ? 'danger' : 'success'}"
                             >${data.OGDescLengthOver}</span
                           >
                         </p>
                         <p>
-                          URL’s with OG description too short<span
+                          URL's with OG description too short<span
                             class="${data.OGDescLengthBelow > 0 ? 'danger' : 'success'}"
                             >${data.OGDescLengthBelow}</span
                           >
@@ -688,9 +688,9 @@ $(document).ready(function () {
                     <div class="dashboard_graph_images_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
                         <p>
-                          Total URL’s with Open Graph Image<span
+                          Total URL's with Open Graph Image<span
                           class="${data.OGImageElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.OGImageElementExists}</span
                           >
@@ -707,8 +707,8 @@ $(document).ready(function () {
                     <div class="dashboard_graph_url_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
-                        <p>Total URL’s with Open Graph URL<span
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
+                        <p>Total URL's with Open Graph URL<span
                         class="${data.OGUrlElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.OGUrlElementExists}</span
                           >
@@ -779,20 +779,20 @@ $(document).ready(function () {
                     <div class="dashboard_graph_title_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
                         <p>
-                          Total URL’s with Twitter title tag<span
+                          Total URL's with Twitter title tag<span
                           class="${data.twitterTitleElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.twitterTitleElementExists}</span
                           >
                         </p>
                         <p>
-                          URL’s with Twitter title too long<span class="${data.twitterTitleLengthOver > 0 ? 'danger' : 'success'}"
+                          URL's with Twitter title too long<span class="${data.twitterTitleLengthOver > 0 ? 'danger' : 'success'}"
                             >${data.twitterTitleLengthOver}</span
                           >
                         </p>
                         <p>
-                          URL’s with Twitter title too short<span
+                          URL's with Twitter title too short<span
                           class="${data.twitterTitleLengthBelow > 0 ? 'danger' : 'success'}"
                             >${data.twitterTitleLengthBelow}</span
                           >
@@ -810,9 +810,9 @@ $(document).ready(function () {
                     <div class="dashboard_graph_images_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
                         <p>
-                          Total URL’s with Twitter Image<span
+                          Total URL's with Twitter Image<span
                           class="${data.twitterImageElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.twitterImageElementExists}</span
                           >
@@ -829,9 +829,9 @@ $(document).ready(function () {
                     <div class="dashboard_graph_url_content">
                       <p class="text_12"># of pages</p>
                       <div class="deshboard_inner_description">
-                        <p>Total URL’s<span>${data.totalUrls}</span></p>
+                        <p>Total URL's<span>${data.totalUrls}</span></p>
                         <p>
-                          Total URL’s with Twitter Image Alt<span
+                          Total URL's with Twitter Image Alt<span
                           class="${data.twitterImageAltElementExists === data.totalUrls ? 'success' : 'danger'}"
                             >${data.twitterImageAltElementExists}</span
                           >
@@ -1796,7 +1796,7 @@ $(document).ready(function () {
 
                             ${data.sitemapNotFound.length > 0 ? `
                             <div class="dashboard_sitemap_textarea">
-                              <p>URL’s not included on XML sitemap</p>
+                              <p>URL's not included on XML sitemap</p>
                               <textarea>
                                   ${data.sitemapNotFoundString}
                               </textarea>
@@ -1868,7 +1868,7 @@ $(document).ready(function () {
 
                         ${htmlSitemapData.sitemapNotFound.length > 0 ? `
                         <div class="dashboard_sitemap_textarea">
-                          <p>URL’s not included on HTML sitemap</p>
+                          <p>URL's not included on HTML sitemap</p>
                           <textarea>
                               ${htmlSitemapData.sitemapNotFoundString}
                           </textarea>
@@ -2081,9 +2081,28 @@ $(document).ready(function () {
       const { DateTime } = luxon;
       const time = project.updated_at
       let value = new DateTime.fromISO(time)
-      value = value.toLocaleString({day: 'numeric', month: 'long', year: 'numeric'});
-      $("#lastUpdated").html(value)
-    } 
+      
+      // Get the day with ordinal suffix
+      const day = value.day;
+      const ordinalSuffix = UI.getOrdinalSuffix(day);
+      
+      // Format the date with ordinal suffix and GMT time
+      const formattedDate = `${day}${ordinalSuffix} ${value.toFormat('MMMM yyyy')}, ${value.toFormat('HH:mm')} local time`;
+      
+      $("#lastUpdated").html(formattedDate)
+    }
+
+    static getOrdinalSuffix(day) {
+      if (day >= 11 && day <= 13) {
+        return 'th';
+      }
+      switch (day % 10) {
+        case 1: return 'st';
+        case 2: return 'nd';
+        case 3: return 'rd';
+        default: return 'th';
+      }
+    }
 
     static toggleDashboardElements(project){
       UI.changeUpdatedTime(project)

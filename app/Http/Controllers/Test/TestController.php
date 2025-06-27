@@ -730,7 +730,7 @@ class TestController extends Controller
         $min = $settings->settings_sub->min_desc_length_val;
         $title = "Meta Description";
         $content = $data["content"];
-        $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page’s content and give searchers a reason to click";
+        $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
         $message = "Your webpage is using a meta description tag";
         $length = strlen($content);
         $lengthClass = "result_pass";
@@ -1100,7 +1100,6 @@ class TestController extends Controller
         $titleCasingBoth = $settings->settings_sub->og_title_casing_both;
         $titleCasingSentence = $settings->settings_sub->og_title_casing_sentence;
         $excludedWordsVal = "";
-        print_r($data);
         $titleContent = $data['metaContent']["content"];
         $title = "Open Graph Tags";
         $message = "Your webpage is
@@ -1662,7 +1661,10 @@ class TestController extends Controller
         $lengthClass = "result_pass";
         $showImage = true;
 
-        $content = $content != "" ? $helpers->getAbsolutePath($content, $domain) : "";
+
+        $content = $helpers->getFavicon($urlValue);
+
+
         if($isFavicon){
             if($content === "" || $content === null){
                 $status = false;
@@ -1752,7 +1754,7 @@ class TestController extends Controller
 
         $title = "XML Sitemap";
         $content = $data["content"];
-        $description = "An XML sitemap is a file that lists a website’s important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability, and indexability.";
+        $description = "An XML sitemap is a file that lists a website's important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability, and indexability.";
         $message = "XML Sitemap check excluded.";
         $xmldata = "";
 
@@ -1832,7 +1834,7 @@ class TestController extends Controller
         
         $title = "XML Sitemap";
         $content = $data["content"];
-        $description = "An XML sitemap is a file that lists a website’s important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability, and indexability.";
+        $description = "An XML sitemap is a file that lists a website's important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability, and indexability.";
         $message = "XML Sitemap check excluded.";
         $xmldata = [];
         $foundUrls = [];
@@ -2005,8 +2007,13 @@ class TestController extends Controller
         $description = "Images make any content more interesting and appealing by helping readers understand your content better. Plus, images add value to your SEO efforts by increasing user engagement and accessibility of your website. There are a number of important factors that can be optimized to help improve image SEO on your site.<br><br>";
         $message = "Your webpage has no images.";
 
+        // Counters for tracking image results
+        $totalImages = 0;
+        $passedImages = 0;
+        $failedImages = 0;
+
         if(count($images) > 0){
-            $message = "All the Images used in the page meet quality requirements";
+            $totalImages = count($images);
             foreach($images as $image){
                 // getting all values again
                 $imageLengthStatus = true;
@@ -2098,7 +2105,6 @@ class TestController extends Controller
                         $status = false;
                         $imageNameClass = "result_fail";
                         $imageSizeClass = "result_fail";
-                        $message = "None of the Images used in the page meet quality requirements";
                         $issueMsg = "Image file size exceeds " . $imageMaxSizeVal . " KB";
                         array_push($imageProblems, $issueMsg);
                     }
@@ -2112,7 +2118,6 @@ class TestController extends Controller
                         $status = false;
                         $imageNameClass = "result_fail";
                         $imageHyphenClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
                         array_push($imageProblems, "Words in file name must be separated by hyphens.");
                     }
                 } 
@@ -2123,7 +2128,6 @@ class TestController extends Controller
                         $status = false;
                         $imageNameClass = "result_fail";
                         $imageUppercaseClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
                         array_push($imageProblems, "Image file name has uppercase characters.");
                     }
                 } 
@@ -2135,7 +2139,6 @@ class TestController extends Controller
                         $status = false;
                         $imageNameClass = "result_fail";
                         $imageSpecialClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
                         array_push($imageProblems, "Image file name has special characters.");
                     }
                 } 
@@ -2146,7 +2149,6 @@ class TestController extends Controller
                         $status = false;
                         $imageNameClass = "result_fail";
                         $imageLengthClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
                         array_push($imageProblems, "Image file name length exceeds maximum limit of " . $imageNameMaxCharactersVal . " characters.");
                     }
                 }
@@ -2156,7 +2158,6 @@ class TestController extends Controller
                         $imageStatus = false;
                         $status = false;
                         $imageAltClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
                         array_push($imageProblems, "Alternate text either does not exist or is empty.");
                     }else{
                         if($imageAltOnlySpaces){
@@ -2165,11 +2166,17 @@ class TestController extends Controller
                                 $status = false;
                                 $imageAltClass = "result_fail";
                                 $imageAltSpacesClass = "result_fail";
-                                $message = "All the Images used in the page do not meet quality requirements";
                                 array_push($imageProblems, "Words in alternate text are not separated by spaces.");
                             }
                         }
                     }
+                }
+
+                // Count passed/failed images
+                if($imageStatus) {
+                    $passedImages++;
+                } else {
+                    $failedImages++;
                 }
 
                 $imageDetail = [
@@ -2198,6 +2205,15 @@ class TestController extends Controller
                 $imageDetail["imageSizeValue"] = $imageMaxSize ? $imgSize . " KB" : "File size check excluded.";
           
                 array_push($problems, $imageDetail);
+            }
+
+            // Set message based on results
+            if($failedImages === 0) {
+                $message = "All the Images meet quality requirements.";
+            } elseif($passedImages === 0) {
+                $message = "None of the Images meet quality requirements.";
+            } else {
+                $message = "While " . $passedImages . " Images were meeting quality requirements, there are " . $failedImages . " of them that are not meeting quality requirements.";
             }
         }
 
@@ -2231,7 +2247,7 @@ class TestController extends Controller
         $isGzipCompression = $settings->settings_sub->is_gzip_compression;
         $title = "Gzip Compression";
         $content = $data["content"];
-        $description = "Gzip is a file format used to compress HTTP content before it’s served to a client. GZip is a form of data compression, it takes a chunk of data and makes it smaller. <br><br> When Gzip compression is enabled,people visiting the site will be downloading smaller files which will help in quicker page loads.";
+        $description = "Gzip is a file format used to compress HTTP content before it's served to a client. GZip is a form of data compression, it takes a chunk of data and makes it smaller. <br><br> When Gzip compression is enabled,people visiting the site will be downloading smaller files which will help in quicker page loads.";
         $message = "Gzip compression is enabled";
         $showContent = false;
         $tagStatus = false;
@@ -2804,7 +2820,7 @@ class TestController extends Controller
         $title = "Core Web Vitals";
         $titleDesktop = "Core Web Vitals (Desktop)";
         $titleMobile = "Core Web Vitals (Mobile)";
-        $description = "Core Web Vitals are a set of specific factors that Google considers important in a webpage’s overall user experience. Core Web Vitals are made up of three specific page speed and user interaction measurements: largest contentful paint, first input delay, and cumulative layout shift.Core Web Vitals are a subset of factors that is part of Google’s page experience score.<br><br>";
+        $description = "Core Web Vitals are a set of specific factors that Google considers important in a webpage's overall user experience. Core Web Vitals are made up of three specific page speed and user interaction measurements: largest contentful paint, first input delay, and cumulative layout shift.Core Web Vitals are a subset of factors that is part of Google's page experience score.<br><br>";
         
         $message = "Core web vitals check excluded";
         $messageDesktop = "Core web vitals for dekstop is meeting quality reqruirements.";

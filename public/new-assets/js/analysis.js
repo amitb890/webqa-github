@@ -639,16 +639,20 @@ $( document ).ready(function() {
       }
       
       if(test.name === "og:title"){
-        test.ogDesc = getTest(results, label.information.ogDesc)
-        test.ogImage = getTest(results, label.information.ogImage)
-        test.ogURL = getTest(results, label.information.ogURL)
+        let ogDesc = getTest(results, label.information.ogDesc)
+        test.ogDesc = ogDesc || { content: "" }
+        let ogImage = getTest(results, label.information.ogImage)
+        test.ogImage = ogImage || { content: "" }
+        let ogURL = getTest(results, label.information.ogURL)
+        test.ogURL = ogURL || { content: "" }
       }
       if(test.name === "twitter:title"){
-        test.twitterImage = getTest(results, label.information.twitterImage)
-        test.twitterImageAlt = getTest(results, label.information.twitterImageAlt)
+        let twitterImage = getTest(results, label.information.twitterImage)
+        test.twitterImage = twitterImage || { content: "" }
+        let twitterImageAlt = getTest(results, label.information.twitterImageAlt)
+        test.twitterImageAlt = twitterImageAlt || { content: "" }
       }
 
-      console.log(test)
       return test
     }
 
@@ -2951,14 +2955,11 @@ $( document ).ready(function() {
 
   function buildImagesPanel(data){
       data.problems.forEach((prob, i)=>{
-          console.log(i)
-         
-
+        
           const tr = document.createElement("tr")
           prob.status ? tr.classList.add("passed") : tr.classList.add("failed") 
           prob.status ? tr.classList.add("row-green-bg") : tr.classList.add("row-orange-bg") 
           tr.innerHTML = `
-          <td class="align-left">${i === 0 ? projectUrl : ""}</td>
           <td class="content-td image-table-link" td-replace="${prob.imageSrc}"><a href="${prob.imageSrc}" target="_blank"><span>Link</span>
           <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M11.3333 5.33333C11.1565 5.33333 10.987 5.40357 10.8619 5.5286C10.7369 5.65362 10.6667 5.82319 10.6667 6V10C10.6667 10.1768 10.5964 10.3464 10.4714 10.4714C10.3464 10.5964 10.1768 10.6667 10 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H6C6.17681 1.33333 6.34638 1.2631 6.4714 1.13807C6.59643 1.01305 6.66667 0.843478 6.66667 0.666667C6.66667 0.489856 6.59643 0.320286 6.4714 0.195262C6.34638 0.0702379 6.17681 0 6 0H2C1.46957 0 0.960859 0.210714 0.585787 0.585787C0.210714 0.960859 0 1.46957 0 2V10C0 10.5304 0.210714 11.0391 0.585787 11.4142C0.960859 11.7893 1.46957 12 2 12H10C10.5304 12 11.0391 11.7893 11.4142 11.4142C11.7893 11.0391 12 10.5304 12 10V6C12 5.82319 11.9298 5.65362 11.8047 5.5286C11.6797 5.40357 11.5101 5.33333 11.3333 5.33333Z" fill="#1E63B8"></path>
@@ -3786,14 +3787,12 @@ $( document ).ready(function() {
                                       <table class="table table-bordered dataTable custom-dataTable">
                                       <thead class="result_data_header">
                                       <tr style="white-space: nowrap;">
-                                          <th class="result_header transparent align-left">URL</th>
                                           <th class="transparent">Image Link</th>
                                           <th class="transparent" colspan="2" class="">Alternate Text</th> 
                                           <th class="transparent" colspan="6">File Name</th>
                                           <th class="transparent" colspan="1">Result</th>
                                       </tr>
                                       <tr>
-                                          <th></th>
                                           <th></th>
                                           <th class="align-left">Content</th>
                                           <th class="">Words separated by spaces?</th>

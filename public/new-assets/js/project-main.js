@@ -110,6 +110,16 @@ $(document).ready(function () {
     var urlValue = $('#homepage').val();
     var container = $('#homepage').closest('.col-md-6.project-single-input');
     container.find('.invalid-feedback').remove();
+    
+    // Auto-prepend https://www. if needed
+    if (urlValue !== "") {
+      const formattedUrl = formatHomepageUrl(urlValue);
+      if (formattedUrl !== urlValue) {
+        $('#homepage').val(formattedUrl);
+        urlValue = formattedUrl;
+      }
+    }
+    
     if(urlValue != "") {
       if(!isValidURL(urlValue)){
         $('#homepage').addClass('is-invalid');
@@ -139,6 +149,25 @@ $(document).ready(function () {
   return;
     
   });
+
+  function formatHomepageUrl(url) {
+    // Remove any existing protocol and www
+    let cleanUrl = url.trim().toLowerCase();
+    
+    // If it already has a protocol, return as is
+    if (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://')) {
+      return cleanUrl;
+    }
+    
+    // If it starts with www., add https://
+    if (cleanUrl.startsWith('www.')) {
+      return 'https://' + cleanUrl;
+    }
+    
+    // Otherwise, add https://www.
+    return 'https://www.' + cleanUrl;
+  }
+
   function updateSitemapInputs() {
     const websiteAddress = removeTrailingSlash($("#homepage").val())
     $("#xmlSitemap").val(getSitemapAddress("xml", websiteAddress))
