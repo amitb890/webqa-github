@@ -29,11 +29,15 @@
                 </div>
               </form>
             </div>
-            <div class="search-setting">
-              <p id="settingBtn">
-                Test Settings <i class="fa-solid fa-angle-down"></i>
-              </p>
+
+            <div class="search-setting-container">
+              <div class="search-setting">
+                <p id="settingBtn">
+                  Test Settings <i class="fa-solid fa-angle-down"></i>
+                </p>
+              </div>
             </div>
+            
           </div>
          
           <div class="home-setting-wrap">

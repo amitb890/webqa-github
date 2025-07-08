@@ -729,52 +729,59 @@ class ProjectsController extends Controller
 
     public function checkValidUrl(Request $request)
     {
-        
-        $url = $request->input('url'); // Get the URL from the request
-        // Initialize a Guzzle HTTP client
-       
+        set_time_limit(15); // Fail if the whole process takes longer than 15 seconds
+        $url = trim($request->input('url'));
+        if (!preg_match('/^https?:\/\//i', $url)) {
+            $url = 'https://' . ltrim($url, '/');
+        }
+        // Remove query parameters and fragments
+        $parsed = parse_url($url);
+        $baseUrl = $parsed['scheme'] . '://' . $parsed['host'];
+        if (isset($parsed['port'])) {
+            $baseUrl .= ':' . $parsed['port'];
+        }
+        if (isset($parsed['path'])) {
+            $baseUrl .= $parsed['path'];
+        }
         try {
             $client = new Client([
                 'allow_redirects' => [
                     'track_redirects' => true,
                 ],
-                'http_errors' => false,  // Prevent Guzzle from throwing exceptions for 4xx and 5xx status codes
-                'timeout' => 8,   // Set the request timeout
+                'http_errors' => false,
+                'timeout' => 8, // Individual HTTP request timeout
             ]);
-            // Send a GET request to the URL
-            //  $response = Http::get($url);
-             $response = Http::timeout(8)->get($url);
-             $response = $client->get($url);
+            $headers = [
+                'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language' => 'en-US,en;q=0.9',
+                'Accept-Encoding' => 'gzip, deflate, br',
+                'Connection' => 'keep-alive',
+                'Upgrade-Insecure-Requests' => '1',
+                'Cache-Control' => 'max-age=0'
+            ];
+            $response = $client->get($baseUrl, ['headers' => $headers]);
 
-             // Get the redirected URL from the response headers
-             $redirectHistory = $response->getHeader('X-Guzzle-Redirect-History');
-             $redirectedUrl = end($redirectHistory) ?: $url; // Use the last URL in the history or the original URL
-     
-             // Get the response status code
-             $statusCode = $response->getStatusCode();
-             $firstXmlUrl = '';
-            // Check if the response status code is 200
+            $redirectHistory = $response->getHeader('X-Guzzle-Redirect-History');
+            $redirectedUrl = end($redirectHistory) ?: $baseUrl;
+            $statusCode = $response->getStatusCode();
+            $firstXmlUrl = '';
             if ($response->getStatusCode() === 200) {
                 $sitemap = false;
                 if ($request->has('sitemap') && $request->sitemap) {
-                    $xmlContent = $response->getBody()->getContents(); // Retrieve the response body as a string
-                    $xml = @simplexml_load_string($xmlContent); // Suppress errors and try to load as XML
-    
-                    // Check for <urlset> or <sitemapindex> tags
+                    $xmlContent = $response->getBody()->getContents();
+                    $xml = @simplexml_load_string($xmlContent);
                     if ($xml && (isset($xml->url) || isset($xml->sitemap))) {
                         $sitemap = true;
                     }
                 } else {
                     $firstXmlUrl = $this->getAllSitemaps($redirectedUrl);
                 }
-                
-                
                 return response()->json(['message' => 'URL is valid and available.', 'valid'=>true, 'redirectedUrl'=>$redirectedUrl, 'firstXmlUrl'=>$firstXmlUrl, 'sitemap'=>$sitemap]);
             } else {
                 return response()->json(['message' => 'URL is valid but returned a non-200 status code.', 'valid'=>false]);
             }
         } catch (\Exception $e) {
-            // Handle any exceptions (e.g., connection error, invalid URL)
             return response()->json(['message' => 'URL is not valid or unavailable.', 'valid'=>false]);
         }
     }

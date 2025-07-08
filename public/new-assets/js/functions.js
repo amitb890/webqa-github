@@ -757,12 +757,12 @@ function validateFrontFooter(data, type){
     const value = data.el.value.trim()
     if(value === ""){
         const alert = buildAlertNew(data.msgEmpty)
-        data.el.parentElement.parentElement.appendChild(alert)
+        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
         return false
     }else if(!isValidURL(value)){
         let msgInvalid = `${value} is an incorrect URL format, please enter the URL in the correct format and try again.`
         const alert = buildAlertNew(msgInvalid)
-        data.el.parentElement.parentElement.appendChild(alert)
+        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
         return false
     }
 
@@ -783,14 +783,14 @@ function validateFront(data, type){
     const value = data.el.value.trim()
     if(value === ""){
         const alert = buildAlertNew(data.msgEmpty)
-        data.el.parentElement.parentElement.appendChild(alert)
+        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
         return false
     }
 
     if(type === "bulk"){
         if(checkedBoxes.length < 1){
             const alert = buildAlertNew("At least one test criteria must be selected.")
-            data.el.parentElement.parentElement.prepend(alert)
+            data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
             return false
         }
         var list = value.split("\n")
@@ -799,7 +799,7 @@ function validateFront(data, type){
             if(!isValidURL(domain)){
                 let msgInvalid = `${domain} is an incorrect URL format, please enter the URL in the correct format and try again.`
                 const alert = buildAlertNew(msgInvalid)
-                data.el.parentElement.parentElement.prepend(alert)
+                data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
                 return false
             }
         }
@@ -807,7 +807,7 @@ function validateFront(data, type){
         if(!isValidURL(value)){
             let msgInvalid = `${value} is an incorrect URL format, please enter the URL in the correct format and try again.`
             const alert = buildAlertNew(msgInvalid)
-            data.el.parentElement.parentElement.appendChild(alert)
+            data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
             return false
         }
     }
@@ -887,12 +887,7 @@ function validateFront(data, type){
 
     if(!customizerState){
         const alert = buildAlertNew("There were some errors in the customizer, please fix them before continuing.")
-        // if(type === "bulk"){
-        //     data.el.parentElement.parentElement.prepend(alert)
-        // }else{
-        //     data.el.parentElement.parentElement.appendChild(alert)
-        // }
-        data.el.parentElement.parentElement.appendChild(alert)
+        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
     }
     return state
 }

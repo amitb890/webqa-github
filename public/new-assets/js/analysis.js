@@ -76,6 +76,49 @@ $( document ).ready(function() {
       document.getElementById(label.name).querySelector(".loader-item-current").textContent = "Testing..."
     }
 
+    
+  static setNeedleByValue(value) {
+    const needle = document.querySelector(".analysis-score .pointer");
+    const score = document.querySelector(".analysis-score .score-health");
+
+    needle.style.transition = "transform 3s ease-in-out";
+    const minAngle = -120;
+    const maxAngle = 120;
+    const clamped = Math.max(0, Math.min(100, value));
+    const angle = minAngle + ((clamped / 100) * (maxAngle - minAngle));
+    
+    needle.style.transform = `rotate(${angle}deg)`;
+    if(value <=25){
+      score.style.color = "#C1262C";
+    }
+    else if(value > 25 && value <=49){
+      score.style.color = "#D85C23";
+    }
+    else if(value >= 50 && value <=74){
+      score.style.color = "#F69220";
+    }
+    else{
+      score.style.color = "#23B473";
+    }
+    score.textContent = value;
+
+
+    let current = 0;
+    const duration = 3000; 
+    const frameRate = 30;
+    const steps = Math.ceil(duration / frameRate);
+    const increment = clamped / steps;
+
+    const counter = setInterval(() => {
+      current += increment;
+      if (current >= clamped) {
+        current = clamped;
+        clearInterval(counter);
+      }
+      score.textContent = Math.round(current);
+    }, frameRate);
+  }
+
     static collapsePreviousParent(data){
       let parentCard = data.parent
 
@@ -566,21 +609,83 @@ $( document ).ready(function() {
 
   class Controls{
     static buildCSV(csvName) {
-      const table = $(".analysis-table-image table").clone()[0];
-  
-
-  
-      // Replace td content with td-replace attribute value if it exists
-      $(table)
-          .find("td[td-replace]")
-          .each(function () {
-              const replacementValue = $(this).attr("td-replace");
-              if (replacementValue) {
-                  $(this).text(replacementValue); // Replace td content with attribute value
-              }
-          });
-      const exporter = new TableCSVExporter(table, csvName);
-      exporter.downloadCSV();
+        // Get the original table structure to preserve headers
+        const originalTable = $(".analysis-table-image table").clone()[0];
+        
+        // Get the DataTable instance
+        const dataTable = $('.custom-dataTable').DataTable();
+        
+        // Get all data from DataTable (not just current page)
+        const allData = dataTable.data().toArray();
+        
+        // Create a new table element with all data
+        const table = document.createElement('table');
+        
+        // Copy the header structure from the original table
+        const originalThead = originalTable.querySelector('thead');
+        if (originalThead) {
+            const newThead = originalThead.cloneNode(true);
+            table.appendChild(newThead);
+        }
+        
+        const tbody = document.createElement('tbody');
+        
+        // Add all data rows
+        allData.forEach(rowData => {
+            const row = document.createElement('tr');
+            rowData.forEach(cellData => {
+                const td = document.createElement('td');
+                
+                // Handle different types of cell data
+                if (typeof cellData === 'string') {
+                    // If it's a string, check if it contains HTML
+                    if (cellData.includes('<')) {
+                        // Create a temporary div to extract text from HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = cellData;
+                        
+                        // Check if it contains an anchor tag with href
+                        const anchor = tempDiv.querySelector('a');
+                        if (anchor && anchor.href) {
+                            td.textContent = anchor.href;
+                        } else {
+                            td.textContent = tempDiv.textContent || tempDiv.innerText || '';
+                        }
+                    } else {
+                        td.textContent = cellData;
+                    }
+                } else if (cellData && cellData.nodeType) {
+                    // If it's a DOM element, check if it's an anchor with href
+                    if (cellData.tagName && cellData.tagName.toLowerCase() === 'a' && cellData.href) {
+                        td.textContent = cellData.href;
+                    } else {
+                        td.textContent = cellData.textContent || cellData.innerText || '';
+                    }
+                } else {
+                    td.textContent = cellData || '';
+                }
+                
+                row.appendChild(td);
+            });
+            tbody.appendChild(row);
+        });
+        
+        table.appendChild(tbody);
+        
+        // Remove hidden elements
+        $(table).find(".export-hidden-element").remove();
+    
+        // Replace td content with td-replace attribute value if it exists
+        $(table)
+            .find("td[td-replace]")
+            .each(function () {
+                const replacementValue = $(this).attr("td-replace");
+                if (replacementValue) {
+                    $(this).text(replacementValue); // Replace td content with attribute value
+                }
+            });
+        const exporter = new TableCSVExporter(table, csvName);
+        exporter.downloadCSV();
     }
 
     static testRequest(results, testLabels){
@@ -3888,6 +3993,9 @@ $( document ).ready(function() {
 
       updateEvents()
       $('#metaTagsUl').removeClass("show")
+      // update health score
+      const healthScore = getReportProgress(dataPassed.length, resultsData.length, false)
+      UI.setNeedleByValue(healthScore)
       removeLoader()
   }
 
@@ -4242,21 +4350,44 @@ $( document ).ready(function() {
               </div>
             </div>
             <div class="col-md-4">
-              <div class="card">
-                <div class="card-body">
-                  <div class="analysis-score analysis-lealthImg">
-                    <p class="title">Health Score</p>
-                    <div class="text-center">
-                      <img src="/new-assets/assets/images/analysis/health-score.png" alt="" />
+           
+                       
+                    
+                    <div class="analysis-score container-health-score">
+                        <div class="title">
+                          <span>Health Score</span>
+                          <span class="card-help">
+                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                  d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0V0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36957 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4V14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4V4Z"
+                                  fill="#D3D5D8" />
+                              </svg>
+                              <div class="card-help-body">
+                                <p>Learn more</p>
+                              </div>
+                          </span>
+                        </div>
+
+                        <div class="healthBarDiv">
+                            <div class="healthScore center">
+                                <div class="label-health poor">POOR</div>
+                                <div class="label-health avg">AVG</div>
+                                <div class="label-health good">GOOD</div>
+                                <div class="label-health best">BEST</div>
+                                </div>
+                            <div class="middleCircle"></div>
+                            <div class="pointer"></div>
+                            <div class="pointer-pivot"></div>
+
+                            <div class="scoreDiv">
+                                <p class="score-health">50</p>
+                            </div>
+                        </div>    
+                        </div>
                     </div>
-                    <p class="text">
-                      Health score reflects how healthy your page is, with
-                      respect to best practices and standards.
-                      <a href="#">Learn More</a>
-                    </p>
-                  </div>
-                </div>
-              </div>
+
+             
             </div>
           </div>
 
@@ -4384,7 +4515,7 @@ function buildDatatable(testLabels) {
 }
 function createDatatableElement() {
   var paginationHtml = `
-  <div class="table-pagination ms-auto datatable-p-25">
+  <div class="table-pagination ms-auto">
       <div class="show-row">
           <span>Show rows:</span>
           <select name="" id="rows-per-page" class="btn btn-outline-gray">

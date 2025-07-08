@@ -26,8 +26,69 @@ class Controls{
 
 
     static buildCSV(csvName) {
-        const table = $(".test_result_area table").clone()[0];
-    
+        // Get the original table structure to preserve headers
+        const originalTable = $(".test_result_area table").clone()[0];
+        
+        // Get the DataTable instance
+        const dataTable = $('.custom-dataTable').DataTable();
+        
+        // Get all data from DataTable (not just current page)
+        const allData = dataTable.data().toArray();
+        
+        // Create a new table element with all data
+        const table = document.createElement('table');
+        
+        // Copy the header structure from the original table
+        const originalThead = originalTable.querySelector('thead');
+        if (originalThead) {
+            const newThead = originalThead.cloneNode(true);
+            table.appendChild(newThead);
+        }
+        
+        const tbody = document.createElement('tbody');
+        
+        // Add all data rows
+        allData.forEach(rowData => {
+            const row = document.createElement('tr');
+            rowData.forEach(cellData => {
+                const td = document.createElement('td');
+                
+                // Handle different types of cell data
+                if (typeof cellData === 'string') {
+                    // If it's a string, check if it contains HTML
+                    if (cellData.includes('<')) {
+                        // Create a temporary div to extract text from HTML
+                        const tempDiv = document.createElement('div');
+                        tempDiv.innerHTML = cellData;
+                        
+                        // Check if it contains an anchor tag with href
+                        const anchor = tempDiv.querySelector('a');
+                        if (anchor && anchor.href) {
+                            td.textContent = anchor.href;
+                        } else {
+                            td.textContent = tempDiv.textContent || tempDiv.innerText || '';
+                        }
+                    } else {
+                        td.textContent = cellData;
+                    }
+                } else if (cellData && cellData.nodeType) {
+                    // If it's a DOM element, check if it's an anchor with href
+                    if (cellData.tagName && cellData.tagName.toLowerCase() === 'a' && cellData.href) {
+                        td.textContent = cellData.href;
+                    } else {
+                        td.textContent = cellData.textContent || cellData.innerText || '';
+                    }
+                } else {
+                    td.textContent = cellData || '';
+                }
+                
+                row.appendChild(td);
+            });
+            tbody.appendChild(row);
+        });
+        
+        table.appendChild(tbody);
+        
         // Remove hidden elements
         $(table).find(".export-hidden-element").remove();
     
@@ -660,14 +721,10 @@ $( document ).ready(function() {
             UI.toggleContent(true)
             removeLoader()
         }
-        modifyCssEndTest()
     }
     modifyCss()
     function modifyCss(){
         $('.tools_sidebar .accordion-body').attr('style', 'margin-top: -10px !important');
-    }
-    function modifyCssEndTest(){
-        $('.table-responsive').attr('style', 'white-space: normal !important');
     }
  
     function buildFailedList(list){
