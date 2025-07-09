@@ -188,6 +188,14 @@ class TestController extends Controller
 
                 if(isset($data["saveInDB"])){
                     $ref_id = $helpers->generateRandomString();
+
+                    // saving ref_id as a cookie
+                    if(isset($data["page"])){
+                        if($data["page"] === "homepage"){
+                            Cookie::queue(Cookie::make('analysis_id', $ref_id));
+                        }
+                    }
+
                     $test = new TestResults();
                     $test->url = $data["urlValue"];
                     $test->testLabels = $data["testLabels"];

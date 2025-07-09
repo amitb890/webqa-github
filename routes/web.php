@@ -105,7 +105,7 @@ Route::middleware('auth')->group(function () {
         Route::get('website-tracker', [App\Http\Controllers\TrackerController::class, 'index'])->name('tracker');
         Route::get('website-tracker-test', [App\Http\Controllers\TrackerController::class, 'indexTest'])->name('trackerTest');
         Route::get('dashboard', [App\Http\Controllers\PagesController::class, 'dashboard'])->name('dashboard');
-        Route::get('/app-analysis/{id}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])->name('app-analysis');
+        Route::get('/app-analysis', [App\Http\Controllers\PagesController::class, 'appAnalysis'])->name('app-analysis');
         Route::resource('profile', App\Http\Controllers\ProfileController::class);
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
         Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap'); 

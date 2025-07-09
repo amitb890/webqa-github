@@ -206,6 +206,7 @@ $( document ).ready(function() {
                 obj = getAllValues(".element-main-area")
                 obj.project = getActiveProjectId()
                 obj.saveInDB = 1
+                obj.page = "homepage"
                 obj.urlValue = document.querySelector("#urlValue").value
                 obj.urlValue = constructTestURL(obj.urlValue);
 
@@ -228,7 +229,7 @@ $( document ).ready(function() {
 
                             startStatus = true
                         }else if(data.status === 1){
-                            window.location.href = `/app-analysis/${data.ref_id}`
+                            window.location.href = `/app-analysis`
                         }else if(data.status === 2){
                             removeLoader()
                             $('.validationPopup').show()

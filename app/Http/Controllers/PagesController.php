@@ -13,6 +13,7 @@ use AllLabels;
 use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Cookie;
 $FastImageSize = new \FastImageSize\FastImageSize();
 
 
@@ -240,9 +241,17 @@ class PagesController extends Controller
         return view("dashboard");
     }
 
-    public function appAnalysis($id){
-        $data = TestResults::where("ref_id", $id)->get()->first();
-        return view("user.analysis.index", compact("data"));
+    public function appAnalysis(Request $request){
+        if ($request->hasCookie('analysis_id')) {
+            $id = Cookie::get('analysis_id');
+            $data = TestResults::where("ref_id", $id)->get()->first();
+            if(!$data){
+              abort(404);
+            }
+            return view("user.analysis.index", compact("data"));
+        } else {
+            abort(404);
+        }
     }
     
     public function urlDiscovery(){

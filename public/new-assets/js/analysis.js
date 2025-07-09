@@ -1,5 +1,6 @@
 $( document ).ready(function() {
 
+
   const CSV_FILE_NAME = "QA Results.csv";
   const CSV_FILE_NAME_BROKEN_LINKS = "QA Results - Broken Links.csv";
 
@@ -64,9 +65,6 @@ $( document ).ready(function() {
   })
   
 
-
-
-  
 
 
   // DEALS WITH UI ELEMENTS(BUILDING AND RENDERING HTML TO THE DOM)
@@ -606,7 +604,6 @@ $( document ).ready(function() {
   }
 
 
-
   class Controls{
     static buildCSV(csvName) {
         // Get the original table structure to preserve headers
@@ -688,7 +685,29 @@ $( document ).ready(function() {
         exporter.downloadCSV();
     }
 
-    static testRequest(results, testLabels){
+
+    static fetchCachedTestResult(testKey) {
+      return fetch(`/api/cached-test?test_key=${testKey}`)
+        .then(res => res.json());
+    }
+
+    static saveCachedTestResult(testKey, result, testLabels) {
+      return fetch('/api/cached-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          test_key: testKey,
+          result,
+          test_labels: JSON.stringify(testLabels),
+          resultsData: JSON.stringify(resultsData),
+          dataFailed: JSON.stringify(dataFailed),
+          dataPassed: JSON.stringify(dataPassed),
+          projectUrl: projectUrl,
+        })
+      });
+    }
+
+    static testRequest(results, testLabels, testKey, resultsByLabel = {}){
       const label = testLabels[testIndex]
       testIndex++;
 
@@ -706,12 +725,17 @@ $( document ).ready(function() {
           },       
           success: function(data) {
             Controls.buildTest(data, label, testLabels)
+            resultsByLabel[label.name] = data;
             if(testLabels.length === resultsData.length){
               window.setTimeout(function(){
-                endTest(data, testLabels)
+                endTest(testLabels)
+
+                // When the test is done, save the result
+                // You may need to adjust this if your test is async
+                Controls.saveCachedTestResult(testKey, resultsByLabel, testLabels);
               }, 3000)
             }else{
-              Controls.testRequest(results, testLabels)              
+              Controls.testRequest(results, testLabels, testKey, resultsByLabel)              
             }
           }
           });
@@ -763,7 +787,7 @@ $( document ).ready(function() {
 
 
 
-    static buildTest(data, label, testLabels){
+    static buildTest(data, label, testLabels, cachedExist = false){
         data = JSON.parse(data)
         data.label = label
         // testing casing
@@ -870,7 +894,7 @@ $( document ).ready(function() {
             }
         }
 
-        buildResult(testLabels, data)
+        buildResult(testLabels, data, cachedExist)
     }
 
     static collapseCard(){
@@ -1331,44 +1355,37 @@ $( document ).ready(function() {
   }
 
 
+
+
+
+
+
+
+  // main test logic
   const ref_id = $("#test_id").val()
-
-  $.ajax({
-      url : `/test/get-analysis`,
-      type : 'POST',
-      data: {
-          "ref_id": ref_id,
-          "_method": 'POST',
-          "_token": $('meta[name="csrf-token"]').attr('content'),
-      },       
-      success : function(result) {
-          if(result.status === 1){
-            let data = result.data
-            projectUrl = data.url
-
-            const testLabels = JSON.parse(data.testLabels)
-            buildLoader(obj, testLabels)
-
-            setTimeout(function (){
-              const results = JSON.parse(data.data)
-              Controls.updatePageTitleDesc(results)
-
-
-              Controls.testRequest(results, testLabels)
-            }, 1000);
-          }
-      },
-      error: function(data){
-          if(!checkIfAuthenticated(data.responseJSON)){
-              window.location = "/login"
-          }
-          removeLoader()
-          displayAlert({
-              status: 0,
-              msg: data.responseJSON.message
-          })
-      }
+  const testKey = ref_id;
+  Controls.fetchCachedTestResult(testKey).then(data => {
+    if (data.result) {
+      const labels = JSON.parse(data.test_labels)
+      projectUrl = data.projectUrl; // restore projectUrl
+      resultsData = JSON.parse(data.resultsData || '[]');
+      dataFailed = JSON.parse(data.dataFailed || '[]');
+      dataPassed = JSON.parse(data.dataPassed || '[]');
+      labels.forEach(label => {
+        const result = data.result[label.name]
+        Controls.buildTest(result, label, labels, true)
+        
+      })
+      endTest(JSON.parse(data.test_labels));
+      removeLoader();
+    } else {
+      // No cache, run test as usual
+      runTestAndCache(testKey);
+    }
   });
+
+  // end of main test logic
+
 
 
 
@@ -1385,9 +1402,6 @@ $( document ).ready(function() {
   $("#hidePassedImages").on( "change", function(e) {
       hideThatPass(e, "images")
   })
-
-
-
 
 
   document.getElementById('updateStatusModal').addEventListener('hidden.bs.modal', function (event) {
@@ -1434,10 +1448,6 @@ $( document ).ready(function() {
       Controls.sendEmail()
     }
   });
-
-
-
-
 
 
   $("#confirmStatusUpdate").on( "click", function(e) {
@@ -1500,6 +1510,12 @@ $( document ).ready(function() {
       const parent = e.target.parentElement.parentElement.parentElement.parentElement
       updateCustomizerInputStatus(parent, e)
   })
+
+
+
+
+
+
 
   function updateCustomizerInputStatus(parent, e){
       const inputs = parent.querySelectorAll("input")
@@ -3036,8 +3052,10 @@ $( document ).ready(function() {
   } 
 
 
-  function buildResult(testLabels, data){
-      updateProgress(testLabels, data)
+  function buildResult(testLabels, data, buildResult){
+      if(!buildResult){
+        updateProgress(testLabels, data)
+      }
       if(data.name === "google_check"){
           buildElementGoogle(data)
       }else if(data.name === "og_tags" || data.name === "twitter_tags"){
@@ -3963,9 +3981,47 @@ $( document ).ready(function() {
   }
 
       
+  function runTestAndCache(testKey){
+    $.ajax({
+      url : `/test/get-analysis`,
+      type : 'POST',
+      data: {
+          "ref_id": ref_id,
+          "_method": 'POST',
+          "_token": $('meta[name="csrf-token"]').attr('content'),
+      },       
+      success : function(result) {
+          if(result.status === 1){
+            let data = result.data
+            projectUrl = data.url
+
+            const testLabels = JSON.parse(data.testLabels)
+            buildLoader(obj, testLabels)
+
+            setTimeout(function (){
+              const results = JSON.parse(data.data)
+              Controls.updatePageTitleDesc(results)
 
 
-  function endTest(data, testLabels){
+              Controls.testRequest(results, testLabels, testKey)
+            }, 1000);
+          }
+      },
+      error: function(data){
+          if(!checkIfAuthenticated(data.responseJSON)){
+              window.location = "/login"
+          }
+          removeLoader()
+          displayAlert({
+              status: 0,
+              msg: data.responseJSON.message
+          })
+      }
+    }); 
+  }
+
+
+  function endTest(testLabels){
     
       buildNavTabs(testLabels)
       buildAnalysisArea(testLabels)
@@ -3974,7 +4030,7 @@ $( document ).ready(function() {
       disableSliderRange()
       UI.updateEmailModal()
       UI.toggleTiles(extendedTiles)
-      buildDatatable(data)
+      buildDatatable()
 
       // updating snippet element title and description
       UI.updateSnippetElement(pageTitle, pageDesc)
