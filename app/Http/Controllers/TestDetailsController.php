@@ -161,8 +161,8 @@ class TestDetailsController extends Controller
                 if($element->status){
                     $sitemapExists+=1;
                 }else{
-                    array_push($sitemapNotFound, $elememt->tested_url);
-                    $sitemapNotFoundString+= $index + ". " + $elememt->tested_url;
+                    array_push($sitemapNotFound, $element->tested_url);
+                    $sitemapNotFoundString .= $index . ". " . $element->tested_url;
                 }
             }
 
@@ -242,8 +242,8 @@ class TestDetailsController extends Controller
                 if($element->status){
                     $sitemapExists+=1;
                 }else{
-                    array_push($sitemapNotFound, $elememt->tested_url);
-                    $sitemapNotFoundString+= $index + ". " + $elememt->tested_url;
+                    array_push($sitemapNotFound, $element->tested_url);
+                    $sitemapNotFoundString .= $index . ". " . $element->tested_url;
                 }
             }
 

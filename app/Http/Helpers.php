@@ -38,6 +38,7 @@ class Helpers{
         else {
             $urlInfo = parse_url($pageUrl);
             $base = $urlInfo['scheme'].'://'.$urlInfo['host'];
+            $path = isset($urlInfo['path']) ? $urlInfo['path'] : '';
             if (substr($imgSrc,0,1) == '/') {
                 //img src is relative from the root URL
                 return $base . $imgSrc;
@@ -46,7 +47,7 @@ class Helpers{
                 //img src is relative from the current directory
                 return
                         $base
-                        . substr($urlInfo['path'],0,strrpos($urlInfo['path'],'/'))
+                        . substr($path,0,strrpos($path,'/'))
                         . '/' . $imgSrc;
             }
         }

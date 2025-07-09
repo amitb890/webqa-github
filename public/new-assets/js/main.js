@@ -815,6 +815,8 @@ function displayAlertSwithProject(classVal, data){
                 if(data.valid) {
                   if(data.sitemap) {
                     sitemapNext()
+                    $('.form-single-text').hide()
+
                   } else {
                     const alert = buildAlertNew(`The URL you entered is not an XML Sitemap.`);
                   $('#xmlSitemap').after(alert);

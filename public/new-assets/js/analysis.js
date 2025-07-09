@@ -1368,9 +1368,7 @@ $( document ).ready(function() {
     if (data.result) {
       const labels = JSON.parse(data.test_labels)
       projectUrl = data.projectUrl; // restore projectUrl
-      resultsData = JSON.parse(data.resultsData || '[]');
-      dataFailed = JSON.parse(data.dataFailed || '[]');
-      dataPassed = JSON.parse(data.dataPassed || '[]');
+    
       labels.forEach(label => {
         const result = data.result[label.name]
         Controls.buildTest(result, label, labels, true)

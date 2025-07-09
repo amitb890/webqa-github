@@ -137,7 +137,6 @@ class UI{
     static getBrokenLinks(allLinks){
         let html = ""
         let i = 0
-        console.log(allLinks)
         for (var key in allLinks) {
           if (allLinks.hasOwnProperty(key)) {
               let status
@@ -784,7 +783,6 @@ $( document ).ready(function() {
         tbody3.classList.add("result_data_body")
         tbody4.classList.add("result_data_body")
 
-        console.log(label.name)
         switch(label.name){
             case "title":
                 table.classList.add("dataTable")
@@ -2422,7 +2420,6 @@ class ToolXlsx {
         // Clone the table to work with
         const table = $(".test_result_area table").clone()[0];
         $(table).find(".export-hidden-element").remove();
-        console.log(table)
         // Add rows and apply styles
         ToolXlsx.addTableToSheet(table, worksheet);
 
