@@ -760,7 +760,7 @@ function validateFrontFooter(data, type){
         data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
         return false
     }else if(!isValidURL(value)){
-        let msgInvalid = `${value} is an incorrect URL format, please enter the URL in the correct format and try again.`
+        let msgInvalid = `Incorrect URL format.`
         const alert = buildAlertNew(msgInvalid)
         data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
         return false
@@ -805,8 +805,9 @@ function validateFront(data, type){
         }
     }else{
         if(!isValidURL(value)){
-            let msgInvalid = `${value} is an incorrect URL format, please enter the URL in the correct format and try again.`
+            let msgInvalid = `Incorrect URL format.`
             const alert = buildAlertNew(msgInvalid)
+            alert.classList.add("ms-4")
             data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
             return false
         }

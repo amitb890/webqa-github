@@ -33,10 +33,13 @@ class TestController extends Controller
             'urlValue.required'=>'URL is required.',
         ]);
 
-       if( !$validator->passes() ){
+               if( !$validator->passes() ){
            return response()->json(['status'=>0,'msg'=>$validator->errors()->toArray()]);
        }else{
-            // $data["urlValue"] = $helpers->removeQueryParams($data["urlValue"]);
+            // Only remove query parameters if the URL contains them
+            if (strpos($data["urlValue"], '?') !== false) {
+                $data["urlValue"] = $helpers->removeQueryParams($data["urlValue"]);
+            }
             $failedUrls = [];
             $failedStatus = [404,'404'];
             Session::forget('google_page_speed_desktop');

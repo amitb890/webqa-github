@@ -1249,8 +1249,6 @@ function removeQueryParams($url) {
                 (isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '') .
                 (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
 
-    echo $cleanUrl;
-
     return $cleanUrl;
 }
 

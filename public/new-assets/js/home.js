@@ -130,6 +130,7 @@ $( document ).ready(function() {
 
 
     function runTest(testLabels, url, type){
+        console.log(url)
         let alertClass
         if(type === "default"){
             alertClass = ".footer-form-container"

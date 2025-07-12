@@ -22,7 +22,7 @@
                   type="text"
                   class="footer_control"
                   name="search"
-                  placeholder="Enter upto 100 urls, put each url in seperate line"
+                  placeholder="Enter a URL to conduct a test"
                 />
                 <div class="footer_utils">
                   <a type="button" id="startTest" class="btn btn_primary rounded-pill">Test Now</a>
