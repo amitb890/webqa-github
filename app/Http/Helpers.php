@@ -25,6 +25,7 @@ class Helpers{
         return (substr($string, 0, $l) === $startStr);
     }
 
+
     function getAbsoluteImageUrl($pageUrl,$imgSrc){
         $imgInfo = parse_url($imgSrc);
         if (!empty($imgInfo['host'])) {
@@ -52,6 +53,8 @@ class Helpers{
             }
         }
     }   
+
+    
     public static function hasUppercase($str){
         return preg_match('/[A-Z]/', $str);
     }
