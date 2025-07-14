@@ -70,7 +70,10 @@ class RunTest implements ShouldQueue
         $DB_MSG = "";
         if($this->type === "recheck"){
             $DB_MSG = "Your dashboard has been rechecked for <b>" .  count($urlList) . " Urls</b>.";
-        }else{
+        }else if($this->type === "single_recheck"){
+            $DB_MSG = "Your dashboard has been rechecked for <b>" .  $this->recheck_label . "</b>.";
+        }
+        else{
             $DB_MSG = "Your dashboard has been prepared for <b>" .  count($urlList) . " Urls</b> only. To check the whole project, please <a id='recheckHyperlink' href='javascript:void()'>re-check</a> once.";
         }
 

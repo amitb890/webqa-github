@@ -46,6 +46,28 @@ class TestController2 extends Controller
         if($type != "single_recheck"){ // only delete if not single recheck
             $projectsController->removeDashboardData($project_id);
             Alerts::where("project_id", $project_id)->delete();
+        } else {
+            // Only remove the specific label from results for all URLs
+            $dashboardTest = DashboardTests::where("project_id", $project_id)->latest()->first();
+            if ($dashboardTest && $recheck_label) {
+                $results = json_decode($dashboardTest->results, true);
+                $changed = false;
+                if (is_array($results)) {
+                    foreach ($results as $url => &$labels) {
+                        if (isset($labels[$recheck_label])) {
+                            unset($labels[$recheck_label]);
+                            $changed = true;
+                        }
+                        // Optionally remove URL if no labels left:
+                        // if (empty($labels)) unset($results[$url]);
+                    }
+                    unset($labels); // break reference
+                    if ($changed) {
+                        $dashboardTest->results = json_encode($results);
+                        $dashboardTest->save();
+                    }
+                }
+            }
         }
 
 
@@ -262,7 +284,7 @@ class TestController2 extends Controller
         $min = $settings->settings_sub->min_desc_length_val;
         $title = "Meta Description";
         $content = $data["description"];
-        $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page’s content and give searchers a reason to click";
+        $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
         $message = "Your webpage is using a meta description tag";
         $length = strlen($content);
         $lengthClass = "result_pass";
@@ -1398,7 +1420,7 @@ class TestController2 extends Controller
         }
 
         $title = "XML Sitemap";
-        $description = "An XML sitemap is a file that lists a website’s important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability and indexability.";
+        $description = "An XML sitemap is a file that lists a website's important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability and indexability.";
         $message = "XML Sitemap check excluded.";
         $xmldata = "";
 
@@ -1785,7 +1807,7 @@ class TestController2 extends Controller
         $urlValue = $testedUrl;
         $isGzipCompression = $settings->settings_sub->is_gzip_compression;
         $title = "Gzip Compression";
-        $description = "Gzip is a file format used to compress HTTP content before it’s served to a client. GZip is a form of data compression, it takes a chunk of data and makes it smaller. <br><br> When Gzip compression is enabled,people visiting the site will be downloading smaller files which will help in quicker page loads.";
+        $description = "Gzip is a file format used to compress HTTP content before it's served to a client. GZip is a form of data compression, it takes a chunk of data and makes it smaller. <br><br> When Gzip compression is enabled,people visiting the site will be downloading smaller files which will help in quicker page loads.";
         $message = "Gzip compression is enabled";
         $showContent = false;
         $tagStatus = false;
@@ -2335,7 +2357,7 @@ class TestController2 extends Controller
         $title = "Core Web Vitals";
         $titleDesktop = "Core Web Vitals (Desktop)";
         $titleMobile = "Core Web Vitals (Mobile)";
-        $description = "Core Web Vitals are a set of specific factors that Google considers important in a webpage’s overall user experience. Core Web Vitals are made up of three specific page speed and user interaction measurements: largest contentful paint, first input delay, and cumulative layout shift.Core Web Vitals are a subset of factors that is part of Google’s page experience score.<br><br>";
+        $description = "Core Web Vitals are a set of specific factors that Google considers important in a webpage's overall user experience. Core Web Vitals are made up of three specific page speed and user interaction measurements: largest contentful paint, first input delay, and cumulative layout shift.Core Web Vitals are a subset of factors that is part of Google's page experience score.<br><br>";
         
         $message = "Core web vitals check excluded";
         $messageDesktop = "Core web vitals for dekstop is meeting quality reqruirements.";

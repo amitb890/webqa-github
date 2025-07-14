@@ -267,6 +267,7 @@ $(document).ready(function () {
     }
 
     static buildDBAlerts(alerts){
+      $(".analysis-content-body-message").html("")
       alerts.forEach(alert=>{
         displayAlert(".analysis-content-body-message", {
           status: 3,
@@ -2117,6 +2118,25 @@ $(document).ready(function () {
       document.querySelector(".project-toggle-container").classList.remove("d-none")
       document.querySelector("#urlSearchForm").classList.remove("d-none")
     }
+
+    static updateSingleTileProgress(target, results, dbName, totalUrls) {
+      let processed = 0;
+      if (results && typeof results === 'object') {
+        for (const url in results) {
+          if (results[url] && results[url][dbName]) {
+            processed++;
+          }
+        }
+      }
+      let progress = totalUrls > 0 ? Math.round((processed / totalUrls) * 100) : 0;
+      // Update the progress bar in the target tile
+      const progressBar = target.querySelector('.dashboard-page-speed-progress');
+      const progressText = target.querySelector('.page_speed_content span');
+      if (progressBar && progressText) {
+        progressBar.style.width = progress + "%";
+        progressText.innerHTML = progress + "%";
+      }
+    }
   }
 
 
@@ -2548,7 +2568,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                Controls.buildGoogleElements()
+                // Controls.buildGoogleElements()
             });
             
         });
@@ -2723,6 +2743,50 @@ $(document).ready(function () {
     static refreshTile(dbName, target){
       const name = target.querySelector(".dashboard_title p").textContent
       refreshTileDbName = dbName
+      obj = {
+        meta_title: [],
+        meta_desc: [],
+        robots_meta: [],
+        canonical_url: [],
+        url_slug: [],
+        meta_viewport: [],
+        doctype: [],
+        favicon: [],
+        page_size: [],
+        xml_sitemap: [],
+        html_sitemap: [],
+        images: [],
+        open_graph_tags: [],
+        twitter_tags: [],
+        http_status_code: [],
+        security_labels: {
+            is_safe_browsing: [],
+            cross_origin_links: [],
+            protocol_relative_resource: [],
+            content_security_policy_header: [],
+            x_frame_options_header: [],
+            hsts_header: [],
+            bad_content_type: [],
+            ssl_certificate_enable: [],
+            folder_browsing_enable: [],
+        },
+        cbp_labels: {
+            html_compression: [],
+            css_compression: [],
+            js_compression: [],
+            gzip_compression: [],
+            nested_tables: [],
+            frameset: [],
+            page_size: [],
+            css_caching_enable: [],
+            js_caching_enable: [],
+            frameset: [],
+        },
+        google_overall: [],
+        google_lighthouse: [],
+        core_web_vitals: [],
+        mobile_friendly: [],
+      }
       UI.buildRefreshTileLoader(dbName, target, name)
       originalUrls = originalUrls.slice(0, 10) // remove
       Controls.startTest(originalUrls, "single_recheck", dbName)
@@ -2731,14 +2795,12 @@ $(document).ready(function () {
         const interval = setInterval(async () => {
             const response = await fetch(`/api/check-status-dashboard/${projectId}`);
             const { status, results } = await response.json();
-
-
+          
+            UI.updateSingleTileProgress(target, results, dbName, originalUrls.length);
 
             if (status === 'completed') {
                 clearInterval(interval);
-
                 Controls.endTest("single_recheck")
-
             }
         }, 1000); // Check every 5 seconds
       }
