@@ -338,13 +338,15 @@ class RunTest implements ShouldQueue
 
         
         // create success alert
-        $alert = new Alerts();
-        $alert->user_id = $userId;
-        $alert->project_id = $projectId;
-        $alert->message = $DB_MSG;
-        $alert->page = "dashboard";
-        $alert->status = 1;
-        $alert->save();
+        if($this->type != "single_recheck"){
+            $alert = new Alerts();
+            $alert->user_id = $userId;
+            $alert->project_id = $projectId;
+            $alert->message = $DB_MSG;
+            $alert->page = "dashboard";
+            $alert->status = 1;
+            $alert->save();
+        }
         
     }
 

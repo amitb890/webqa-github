@@ -647,6 +647,10 @@ class TestDetailsController extends Controller
         $desktopStatus = true;
 
         foreach($elements as $element){
+            // Skip if this element is an error object
+            if (!isset($element->desktop) || !isset($element->mobile)) {
+                continue;
+            }
             $totalElements++;
             $desktopOverallAvg+=$element->desktop->performance_score;
             $mobileOverallAvg+=$element->mobile->performance_score;
@@ -675,8 +679,13 @@ class TestDetailsController extends Controller
             }
         }
 
-        $desktopOverallAvg = intVal($desktopOverallAvg/$totalElements);
-        $mobileOverallAvg = intVal($mobileOverallAvg/$totalElements);
+        if ($totalElements > 0) {
+            $desktopOverallAvg = intVal($desktopOverallAvg/$totalElements);
+            $mobileOverallAvg = intVal($mobileOverallAvg/$totalElements);
+        } else {
+            $desktopOverallAvg = 0;
+            $mobileOverallAvg = 0;
+        }
 
         $colorDesktop = $helpers->getGoogleInsightsColorByScore($desktopOverallAvg);
         $colorMobile = $helpers->getGoogleInsightsColorByScore($mobileOverallAvg);
@@ -753,6 +762,9 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
+            if (!isset($element->desktop) || !isset($element->mobile)) {
+                continue;
+            }
             $totalElements++;
             $desktopAccAvg+=$element->desktop->accessibility_score;
             $desktopPerAvg+=$element->desktop->performance_score;
@@ -849,15 +861,19 @@ class TestDetailsController extends Controller
             }
         }
 
-        $desktopAccAvg = $desktopAccAvg/$totalElements;
-        $desktopPerAvg = $desktopPerAvg/$totalElements;
-        $desktopBPAvg = $desktopBPAvg/$totalElements;
-        $desktopSeoAvg = $desktopSeoAvg/$totalElements;
-
-        $mobileAccAvg = $mobileAccAvg/$totalElements;
-        $mobilePerAvg = $mobilePerAvg/$totalElements;
-        $mobileBPAvg = $mobileBPAvg/$totalElements;
-        $mobileSeoAvg = $mobileSeoAvg/$totalElements;
+        if ($totalElements > 0) {
+            $desktopAccAvg = $desktopAccAvg/$totalElements;
+            $desktopPerAvg = $desktopPerAvg/$totalElements;
+            $desktopBPAvg = $desktopBPAvg/$totalElements;
+            $desktopSeoAvg = $desktopSeoAvg/$totalElements;
+            $mobileAccAvg = $mobileAccAvg/$totalElements;
+            $mobilePerAvg = $mobilePerAvg/$totalElements;
+            $mobileBPAvg = $mobileBPAvg/$totalElements;
+            $mobileSeoAvg = $mobileSeoAvg/$totalElements;
+        } else {
+            $desktopAccAvg = $desktopPerAvg = $desktopBPAvg = $desktopSeoAvg = 0;
+            $mobileAccAvg = $mobilePerAvg = $mobileBPAvg = $mobileSeoAvg = 0;
+        }
 
         
         // color
@@ -1021,6 +1037,9 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
+            if (!isset($element->desktop) || !isset($element->mobile)) {
+                continue;
+            }
             $totalElements++;
 
             // DESKTOP AVG SCORES
@@ -1200,21 +1219,27 @@ class TestDetailsController extends Controller
             }
         }
 
-        $desktopLCPAvg = $desktopLCPAvg/$totalElements;
-        $desktopFCPAvg = $desktopFCPAvg/$totalElements;
-        $desktopCLSAvg = $desktopCLSAvg/$totalElements;
-        $desktopFIDAvg = $desktopFIDAvg/$totalElements;
-        $desktopTTIAvg = $desktopTTIAvg/$totalElements;
-        $desktopSIAvg = $desktopSIAvg/$totalElements;
-        $desktopTBTAvg = $desktopTBTAvg/$totalElements;
+        // Division by zero protection for averages
+        if ($totalElements > 0) {
+            $desktopLCPAvg = $desktopLCPAvg/$totalElements;
+            $desktopFCPAvg = $desktopFCPAvg/$totalElements;
+            $desktopCLSAvg = $desktopCLSAvg/$totalElements;
+            $desktopFIDAvg = $desktopFIDAvg/$totalElements;
+            $desktopTTIAvg = $desktopTTIAvg/$totalElements;
+            $desktopSIAvg = $desktopSIAvg/$totalElements;
+            $desktopTBTAvg = $desktopTBTAvg/$totalElements;
 
-        $mobileLCPAvg = $mobileLCPAvg/$totalElements;
-        $mobileFCPAvg = $mobileFCPAvg/$totalElements;
-        $mobileCLSAvg = $mobileCLSAvg/$totalElements;
-        $mobileFIDAvg = $mobileFIDAvg/$totalElements;
-        $mobileTTIAvg = $mobileTTIAvg/$totalElements;
-        $mobileSIAvg = $mobileSIAvg/$totalElements;
-        $mobileTBTAvg = $mobileTBTAvg/$totalElements;
+            $mobileLCPAvg = $mobileLCPAvg/$totalElements;
+            $mobileFCPAvg = $mobileFCPAvg/$totalElements;
+            $mobileCLSAvg = $mobileCLSAvg/$totalElements;
+            $mobileFIDAvg = $mobileFIDAvg/$totalElements;
+            $mobileTTIAvg = $mobileTTIAvg/$totalElements;
+            $mobileSIAvg = $mobileSIAvg/$totalElements;
+            $mobileTBTAvg = $mobileTBTAvg/$totalElements;
+        } else {
+            $desktopLCPAvg = $desktopFCPAvg = $desktopCLSAvg = $desktopFIDAvg = $desktopTTIAvg = $desktopSIAvg = $desktopTBTAvg = 0;
+            $mobileLCPAvg = $mobileFCPAvg = $mobileCLSAvg = $mobileFIDAvg = $mobileTTIAvg = $mobileSIAvg = $mobileTBTAvg = 0;
+        }
 
         // color
         $colorLCPDesktop = $helpers->getGoogleCWVColorByScore($desktopLCPAvg, "LCPMobile");

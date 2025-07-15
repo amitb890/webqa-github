@@ -246,6 +246,12 @@ class ProjectsController extends Controller
         return response()->json(['status' => 1, 'msg' => 'Success.', 'googleStatus' => $project->google_show_status]);
     }
 
+    public function resetGoogleStatus($projectId){
+        Projects::where('id', $projectId)->update(['google_show_status'=>0]);
+        \App\Models\LighthouseTest::where('project_id', $projectId)->delete();
+        return response()->json(['status' => 1, 'msg' => 'Google status reset to 0 and previous Lighthouse results deleted.']);
+    }
+
     /**
      * Get project data for DataTables.
      *

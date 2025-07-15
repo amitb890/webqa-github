@@ -9278,7 +9278,7 @@ h6 {
   width: 16px;
   margin-right: 5px;
 }
-.result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
+/* .result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
 	font-size: 13px;
 	line-height: 18px;
 	color: #6E6E6E;
@@ -9286,7 +9286,7 @@ h6 {
 	border-bottom: none;
   border-left: none;
   vertical-align: middle;
-}
+} */
 
 .result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
   text-align: center!important;
@@ -13240,12 +13240,11 @@ nav .nav-tabs{
 }
 
 /* DataTable styling to prevent horizontal scrollbars and ensure proper width */
-.table-responsive {
+.table-responsive:not(.tracker-table .table-responsive) {
   white-space: normal !important;
 }
 
-.table-responsive table {
+.table-responsive table:not(#reportTable) {
   width: 100% !important;
 }
-
 

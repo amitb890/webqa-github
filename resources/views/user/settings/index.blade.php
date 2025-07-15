@@ -3267,6 +3267,146 @@
                         </div>
                       </div>
                       <div class="score-range-flex">
+                        <div class="slider-range score-range1">
+                          <span class="span-left">90</span>
+                          <input
+                            id="score10"
+                            type="text"
+                            data-slider-id="slider22"
+                            class="slider-input"
+                            data-slider-min="0"
+                            data-slider-max="100"
+                            data-slider-step="1"
+                            data-slider-value="{{ $settings->settingsSub->google_seo_mobile_val}}"
+                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]'
+                          />
+                          <span class="span-right">120</span>
+                        </div>
+                        <div class="range-value">
+                          <p>Greater than</p>
+                          <input class="slider-input-text" type="number" id="googleSeoMobileVal" value="{{ $settings->settingsSub->google_seo_mobile_val}}" min="0" max="100">
+                        </div>
+                      </div>
+                    </div>
+                    <!-- single item -->
+                  </div>
+                </div>
+              </div>
+              <!-- performance button -->
+              <div class="accor-content-button performance-button">
+                <input
+                  class="reset-default btn btn_primary rounded-pill"
+                  type="submit"
+                  value="Reset"
+                  id="defaultSettingsGoogleLighthouse"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- single accordion item -->
+          <div class="accor-single-item">
+            <div class="accor-head">
+              <div class="accor-title-btn">
+                <button>
+                  <img
+                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
+                    alt="btn"
+                  />
+                </button>
+                <span>Core Web Vitals</span>
+              </div>
+              <div class="accor-head-switch">
+                <div class="toggle-button-cover">
+                  <div class="button-cover">
+                    <div class="button r" id="button-9">
+                      <input
+                        type="checkbox"
+                        class="checkbox"
+                        {{ $settings->core_web_vitals ? "checked" : "" }} id="switchCoreWebVitals" name="switchCoreWebVitals"
+                      />
+                      <div class="knobs">
+                        <span></span>
+                      </div>
+                      <div class="layer"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="accor-body">
+              <div class="meta-content performance-content">
+                <div class="performance-left">
+                  <div class="accor-content">
+                    <div class="performance-title">
+                      <h4>Desktop</h4>
+                      <svg
+                        width="27"
+                        height="24"
+                        viewBox="0 0 27 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
+                          fill="#222222"
+                        />
+                      </svg>
+                    </div>
+                    <!-- single item 1 -->
+                    <div class="overall-item overall-item2">
+                      <div class="tooltips-flex">
+                        <div class="form-check">
+                          <input
+                            class="form-check-input"
+                            type="checkbox"
+                            id="googleLCPDesktop" {{ $settings->settingsSub->google_lcp_desktop ? "checked" : "" }}
+                          />
+                          <label
+                            class="form-check-label"
+                            for="googleLCPDesktop"
+                          >
+                            Largest Contentful Paint
+                          </label>
+                        </div>
+                        <div class="overall-tooltips">
+                          <div class="tooltips-contents">
+                            <p>
+                              Lorem Ipsum is simply dummy text of the
+                              printing and typesetting industry.
+                            </p>
+                            <div class="color-flex">
+                              <p><span></span>&nbsp; Poor</p>
+                              <h6>0-49</h6>
+                            </div>
+                            <div class="color-flex">
+                              <p><span></span>&nbsp; Average</p>
+                              <h6>50-89</h6>
+                            </div>
+                            <div class="color-flex">
+                              <p><span></span>&nbsp; Good</p>
+                              <h6>90-100</h6>
+                            </div>
+                          </div>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                              fill="#D3D5D8"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <div class="score-range-flex">
                         <div class="slider-range score-range2">
                           <span class="span-left">0</span>
                           <input
@@ -6716,7 +6856,7 @@
 
     val = val.substring(0, val.length - 1);
 
-    $("#httpStatusCodeAccepted").val(val)
+    $("#http_status_code_accepted").val(val)
   }
 
   function initCasingInput(){

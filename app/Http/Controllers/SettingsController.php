@@ -659,7 +659,7 @@ class SettingsController extends Controller
             $settingsSub->doctype = $data["isDoctype"];
 
             // http status
-            $settingsSub->http_status_code_accepted = $data["httpStatusCodeAccepted"];
+            $settingsSub->http_status_code_accepted = $data["http_status_code_accepted"];
 
             // HSTS
             $settingsSub->hsts_header = $data["isHSTS"];

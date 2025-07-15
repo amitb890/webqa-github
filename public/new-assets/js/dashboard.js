@@ -1,6 +1,8 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckMax = 20, htmlSitemapData, recheckAllowed = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1
+  var recheckMax = 20, recheckGoogle = 2, recheckSingleMax = 50
+  var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
   var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {
@@ -89,7 +91,7 @@ $(document).ready(function () {
       });
     }
 
-    static async startGoogleTests() {
+    static async startGoogleTests(urlsGoogle) {
       const response = await fetch('/api/start-tests', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' ,
@@ -97,7 +99,7 @@ $(document).ready(function () {
           },
           body: JSON.stringify({ 
             "_token": $('meta[name="csrf-token"]').attr('content'),
-            "urls":urls.slice(0, googleUrlsToCheck), 
+            "urls":urls.slice(0, urlsGoogle), 
             "project_id": projectId
           })
       });
@@ -2284,7 +2286,7 @@ $(document).ready(function () {
       }
       return getReportProgress(resultsTotal, total, false)
     }
-    static buildGoogleElements(){
+    static buildGoogleElements(refreshState = false){
       // CHECKING IF GOOGLE ELEMENTS WERE STARTED OR NOT
       DB.getGoogleShowStatus(projectId)
       .done(function(data) {
@@ -2293,7 +2295,13 @@ $(document).ready(function () {
           }else{
 
             (async () => {
-              const testId = await DB.startGoogleTests()
+              let urlsGoogle
+              if(refreshState){
+                urlsGoogle = recheckGoogle
+              }else{
+                urlsGoogle = googleUrlsToCheck
+              }
+              const testId = await DB.startGoogleTests(urlsGoogle)
 
             })()
           }
@@ -2568,7 +2576,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                // Controls.buildGoogleElements()
+                Controls.buildGoogleElements()
             });
             
         });
@@ -2603,11 +2611,15 @@ $(document).ready(function () {
           const interval = setInterval(async () => {
               const response = await fetch(`/api/check-status/${projectId}`);
               const { status, results } = await response.json();
-              Controls.updateGoogleCards(results)
+
+              const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
 
               if (status === 'completed') {
                   clearInterval(interval);
+                  if (handleGoogleResults(results, googleTiles)) {
+                    Controls.updateGoogleCards(results)
+                  }
                   Controls.finalizeGoogleElements(results)
 
               }
@@ -2677,7 +2689,11 @@ $(document).ready(function () {
           refreshTileDisabled = true
           const target = e.target.closest(".single_dashboard_card_main")
           const elementDbName = target.getAttribute("data-label")
-          Controls.refreshTile(elementDbName, target)
+          if(ignore_tests.includes(elementDbName)){
+            Controls.refreshTileGoogle(elementDbName, target)
+          }else{
+            Controls.refreshTile(elementDbName, target)
+          }
         }
       })
 
@@ -2739,6 +2755,48 @@ $(document).ready(function () {
       })
     }
 
+    static refreshTileGoogle(dbName, target){
+      const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
+      // For each Google tile, build the loader
+      googleTiles.forEach(tileDbName => {
+        const tileElem = document.querySelector(`.single_dashboard_card_main[data-label='${tileDbName}']`);
+        if (tileElem) {
+          const name = tileElem.querySelector(".dashboard_title p").textContent;
+          UI.buildRefreshTileLoader(tileDbName, tileElem, name);
+          if(tileElem.querySelector(".google-error-message")){
+            tileElem.querySelector(".google-error-message").remove()
+          }
+        }
+      });
+      // Reset Google status in backend first
+      fetch(`/reset-google-status/${projectId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      })
+      .then(response => response.json())
+      .then(data => {
+        Controls.buildGoogleElements(true)
+        async function checkStatus() {
+          const interval = setInterval(async () => {
+              const response = await fetch(`/api/check-status/${projectId}`);
+              const { status, results } = await response.json();
+              // Handle Google error logic
+              const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
+              if (status === 'completed') {
+                  clearInterval(interval);
+                  if (handleGoogleResults(results, googleTiles)) {
+                    Controls.updateGoogleCards(results)
+                  }
+                  Controls.finalizeGoogleElements(results)
+              }
+          }, 5000); // Check every 5 seconds
+        }
+        checkStatus()
+      });
+    }
 
     static refreshTile(dbName, target){
       const name = target.querySelector(".dashboard_title p").textContent
@@ -3052,3 +3110,41 @@ $(document).ready(function () {
 
 
 })
+
+// Helper to handle Google results error logic
+function handleGoogleResults(results, googleTiles) {
+  let validUrls = [];
+  let hasValid = false;
+
+  for (const url in results) {
+    const urlResult = results[url];
+    // If the result is an error object at the top level
+    if (urlResult && urlResult.error) {
+      continue;
+    } else {
+      hasValid = true;
+      validUrls.push(url);
+    }
+  }
+
+  if (hasValid) {
+    // Let the normal update logic run (do nothing special)
+    return true;
+  } else {
+    // Show error message in each Google card
+    googleTiles.forEach(tileDbName => {
+      const tileElem = document.querySelector(`.single_dashboard_card_main[data-label='${tileDbName}']`);
+      if (tileElem) {
+        const cardContent = tileElem.querySelector('.single_dashboard_card_content');
+        if (cardContent) cardContent.remove();
+        const div = document.createElement('div');
+        div.classList.add('single_dashboard_card_content');
+        div.innerHTML = `<div class="google-error-message" style="padding: 20px; text-align: center; color: #b94a48;">
+          <strong>Please try again later.</strong>
+        </div>`;
+        tileElem.querySelector('.single_dashboard_card').appendChild(div);
+      }
+    });
+    return false;
+  }
+}
