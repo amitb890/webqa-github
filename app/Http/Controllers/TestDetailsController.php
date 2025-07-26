@@ -629,6 +629,32 @@ class TestDetailsController extends Controller
         echo json_encode($object);
     }
 
+    public function brokenLinks(Request $request){
+        $elements = json_decode($request->input("data"));
+        $http200 = 0;
+        $http100x = 0;
+        $http200x = 0;
+        $http300x = 0;
+        $http400x = 0;
+        $http500x = 0;
+
+        foreach($elements as $element){
+        
+        }
+
+        $object = new \stdClass();
+        $object->settings = $elements[0]->settings;
+        $object->totalUrls = count($elements);
+        $object->http200 = $http200;
+        $object->http100x = $http100x;
+        $object->http200x = $http200x;
+        $object->http300x = $http300x;
+        $object->http400x = $http400x;
+        $object->http500x = $http500x;
+
+        echo json_encode($object);
+    }
+
     public function googleInsights(Request $request){
         $helpers = new Helper();
 

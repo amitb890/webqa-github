@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>The Material That Remembers</title>
+
+  <style>
+
+    body {
+
+      background-color: black;
+
+      margin: 0;
+
+      display: flex;
+
+      flex-wrap: wrap;
+
+      justify-content: center;
+
+      align-items: center;
+
+      height: 100vh;
+
+    }
+
+    video.material {
+
+      width: 22vw;
+
+      height: auto;
+
+      margin: 1vw;
+
+      border-radius: 20px;
+
+      cursor: pointer;
+
+      transition: transform 0.3s ease;
+
+    }
+
+    video.material.active {
+
+      transform: scale(1.1);
+
+      box-shadow: 0 0 20px rgba(255,255,255,0.5);
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+
+
+  <!-- 8 Materials as looping videos -->
+
+  <video class="material" src="materials/material_idle_01.mp4" loop autoplay muted data-id="1"></video>
+
+  <video class="material" src="materials/material_idle_02.mp4" loop autoplay muted data-id="2"></video>
+
+  <video class="material" src="materials/material_idle_03.mp4" loop autoplay muted data-id="3"></video>
+
+  <video class="material" src="materials/material_idle_04.mp4" loop autoplay muted data-id="4"></video>
+
+  <video class="material" src="materials/material_idle_05.mp4" loop autoplay muted data-id="5"></video>
+
+  <video class="material" src="materials/material_idle_06.mp4" loop autoplay muted data-id="6"></video>
+
+  <video class="material" src="materials/material_idle_07.mp4" loop autoplay muted data-id="7"></video>
+
+  <video class="material" src="materials/material_idle_08.mp4" loop autoplay muted data-id="8"></video>
+
+
+
+  <script>
+
+    let materials = document.querySelectorAll('.material');
+
+    let tvWindow = null;
+
+    let isPlaying = false;
+
+
+
+    // Open second screen and load idle loop
+
+    function openTVWindow() {
+
+      tvWindow = window.open('', '', 'width=800,height=600');
+
+      tvWindow.document.write(`
+
+        <body style="margin:0;background:black;">
+
+          <video id="tvVideo" autoplay muted style="width:100vw;height:100vh;object-fit:cover;">
+
+            <source src="tv/idle_loop.mp4" type="video/mp4">
+
+          </video>
+
+        </body>
+
+      `);
+
+    }
+
+
+
+    // Handle tap on material
+
+    materials.forEach(material => {
+
+      material.addEventListener('click', () => {
+
+        if (isPlaying) return; // prevent interaction during playback
+
+
+
+        isPlaying = true;
+
+        let id = material.dataset.id;
+
+
+
+        // Reset all materials
+
+        materials.forEach(m => {
+
+          m.classList.remove('active');
+
+          m.src = `materials/material_idle_0${m.dataset.id}.mp4`;
+
+        });
+
+
+
+        // Activate selected material
+
+        material.classList.add('active');
+
+        material.src = `materials/material_active_0${id}.mp4`;
+
+        material.play();
+
+
+
+        // Update TV video
+
+        tvWindow.document.getElementById('tvVideo').src = `tv/garment_0${id}.mp4`;
+
+
+
+        // Listen for end of garment video and reset
+
+        tvWindow.document.getElementById('tvVideo').onended = () => {
+
+          tvWindow.document.getElementById('tvVideo').src = 'tv/idle_loop.mp4';
+
+          materials.forEach(m => {
+
+            m.classList.remove('active');
+
+            m.src = `materials/material_idle_0${m.dataset.id}.mp4`;
+
+          });
+
+          isPlaying = false;
+
+        };
+
+      });
+
+    });
+
+
+
+    // Open TV window when page loads
+
+    window.onload = openTVWindow;
+
+  </script>
+
+
+
+</body>
+
+</html>

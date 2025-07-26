@@ -26,6 +26,7 @@ $(document).ready(function () {
     open_graph_tags: [],
     twitter_tags: [],
     http_status_code: [],
+    broken_links: [],
     security_labels: {
         is_safe_browsing: [],
         cross_origin_links: [],
@@ -881,6 +882,21 @@ $(document).ready(function () {
                       <a href="#">View Report</a>
                     </div>`
               break;
+              case "broken_links":
+                element =  `
+                <div class="deshboard_inner_description border_bottom">
+                    <p class="total-broken-links"><b>54</b></p>
+                    <p>Broken links found on this website</p>
+                </div>
+                <div class="deshboard_inner_description">
+                    <p>Pages with broken links <span class="">12/121</span></p>
+                    <p>Internal broken links <span class="">11</span></p>
+                    <p>External broken links <span class="">54</span></p>
+                </div>
+                <div class="inner_dashboard_footer">
+                    <a href="#">View Report</a>
+                </div>`
+                break;
             case "security_labels":
                 element = ` <div class="security_table">
                 <div class="table-responsive">
@@ -1952,6 +1968,7 @@ $(document).ready(function () {
             break;
         }
         div.innerHTML =  UI.getSingleLoaderCardElement(label, JSON.parse(data))
+        console.log(div)
         if(document.getElementById(`card_${label}`).querySelector(".page_speed_content")){
           document.getElementById(`card_${label}`).querySelector(".page_speed_content").remove()
           document.getElementById(`card_${label}`).querySelector(".single_dashboard_card").appendChild(div)
@@ -2356,6 +2373,7 @@ $(document).ready(function () {
                 open_graph_tags: [],
                 twitter_tags: [],
                 http_status_code: [],
+                broken_links: [],
                 security_labels: {
                     is_safe_browsing: [],
                     cross_origin_links: [],
@@ -2576,7 +2594,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                Controls.buildGoogleElements()
+                // Controls.buildGoogleElements()
             });
             
         });
@@ -2611,15 +2629,14 @@ $(document).ready(function () {
           const interval = setInterval(async () => {
               const response = await fetch(`/api/check-status/${projectId}`);
               const { status, results } = await response.json();
+              Controls.updateGoogleCards(results)
 
               const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
-
               if (status === 'completed') {
+                handleGoogleResults(results, googleTiles)
+
                   clearInterval(interval);
-                  if (handleGoogleResults(results, googleTiles)) {
-                    Controls.updateGoogleCards(results)
-                  }
                   Controls.finalizeGoogleElements(results)
 
               }
@@ -2783,13 +2800,14 @@ $(document).ready(function () {
           const interval = setInterval(async () => {
               const response = await fetch(`/api/check-status/${projectId}`);
               const { status, results } = await response.json();
+              Controls.updateGoogleCards(results)
+
               // Handle Google error logic
               const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
               if (status === 'completed') {
+                handleGoogleResults(results, googleTiles)
+
                   clearInterval(interval);
-                  if (handleGoogleResults(results, googleTiles)) {
-                    Controls.updateGoogleCards(results)
-                  }
                   Controls.finalizeGoogleElements(results)
               }
           }, 5000); // Check every 5 seconds
@@ -2817,6 +2835,7 @@ $(document).ready(function () {
         open_graph_tags: [],
         twitter_tags: [],
         http_status_code: [],
+        broken_links: [],
         security_labels: {
             is_safe_browsing: [],
             cross_origin_links: [],
@@ -2898,6 +2917,7 @@ $(document).ready(function () {
  
 
     static buildCards(testDetails){
+      console.log(testDetails)
         UI.buildLoaderCards(testDetails)
         UI.buildSubmitIdeaWidget(testDetails)
         UI.buildAddWidget(testDetails)

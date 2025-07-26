@@ -307,6 +307,9 @@ class RunTest implements ShouldQueue
                         case "http_status_code":
                             $testData = $this->httpStatusCode($finalRes, $label, $url);
                             break;
+                        case "broken_links":
+                            $testData = $this->brokenLinks($finalRes, $label, $url);
+                            break;
                     }
         
                     $allResults[$url][$label->db_name] = $testData;                    
@@ -391,6 +394,62 @@ class RunTest implements ShouldQueue
         $object->learnMoreURL = "https://setmore.com/";
         $object->tagName = "HTTP Status Code";
         $object->settings = $settings->settings_sub;
+        $object->label = $label;
+        $object->tested_url = $testedUrl;
+        $object->tested_at = time();
+        return json_encode($object);
+    }
+
+
+    public function brokenLinks($data, $label, $testedUrl){
+        $helpers = new Helper();
+
+        $status = true;
+        $problems = [];
+        $urlValue = $testedUrl;
+        $settings = json_decode($data["settings"]);
+        $html = $data["html"];
+        $internalResponse = $data["internal_response"];
+        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+        $title = "Broken Links";
+        $description = "Broken Links";
+        $message = '';
+        $content = '';
+        $brokenLinks = $settings->settings_sub->broken_links;  
+      
+
+        $output = json_decode($helpers->brokenLinks($urlValue));
+
+
+        if($output->status){
+            if($output->isBrokenLinkPresent){
+                $message = "Your page has " . $output->totalBrokenLinks . " broken links, please see the list below.";
+            }else{
+                $message = "There were 0 broken links found in your web page.";
+            }
+        }else{
+            $message = "The url ('" . $urlValue . "') does not allow parsing, please try a different URL.";
+        }
+
+        $object = new \stdClass();
+        if($output->status){
+            $object->status = !$output->isBrokenLinkPresent;
+        }else{
+            $object->status = false;
+        }
+        $object->title = $title;
+        $object->problems = $problems;
+        $object->message = $message;
+        $object->description = $description;
+        $object->learnMoreURL = "https://setmore.com/";
+        $object->tagName = "Broken Links";
+        $object->settings = $settings->settings_sub;
+        $object->content = $content;
+        $object->status_url = $output->status;
+        $object->totalBrokenLinks = $output->totalBrokenLinks;
+        if($output->status){
+            $object->allLinks = $output->results;
+        }
         $object->label = $label;
         $object->tested_url = $testedUrl;
         $object->tested_at = time();

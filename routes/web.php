@@ -156,6 +156,7 @@ Route::namespace("TestDetails")->prefix('test-details')->group(function(){
     Route::post('/og-tags', [App\Http\Controllers\TestDetailsController::class, 'ogTags'])->name('test.og-tags');
     Route::post('/twitter-tags', [App\Http\Controllers\TestDetailsController::class, 'twitterTags'])->name('test.twitter-tags');
     Route::post('/http-status-code', [App\Http\Controllers\TestDetailsController::class, 'httpStatusCode'])->name('test.http-status-code');
+    Route::post('/broken-links', [App\Http\Controllers\TestDetailsController::class, 'brokenLinks'])->name('test.broken-links');
     Route::post('/security-headers', [App\Http\Controllers\TestDetailsController::class, 'securityHeaders'])->name('test.security-headers');
     Route::post('/coding-best-practices', [App\Http\Controllers\TestDetailsController::class, 'codingBestPractices'])->name('test.coding-best-practices');
     Route::post('/page-size', [App\Http\Controllers\TestDetailsController::class, 'pageSize'])->name('test.page-size');
