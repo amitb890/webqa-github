@@ -1,4 +1,8 @@
 @extends('layouts.app')
+@section('title')
+Webqa - Analysis Report
+@endsection
+
 @section("content")
 @include("components.loader")
 @include("components.modal-fix")

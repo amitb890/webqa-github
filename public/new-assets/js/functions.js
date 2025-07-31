@@ -367,7 +367,7 @@ class TableCSVExporter {
         $(this.table).find('tr.root-tr').remove();
 
         if ($('#report-slug').val()) {
-            this.fileName = this.prepareCsvName($('#report-slug').val()) + '.csv';
+            this.fileName = TableCSVExporter.prepareCsvName($('#report-slug').val()) + '.csv';
         } else  {
             this.fileName = fileName;
         }
@@ -473,7 +473,7 @@ class TableCSVExporter {
             URL.revokeObjectURL(blobUrl);
         }, 500);
     }
-    prepareCsvName(slug) {
+    static prepareCsvName(slug) {
         // Replace hyphens with underscores and remove "test" keyword
         const formattedSlug = slug.replace(/-test/g, '').replace(/-/g, '_').trim();
 

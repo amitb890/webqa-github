@@ -132,7 +132,6 @@ class ReportsController extends Controller
     public function show($slug)
     {
         $projectId = 1;
-        $projectId = 9;
         $projectsController = new ProjectsController();
         $labels = json_decode(json_encode($projectsController->getLabels($projectId)))->original->all_labels;
 
