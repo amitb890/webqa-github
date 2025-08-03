@@ -638,19 +638,27 @@ class TestDetailsController extends Controller
         $http400x = 0;
         $http500x = 0;
 
+        $totalBrokenLinks = 0;
+        $totalBrokenWebPages = 0;
+        $totalBrokenInternal = 0;
+        $totalBrokenExternal = 0;
+
         foreach($elements as $element){
-        
+            if(!$element->status){
+                $totalBrokenWebPages++;
+                $totalBrokenLinks+=$element->totalBrokenLinks;
+                $totalBrokenInternal+=count($element->totalBrokenInternal);
+                $totalBrokenExternal+=count($element->totalBrokenExternal);
+            }
         }
 
         $object = new \stdClass();
         $object->settings = $elements[0]->settings;
         $object->totalUrls = count($elements);
-        $object->http200 = $http200;
-        $object->http100x = $http100x;
-        $object->http200x = $http200x;
-        $object->http300x = $http300x;
-        $object->http400x = $http400x;
-        $object->http500x = $http500x;
+        $object->totalBrokenLinks = $totalBrokenLinks;
+        $object->totalBrokenWebPages = $totalBrokenWebPages;
+        $object->totalBrokenInternal = $totalBrokenInternal;
+        $object->totalBrokenExternal = $totalBrokenExternal;
 
         echo json_encode($object);
     }

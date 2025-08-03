@@ -13249,3 +13249,30 @@ nav .nav-tabs{
   width: 100% !important;
 }
 
+/* ANALYSIS HEADINGS END*/
+.bulk-tool-test.single-post-content-main {
+  margin-left: 10%;
+  margin-right: 10%;
+}
+
+.bulk-tool-test .single-post-content > h3 {
+  font-size: 24px;
+}
+
+.bulk-tool-test .single-post-content ul {
+  margin-bottom: 50px;
+}
+
+.bulk-tool-test .single-post-content ul li {
+  list-style: disc;
+}
+
+.bulk-tool-test .single-post-content h2 {
+  padding: 0px !important;
+}
+
+.bulk-tool-test img.img-fluid {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}

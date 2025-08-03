@@ -1383,383 +1383,10 @@ function removeQueryParams($url) {
 
 
     function getAllTests(){
-        $performance = array (
-            0 => 
-            array (
-                'displayName' => 'Overall Score',
-                'name' => 'page_speed_google',
-                'dbName' => 'google_overall',
-                'url' => '/test/google-page-speed-insights',
-                'slug' => 'google-page-speed-insights',
-                'route' => 'tool/google-page-speed-insights',
-                'main_heading' => 'Google Page Speed - Overall Score Test',
-                'main_para' => 'Test multiple URLs for Google Page speed overall score. Download scores in CSV or PDF file.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            1 => 
-            array (
-                'displayName' => 'Lighthouse Score',
-                'name' => 'page_speed_google_lighthouse',
-                'dbName' => 'google_lighthouse',
-                'url' => '/test/google-page-speed-lighthouse',
-                'slug' => 'google-lighthouse',
-                'route' => 'tool/google-lighthouse',
-                'main_heading' => 'Lighthouse Test',
-                'main_para' => 'Test multiple URLs for Lighthouse scores and Download them in CSV or PDF file format.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            2 => 
-            array (
-                'displayName' => 'Core Web Vitals',
-                'name' => 'page_speed_google_core',
-                'dbName' => 'core_web_vitals',
-                'url' => '/test/google-page-speed-core-web-vitals',
-                'slug' => 'google-core-web-vitals',
-                'route' => 'tool/google-core-web-vitals',
-                'main_heading' => 'Core Web Vitals Test',
-                'main_para' => 'Test multiple URLs for Core web vitals score and Download them in CSV or PDF file format.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            3 => 
-            array (
-                'displayName' => 'Mobile Friendliness',
-                'name' => 'mobile_friendly',
-                'dbName' => 'mobile_friendly',
-                'url' => '/test/mobile-friendly',
-                'slug' => 'mobile-friendliness',
-                'route' => 'tool/mobile-friendliness',
-                'main_heading' => 'Mobile Friendliness',
-                'main_para' => 'Test multiple URLs for Core web vitals score and Download them in CSV or PDF file format.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-        );
 
-        $images = array (
-            0 => 
-            array (
-                'displayName' => 'Images',
-                'name' => 'img',
-                'dbName' => 'images',
-                'url' => '/test/images',
-                'slug' => 'images',
-                'route' => 'tool/images',
-                'main_heading' => 'Images Test',
-                'main_para' => 'Test multiple URLs for Images used in those URLs. Test Image alternate text, file size, file name and download the data in PDF or CSV Formats.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            )
-        );
-
-
-        $best_practices = array (
-            0 => 
-            array (
-                'displayName' => 'HTML Compression',
-                'name' => 'compression',
-                'dbName' => 'html_compression',
-                'url' => '/test/html-compression',
-                'slug' => 'html-compression',
-                'route' => 'tool/html-compression',
-                'main_heading' => 'HTML Compression Test',
-                'main_para' => 'Test multiple urls for HTML Compression. Check which of your website pages do not have HTML compression enabled.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            1 => 
-            array (
-                'displayName' => 'CSS Compression',
-                'name' => 'stylesheet',
-                'dbName' => 'css_compression',
-                'url' => '/test/css-compression',
-                'slug' => 'css-compression',
-                'route' => 'tool/css-compression',
-                'main_heading' => 'CSS Compression Test',
-                'main_para' => 'Test multiple urls CSS Compression. Check which of your website CSS files do not have compression enabled.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            2 => 
-            array (
-                'displayName' => 'JS Compression',
-                'name' => 'script',
-                'dbName' => 'js_compression',
-                'url' => '/test/js-compression',
-                'slug' => 'js-compression',
-                'route' => 'tool/js-compression',
-                'main_heading' => 'JS Compression Test',
-                'main_para' => 'Test multiple website urls for JS Compression. Check which of your Javascript files do not have compression enabled.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            3 => 
-            array (
-                'displayName' => 'GZIP Compression',
-                'name' => 'gzip_compression',
-                'dbName' => 'gzip_compression',
-                'url' => '/test/gzip-compression',
-                'slug' => 'gzip-compression',
-                'route' => 'tool/gzip-compression',
-                'main_heading' => 'Gzip Compression Test',
-                'main_para' => 'Test your website pages for Gzip compression and see which one of them do not have Gzip compression enabled.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            4 => 
-            array (
-                'displayName' => 'Nested Tables',
-                'name' => 'nestedtables',
-                'dbName' => 'nested_tables',
-                'url' => '/test/nested-tables',
-                'slug' => 'nested-tables',
-                'route' => 'tool/nested-tables',
-                'main_heading' => 'Nested Tables Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            5 => 
-            array (
-                'displayName' => 'Frameset',
-                'name' => 'frameset',
-                'dbName' => 'frameset',
-                'url' => '/test/frameset',
-                'slug' => 'frameset',
-                'route' => 'tool/frameset',
-                'main_heading' => 'Frameset Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            6 => 
-            array (
-                'displayName' => 'Page Size',
-                'name' => 'pagesize',
-                'dbName' => 'page_size',
-                'url' => '/test/page-size',
-                'slug' => 'page-size',
-                'route' => 'tool/page-size',
-                'main_heading' => 'Page Size Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            7 => 
-            array (
-                'displayName' => 'CSS caching',
-                'name' => 'css_caching_enable',
-                'dbName' => 'css_caching_enable',
-                'url' => '/test/css-caching-enable',
-                'slug' => 'css-caching-test',
-                'route' => 'tool/css-caching-test',
-                'main_heading' => 'CSS Caching Test',
-                'main_para' => 'CSS Caching Test',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-
-            8 => 
-            array (
-                'displayName' => 'JS caching',
-                'name' => 'js_caching_enable',
-                'dbName' => 'js_caching_enable',
-                'url' => '/test/js-caching-enable',
-                'slug' => 'js-caching-test',
-                'route' => 'tool/js-caching-test',
-                'main_heading' => 'JS Caching Test',
-                'main_para' => 'JS Caching Test',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            9 => 
-            array (
-                'displayName' => 'Broken Links',
-                'name' => 'broken_links',
-                'dbName' => 'broken_links',
-                'url' => '/test/broken-links',
-                'slug' => 'broken-links',
-                'route' => 'tool/broken-links',
-                'main_heading' => 'Broken Links',
-                'main_para' => 'Broken Links',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            
-        );
-
-
-        $security = array (
-            1 => 
-            array (
-                'displayName' => 'X Frame Options Header',
-                'name' => 'xframe',
-                'dbName' => 'x_frame_options_header',
-                'url' => '/test/x-frame-options-header',
-                'slug' => 'x-frame-options-header-test',
-                'route' => 'tool/x-frame-options-header-test',
-                'main_heading' => 'X Frame Options Header',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            2 => 
-            array (
-                'displayName' => 'Content Security Policy Header',
-                'name' => 'content-security',
-                'dbName' => 'content_security_policy_header',
-                'url' => '/test/content-security-policy-header',
-                'slug' => 'content-security-policy-header-test',
-                'route' => 'tool/content-security-policy-header-test',
-                'main_heading' => 'Content Security Policy Header',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            3 => 
-            array (
-                'displayName' => 'Hsts Header',
-                'name' => 'hsts',
-                'dbName' => 'hsts_header',
-                'url' => '/test/hsts-header',
-                'slug' => 'hsts-header-test',
-                'route' => 'tool/hsts-header-test',
-                'main_heading' => 'Hsts Header Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            4 => 
-            array (
-                'displayName' => 'Safe Browsing',
-                'name' => 'safe-browsing',
-                'dbName' => 'is_safe_browsing',
-                'url' => '/test/safe-browsing',
-                'slug' => 'safe-browsing-test',
-                'route' => 'tool/safe-browsing-test',
-                'main_heading' => 'Safe Browsing',
-                'main_para' => 'safe-browsing Content',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            5 => 
-            array (
-                'displayName' => 'Protocall relative resource links',
-                'name' => 'protocall-relative-resource-links',
-                'dbName' => 'protocol_relative_resource',
-                'url' => '/test/protocol-relative-resource',
-                'slug' => 'protocall-relative-resource-links-test',
-                'route' => 'tool/protocall-relative-resource-links-test',
-                'main_heading' => 'Protocall relative resource links',
-                'main_para' => 'Protocall relative resource links',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            6 => 
-            array (
-                'displayName' => 'Unsafe Cross Origin Links',
-                'name' => 'cross-origin-links',
-                'dbName' => 'cross_origin_links',
-                'url' => '/test/cross-origin-links',
-                'slug' => 'unsafe-cross-origin-links-test',
-                'route' => 'tool/unsafe-cross-origin-links-test',
-                'main_heading' => 'Unsafe Cross Origin Links',
-                'main_para' => 'cross-origin-links Content',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-            7 => 
-            array (
-                'displayName' => 'SSL Certificate',
-                'name' => 'ssl-certificate',
-                'dbName' => 'ssl_certificate_enable',
-                'url' => '/test/ssl-certificate',
-                'slug' => 'ssl-certificate-test',
-                'route' => 'tool/ssl-certificate-test',
-                'main_heading' => 'SSL Certificate',
-                'main_para' => 'ssl-certificate Content',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-
-            8 => 
-            array (
-                'displayName' => 'Directory Browsing',
-                'name' => 'directory-browsing',
-                'dbName' => 'folder_browsing_enable',
-                'url' => '/test/directory-browsing',
-                'slug' => 'directory-browsing-test',
-                'route' => 'tool/directory-browsing-test',
-                'main_heading' => 'Directory Browsing',
-                'main_para' => 'Directory Browsing',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-
-            9 => 
-            array (
-                'displayName' => 'Bad content Type',
-                'name' => 'bad-content-type',
-                'dbName' => 'folder_browsing_enable',
-                'url' => '/test/bad-content',
-                'slug' => 'bad-content-type-test',
-                'route' => 'tool/bad-content-type-test',
-                'main_heading' => 'Bad content Type',
-                'main_para' => 'Bad content Type',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-
-            10 => 
-            array (
-                'displayName' => 'Robots.txt',
-                'name' => 'robotstxt-test',
-                'dbName' => 'folder_browsing_enable',
-                'url' => '/test/robot-text-test',
-                'slug' => 'robotstxt-test',
-                'route' => 'tool/robotstxt-test',
-                'main_heading' => 'Robots.txt',
-                'main_para' => 'Robots.txt',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-                'bulk_ignore' => true
-            ),
-
-            11 => 
-            array (
-                'displayName' => 'Headings',
-                'name' => 'headings-test',
-                'dbName' => 'h1_heading_tag',
-                'url' => '/test/h1-heading-tag',
-                'slug' => 'headings-test',
-                'route' => 'tool/headings-test',
-                'main_heading' => 'Headings',
-                'main_para' => 'Headings',
-                'results_heading' => 'Results',
-                'results_para' => 'Results'
-            ),
-            
-
-        );
-
-
-
-        $meta = array (
-            0 => 
-            array (
+        $seo = [
+            // Left column items
+            [
                 'displayName' => 'Meta Title',
                 'name' => 'title',
                 'dbName' => 'meta_title',
@@ -1767,12 +1394,11 @@ function removeQueryParams($url) {
                 'slug' => 'meta-title',
                 'route' => 'tool/meta-title',
                 'main_heading' => 'Meta Title Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
+                'main_para' => 'Test your website pages for Meta title tag content.',
                 'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            1 => 
-            array (
+                'results_para' => 'Results'
+            ],
+            [
                 'displayName' => 'Meta Description',
                 'name' => 'description',
                 'dbName' => 'meta_desc',
@@ -1780,25 +1406,11 @@ function removeQueryParams($url) {
                 'slug' => 'meta-description',
                 'route' => 'tool/meta-description',
                 'main_heading' => 'Meta Description Test',
-                'main_para' => 'Test your website pages for Meta description tag content and meta description length.',
+                'main_para' => 'Test your website pages for Meta description.',
                 'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            2 => 
-            array (
-                'displayName' => 'Canonical Tag',
-                'name' => 'canonical',
-                'dbName' => 'canonical_url',
-                'url' => '/test/canonical-url',
-                'slug' => 'canonical-url',
-                'route' => 'tool/canonical-url',
-                'main_heading' => 'Canonical URL Test',
-                'main_para' => 'Test your website pages for canonicalisation, check whether they are self canonicalised or whether a canonical tag exists or not.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            3 => 
-            array (
+                'results_para' => 'Results'
+            ],
+            [
                 'displayName' => 'Robots Meta Tag',
                 'name' => 'robots',
                 'dbName' => 'robots_meta',
@@ -1806,12 +1418,35 @@ function removeQueryParams($url) {
                 'slug' => 'robots-meta',
                 'route' => 'tool/robots-meta',
                 'main_heading' => 'Robots Meta Tag Test',
-                'main_para' => 'Test your website pages for indexability, whether it contains a robots meta tag and the content of the robots meta tag.',
+                'main_para' => 'Test your website pages for Robots meta tag.',
                 'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            4 => 
-            array (
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Canonical Tag',
+                'name' => 'canonical',
+                'dbName' => 'canonical_url',
+                'url' => '/test/canonical-url',
+                'slug' => 'canonical-url',
+                'route' => 'tool/canonical-url',
+                'main_heading' => 'Canonical URL Test',
+                'main_para' => 'Test your website pages for Canonical tag.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Images',
+                'name' => 'img',
+                'dbName' => 'images',
+                'url' => '/test/images',
+                'slug' => 'images',
+                'route' => 'tool/images',
+                'main_heading' => 'Images Test',
+                'main_para' => 'Test your website images.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
                 'displayName' => 'URL Slug',
                 'name' => 'url',
                 'dbName' => 'url_slug',
@@ -1819,20 +1454,57 @@ function removeQueryParams($url) {
                 'slug' => 'url-slug',
                 'route' => 'tool/url-slug',
                 'main_heading' => 'URL Slug Test',
-                'main_para' => 'Test your website pages URL slug and check whether it meets best SEO practices and standards.',
+                'main_para' => 'Test your website URL slugs.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Robot.txt',
+                'name' => 'robotstxt-test',
+                'dbName' => 'robotstxt',
+                'url' => '/test/robotstxt',
+                'slug' => 'robotstxt',
+                'route' => 'tool/robotstxt',
+                'main_heading' => 'Robots.txt Test',
+                'main_para' => 'Test your website robots.txt.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
-            ),
-            5 => 
-            array (
-                'displayName' => 'OG Tags',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Headings',
+                'name' => 'headings-test',
+                'dbName' => 'h1_heading_tag',
+                'url' => '/test/headings',
+                'slug' => 'headings',
+                'route' => 'tool/headings',
+                'main_heading' => 'Headings Test',
+                'main_para' => 'Test your website headings.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'XML Sitemap',
+                'name' => 'xml_sitemap',
+                'dbName' => 'xml_sitemap',
+                'url' => '/test/xml-sitemap',
+                'slug' => 'xml-sitemap',
+                'route' => 'tool/xml-sitemap',
+                'main_heading' => 'XML Sitemap Test',
+                'main_para' => 'Test your website XML sitemap.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            // Right column items
+            [
+                'displayName' => 'Open Graph tags',
                 'name' => 'og:title',
                 'dbName' => 'open_graph_tags',
                 'url' => '/test/og-tags',
                 'slug' => 'og-tags',
                 'route' => 'tool/og-tags',
                 'main_heading' => 'Open Graph Tags Test',
-                'main_para' => 'Test your website pages for Open Graph Tags tags, whether they exist and are following the best practices and standards.',
+                'main_para' => 'Test your website pages for Open Graph Tags.',
                 'results_heading' => 'Open Graph Tags',
                 'results_para' => 'Results',
                 'ogDesc' => [
@@ -1849,10 +1521,9 @@ function removeQueryParams($url) {
                     'displayName' => "OG URL",
                     'name' => "og:url",
                     'dbName' => "open_graph_url",
-                ],
-            ),
-            6 => 
-            array (
+                ]
+            ],
+            [
                 'displayName' => 'Twitter Tags',
                 'name' => 'twitter:title',
                 'dbName' => 'twitter_tags',
@@ -1860,7 +1531,7 @@ function removeQueryParams($url) {
                 'slug' => 'twitter-tags',
                 'route' => 'tool/twitter-tags',
                 'main_heading' => 'Twitter Tags Test',
-                'main_para' => 'Test your website pages for Twitter title tags, whether they exist and are following the best practices and standards.',
+                'main_para' => 'Test your website pages for Twitter tags.',
                 'results_heading' => 'Twitter Tags',
                 'results_para' => 'Results',
                 'twitterImage' => [
@@ -1872,10 +1543,9 @@ function removeQueryParams($url) {
                     'displayName' => "Twitter Image Alt",
                     'name' => "twitter:image:alt",
                     'dbName' => "twitter_image_alt",
-                ],
-            ),
-            7 => 
-            array (
+                ]
+            ],
+            [
                 'displayName' => 'Favicon',
                 'name' => 'icon',
                 'dbName' => 'favicon',
@@ -1883,38 +1553,11 @@ function removeQueryParams($url) {
                 'slug' => 'favicon',
                 'route' => 'tool/favicon',
                 'main_heading' => 'Favicon Test',
-                'main_para' => 'Test your website pages if they are using a Favicon tag or not.',
+                'main_para' => 'Test your website pages for Favicon.',
                 'results_heading' => 'Results',
-                'results_para' => 'Results',
-            ),
-            8 => 
-            array (
-              'displayName' => 'XML Sitemap',
-              'name' => 'xml_sitemap',
-              'dbName' => 'xml_sitemap',
-              'url' => '/test/xml-sitemap',
-              'slug' => 'xml-sitemap',
-              'route' => 'tool/xml-sitemap',
-              'main_heading' => 'XML Sitemap Test',
-              'main_para' => 'Test your website pages if they exist in the XML Sitemap',
-              'results_heading' => 'Results',
-              'results_para' => 'Results',
-            ),
-            9 => 
-            array (
-              'displayName' => 'HTML Sitemap',
-              'name' => 'html_sitemap',
-              'dbName' => 'html_sitemap',
-              'url' => '/test/html-sitemap',
-              'slug' => 'html-sitemap',
-              'route' => 'tool/html-sitemap',
-              'main_heading' => 'HTML Sitemap Test',
-              'main_para' => 'Test your website pages if they exist in the HTML Sitemap',
-              'results_heading' => 'Results',
-              'results_para' => 'Results',
-            ),
-            10 => 
-            array (
+                'results_para' => 'Results'
+            ],
+            [
                 'displayName' => 'Meta Viewport',
                 'name' => 'viewport',
                 'dbName' => 'meta_viewport',
@@ -1922,13 +1565,12 @@ function removeQueryParams($url) {
                 'slug' => 'meta-viewport',
                 'route' => 'tool/meta-viewport',
                 'main_heading' => 'Meta Viewport Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
+                'main_para' => 'Test your website pages for Meta viewport.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
-            ),
-            11 => 
-            array (
+            ],
+            [
                 'displayName' => 'Doctype',
                 'name' => 'doctype',
                 'dbName' => 'doctype',
@@ -1936,12 +1578,12 @@ function removeQueryParams($url) {
                 'slug' => 'doctype',
                 'route' => 'tool/doctype',
                 'main_heading' => 'Doctype Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
+                'main_para' => 'Test your website doctype.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
-            ),
-            array (
+            ],
+            [
                 'displayName' => 'HTTP Status Code',
                 'name' => 'http_status_code',
                 'dbName' => 'http_status_code',
@@ -1949,21 +1591,343 @@ function removeQueryParams($url) {
                 'slug' => 'http-status-code',
                 'route' => 'tool/http-status-code',
                 'main_heading' => 'HTTP Status Code Test',
-                'main_para' => 'Test your website pages for Meta title tag content. Check meta title length, whether it is equal to H1 tag, and check what casing the title tag follows.',
+                'main_para' => 'Test your website HTTP status codes.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'HTML Sitemap',
+                'name' => 'html_sitemap',
+                'dbName' => 'html_sitemap',
+                'url' => '/test/html-sitemap',
+                'slug' => 'html-sitemap',
+                'route' => 'tool/html-sitemap',
+                'main_heading' => 'HTML Sitemap Test',
+                'main_para' => 'Test your website pages if they exist in the HTML Sitemap',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
-            ),
-        );
-
-        $data = array_merge($meta, $images, $performance, $best_practices, $security);
-
+            ],
+            [
+                'displayName' => 'Headings',
+                'name' => 'headings-test',
+                'dbName' => 'h1_heading_tag',
+                'url' => '/test/headings',
+                'slug' => 'headings',
+                'route' => 'tool/headings',
+                'main_heading' => 'Headings Test',
+                'main_para' => 'Test your website headings.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ]
+        ];
+        
+        $performance = [
+            [
+                'displayName' => 'Overall Score',
+                'name' => 'page_speed_google',
+                'dbName' => 'google_overall',
+                'url' => '/test/google-page-speed-insights',
+                'slug' => 'google-page-speed-insights',
+                'route' => 'tool/google-page-speed-insights',
+                'main_heading' => 'Google Page Speed - Overall Score Test',
+                'main_para' => 'Test multiple URLs for Google Page speed overall score.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Lighthouse Score',
+                'name' => 'page_speed_google_lighthouse',
+                'dbName' => 'google_lighthouse',
+                'url' => '/test/google-page-speed-lighthouse',
+                'slug' => 'google-lighthouse',
+                'route' => 'tool/google-lighthouse',
+                'main_heading' => 'Lighthouse Test',
+                'main_para' => 'Test multiple URLs for Lighthouse scores.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Core Web Vitals',
+                'name' => 'page_speed_google_core',
+                'dbName' => 'core_web_vitals',
+                'url' => '/test/google-page-speed-core-web-vitals',
+                'slug' => 'google-core-web-vitals',
+                'route' => 'tool/google-core-web-vitals',
+                'main_heading' => 'Core Web Vitals Test',
+                'main_para' => 'Test multiple URLs for Core web vitals score.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Mobile Friendliness',
+                'name' => 'mobile_friendly',
+                'dbName' => 'mobile_friendly',
+                'url' => '/test/mobile-friendly',
+                'slug' => 'mobile-friendliness',
+                'route' => 'tool/mobile-friendliness',
+                'main_heading' => 'Mobile Friendliness',
+                'main_para' => 'Test mobile friendliness of your website.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ]
+        ];
+        
+        $best_practices = [
+            [
+                'displayName' => 'GZIP Compression',
+                'name' => 'gzip_compression',
+                'dbName' => 'gzip_compression',
+                'url' => '/test/gzip-compression',
+                'slug' => 'gzip-compression',
+                'route' => 'tool/gzip-compression',
+                'main_heading' => 'Gzip Compression Test',
+                'main_para' => 'Test your website pages for Gzip compression.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'HTML Compression',
+                'name' => 'compression',
+                'dbName' => 'html_compression',
+                'url' => '/test/html-compression',
+                'slug' => 'html-compression',
+                'route' => 'tool/html-compression',
+                'main_heading' => 'HTML Compression Test',
+                'main_para' => 'Test multiple urls for HTML Compression.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'CSS Compression',
+                'name' => 'stylesheet',
+                'dbName' => 'css_compression',
+                'url' => '/test/css-compression',
+                'slug' => 'css-compression',
+                'route' => 'tool/css-compression',
+                'main_heading' => 'CSS Compression Test',
+                'main_para' => 'Test multiple urls CSS Compression.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'JS Compression',
+                'name' => 'script',
+                'dbName' => 'js_compression',
+                'url' => '/test/js-compression',
+                'slug' => 'js-compression',
+                'route' => 'tool/js-compression',
+                'main_heading' => 'JS Compression Test',
+                'main_para' => 'Test multiple website urls for JS Compression.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'CSS caching',
+                'name' => 'css_caching_enable',
+                'dbName' => 'css_caching_enable',
+                'url' => '/test/css-caching-enable',
+                'slug' => 'css-caching-test',
+                'route' => 'tool/css-caching-test',
+                'main_heading' => 'CSS Caching Test',
+                'main_para' => 'CSS Caching Test',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'JS caching',
+                'name' => 'js_caching_enable',
+                'dbName' => 'js_caching_enable',
+                'url' => '/test/js-caching-enable',
+                'slug' => 'js-caching-test',
+                'route' => 'tool/js-caching-test',
+                'main_heading' => 'JS Caching Test',
+                'main_para' => 'JS Caching Test',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Page Size',
+                'name' => 'pagesize',
+                'dbName' => 'page_size',
+                'url' => '/test/page-size',
+                'slug' => 'page-size',
+                'route' => 'tool/page-size',
+                'main_heading' => 'Page Size Test',
+                'main_para' => 'Test your website page sizes.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
+            [
+                'displayName' => 'Nested Tables',
+                'name' => 'nestedtables',
+                'dbName' => 'nested_tables',
+                'url' => '/test/nested-tables',
+                'slug' => 'nested-tables',
+                'route' => 'tool/nested-tables',
+                'main_heading' => 'Nested Tables Test',
+                'main_para' => 'Test for nested tables.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Frameset',
+                'name' => 'frameset',
+                'dbName' => 'frameset',
+                'url' => '/test/frameset',
+                'slug' => 'frameset',
+                'route' => 'tool/frameset',
+                'main_heading' => 'Frameset Test',
+                'main_para' => 'Test for frameset usage.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+          [
+                'displayName' => 'Broken Links',
+                'name' => 'broken_links',
+                'dbName' => 'broken_links',
+                'url' => '/test/broken-links',
+                'slug' => 'broken-links',
+                'route' => 'tool/broken-links',
+                'main_heading' => 'Broken Links',
+                'main_para' => 'Broken Links',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+            ]
+        ];
+        
+        $security = [
+            [
+                'displayName' => 'Safe browsing',
+                'name' => 'safe-browsing',
+                'dbName' => 'is_safe_browsing',
+                'url' => '/test/safe-browsing',
+                'slug' => 'safe-browsing-test',
+                'route' => 'tool/safe-browsing-test',
+                'main_heading' => 'Safe Browsing',
+                'main_para' => 'Check if your site is marked as safe by Google.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Unsafe cross origin links',
+                'name' => 'cross-origin-links',
+                'dbName' => 'cross_origin_links',
+                'url' => '/test/cross-origin-links',
+                'slug' => 'unsafe-cross-origin-links-test',
+                'route' => 'tool/unsafe-cross-origin-links-test',
+                'main_heading' => 'Unsafe Cross Origin Links',
+                'main_para' => 'Check for unsafe cross-origin links.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Protocol relative resource links',
+                'name' => 'protocall-relative-resource-links',
+                'dbName' => 'protocol_relative_resource',
+                'url' => '/test/protocol-relative-resource',
+                'slug' => 'protocall-relative-resource-links-test',
+                'route' => 'tool/protocall-relative-resource-links-test',
+                'main_heading' => 'Protocol relative resource links',
+                'main_para' => 'Check for protocol relative resource links.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Content Security Policy Header',
+                'name' => 'content-security',
+                'dbName' => 'content_security_policy_header',
+                'url' => '/test/content-security-policy-header',
+                'slug' => 'content-security-policy-header-test',
+                'route' => 'tool/content-security-policy-header-test',
+                'main_heading' => 'Content Security Policy Header',
+                'main_para' => 'Check Content Security Policy header.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'X Frame Options Header',
+                'name' => 'xframe',
+                'dbName' => 'x_frame_options_header',
+                'url' => '/test/x-frame-options-header',
+                'slug' => 'x-frame-options-header-test',
+                'route' => 'tool/x-frame-options-header-test',
+                'main_heading' => 'X Frame Options Header',
+                'main_para' => 'Check X-Frame-Options header.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'HSTS Header',
+                'name' => 'hsts',
+                'dbName' => 'hsts_header',
+                'url' => '/test/hsts-header',
+                'slug' => 'hsts-header-test',
+                'route' => 'tool/hsts-header-test',
+                'main_heading' => 'HSTS Header Test',
+                'main_para' => 'Check HSTS header.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Bad content Type',
+                'name' => 'bad-content-type',
+                'dbName' => 'bad_content_type',
+                'url' => '/test/bad-content',
+                'slug' => 'bad-content-type-test',
+                'route' => 'tool/bad-content-type-test',
+                'main_heading' => 'Bad content Type',
+                'main_para' => 'Check for bad content types.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'SSL Certificate',
+                'name' => 'ssl-certificate',
+                'dbName' => 'ssl_certificate_enable',
+                'url' => '/test/ssl-certificate',
+                'slug' => 'ssl-certificate-test',
+                'route' => 'tool/ssl-certificate-test',
+                'main_heading' => 'SSL Certificate',
+                'main_para' => 'Check SSL certificate.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ],
+            [
+                'displayName' => 'Directory Browsing',
+                'name' => 'directory-browsing',
+                'dbName' => 'folder_browsing_enable',
+                'url' => '/test/directory-browsing',
+                'slug' => 'directory-browsing-test',
+                'route' => 'tool/directory-browsing-test',
+                'main_heading' => 'Directory Browsing',
+                'main_para' => 'Check for directory browsing.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results',
+                'bulk_ignore' => true
+            ]
+        ];
+        
+        // Merge all into one data array
+        $data = array_merge($seo, $performance, $best_practices, $security);
+        
+        // Return structure
         return [
-            "meta" => $meta,
-            "images" => $images,
+            "seo" => $seo,
             "performance" => $performance,
             "best_practices" => $best_practices,
             "security" => $security,
             "data" => $data,
         ];
+        
     }
 }

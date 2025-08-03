@@ -141,6 +141,7 @@ $(document).ready(function () {
       static buildRootURLElement(el){
         const tr = document.createElement("tr")
         tr.classList.add("root-tr")
+        tr.classList.add("export-hidden-element")
         tr.setAttribute("data-id", el.id)
         tr.innerHTML = `
           <td scope="row" class="active-table-url2">
@@ -298,10 +299,11 @@ $(document).ready(function () {
       static buildTableHeader(type, data, colspan, options, settings, title){
         totalTests+=colspan
           Controls.calcColespan(title, colspan)
-          const projectSettings = data[0].settings;
+          let projectSettings = [];
           if(title === "performance"){
             UI.buildPerformanceTableHeader(type)
           }else{
+            projectSettings = data[0].settings;
             const displayName = data[0].label.display_name
             const td = document.createElement("td")
             td.setAttribute("data-consists", type)
@@ -2251,6 +2253,79 @@ $(document).ready(function () {
             })
           })
         }
+        else if(page[1] === "google-page-speed-insights"){
+          UI.buildTableHeader("google_overall", testDetailsLighthouse, 2, options, settings, "performance")
+
+         updatedUrls.forEach(el=>{
+           UI.buildRootURLElement(el)
+
+           const urls = el.urls
+           urls.forEach(urlEl=>{
+             const url = urlEl.url
+             const originalIndex = urlEl.original_index
+
+             urlsList.push(url)
+             const options = UI.initTableBody(el.id)
+             UI.buildTableBody(el.id, "google_overall", testDetailsLighthouse[url], options, url, settings, "performance", data.url_slug)
+           })
+         })
+       }
+       
+       
+       else if(page[1] === "google-page-speed-lighthouse"){
+         UI.buildTableHeader("google_lighthouse", testDetailsLighthouse, 8, options, settings, "performance")
+
+        updatedUrls.forEach(el=>{
+          UI.buildRootURLElement(el)
+
+          const urls = el.urls
+          urls.forEach(urlEl=>{
+            const url = urlEl.url
+            const originalIndex = urlEl.original_index
+
+            urlsList.push(url)
+            const options = UI.initTableBody(el.id)
+            UI.buildTableBody(el.id, "google_lighthouse", testDetailsLighthouse[url], options, url, settings, "performance", data.url_slug)
+          })
+        })
+      }
+
+      
+      else if(page[1] === "google-page-speed-core-web-vitals"){
+       UI.buildTableHeader("core_web_vitals", testDetailsLighthouse, 14, options, settings, "performance")
+
+      updatedUrls.forEach(el=>{
+        UI.buildRootURLElement(el)
+
+        const urls = el.urls
+        urls.forEach(urlEl=>{
+          const url = urlEl.url
+          const originalIndex = urlEl.original_index
+
+          urlsList.push(url)
+          const options = UI.initTableBody(el.id)
+          UI.buildTableBody(el.id, "core_web_vitals", testDetailsLighthouse[url], options, url, settings, "performance", data.url_slug)
+        })
+      })
+    }
+
+    else if(page[1] === "mobile-friendly"){
+     UI.buildTableHeader("mobile_friendly", data.mobile_friendly, 1, options, settings, "performance")
+
+    updatedUrls.forEach(el=>{
+      UI.buildRootURLElement(el)
+
+      const urls = el.urls
+      urls.forEach(urlEl=>{
+        const url = urlEl.url
+        const originalIndex = urlEl.original_index
+
+        urlsList.push(url)
+        const options = UI.initTableBody(el.id)
+        UI.buildTableBody(el.id, "mobile_friendly", data.mobile_friendly[originalIndex], options, url, settings, "performance", data.url_slug)
+      })
+    })
+  }
     }
 
       static buildTableHeaderTop(){
@@ -2513,3 +2588,8 @@ $(document).ready(function () {
   })
 
 })
+$(document).on("click",".download-xlsx-bulk",function() {
+  let xlsxName = TableCSVExporter.prepareCsvName($('#report-slug').val()) + '.xlsx';
+  ToolXlsx.buildXLSX(xlsxName);
+
+});

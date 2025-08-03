@@ -455,6 +455,24 @@ $( document ).ready(function() {
                         
                         li.innerHTML = `<span class="side_content">${labelDisaplayName}</span>`
                         document.querySelector("#settingsCollapsePerformance").appendChild(li)
+                        li.innerHTML = `<span class="side_content">${label.displayName}</span>`
+
+                        if(label.name == 'google_overall'){
+                            li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-insights" target="_blank">${label.displayName}</a></span>`
+                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
+                        } 
+                       else if(label.name == 'google_lighthouse'){
+                            li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-lighthouse" target="_blank">${label.displayName}</a></span>`
+                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
+                        } 
+                       else if(label.name == 'core_web_vitals'){
+                            li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-core-web-vitals" target="_blank">${label.displayName}</a></span>`
+                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
+                        } 
+                        else if(label.name == 'mobile_friendly'){
+                            li.innerHTML = `<span class="side_content"><a href="/reports/mobile-friendly" target="_blank">${label.displayName}</a></span>`
+                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
+                        } 
                     }
                 })
                 if(!performanceLabelsFlag) {

@@ -17,54 +17,30 @@
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingOne">
                     <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_1" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                      Meta Tags
+                     SEO
                     </button>
                   </h2>
 
                         <?php  
-                            $metaStatus = false;
-                            $meta = $data["meta"];
-                            foreach($meta as $el){
+                            $seoStatus = false;
+                            $seo = $data["seo"];
+                            foreach($seo as $el){
                                 if($el["name"] === $d["name"]){
-                                    $metaStatus = true;
+                                    $seoStatus = true;
                                 }
                             }
                         ?>
-                  <div id="panelsStayOpen-collapse_tools_1" class="accordion-collapse collapse {{$metaStatus ? 'show' : ''}}" aria-labelledby="panelsStayOpen-headingOne">
+                  <div id="panelsStayOpen-collapse_tools_1" class="accordion-collapse collapse {{$seoStatus ? 'show' : ''}}" aria-labelledby="panelsStayOpen-headingOne">
                     <div class="accordion-body">
                     
-                    @foreach($data["meta"] as $el)
+                    @foreach($data["seo"] as $el)
                         <?php $slug = 'tool/' . $el["slug"];?>
                         <a href="/{{$el['route']}}" class="{{ Request::path() === $slug ? 'active' : '' }}">{{$el["displayName"]}}<i class="fa-solid fa-angle-right"></i></a>
                     @endforeach
                     </div>
                   </div>
                 </div>
-                <div class="accordion-item">
-                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_2" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
-                      Images
-                    </button>
-                  </h2>
-
-                    <?php  
-                        $imageStatus = false;
-                        $images = $data["images"];
-                        foreach($images as $el){
-                            if($el["name"] === $d["name"]){
-                                $imageStatus = true;
-                            }
-                        }
-                    ?>
-                  <div id="panelsStayOpen-collapse_tools_2" class="accordion-collapse collapse {{$imageStatus ? 'show' : ''}}" aria-labelledby="panelsStayOpen-headingTwo">
-                    <div class="accordion-body">
-                        @foreach($data["images"] as $el)
-                            <?php $slug = 'tool/' . $el["slug"];?>
-                            <a href="/{{$el['route']}}" class="{{ Request::path() === $slug ? 'active' : '' }}">{{$el["displayName"]}}<i class="fa-solid fa-angle-right"></i></a>
-                        @endforeach
-                    </div>
-                  </div>
-                </div>
+             
                 <div class="accordion-item">
                   <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_3" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
@@ -210,7 +186,7 @@
 
 
 
-                        @if($d['slug'] === 'headings-test')
+                        @if($d['slug'] === 'headings')
                             <div class="accor-content">
                                 <div class="form-check">
                                 <input
@@ -2856,12 +2832,17 @@
                 @include("bulk-tools.posts.xml-sitemap")
             @elseif($d['slug'] === 'html-sitemap')
                 @include("bulk-tools.posts.html-sitemap")
+            @elseif($d['slug'] === 'headings')
+                @include("bulk-tools.posts.html-sitemap")
+                
             @elseif($d['slug'] === 'meta-viewport')
                 @include("bulk-tools.posts.meta-viewport")
             @elseif($d['slug'] === 'doctype')
                 @include("bulk-tools.posts.doctype") 
             @elseif($d['slug'] === 'images')
                 @include("bulk-tools.posts.images") 
+            @elseif($d['slug'] === 'http-status-code')
+                @include("bulk-tools.posts.http-status-code") 
             @elseif($d['slug'] === 'google-page-speed-insights')
                 @include("bulk-tools.posts.page-speed-overall-score") 
             @elseif($d['slug'] === 'google-lighthouse')
@@ -2901,7 +2882,7 @@
                 @include("bulk-tools.posts.directory-browsing")
             @elseif($d['slug'] === 'bad-content-type-test')
                  @include("bulk-tools.posts.bad-content-type")
-            @elseif($d['slug'] === 'robotstxt-test')
+            @elseif($d['slug'] === 'robotstxt')
                  @include("bulk-tools.posts.robotstxt-test")
                  @elseif($d['slug'] === 'js-caching-test')
                  @include("bulk-tools.posts.js-caching-test")
@@ -2935,5 +2916,6 @@
 @section("js")
 <script src="/new-assets/js/exceljs.min.js"></script>
 <script src="/new-assets/js/bulk.js"></script>
+<script src="/new-assets/js/exportXlsx.js"></script>
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}"></script>
 @endsection

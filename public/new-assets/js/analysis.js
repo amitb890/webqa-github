@@ -2085,7 +2085,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="32" class="fw-normal"></text>
+                                          font-size="32" class="fw-normal overallDesktop"></text>
                                       </svg>
                                     </span>
                                   </div>
@@ -2147,7 +2147,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="32" class="fw-normal"></text>
+                                          font-size="32" class="fw-normal overallMobile"></text>
                                       </svg>
                                     </span>
                                   </div>
@@ -2306,7 +2306,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal performanceDesktop"></text>
                                       </svg>
                                     </span>
                                     <p>Performance</p>
@@ -2348,7 +2348,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal accessibilityDesktop"></text>
                                       </svg>
                                     </span>
                                     <p>Accessibility</p>
@@ -2393,7 +2393,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal bestPracticesDesktop"></text>
                                       </svg>
                                     </span>
                                     <p>Best Practices</p>
@@ -2434,7 +2434,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal seoDesktop"></text>
                                       </svg>
                                     </span>
                                     <p>SEO</p>
@@ -2490,7 +2490,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal performanceMobile"></text>
                                       </svg>
                                     </span>
                                     <p>Performance</p>
@@ -2533,7 +2533,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal accessibilityMobile"></text>
                                       </svg>
                                     </span>
                                     <p>Accessibility</p>
@@ -2579,7 +2579,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal bestPracticesMobile"></text>
                                       </svg>
                                     </span>
                                     <p>Best Practices</p>
@@ -2620,7 +2620,7 @@ $( document ).ready(function() {
                                           stroke-dasharray="282.78302001953125" />
                                         <!-- Value automatically updates based on data-value set above -->
                                         <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-                                          font-size="24" class="fw-normal"></text>
+                                          font-size="24" class="fw-normal seoMobile"></text>
                                       </svg>
                                     </span>
                                     <p>SEO</p>
@@ -2763,7 +2763,7 @@ $( document ).ready(function() {
                                   <ul>
                                     <li class="${data.statusFCPDesktop ? "active-orange-green" : "active-orange-red"}">
                                       <p>First Contentful Paint</p>
-                                      <h2>${data.fcpDesktop} s</h2>
+                                      <h2 class="fcpDesktop">${data.fcpDesktop} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance31">
                                         <span>First Contentful Paint marks the time at which the first text or image is painted.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/">Learn more about the First Contentful Paint metric.</a></span>
@@ -2784,7 +2784,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusTBTDesktop ? "active-orange-green" : "active-orange-red"}">
                                       <p>Time to Interactive</p>
-                                      <h2>${data.tbtDesktop} s</h2>
+                                      <h2 class="ttiDesktop">${data.tbtDesktop} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance32">
                                         <span>Time to Interactice measures how long it takes a page to become fully interactive.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/interactive/">Learn more about the Time to Interactive Metric</a></span>
@@ -2805,7 +2805,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusSIPDesktop ? "active-orange-green" : "active-orange-red"}">
                                       <p>Speed Index</p>
-                                      <h2>${data.siDesktop} s</h2>
+                                      <h2 class="siDesktop">${data.siDesktop} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance33">
                                         <span>Speed Index shows how quickly the contents of a page are visibly populated.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/speed-index/">Learn more about the Speed Index Metric</a></span>
@@ -2832,7 +2832,7 @@ $( document ).ready(function() {
                                   <ul>
                                     <li class="${data.statusTBTDesktop ? "active-orange-green" : "active-orange-red"}">
                                       <p>Total Blocking Time</p>
-                                      <h2>${data.tbtDesktop} ms</h2>
+                                      <h2 class="tbtDesktop">${data.tbtDesktop} ms</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance34">
                                         <span>Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/?utm_source=lighthouse&utm_medium=lr">Learn more about the Total Blocking time metric.</a></span>
@@ -2853,7 +2853,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusLCPDesktop ? "active-orange-green" : "active-orange-red"}">
                                       <p>Largest Contentful Paint</p>
-                                      <h2>${data.lcpDesktop} s</h2>
+                                      <h2 class="lcpDesktop">${data.lcpDesktop} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance35">
                                         <span>Largest Contentful Paint marks the time at which the largest text or image is painted
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/">Learn more about the Largest Contentful paint metric.</a></span>
@@ -2874,7 +2874,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusCLSDesktop ? "active-orange-green" : "active-orange-red"}">
                                       <p>Cumulative Layout Shift</p>
-                                      <h2>${data.clsDesktop}</h2>
+                                      <h2 class="clsDesktop">${data.clsDesktop}</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance36">
                                         <span>Cumulative Layout Shift measures the movement of visible elements within the viewport.
                                           <a target="_blank" href="https://web.dev/cls/">Learn more about the Cumulative Layout Shift Metric</a></span>
@@ -2908,7 +2908,7 @@ $( document ).ready(function() {
                                   <ul>
                                     <li class="${data.statusFCPMobile ? "active-orange-green" : "active-orange-red"}">
                                       <p>First Contentful Paint</p>
-                                      <h2>${data.fcpMobile} s</h2>
+                                      <h2 class="fcpMobile">${data.fcpMobile} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance37">
                                         <span>First Contentful Paint marks the time at which the first text or image is painted.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/first-contentful-paint/">Learn more about the First Contentful Paint metric.</a></span>
@@ -2929,7 +2929,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusTTIMobile ? "active-orange-green" : "active-orange-red"}">
                                       <p>Time to Interactive</p>
-                                      <h2>${data.ttiMobile} s</h2>
+                                      <h2 class="ttiMobile">${data.ttiMobile} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance38">
                                         <span>Time to Interactice measures how long it takes a page to become fully interactive.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/interactive/">Learn more about the Time to Interactive Metric</a></span>
@@ -2950,7 +2950,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusSIMobile ? "active-orange-green" : "active-orange-red"}">
                                       <p>Speed Index</p>
-                                      <h2>${data.siMobile} s</h2>
+                                      <h2 class="siMobile">${data.siMobile} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance39">
                                         <span>Speed Index shows how quickly the contents of a page are visibly populated.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/speed-index/">Learn more about the Speed Index Metric</a></span>
@@ -2977,7 +2977,7 @@ $( document ).ready(function() {
                                   <ul>
                                     <li class="${data.statusTBTMobile ? "active-orange-green" : "active-orange-red"}">
                                       <p>Total Blocking Time</p>
-                                      <h2>${data.tbtMobile} ms</h2>
+                                      <h2 class="tbtMobile">${data.tbtMobile} ms</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance310">
                                         <span>Sum of all time periods between FCP and Time to Interactive, when task length exceeded 50ms, expressed in milliseconds.
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/lighthouse-total-blocking-time/?utm_source=lighthouse&utm_medium=lr">Learn more about the Total Blocking time metric.</a></span>
@@ -2998,7 +2998,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusLCPMobile ? "active-orange-green" : "active-orange-red"}">
                                       <p>Largest Contentful Paint</p>
-                                      <h2>${data.lcpMobile} s</h2>
+                                      <h2 class="lcpMobile">${data.lcpMobile} s</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance311">
                                         <span>Largest Contentful Paint marks the time at which the largest text or image is painted
                                           <a target="_blank" href="https://developer.chrome.com/docs/lighthouse/performance/lighthouse-largest-contentful-paint/">Learn more about the Largest Contentful paint metric.</a></span>
@@ -3019,7 +3019,7 @@ $( document ).ready(function() {
                                     </li>
                                     <li class="${data.statusCLSMobile ? "active-orange-green" : "active-orange-red"}">
                                       <p>Cumulative Layout Shift</p>
-                                      <h2>${data.clsMobile}</h2>
+                                      <h2 class="clsMobile">${data.clsMobile}</h2>
                                       <div class="collapse multi-collapse3" id="multiCollapsePerformance312">
                                         <span>Cumulative Layout Shift measures the movement of visible elements within the viewport.
                                           <a target="_blank" href="https://web.dev/cls/">Learn more about the Cumulative Layout Shift Metric</a></span>
@@ -3208,7 +3208,7 @@ $( document ).ready(function() {
                           <div class="card-single-content ${data.status ? "text-success-custom" : "text-danger-custom"} problem-help">
                             <p>
                               <span class="badge status_pdf">${data.status ? "PASS" : "FAIL"}</span>
-                              <span>${data.message}</span>
+                              <span class="message_pdf">${data.message}</span>
                             </p>
 
                             ${data.showSnippet ? `
