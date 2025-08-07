@@ -884,14 +884,14 @@ $(document).ready(function () {
               break;
               case "broken_links":
                 element =  `
-                <div class="deshboard_inner_description border_bottom">
-                    <p class="total-broken-links"><b>54</b></p>
+                <div class="deshboard_inner_description border_bottom total-broken-links-container">
+                    <p class="total-broken-links"><b>${data.totalBrokenLinks}</b></p>
                     <p>Broken links found on this website</p>
                 </div>
                 <div class="deshboard_inner_description">
-                    <p>Pages with broken links <span class="">12/121</span></p>
-                    <p>Internal broken links <span class="">11</span></p>
-                    <p>External broken links <span class="">54</span></p>
+                    <p>Pages with broken links <span class="">${data.totalBrokenWebPages}/${data.totalUrls}</span></p>
+                    <p>Internal broken links <span class="">${data.totalBrokenInternal}</span></p>
+                    <p>External broken links <span class="">${data.totalBrokenExternal}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
                     <a href="#">View Report</a>
@@ -2594,7 +2594,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                // Controls.buildGoogleElements()
+                Controls.buildGoogleElements()
             });
             
         });
