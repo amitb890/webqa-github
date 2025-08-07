@@ -116,6 +116,22 @@
 @section('title', "Twitter Tags Report | Webqa")
 @endif
 
+@if($slug == 'google-page-speed-insights')
+@section('title', "Overall score report | Webqa")
+@endif
+
+@if($slug == 'google-page-speed-lighthouse')
+@section('title', "Lighthouse report | Webqa")
+@endif
+
+@if($slug == 'google-page-speed-core-web-vitals')
+@section('title', "Core web vitals report | Webqa")
+@endif
+
+@if($slug == 'mobile-friendly')
+@section('title', "Moobile friendliness report | Webqa")
+@endif
+
 
 
 
