@@ -1228,29 +1228,29 @@ public function getContentType($response)
         return 'Other';
     }
 
-public function isExternal(string $url, string $domain)
-{
-    // $host = parse_url($url, PHP_URL_HOST);
-    // return $host && $host !== $domain;
-    if(str_contains($url, $domain)){
-        return false;
+    public function isExternal(string $url, string $domain)
+    {
+        // $host = parse_url($url, PHP_URL_HOST);
+        // return $host && $host !== $domain;
+        if(str_contains($url, $domain)){
+            return false;
+        }
+
+        return true;
     }
 
-    return true;
-}
 
+    function removeQueryParams($url) {
+        $parsedUrl = parse_url($url);
 
-function removeQueryParams($url) {
-    $parsedUrl = parse_url($url);
+        // Rebuild the URL without the query string
+        $cleanUrl = (isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '') .
+                    (isset($parsedUrl['host']) ? $parsedUrl['host'] : '') .
+                    (isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '') .
+                    (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
 
-    // Rebuild the URL without the query string
-    $cleanUrl = (isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '') .
-                (isset($parsedUrl['host']) ? $parsedUrl['host'] : '') .
-                (isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '') .
-                (isset($parsedUrl['path']) ? $parsedUrl['path'] : '');
-
-    return $cleanUrl;
-}
+        return $cleanUrl;
+    }
 
 
     public function brokenLinks($url){
@@ -1264,6 +1264,8 @@ function removeQueryParams($url) {
 
         $client = new GuzzleClient(['timeout' => 10]);
         $results = [];
+        $brokenExternal = [];
+        $brokenInternal = [];
 
         try {
             $response = $client->get($url);
@@ -1272,7 +1274,9 @@ function removeQueryParams($url) {
             return json_encode(['status' => 0, 
             'error' => 'Could not fetch the URL: ' . $e->getMessage(),   
             'isBrokenLinkPresent' => 0,
-            'totalBrokenLinks' => 0]);
+            'totalBrokenLinks' => 0,
+            'external' => [],
+            'internal' => []]);
         }
 
         $crawler = new Crawler($html);
@@ -1280,7 +1284,6 @@ function removeQueryParams($url) {
         $links = $crawler->filter('a[href]')->each(function (Crawler $node) {
             return $node->attr('href');
         });
-
 
         $resources = array_merge($links);
 
@@ -1290,24 +1293,23 @@ function removeQueryParams($url) {
 
         $parsedBaseUrl = parse_url($url);
         $baseDomain = $parsedBaseUrl['scheme'] . '://' . $parsedBaseUrl['host'];
+        $host = $parsedBaseUrl['host'];
         
         foreach ($resources as $resource) {
-            
             // Skip ignored file types
             $extension = pathinfo(parse_url($resource, PHP_URL_PATH), PATHINFO_EXTENSION);
             if (in_array(strtolower($extension), $ignoredExtensions)) {
                 continue;
             }
-    
+
             // Skip URLs containing ignored keywords
             foreach ($ignoredKeywords as $keyword) {
                 if (stripos($resource, $keyword) !== false) {
                     continue 2; // Skip this URL
                 }
             }
-    
 
-        // Resolve relative URLs correctly to avoid duplication issues
+            // Resolve relative URLs correctly to avoid duplication issues
             $absoluteUrl = parse_url($resource, PHP_URL_SCHEME) === null
                 ? rtrim($baseDomain, '/') . '/' . ltrim($resource, '/')
                 : $resource;
@@ -1315,30 +1317,41 @@ function removeQueryParams($url) {
             // Normalize the URL to avoid duplication issues
             $absoluteUrl = preg_replace('/([^:])(\/\/+)/', '$1/', $absoluteUrl);
 
-            $host = "setmore.com";
+            // Determine if the link is external or internal
             $isExternal = $this->isExternal($absoluteUrl, $host);
 
             $promises[$absoluteUrl] = $client->headAsync($absoluteUrl)
                 ->then(
-                    function ($response) use ($absoluteUrl, $isExternal) {
+                    function ($response) use ($absoluteUrl, $isExternal, &$brokenExternal, &$brokenInternal) {
+                        global $isBrokenLinkPresent, $totalBrokenLinks;
                         if($response->getStatusCode() != 200 && $response->getStatusCode() != 0 && $response->getStatusCode() != 405){
                             $isBrokenLinkPresent = true;
                             $totalBrokenLinks++;
+                            $brokenLink = ['url' => $absoluteUrl, 'status' => $response->getStatusCode()];
+                            if ($isExternal) {
+                                $brokenExternal[] = $brokenLink;
+                            } else {
+                                $brokenInternal[] = $brokenLink;
+                            }
                         }
                         return ['url' => $absoluteUrl, 'status' => $response->getStatusCode(), 'msg' => "success", 'is_external' => $isExternal];
                     },
-                    function ($exception) use ($client, $absoluteUrl, $isExternal) {
-                        global $isBrokenLinkPresent, $totalBrokenLinks; // Access global variables
-
+                    function ($exception) use ($client, $absoluteUrl, $isExternal, &$brokenExternal, &$brokenInternal) {
+                        global $isBrokenLinkPresent, $totalBrokenLinks;
                         // If HEAD request fails with 403, retry with GET
                         if ($exception->getCode() === 403) {
                             try {
                                 $response = $client->get($absoluteUrl);
                                 return ['url' => $absoluteUrl, 'status' => $response->getCode(), 'msg' => "success", 'is_external' => $isExternal];
-
                             } catch (Exception $e) {
                                 $isBrokenLinkPresent = true;
                                 $totalBrokenLinks++;
+                                $brokenLink = ['url' => $absoluteUrl, 'status' => $exception->getCode()];
+                                if ($isExternal) {
+                                    $brokenExternal[] = $brokenLink;
+                                } else {
+                                    $brokenInternal[] = $brokenLink;
+                                }
                                 return ['url' => $absoluteUrl, 'status' => $exception->getCode(), 'msg' => 'Broken (' . $exception->getMessage() . ')', 'is_external' => $isExternal];
                             }
                         }
@@ -1346,8 +1359,13 @@ function removeQueryParams($url) {
                         if($exception->getCode() != 200 && $exception->getCode() != 0 && $exception->getCode() != 405){
                             $isBrokenLinkPresent = true;
                             $totalBrokenLinks++;
+                            $brokenLink = ['url' => $absoluteUrl, 'status' => $exception->getCode()];
+                            if ($isExternal) {
+                                $brokenExternal[] = $brokenLink;
+                            } else {
+                                $brokenInternal[] = $brokenLink;
+                            }
                         }
-
                         return ['url' => $absoluteUrl, 'status' => $exception->getCode(), 'msg' => 'Broken (' . $exception->getMessage() . ')', 'is_external' => $isExternal];
                     }
                 );
@@ -1356,12 +1374,13 @@ function removeQueryParams($url) {
         // Use Utils::settle to resolve promises
         $settledPromises = Utils::settle($promises)->wait();
 
-
         return json_encode([
             'status' => 1, 
             'results' => $settledPromises,
             'isBrokenLinkPresent' => $isBrokenLinkPresent,
-            'totalBrokenLinks' => $totalBrokenLinks
+            'totalBrokenLinks' => $totalBrokenLinks,
+            'external' => $brokenExternal,
+            'internal' => $brokenInternal
         ], JSON_PRETTY_PRINT);
     }
 

@@ -17,6 +17,7 @@ $(document).ready(function () {
     xml_sitemap: [],
     html_sitemap: [],
     images: [],
+    broken_links: [],
     open_graph_tags: [],
     twitter_tags: [],
     is_safe_browsing: [],
@@ -2484,9 +2485,11 @@ $(document).ready(function () {
       }
 
       static updateTestDataForm(results){
+        console.log(results, obj)
         for (const [key, value] of Object.entries(results)) {
           for (const [key1, value1] of Object.entries(results[key])) {
             const result = JSON.parse(value1)
+            console.log(key1)
             obj[key1].push(result)
 
           }

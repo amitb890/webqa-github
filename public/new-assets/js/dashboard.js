@@ -2594,7 +2594,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                // Controls.buildGoogleElements()
+                Controls.buildGoogleElements()
             });
             
         });

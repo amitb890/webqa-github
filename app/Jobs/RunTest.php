@@ -447,6 +447,9 @@ class RunTest implements ShouldQueue
         $object->content = $content;
         $object->status_url = $output->status;
         $object->totalBrokenLinks = $output->totalBrokenLinks;
+        $object->totalBrokenExternal = $output->external;
+        $object->totalBrokenInternal = $output->internal;
+
         if($output->status){
             $object->allLinks = $output->results;
         }
