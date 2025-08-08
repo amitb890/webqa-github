@@ -188,17 +188,53 @@ class ReportsController extends Controller
     }
 
     public function getActiveProjects(){
-        $activeProject = "";
-        if(isset($_COOKIE["activeProject"])) {
-            $activeProject = $_COOKIE["activeProject"];
-            $activeProjectExplode = explode('-', $activeProject);
-            $activeProjectId = $activeProjectExplode[1];
-            $activeProject = Projects::all()->where("id", $activeProjectId)->first();
-        } else {
-            $project = Projects::all()->where("user_id", Auth::id())->sortByDesc("id")->first();
-            $activeProject = $project;
+        // First check if there's an active project ID in the session
+        if (session()->has('active_project_id')) {
+            $activeProjectId = session('active_project_id');
+            $activeProject = Projects::where('id', $activeProjectId)
+                                   ->where('user_id', Auth::id())
+                                   ->first();
+            
+            if ($activeProject) {
+                return $activeProject;
+            }
         }
-        return $activeProject;
         
+        // If no session or session project doesn't exist, get the first project of the current user
+        $project = Projects::where('user_id', Auth::id())
+                          ->orderBy('id', 'desc')
+                          ->first();
+        
+        // If a project exists, save it to session for future use
+        if ($project) {
+            session(['active_project_id' => $project->id]);
+        }
+        
+        return $project;
+    }
+
+    /**
+     * Set the active project ID in the session
+     *
+     * @param int $projectId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function setActiveProject(Request $request)
+    {
+        $projectId = $request->input('project_id');
+        
+        // Verify the project belongs to the current user
+        $project = Projects::where('id', $projectId)
+                          ->where('user_id', Auth::id())
+                          ->first();
+        
+        if (!$project) {
+            return response()->json(['status' => 0, 'msg' => 'Project not found or access denied.']);
+        }
+        
+        // Save the project ID to session
+        session(['active_project_id' => $projectId]);
+        
+        return response()->json(['status' => 1, 'msg' => 'Active project updated successfully.']);
     }
 }

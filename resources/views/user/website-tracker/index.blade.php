@@ -10,6 +10,8 @@
 
 
     <!-- main sections starts -->
+    <input type="hidden"  value="Website tracker report" id="report-slug">
+
           <div class="tracker-title">
             <h2>Website Tracker</h2>
           </div>
@@ -40,6 +42,11 @@
                       <li id="downloadCSV">
                         <a class="dropdown-item website-tracker-csv" href="#"
                           ><img src="/new-assets/assets/images/csv.png" alt="icon" /> CSV</a
+                        >
+                      </li>
+                      <li class="download-xlsx-bulk">
+                        <a class="dropdown-item" href="#"
+                          ><img src="/new-assets/assets/images/csv.png" alt="icon" />Xlsx</a
                         >
                       </li>
                     </ul>
@@ -179,4 +186,6 @@
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}"></script>
 <script src="{{ asset('new-assets/vendor/datatables/jquery.dataTables.colResize.js') }}"></script>
 <script src="{{ asset('new-assets/js/tracker.js') }}"></script>
+<script src="/new-assets/js/exceljs.min.js"></script>
+<script src="/new-assets/js/exportXlsx.js"></script>
 @endsection

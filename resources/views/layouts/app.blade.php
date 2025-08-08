@@ -1157,6 +1157,64 @@ if(isset($_COOKIE["activeProject"])){
     <script src="{{ asset('new-assets/js/main.js') }}"></script>
     <script src="{{ asset('new-assets/js/app.js') }}"></script>
 
+    <!-- Project selection session update script -->
+    <script>
+        $(document).ready(function() {
+            // Handle project selection from dropdown
+            $('.select-project').on('click', function(e) {
+                e.preventDefault();
+                
+                const projectVal = $(this).data('val');
+                const projectName = $(this).data('name');
+                const projectFavicon = $(this).data('favicon');
+                
+                // Extract project ID from the data-val (format: "project-{id}")
+                const projectId = projectVal.split('-')[1];
+                
+                // Update the active project display
+                $('#activeProject').text(projectName);
+                $('#activeProject').attr('data-val', projectVal);
+                $('#activeProject').attr('data-name', projectName);
+                $('#activeProject').attr('data-favicon', projectFavicon);
+                $('#activeFavicon').attr('src', projectFavicon);
+                
+                // Update cookies
+                setCookie('activeProject', projectId, 7);
+                setCookie('activeProjectName', projectName, 7);
+                setCookie('activeProjectFavicon', projectFavicon, 7);
+                
+                // Update session via AJAX
+                $.ajax({
+                    url: '/set-active-project',
+                    method: 'POST',
+                    data: {
+                        project_id: projectId,
+                        _token: $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.status === 1) {
+                            console.log('Active project updated in session');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error updating active project in session:', error);
+                    }
+                });
+            });
+        });
+        
+        // Helper function to set cookies (if not already defined)
+        function setCookie(name, value, days) {
+            let expires = "";
+            if (days) {
+                const date = new Date();
+                date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=/";
+        }
+    </script>
+
     @yield("js")
     <div id="backgroundBackdrop" style="display: none;"></div>
 

@@ -468,6 +468,9 @@ class ProjectsController extends Controller
             $settingsSub->html_sitemap_val = $request->input('htmlSitemap');
             $settingsSubState = $settingsSub->save();
             if ($projectState && $urlsListState && $settingsState && $settingsSubState) {
+                // Set the newly created project as the active project in session
+                session(['active_project_id' => $project->id]);
+                
                 $successMessage = 'Project "' . $project->name . '" created successfully with default settings. You can override the settings of the project <a href="' . route('settings.edit', $project->id) . '">here</a>.';
                 if ($request->input('route') != "projects.create") {
                     session()->flash('alert-class', 'alert-success alert-success-custom');

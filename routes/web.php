@@ -110,6 +110,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
         Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap'); 
         Route::resource('reports', App\Http\Controllers\ReportsController::class);
+        Route::post('set-active-project', [App\Http\Controllers\ReportsController::class, 'setActiveProject'])->name('setActiveProject');
 
         Route::resource('projects', App\Http\Controllers\ProjectsController::class);
         Route::post('delete-url', [App\Http\Controllers\ProjectsController::class, 'deleteUrl'])->name('delete-url');

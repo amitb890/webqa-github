@@ -647,6 +647,25 @@ function activeProject(data, action) {
     setCookie('activeProject', data.id, 7);
     setCookie('activeProjectName', data.name, 7);
     setCookie('activeProjectFavicon', activeFavicon, 7);
+    
+    // Also update the session with the new active project
+    $.ajax({
+      url: '/set-active-project',
+      method: 'POST',
+      data: {
+        project_id: data.id,
+        _token: $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        if (response.status === 1) {
+          console.log('Active project updated in session');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error updating active project in session:', error);
+      }
+    });
+    
     updateSidebarSettingsLink()
   }
 }
@@ -713,6 +732,24 @@ function selectProject(e, _this) {
   setCookie('activeProjectName', projectName, 7);
   setCookie('activeProjectFavicon', projectFavicon, 7);
 
+  // Also update the session with the new active project
+  const projectId = getStringPart(projectVal, "-", 1);
+  $.ajax({
+    url: '/set-active-project',
+    method: 'POST',
+    data: {
+      project_id: projectId,
+      _token: $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function(response) {
+      if (response.status === 1) {
+        console.log('Active project updated in session');
+      }
+    },
+    error: function(xhr, status, error) {
+      console.error('Error updating active project in session:', error);
+    }
+  });
 
   e.preventDefault()
 }

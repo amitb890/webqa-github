@@ -85,6 +85,25 @@ $(document).on("click", ".deleteProject", function () {
     setCookie('activeProject', data.id, 7);
     setCookie('activeProjectName', data.name, 7);
     setCookie('activeProjectFavicon', $('#projectLi').attr('data-favicon'), 7);
+    
+    // Also update the session with the new active project
+    $.ajax({
+      url: '/set-active-project',
+      method: 'POST',
+      data: {
+        project_id: data.id,
+        _token: $('meta[name="csrf-token"]').attr('content')
+      },
+      success: function(response) {
+        if (response.status === 1) {
+          console.log('Active project updated in session');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error updating active project in session:', error);
+      }
+    });
+    
     updateSidebarSettingsLink()
   }
   // Get Cookie
