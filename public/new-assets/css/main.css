@@ -10188,6 +10188,9 @@ table.bulk-table td:last-child {
 /* newly created pages (dasahboard, home page sidebar*/
 
 /***************************** Dashboard Page CSS ************************/
+.security_table thead tr th, .security_table tbody tr td{
+  width: 90%;
+}
 .analysis-content-body-message .alert{
   margin-top: 1.5rem;
 }

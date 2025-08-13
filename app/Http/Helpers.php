@@ -441,16 +441,33 @@ class Helpers{
         return $hasGzip;   
     }
 
-    function delete_all_between($beginning, $end, $string) {
+    function delete_all_between($beginning, $end, $string, $maxIterations = 100) {
+        // Prevent infinite recursion by limiting iterations
+        if ($maxIterations <= 0) {
+            return $string;
+        }
+        
         $beginningPos = strpos($string, $beginning);
         $endPos = strpos($string, $end, $beginningPos);
+        
         if ($beginningPos === false || $endPos === false) {
-          return $string;
+            return $string;
         }
-      
+        
+        // Ensure we're making progress by checking if endPos is after beginningPos
+        if ($endPos <= $beginningPos) {
+            return $string;
+        }
+        
         $textToDelete = substr($string, $beginningPos, ($endPos + strlen($end)) - $beginningPos);
-      
-        return $this->delete_all_between($beginning, $end, str_replace($textToDelete, '', $string)); // recursion to ensure all occurrences are replaced
+        $newString = str_replace($textToDelete, '', $string);
+        
+        // Only recurse if we actually made a change and the string is different
+        if ($newString !== $string) {
+            return $this->delete_all_between($beginning, $end, $newString, $maxIterations - 1);
+        }
+        
+        return $string;
     }
 
 

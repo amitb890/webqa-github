@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1
-  var recheckMax = 20, recheckGoogle = 2, recheckSingleMax = 50
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1
+  var recheckMax = 20, recheckGoogle = 1, recheckSingleMax = 20
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
@@ -317,6 +317,64 @@ $(document).ready(function () {
               </div>`
       document.querySelector(".dashboard_recheck_area").prepend(div)
     }
+
+    static showWaitingMessage(){
+      // Remove any existing waiting message first
+      this.removeWaitingMessage();
+      
+      const div = document.createElement("div")
+      div.id = "waiting-message"
+      div.classList.add("main-tricker-progress")
+      div.innerHTML = `
+              <div class="gif-loader">
+                <img src="/new-assets/assets/images/preloader1.gif" alt="icon">
+              </div>
+              <div class="single-tricker-progress">
+                <div class="rechecking-page">
+                  <span class="primary-span">Waiting for current tests to complete...</span>
+                  <span class="dark-span">Please wait while we finish the current queue of tests before starting the recheck.</span>
+                </div>
+              </div>`
+      document.querySelector(".dashboard_recheck_area").prepend(div)
+    }
+
+    static removeWaitingMessage(){
+      const existingMessage = document.querySelector("#waiting-message")
+      if (existingMessage) {
+        existingMessage.remove()
+      }
+    }
+
+    static updateRecheckButtonState(isDisabled) {
+      const recheckBtn = document.querySelector("#recheckBtn")
+      const recheckHyperlink = document.querySelector("#recheckHyperlink")
+      
+      if (recheckBtn) {
+        recheckBtn.disabled = isDisabled
+        if (isDisabled) {
+          recheckBtn.style.opacity = "0.6"
+          recheckBtn.style.cursor = "not-allowed"
+          recheckBtn.title = "Please wait for current tests to complete before rechecking"
+        } else {
+          recheckBtn.style.opacity = "1"
+          recheckBtn.style.cursor = "pointer"
+          recheckBtn.title = "Recheck dashboard"
+        }
+      }
+      
+      if (recheckHyperlink) {
+        if (isDisabled) {
+          recheckHyperlink.style.opacity = "0.6"
+          recheckHyperlink.style.cursor = "not-allowed"
+          recheckHyperlink.title = "Please wait for current tests to complete before rechecking"
+        } else {
+          recheckHyperlink.style.opacity = "1"
+          recheckHyperlink.style.cursor = "pointer"
+          recheckHyperlink.title = "Recheck dashboard"
+        }
+      }
+    }
+
     static buildWidgetSidebar(){
       document.querySelector(".dashboard_offcanvas_content").innerHTML = ""
 
@@ -2162,73 +2220,76 @@ $(document).ready(function () {
 
   class Controls{
     static init(){
-        buildLoader()
+      buildLoader()
 
-        projectId = getActiveProjectId()
-
-
-        getAllTestLabels2(projectId)
-        .done(function(data) {
-            allLabels = data.all_labels
-
-            seoLabels = data.seo_labels
-            performanceLabels = data.performance_labels
-            cbpLabels = data.cbp_labels
-            securityLabels = data.security_labels
-            Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
+      projectId = getActiveProjectId()
 
 
-            DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
-            .done(function(data){
-              originalUrls = data
-                urls = data.slice(0, urlsToCheck)
+       // Check initial button state
+      Controls.checkIfTestsAreRunning().then(testsRunning => {
+        UI.updateRecheckButtonState(testsRunning);
+      });
 
-                // CHECKING IF DASHBOARD WAS BUILT
-                DB.getDashboardShowStatus(projectId)
-                .done(function(data) {
-                    if(data.dashboardStatus){
+      getAllTestLabels2(projectId)
+      .done(function(data) {
+          allLabels = data.all_labels
 
-                      Controls.buildDashboard()
+          seoLabels = data.seo_labels
+          performanceLabels = data.performance_labels
+          cbpLabels = data.cbp_labels
+          securityLabels = data.security_labels
+          Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
 
-                    }else{
-                      removeLoader()
-                      Controls.buildDashboardLoader()
-                      if(data.details_progress != "in_progress"){
-                      Controls.startTest(urls, "default")
-                      } 
 
-                      async function checkStatusDashboard() {
-                        const interval = setInterval(async () => {
-                            const response = await fetch(`/api/check-status-dashboard/${projectId}`);
-                            const { status, results } = await response.json();
-                            Controls.updateDashboardLoader(results)
-              
+          DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
+          .done(function(data){
+            originalUrls = data
+              urls = data.slice(0, urlsToCheck)
 
-              
-                            if (status === 'completed') {
-                                clearInterval(interval);
+              // CHECKING IF DASHBOARD WAS BUILT
+              DB.getDashboardShowStatus(projectId)
+              .done(function(data) {
+                  if(data.dashboardStatus){
 
-                                Controls.endTest()
+                    Controls.buildDashboard()
 
-                                window.setTimeout(function(){
-                                  recheckAllowed = true
-                                }, 100)
-                            }
-                        }, 1000); // Check every 5 seconds
-                      }
-              
-                      checkStatusDashboard()
-                      
-                    }
-                });
-               
+                  }else{
+                    removeLoader()
+                    Controls.buildDashboardLoader()
+                    if(data.details_progress != "in_progress"){
+                    Controls.startTest(urls, "default")
+                    } 
 
-            })
+                    async function checkStatusDashboard() {
+                      const interval = setInterval(async () => {
+                          const response = await fetch(`/api/check-status-dashboard/${projectId}`);
+                          const { status, results } = await response.json();
+                          Controls.updateDashboardLoader(results)
             
-        });
-    }
 
+            
+                          if (status === 'completed') {
+                              clearInterval(interval);
 
+                              Controls.endTest()
+
+                              window.setTimeout(function(){
+                                recheckAllowed = true
+                              }, 100)
+                          }
+                      }, 1000); // Check every 5 seconds
+                    }
+            
+                    checkStatusDashboard()
+                    
+                  }
+              });
+             
+
+          })
+          
+      });
+  }
     static displayAlerts(){
       
     }
@@ -2346,14 +2407,76 @@ $(document).ready(function () {
       return label
     }
 
-    static recheckStart(){
+    static async checkIfTestsAreRunning() {
+      try {
+        // Check dashboard tests status
+        const dashboardResponse = await fetch(`/api/check-status-dashboard/${projectId}`);
+        const dashboardData = await dashboardResponse.json();
+        
+        // Check Google tests status
+        const googleResponse = await fetch(`/api/check-status/${projectId}`);
+        const googleData = await googleResponse.json();
+        
+        // If any test is still running, return true
+        if (dashboardData.status === 'running' || googleData.status === 'running') {
+          return true;
+        }
+        
+        return false;
+      } catch (error) {
+        console.error('Error checking test status:', error);
+        // If there's an error, assume tests might be running to be safe
+        return true;
+      }
+    }
+
+    static async waitForTestsToComplete() {
+      return new Promise((resolve) => {
+        const checkInterval = setInterval(async () => {
+          const testsRunning = await Controls.checkIfTestsAreRunning();
+          
+          if (!testsRunning) {
+            clearInterval(checkInterval);
+            resolve();
+          }
+        }, 2000); // Check every 2 seconds
+      });
+    }
+
+    static startTestStatusMonitoring() {
+      // Monitor test status every 5 seconds and update recheck button state
+      setInterval(async () => {
+        const testsRunning = await Controls.checkIfTestsAreRunning();
+        UI.updateRecheckButtonState(testsRunning);
+      }, 5000);
+    }
+
+    static async recheckStart(){
       if(recheckAllowed){
+        // First check if any tests are currently running
+        const testsRunning = await Controls.checkIfTestsAreRunning();
+        
+        if (testsRunning) {
+          // Show message that we need to wait for tests to complete
+          UI.showWaitingMessage();
+          
+          // Wait for all tests to complete
+          await Controls.waitForTestsToComplete();
+          
+          // Remove waiting message
+          UI.removeWaitingMessage();
+        }
+        
+        // Now proceed with recheck
         recheckAllowed = false
+        
+        // Update button state to show recheck is starting
+        UI.updateRecheckButtonState(true)
+        
         DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
           .done(function(data){
               urls = data.slice(0, recheckMax)
               urlsToCheck = recheckMax
-
 
               removeLoader()
               UI.buildRecheckLoader()
@@ -2405,7 +2528,6 @@ $(document).ready(function () {
               // UI.recheckStartedAlert()
               Controls.startTest(urls, "recheck")
 
-
               async function checkStatusDashboard() {
                 const interval = setInterval(async () => {
                     const response = await fetch(`/api/check-status-dashboard/${projectId}`);
@@ -2420,9 +2542,11 @@ $(document).ready(function () {
 
                         window.setTimeout(function(){
                           recheckAllowed = true
+                          // Re-enable recheck button after recheck completion
+                          UI.updateRecheckButtonState(false)
                         }, 100)
                     }
-                }, 1000); // Check every 5 seconds
+                }, 1000); // Check every 1 second
               }
       
             checkStatusDashboard()
@@ -2614,8 +2738,8 @@ $(document).ready(function () {
         $("#submitIdeaForm span").html(`${val}/200`)
       })
 
-      $("#recheckHyperlink").on("click", (e)=>{
-        Controls.recheckStart()
+      $("#recheckHyperlink").on("click", async (e)=>{
+        await Controls.recheckStart()
         e.preventDefault()
       })
 
@@ -2633,13 +2757,15 @@ $(document).ready(function () {
 
               const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
-              if (status === 'completed') {
-                handleGoogleResults(results, googleTiles)
+                                        if (status === 'completed') {
+                            handleGoogleResults(results, googleTiles)
 
-                  clearInterval(interval);
-                  Controls.finalizeGoogleElements(results)
-
-              }
+                              clearInterval(interval);
+                              Controls.finalizeGoogleElements(results)
+                              
+                              // Re-enable recheck button after Google tests completion
+                              UI.updateRecheckButtonState(false)
+                          }
           }, 5000); // Check every 5 seconds
         }
 
@@ -2735,6 +2861,9 @@ $(document).ready(function () {
       const label = Controls.getActiveLabel(dbName)
       const element = Controls.getActiveElement(dbName)
 
+      // Disable recheck button when adding a new tile (which starts tests)
+      UI.updateRecheckButtonState(true)
+
       Controls.manageSingleCard(element, dbName, label, true)
       DB.updateLabelStatus(dbName, 1)
       .done(function(){
@@ -2773,6 +2902,9 @@ $(document).ready(function () {
     }
 
     static refreshTileGoogle(dbName, target){
+      // Disable recheck button when refreshing Google tiles
+      UI.updateRecheckButtonState(true)
+      
       const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
       // For each Google tile, build the loader
       googleTiles.forEach(tileDbName => {
@@ -2809,6 +2941,9 @@ $(document).ready(function () {
 
                   clearInterval(interval);
                   Controls.finalizeGoogleElements(results)
+                  
+                  // Re-enable recheck button after Google tile refresh completion
+                  UI.updateRecheckButtonState(false)
               }
           }, 5000); // Check every 5 seconds
         }
@@ -2865,7 +3000,7 @@ $(document).ready(function () {
         mobile_friendly: [],
       }
       UI.buildRefreshTileLoader(dbName, target, name)
-      originalUrls = originalUrls.slice(0, 10) // remove
+      originalUrls = originalUrls.slice(0, recheckSingleMax) // remove
       Controls.startTest(originalUrls, "single_recheck", dbName)
 
       async function checkStatusDashboard() {
@@ -2878,6 +3013,8 @@ $(document).ready(function () {
             if (status === 'completed') {
                 clearInterval(interval);
                 Controls.endTest("single_recheck")
+                // Re-enable recheck button after single recheck completion
+                UI.updateRecheckButtonState(false)
             }
         }, 1000); // Check every 5 seconds
       }
@@ -3001,8 +3138,20 @@ $(document).ready(function () {
 
       }
 
-      Controls.buildDashboard()
+      // For single_recheck, show message instead of rebuilding dashboard
+      if(type === "single_recheck"){
+        displayAlert(".analysis-content-body-message", {
+          status: 1,
+          msg: "Recheck completed! Please refresh the page to see the updated results.",
+          notHide: true
+        })
+        $('.analysis-content-body-message').show()
+      } else {
+        Controls.buildDashboard()
+      }
 
+      // Re-enable recheck button after test completion
+      UI.updateRecheckButtonState(false)
     }
 
     static updateProgress(results, progress){
@@ -3123,8 +3272,8 @@ $(document).ready(function () {
 
 
   // Events
-  $("#recheckBtn").on("click", function(e){
-    Controls.recheckStart()
+  $("#recheckBtn").on("click", async function(e){
+    await Controls.recheckStart()
     e.preventDefault()
   })
 

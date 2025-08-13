@@ -19,28 +19,30 @@ class TestDetailsController extends Controller
         $casingSentence = 0;
 
         foreach($elements as $element){
-            if($element->content === ""){
-                $noContent++;
-            }
+            if(!$element->testerrorcaught){
+                if($element->content === ""){
+                    $noContent++;
+                }
 
-            if(strlen($element->content) > 65){
-                $lengthOver++;
-            }
-            
-            if(strlen($element->content) < 30){
-                $lengthBelow++;
-            }
+                if(strlen($element->content) > 65){
+                    $lengthOver++;
+                }
+                
+                if(strlen($element->content) < 30){
+                    $lengthBelow++;
+                }
 
-            if($element->titleCasingCamel == 1){
-                $casingCamel++;
-            }
+                if($element->titleCasingCamel == 1){
+                    $casingCamel++;
+                }
 
-            if($element->titleCasingSentence == 1){
-                $casingSentence++;
-            }
+                if($element->titleCasingSentence == 1){
+                    $casingSentence++;
+                }
 
-            if($element->titleCasingCamel == 0 || $element->titleCasingSentence == 0 || $element->titleCasingBoth == 0){
-                $casingUndefined++;
+                if($element->titleCasingCamel == 0 || $element->titleCasingSentence == 0 || $element->titleCasingBoth == 0){
+                    $casingUndefined++;
+                }
             }
         }
 
@@ -65,16 +67,18 @@ class TestDetailsController extends Controller
         $lengthBelow = 0;
 
         foreach($elements as $element){
-            if($element->content === ""){
-                $noContent++;
-            }
+            if(!$element->testerrorcaught){
+                if($element->content === ""){
+                    $noContent++;
+                }
 
-            if(strlen($element->content) > 160){
-                $lengthOver++;
-            }
-            
-            if(strlen($element->content) < 30){
-                $lengthBelow++;
+                if(strlen($element->content) > 160){
+                    $lengthOver++;
+                }
+                
+                if(strlen($element->content) < 30){
+                    $lengthBelow++;
+                }
             }
         }
 
@@ -97,20 +101,22 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
-            if($element->isExists){
-                $withRobotsMeta+=1;
-            }
+            if(!$element->testerrorcaught){
+                if($element->isExists){
+                    $withRobotsMeta+=1;
+                }
 
-            if(!$element->isExists){
-                $withoutRobotsMeta+=1;
-            }
+                if(!$element->isExists){
+                    $withoutRobotsMeta+=1;
+                }
 
-            if($element->noIndexFollowStatus){
-                $withNoIndexNofollow+=1;
-            }
+                if($element->noIndexFollowStatus){
+                    $withNoIndexNofollow+=1;
+                }
 
-            if($element->noIndexStatus){
-                $withNoIndex+=1;
+                if($element->noIndexStatus){
+                    $withNoIndex+=1;
+                }
             }
         }
 
@@ -128,14 +134,15 @@ class TestDetailsController extends Controller
         $withoutCanonical = 0;
 
         foreach($elements as $element){
-            if($element->isExists){
-                $withCanonical+=1;
-            }
+            if(!$element->testerrorcaught){
+                if($element->isExists){
+                    $withCanonical+=1;
+                }
 
-            if(!$element->isExists){
-                $withoutCanonical+=1;
+                if(!$element->isExists){
+                    $withoutCanonical+=1;
+                }
             }
-
         }
 
         $object = new \stdClass();
@@ -147,7 +154,7 @@ class TestDetailsController extends Controller
 
     public function xmlSitemap(Request $request){
         $elements = json_decode($request->input("data"));
-        $fileExists = $elements[0]->fileExists;
+        $fileExists = isset($elements[0]->fileExists) ? $elements[0]->fileExists : false;
         $object = new \stdClass();
         $object->fileExists = $fileExists;
 
@@ -157,12 +164,14 @@ class TestDetailsController extends Controller
             $sitemapNotFoundString = "";
             $index = 1;
             foreach($elements as $element){
-                $index++;
-                if($element->status){
-                    $sitemapExists+=1;
-                }else{
-                    array_push($sitemapNotFound, $element->tested_url);
-                    $sitemapNotFoundString .= $index . ". " . $element->tested_url;
+                if(!$element->testerrorcaught){
+                    $index++;
+                    if($element->status){
+                        $sitemapExists+=1;
+                    }else{
+                        array_push($sitemapNotFound, $element->tested_url);
+                        $sitemapNotFoundString .= $index . ". " . $element->tested_url;
+                    }
                 }
             }
 
@@ -187,28 +196,30 @@ class TestDetailsController extends Controller
         $totalImages = 0;
 
         foreach($elements as $element){
-            $totalImages+=count($element->problems);
-            foreach($element->problems as $image){
-                if(!$image->imageSize){
-                    $imageSizeOver++;
-                }
+            if(!$element->testerrorcaught){
+                $totalImages+=count($element->problems);
+                foreach($element->problems as $image){
+                    if(!$image->imageSize){
+                        $imageSizeOver++;
+                    }
 
-                if($image->imageAlt == ""){
-                    $imageNameMissingAlt++;
-                }
-
-
-                if(!$image->imageLengthStatus){
-                    $imageNameLengthOver++;
-                }
+                    if($image->imageAlt == ""){
+                        $imageNameMissingAlt++;
+                    }
 
 
-                if(!$image->imageAltSpacesStatus){
-                    $imageNameAltIssues++;
-                }
+                    if(!$image->imageLengthStatus){
+                        $imageNameLengthOver++;
+                    }
 
-                if(!$image->imageHyphenStatus || !$image->imageSpecialStatus || !$image->imageUppercaseStatus){
-                    $imageFileNameIssue++;
+
+                    if(!$image->imageAltSpacesStatus){
+                        $imageNameAltIssues++;
+                    }
+
+                    if(!$image->imageHyphenStatus || !$image->imageSpecialStatus || !$image->imageUppercaseStatus){
+                        $imageFileNameIssue++;
+                    }
                 }
             }
         }
@@ -228,7 +239,7 @@ class TestDetailsController extends Controller
 
     public function htmlSitemap(Request $request){
         $elements = json_decode($request->input("data"));
-        $fileExists = $elements[0]->fileExists;
+        $fileExists = isset($elements[0]->fileExists) ? $elements[0]->fileExists : false;
         $object = new \stdClass();
         $object->fileExists = $fileExists;
 
@@ -238,12 +249,14 @@ class TestDetailsController extends Controller
             $sitemapNotFoundString = "";
             $index = 1;
             foreach($elements as $element){
-                $index++;
-                if($element->status){
-                    $sitemapExists+=1;
-                }else{
-                    array_push($sitemapNotFound, $element->tested_url);
-                    $sitemapNotFoundString .= $index . ". " . $element->tested_url;
+                if(!$element->testerrorcaught){
+                    $index++;
+                    if($element->status){
+                        $sitemapExists+=1;
+                    }else{
+                        array_push($sitemapNotFound, $element->tested_url);
+                        $sitemapNotFoundString .= $index . ". " . $element->tested_url;
+                    }
                 }
             }
 
@@ -275,41 +288,43 @@ class TestDetailsController extends Controller
     
 
         foreach($elements as $element){
-            if($element->showContent){
-                $OGTitleElementExists+=1;
-            }
+            if(!$element->testerrorcaught){
+                if($element->showContent){
+                    $OGTitleElementExists+=1;
+                }
 
 
-            // title    
-            if(strlen($element->content) > 65){
-                $OGTitleLengthOver++;
-            }
-            
-            if(strlen($element->content) < 30){
-                $OGTitleLengthBelow++;
-            }
+                // title    
+                if(strlen($element->content) > 65){
+                    $OGTitleLengthOver++;
+                }
+                
+                if(strlen($element->content) < 30){
+                    $OGTitleLengthBelow++;
+                }
 
-            // desc
-            if($element->contentDesc != ""){
-                $OGDescElementExists+=1;
-            }
+                // desc
+                if($element->contentDesc != ""){
+                    $OGDescElementExists+=1;
+                }
 
-            if(strlen($element->contentDesc) > 200){
-                $OGDescLengthOver++;
-            }
-            
-            if(strlen($element->contentDesc) < 70){
-                $OGDescLengthBelow++;
-            }
+                if(strlen($element->contentDesc) > 200){
+                    $OGDescLengthOver++;
+                }
+                
+                if(strlen($element->contentDesc) < 70){
+                    $OGDescLengthBelow++;
+                }
 
-            // image
-            if($element->contentImage != ""){
-                $OGImageElementExists+=1;
-            }
+                // image
+                if($element->contentImage != ""){
+                    $OGImageElementExists+=1;
+                }
 
-            // url
-            if($element->contentURL != ""){
-                $OGUrlElementExists+=1;
+                // url
+                if($element->contentURL != ""){
+                    $OGUrlElementExists+=1;
+                }
             }
         }
 
@@ -348,29 +363,30 @@ class TestDetailsController extends Controller
     
 
         foreach($elements as $element){
+            if(!$element->testerrorcaught){
+                // title    
+                if($element->showContent){
+                    $twitterTitleElementExists+=1;
+                }
 
-            // title    
-            if($element->showContent){
-                $twitterTitleElementExists+=1;
-            }
-
-            if(strlen($element->content) > 65){
-                $twitterTitleLengthOver++;
-            }
-            
-            if(strlen($element->content) < 30){
-                $twitterTitleLengthBelow++;
-            }
+                if(strlen($element->content) > 65){
+                    $twitterTitleLengthOver++;
+                }
+                
+                if(strlen($element->content) < 30){
+                    $twitterTitleLengthBelow++;
+                }
 
 
-            // image
-            if($element->contentImage != ""){
-                $twitterImageElementExists+=1;
-            }
+                // image
+                if($element->contentImage != ""){
+                    $twitterImageElementExists+=1;
+                }
 
-            // url
-            if($element->contentImageAlt != ""){
-                $twitterImageAltElementExists+=1;
+                // url
+                if($element->contentImageAlt != ""){
+                    $twitterImageAltElementExists+=1;
+                }
             }
         }
 
@@ -433,74 +449,92 @@ class TestDetailsController extends Controller
     
 
         foreach($elementsSafeBrowsing as $element){
-            if($element->status){
-                $safeBrowsingEnabled++;
-            }else{
-                $safeBrowsingDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $safeBrowsingEnabled++;
+                }else{
+                    $safeBrowsingDisabled++;
+                }
             }
         }
 
         foreach($elementsCrossOriginLinks as $element){
-            if($element->status){
-                $crossOriginLinksEnabled++;
-            }else{
-                $crossOriginLinksDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $crossOriginLinksEnabled++;
+                }else{
+                    $crossOriginLinksDisabled++;
+                }
             }
         }
 
         foreach($elementsBadContent as $element){
-            if($element->status){
-                $badContentEnabled++;
-            }else{
-                $badContentDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $badContentEnabled++;
+                }else{
+                    $badContentDisabled++;
+                }
             }
         }
 
         foreach($elementsSSL as $element){
-            if($element->status){
-                $sslCertificateEnabled++;
-            }else{
-                $sslCertificateDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $sslCertificateEnabled++;
+                }else{
+                    $sslCertificateDisabled++;
+                }
             }
         }
 
         foreach($elementsXframe as $element){
-            if($element->status){
-                $xFrameOptionsEnabled++;
-            }else{
-                $xFrameOptionsDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $xFrameOptionsEnabled++;
+                }else{
+                    $xFrameOptionsDisabled++;
+                }
             }
         }
 
         foreach($elementsProtocol as $element){
-            if($element->status){
-                $protocolRelativeEnabled++;
-            }else{
-                $protocolRelativeDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $protocolRelativeEnabled++;
+                }else{
+                    $protocolRelativeDisabled++;
+                }
             }
         }
 
         foreach($elementsContentSecurity as $element){
-            if($element->status){
-                $contentSecurityEnabled++;
-            }else{
-                $contentSecurityDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $contentSecurityEnabled++;
+                }else{
+                    $contentSecurityDisabled++;
+                }
             }
         }
 
         foreach($elementsHSTS as $element){
-            if($element->status){
-                $hstsHeaderEnabled++;
-            }else{
-                $hstsHeaderDisabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $hstsHeaderEnabled++;
+                }else{
+                    $hstsHeaderDisabled++;
+                }
             }
         }
 
         foreach($elementsFolder as $element){
-            if($element->status){
-                $folderBrowsingDisabled++;
-            }else{
-                $folderBrowsingEnabled++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $folderBrowsingDisabled++;
+                }else{
+                    $folderBrowsingEnabled++;
+                }
             }
         }
 
@@ -541,10 +575,12 @@ class TestDetailsController extends Controller
         $mobileFriendlyFailed = 0;
 
         foreach($elements as $element){
-            if($element->status){
-                $mobileFriendlyPassed++;
-            }else{
-                $mobileFriendlyFailed++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $mobileFriendlyPassed++;
+                }else{
+                    $mobileFriendlyFailed++;
+                }
             }
         }
 
@@ -563,10 +599,12 @@ class TestDetailsController extends Controller
         $pageSizeFailed = 0;
 
         foreach($elements as $element){
-            if($element->status){
-                $pageSizePassed++;
-            }else{
-                $pageSizeFailed++;
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $pageSizePassed++;
+                }else{
+                    $pageSizeFailed++;
+                }
             }
         }
 
@@ -589,29 +627,31 @@ class TestDetailsController extends Controller
         $http500x = 0;
 
         foreach($elements as $element){
-            $httpCode = intval($element->httpCode);
-            if($httpCode == 200){
-                $http200++;
-            }else{
+            if(!$element->testerrorcaught){
+                $httpCode = intval($element->httpCode);
+                if($httpCode == 200){
+                    $http200++;
+                }else{
 
-                if($httpCode >= 100 && $httpCode < 200){
-                    $http100x++;
-                }
+                    if($httpCode >= 100 && $httpCode < 200){
+                        $http100x++;
+                    }
 
-                if($httpCode >= 200 && $httpCode < 300){
-                    $http200x++;
-                }
+                    if($httpCode >= 200 && $httpCode < 300){
+                        $http200x++;
+                    }
 
-                if($httpCode >= 300 && $httpCode < 400){
-                    $http300x++;
-                }
+                    if($httpCode >= 300 && $httpCode < 400){
+                        $http300x++;
+                    }
 
-                if($httpCode >= 400 && $httpCode < 500){
-                    $http400x++;
-                }
+                    if($httpCode >= 400 && $httpCode < 500){
+                        $http400x++;
+                    }
 
-                if($httpCode > 500){
-                    $http500x++;
+                    if($httpCode > 500){
+                        $http500x++;
+                    }
                 }
             }
         }
@@ -644,11 +684,13 @@ class TestDetailsController extends Controller
         $totalBrokenExternal = 0;
 
         foreach($elements as $element){
-            if(!$element->status){
-                $totalBrokenWebPages++;
-                $totalBrokenLinks+=$element->totalBrokenLinks;
-                $totalBrokenInternal+=count($element->totalBrokenInternal);
-                $totalBrokenExternal+=count($element->totalBrokenExternal);
+            if(!$element->testerrorcaught){
+                if(!$element->status){
+                    $totalBrokenWebPages++;
+                    $totalBrokenLinks+=$element->totalBrokenLinks;
+                    $totalBrokenInternal+=count($element->totalBrokenInternal);
+                    $totalBrokenExternal+=count($element->totalBrokenExternal);
+                }
             }
         }
 
@@ -681,35 +723,37 @@ class TestDetailsController extends Controller
         $desktopStatus = true;
 
         foreach($elements as $element){
-            // Skip if this element is an error object
-            if (!isset($element->desktop) || !isset($element->mobile)) {
-                continue;
-            }
-            $totalElements++;
-            $desktopOverallAvg+=$element->desktop->performance_score;
-            $mobileOverallAvg+=$element->mobile->performance_score;
+            if(!$element->testerrorcaught){
+                // Skip if this element is an error object
+                if (!isset($element->desktop) || !isset($element->mobile)) {
+                    continue;
+                }
+                $totalElements++;
+                $desktopOverallAvg+=$element->desktop->performance_score;
+                $mobileOverallAvg+=$element->mobile->performance_score;
 
-            // desktop
-            if($element->desktop->performance_score >= 90){
-                $desktopGood++;
-            }
-            if($element->desktop->performance_score >= 50 &&  $element->desktop->performance_score < 90){
-                $desktopAvg++;
-            }
-            if($element->desktop->performance_score < 50){
-                $desktopPoor++;
-            }
+                // desktop
+                if($element->desktop->performance_score >= 90){
+                    $desktopGood++;
+                }
+                if($element->desktop->performance_score >= 50 &&  $element->desktop->performance_score < 90){
+                    $desktopAvg++;
+                }
+                if($element->desktop->performance_score < 50){
+                    $desktopPoor++;
+                }
 
 
-            // mobile
-            if($element->mobile->performance_score >= 90){
-                $mobileGood++;
-            }
-            if($element->mobile->performance_score >= 50 &&  $element->mobile->performance_score < 90){
-                $mobileAvg++;
-            }
-            if($element->mobile->performance_score < 50){
-                $mobilePoor++;
+                // mobile
+                if($element->mobile->performance_score >= 90){
+                    $mobileGood++;
+                }
+                if($element->mobile->performance_score >= 50 &&  $element->mobile->performance_score < 90){
+                    $mobileAvg++;
+                }
+                if($element->mobile->performance_score < 50){
+                    $mobilePoor++;
+                }
             }
         }
 
@@ -796,102 +840,104 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
-            if (!isset($element->desktop) || !isset($element->mobile)) {
-                continue;
-            }
-            $totalElements++;
-            $desktopAccAvg+=$element->desktop->accessibility_score;
-            $desktopPerAvg+=$element->desktop->performance_score;
-            $desktopBPAvg+=$element->desktop->best_practices_score;
-            $desktopSeoAvg+=$element->desktop->seo_score;
+            if(!$element->testerrorcaught){
+                if (!isset($element->desktop) || !isset($element->mobile)) {
+                    continue;
+                }
+                $totalElements++;
+                $desktopAccAvg+=$element->desktop->accessibility_score;
+                $desktopPerAvg+=$element->desktop->performance_score;
+                $desktopBPAvg+=$element->desktop->best_practices_score;
+                $desktopSeoAvg+=$element->desktop->seo_score;
 
-            $mobileAccAvg+=$element->mobile->accessibility_score;
-            $mobilePerAvg+=$element->mobile->performance_score;
-            $mobileBPAvg+=$element->mobile->best_practices_score;
-            $mobileSeoAvg+=$element->mobile->seo_score;
+                $mobileAccAvg+=$element->mobile->accessibility_score;
+                $mobilePerAvg+=$element->mobile->performance_score;
+                $mobileBPAvg+=$element->mobile->best_practices_score;
+                $mobileSeoAvg+=$element->mobile->seo_score;
 
-            // desktop
-            if($element->desktop->performance_score >= 90){ // performance
-                $desktopGoodPer++;
-            }
-            if($element->desktop->performance_score >= 50 &&  $element->desktop->performance_score < 90){
-                $desktopAvgPer++;
-            }
-            if($element->desktop->performance_score < 50){
-                $desktopPoorPer++;
-            }
+                // desktop
+                if($element->desktop->performance_score >= 90){ // performance
+                    $desktopGoodPer++;
+                }
+                if($element->desktop->performance_score >= 50 &&  $element->desktop->performance_score < 90){
+                    $desktopAvgPer++;
+                }
+                if($element->desktop->performance_score < 50){
+                    $desktopPoorPer++;
+                }
 
-            if($element->desktop->accessibility_score >= 90){ // accessibility
-                $desktopGoodAcc++;
-            }
-            if($element->desktop->accessibility_score >= 50 &&  $element->desktop->accessibility_score < 90){
-                $desktopAvgAcc++;
-            }
-            if($element->desktop->accessibility_score < 50){
-                $desktopPoorAcc++;
-            }
+                if($element->desktop->accessibility_score >= 90){ // accessibility
+                    $desktopGoodAcc++;
+                }
+                if($element->desktop->accessibility_score >= 50 &&  $element->desktop->accessibility_score < 90){
+                    $desktopAvgAcc++;
+                }
+                if($element->desktop->accessibility_score < 50){
+                    $desktopPoorAcc++;
+                }
 
-            if($element->desktop->best_practices_score >= 90){ // best practices
-                $desktopGoodBP++;
-            }
-            if($element->desktop->best_practices_score >= 50 &&  $element->desktop->best_practices_score < 90){
-                $desktopAvgBP++;
-            }
-            if($element->desktop->best_practices_score < 50){
-                $desktopPoorBP++;
-            }
+                if($element->desktop->best_practices_score >= 90){ // best practices
+                    $desktopGoodBP++;
+                }
+                if($element->desktop->best_practices_score >= 50 &&  $element->desktop->best_practices_score < 90){
+                    $desktopAvgBP++;
+                }
+                if($element->desktop->best_practices_score < 50){
+                    $desktopPoorBP++;
+                }
 
-            if($element->desktop->seo_score >= 90){ // seo
-                $desktopGoodSeo++;
-            }
-            if($element->desktop->seo_score >= 50 &&  $element->desktop->seo_score < 90){
-                $desktopAvgSeo++;
-            }
-            if($element->desktop->seo_score < 50){
-                $desktopPoorSeo++;
-            }
+                if($element->desktop->seo_score >= 90){ // seo
+                    $desktopGoodSeo++;
+                }
+                if($element->desktop->seo_score >= 50 &&  $element->desktop->seo_score < 90){
+                    $desktopAvgSeo++;
+                }
+                if($element->desktop->seo_score < 50){
+                    $desktopPoorSeo++;
+                }
 
 
 
-            // mobile
-            if($element->mobile->performance_score >= 90){ // performance
-                $mobileGoodPer++;
-            }
-            if($element->mobile->performance_score >= 50 &&  $element->mobile->performance_score < 90){
-                $mobileAvgPer++;
-            }
-            if($element->mobile->performance_score < 50){
-                $mobilePoorPer++;
-            }
+                // mobile
+                if($element->mobile->performance_score >= 90){ // performance
+                    $mobileGoodPer++;
+                }
+                if($element->mobile->performance_score >= 50 &&  $element->mobile->performance_score < 90){
+                    $mobileAvgPer++;
+                }
+                if($element->mobile->performance_score < 50){
+                    $mobilePoorPer++;
+                }
 
-            if($element->mobile->accessibility_score >= 90){ // accessibility
-                $mobileGoodAcc++;
-            }
-            if($element->mobile->accessibility_score >= 50 &&  $element->mobile->accessibility_score < 90){
-                $mobileAvgAcc++;
-            }
-            if($element->mobile->accessibility_score < 50){
-                $mobilePoorAcc++;
-            }
+                if($element->mobile->accessibility_score >= 90){ // accessibility
+                    $mobileGoodAcc++;
+                }
+                if($element->mobile->accessibility_score >= 50 &&  $element->mobile->accessibility_score < 90){
+                    $mobileAvgAcc++;
+                }
+                if($element->mobile->accessibility_score < 50){
+                    $mobilePoorAcc++;
+                }
 
-            if($element->desktop->best_practices_score >= 90){ // best practices
-                $mobileGoodBP++;
-            }
-            if($element->desktop->best_practices_score >= 50 &&  $element->desktop->best_practices_score < 90){
-                $mobileAvgBP++;
-            }
-            if($element->desktop->best_practices_score < 50){
-                $mobilePoorBP++;
-            }
+                if($element->desktop->best_practices_score >= 90){ // best practices
+                    $mobileGoodBP++;
+                }
+                if($element->desktop->best_practices_score >= 50 &&  $element->desktop->best_practices_score < 90){
+                    $mobileAvgBP++;
+                }
+                if($element->desktop->best_practices_score < 50){
+                    $mobilePoorBP++;
+                }
 
-            if($element->mobile->seo_score >= 90){ // seo
-                $mobileGoodSeo++;
-            }
-            if($element->mobile->seo_score >= 50 &&  $element->mobile->seo_score < 90){
-                $mobileAvgSeo++;
-            }
-            if($element->mobile->seo_score < 50){
-                $mobilePoorSeo++;
+                if($element->mobile->seo_score >= 90){ // seo
+                    $mobileGoodSeo++;
+                }
+                if($element->mobile->seo_score >= 50 &&  $element->mobile->seo_score < 90){
+                    $mobileAvgSeo++;
+                }
+                if($element->mobile->seo_score < 50){
+                    $mobilePoorSeo++;
+                }
             }
         }
 
@@ -1071,185 +1117,186 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
-            if (!isset($element->desktop) || !isset($element->mobile)) {
-                continue;
-            }
-            $totalElements++;
+            if(!$element->testerrorcaught){
+                if (!isset($element->desktop) || !isset($element->mobile)) {
+                    continue;
+                }
+                $totalElements++;
 
-            // DESKTOP AVG SCORES
-            $desktopLCPAvg+=$element->desktop->largest_contentful_paint;
-            $desktopFCPAvg+=$element->desktop->first_contentful_paint;
-            $desktopCLSAvg+=$element->desktop->cumulative_layout_shift;
-            $desktopFIDAvg+=$element->desktop->max_potential_fid;
-            $desktopTTIAvg+=$element->desktop->interactive;
-            $desktopSIAvg+=$element->desktop->speed_index;
-            $desktopTBTAvg+=$element->desktop->total_blocking_time;
+                // DESKTOP AVG SCORES
+                $desktopLCPAvg+=$element->desktop->largest_contentful_paint;
+                $desktopFCPAvg+=$element->desktop->first_contentful_paint;
+                $desktopCLSAvg+=$element->desktop->cumulative_layout_shift;
+                $desktopFIDAvg+=$element->desktop->max_potential_fid;
+                $desktopTTIAvg+=$element->desktop->interactive;
+                $desktopSIAvg+=$element->desktop->speed_index;
+                $desktopTBTAvg+=$element->desktop->total_blocking_time;
 
-            // MOBILE AVG SCORES
-            $mobileLCPAvg+=$element->mobile->largest_contentful_paint;
-            $mobileFCPAvg+=$element->mobile->first_contentful_paint;
-            $mobileCLSAvg+=$element->mobile->cumulative_layout_shift;
-            $mobileFIDAvg+=$element->mobile->max_potential_fid;
-            $mobileTTIAvg+=$element->mobile->interactive;
-            $mobileSIAvg+=$element->mobile->speed_index;
-            $mobileTBTAvg+=$element->mobile->total_blocking_time;
+                // MOBILE AVG SCORES
+                $mobileLCPAvg+=$element->mobile->largest_contentful_paint;
+                $mobileFCPAvg+=$element->mobile->first_contentful_paint;
+                $mobileCLSAvg+=$element->mobile->cumulative_layout_shift;
+                $mobileFIDAvg+=$element->mobile->max_potential_fid;
+                $mobileTTIAvg+=$element->mobile->interactive;
+                $mobileSIAvg+=$element->mobile->speed_index;
+                $mobileTBTAvg+=$element->mobile->total_blocking_time;
 
-            // desktop
-            if($element->desktop->largest_contentful_paint <= 3){ // LCP
-                $desktopGoodLCP++;
-            }
-            if($element->desktop->largest_contentful_paint > 3 &&  $element->desktop->largest_contentful_paint < 4.5){
-                $desktopAvgLCP++;
-            }
-            if($element->desktop->largest_contentful_paint >= 4.5){
-                $desktopPoorLCP++;
-            }
-
-
-            if($element->desktop->first_contentful_paint <= 3){ // FCP
-                $desktopGoodFCP++;
-            }
-            if($element->desktop->first_contentful_paint > 3 &&  $element->desktop->first_contentful_paint <= 4.5){
-                $desktopAvgFCP++;
-            }
-            if($element->desktop->first_contentful_paint > 4.5){
-                $desktopPoorFCP++;
-            }
+                // desktop
+                if($element->desktop->largest_contentful_paint <= 3){ // LCP
+                    $desktopGoodLCP++;
+                }
+                if($element->desktop->largest_contentful_paint > 3 &&  $element->desktop->largest_contentful_paint < 4.5){
+                    $desktopAvgLCP++;
+                }
+                if($element->desktop->largest_contentful_paint >= 4.5){
+                    $desktopPoorLCP++;
+                }
 
 
-            if($element->desktop->cumulative_layout_shift <= 0.1){ // CLS
-                $desktopGoodCLS++;
-            }
-            if($element->desktop->cumulative_layout_shift > 0.1 &&  $element->desktop->cumulative_layout_shift <= 0.25){
-                $desktopAvgCLS++;
-            }
-            if($element->desktop->cumulative_layout_shift >= 0.25){
-                $desktopPoorCLS++;
-            }
+                if($element->desktop->first_contentful_paint <= 3){ // FCP
+                    $desktopGoodFCP++;
+                }
+                if($element->desktop->first_contentful_paint > 3 &&  $element->desktop->first_contentful_paint <= 4.5){
+                    $desktopAvgFCP++;
+                }
+                if($element->desktop->first_contentful_paint > 4.5){
+                    $desktopPoorFCP++;
+                }
 
 
-            if($element->desktop->max_potential_fid <= 100){ // FID
-                $desktopGoodFID++;
-            }
-            if($element->desktop->max_potential_fid > 100 &&  $element->desktop->max_potential_fid <= 330){
-                $desktopAvgFID++;
-            }
-            if($element->desktop->max_potential_fid > 330){
-                $desktopPoorFID++;
-            }
+                if($element->desktop->cumulative_layout_shift <= 0.1){ // CLS
+                    $desktopGoodCLS++;
+                }
+                if($element->desktop->cumulative_layout_shift > 0.1 &&  $element->desktop->cumulative_layout_shift <= 0.25){
+                    $desktopAvgCLS++;
+                }
+                if($element->desktop->cumulative_layout_shift >= 0.25){
+                    $desktopPoorCLS++;
+                }
 
 
-            if($element->desktop->total_blocking_time <= 100){ // TBT
-                $desktopGoodTBT++;
-            }
-            if($element->desktop->total_blocking_time > 100 &&  $element->desktop->total_blocking_time <= 330){
-                $desktopAvgTBT++;
-            }
-            if($element->desktop->total_blocking_time > 330){
-                $desktopPoorTBT++;
-            }
+                if($element->desktop->max_potential_fid <= 100){ // FID
+                    $desktopGoodFID++;
+                }
+                if($element->desktop->max_potential_fid > 100 &&  $element->desktop->max_potential_fid <= 330){
+                    $desktopAvgFID++;
+                }
+                if($element->desktop->max_potential_fid > 330){
+                    $desktopPoorFID++;
+                }
 
 
-            if($element->desktop->speed_index <= 2){ // SI
-                $desktopGoodSI++;
-            }
-            if($element->desktop->speed_index > 2 &&  $element->desktop->speed_index <= 7){
-                $desktopAvgSI++;
-            }
-            if($element->desktop->speed_index > 7){
-                $desktopPoorSI++;
-            }
+                if($element->desktop->total_blocking_time <= 100){ // TBT
+                    $desktopGoodTBT++;
+                }
+                if($element->desktop->total_blocking_time > 100 &&  $element->desktop->total_blocking_time <= 330){
+                    $desktopAvgTBT++;
+                }
+                if($element->desktop->total_blocking_time > 330){
+                    $desktopPoorTBT++;
+                }
 
 
-            if($element->desktop->interactive <= 2){ // TTI
-                $desktopGoodTTI++;
-            }
-            if($element->desktop->interactive > 2 &&  $element->desktop->interactive <= 7){
-                $desktopAvgTTI++;
-            }
-            if($element->desktop->interactive > 7){
-                $desktopPoorTTI++;
-            }
+                if($element->desktop->speed_index <= 2){ // SI
+                    $desktopGoodSI++;
+                }
+                if($element->desktop->speed_index > 2 &&  $element->desktop->speed_index <= 7){
+                    $desktopAvgSI++;
+                }
+                if($element->desktop->speed_index > 7){
+                    $desktopPoorSI++;
+                }
+
+
+                if($element->desktop->interactive <= 2){ // TTI
+                    $desktopGoodTTI++;
+                }
+                if($element->desktop->interactive > 2 &&  $element->desktop->interactive <= 7){
+                    $desktopAvgTTI++;
+                }
+                if($element->desktop->interactive > 7){
+                    $desktopPoorTTI++;
+                }
 
 
 
 
-
-            // mobile
-            if($element->mobile->largest_contentful_paint <= 3){ // LCP
-                $mobileGoodLCP++;
-            }
-            if($element->mobile->largest_contentful_paint > 3 &&  $element->mobile->largest_contentful_paint < 4.5){
-                $mobileAvgLCP++;
-            }
-            if($element->mobile->largest_contentful_paint >= 4.5){
-                $mobilePoorLCP++;
-            }
-
-
-            if($element->mobile->first_contentful_paint <= 3){ // FCP
-                $mobileGoodFCP++;
-            }
-            if($element->mobile->first_contentful_paint > 3 &&  $element->mobile->first_contentful_paint <= 4.5){
-                $mobileAvgFCP++;
-            }
-            if($element->mobile->first_contentful_paint > 4.5){
-                $mobilePoorFCP++;
-            }
+                // mobile
+                if($element->mobile->largest_contentful_paint <= 3){ // LCP
+                    $mobileGoodLCP++;
+                }
+                if($element->mobile->largest_contentful_paint > 3 &&  $element->mobile->largest_contentful_paint < 4.5){
+                    $mobileAvgLCP++;
+                }
+                if($element->mobile->largest_contentful_paint >= 4.5){
+                    $mobilePoorLCP++;
+                }
 
 
-            if($element->mobile->cumulative_layout_shift <= 0.1){ // CLS
-                $mobileGoodCLS++;
-            }
-            if($element->mobile->cumulative_layout_shift > 0.1 &&  $element->mobile->cumulative_layout_shift <= 0.25){
-                $mobileAvgCLS++;
-            }
-            if($element->mobile->cumulative_layout_shift >= 0.25){
-                $mobilePoorCLS++;
-            }
+                if($element->mobile->first_contentful_paint <= 3){ // FCP
+                    $mobileGoodFCP++;
+                }
+                if($element->mobile->first_contentful_paint > 3 &&  $element->mobile->first_contentful_paint <= 4.5){
+                    $mobileAvgFCP++;
+                }
+                if($element->mobile->first_contentful_paint > 4.5){
+                    $mobilePoorFCP++;
+                }
 
 
-            if($element->mobile->max_potential_fid <= 100){ // FID
-                $mobileGoodFID++;
-            }
-            if($element->mobile->max_potential_fid > 100 &&  $element->mobile->max_potential_fid <= 330){
-                $mobileAvgFID++;
-            }
-            if($element->mobile->max_potential_fid > 330){
-                $mobilePoorFID++;
-            }
+                if($element->mobile->cumulative_layout_shift <= 0.1){ // CLS
+                    $mobileGoodCLS++;
+                }
+                if($element->mobile->cumulative_layout_shift > 0.1 &&  $element->mobile->cumulative_layout_shift <= 0.25){
+                    $mobileAvgCLS++;
+                }
+                if($element->mobile->cumulative_layout_shift >= 0.25){
+                    $mobilePoorCLS++;
+                }
 
 
-            if($element->mobile->total_blocking_time <= 100){ // TBT
-                $mobileGoodTBT++;
-            }
-            if($element->mobile->total_blocking_time > 100 &&  $element->mobile->total_blocking_time <= 330){
-                $mobileAvgTBT++;
-            }
-            if($element->mobile->total_blocking_time > 330){
-                $mobilePoorTBT++;
-            }
+                if($element->mobile->max_potential_fid <= 100){ // FID
+                    $mobileGoodFID++;
+                }
+                if($element->mobile->max_potential_fid > 100 &&  $element->mobile->max_potential_fid <= 330){
+                    $mobileAvgFID++;
+                }
+                if($element->mobile->max_potential_fid > 330){
+                    $mobilePoorFID++;
+                }
 
 
-            if($element->mobile->speed_index <= 2){ // SI
-                $mobileGoodSI++;
-            }
-            if($element->mobile->speed_index > 2 &&  $element->mobile->speed_index <= 7){
-                $mobileAvgSI++;
-            }
-            if($element->mobile->speed_index > 7){
-                $mobilePoorSI++;
-            }
+                if($element->mobile->total_blocking_time <= 100){ // TBT
+                    $mobileGoodTBT++;
+                }
+                if($element->mobile->total_blocking_time > 100 &&  $element->mobile->total_blocking_time <= 330){
+                    $mobileAvgTBT++;
+                }
+                if($element->mobile->total_blocking_time > 330){
+                    $mobilePoorTBT++;
+                }
 
 
-            if($element->mobile->interactive <= 2){ // TTI
-                $mobileGoodTTI++;
-            }
-            if($element->mobile->interactive > 2 &&  $element->mobile->interactive <= 7){
-                $mobileAvgTTI++;
-            }
-            if($element->mobile->interactive > 7){
-                $mobilePoorTTI++;
+                if($element->mobile->speed_index <= 2){ // SI
+                    $mobileGoodSI++;
+                }
+                if($element->mobile->speed_index > 2 &&  $element->mobile->speed_index <= 7){
+                    $mobileAvgSI++;
+                }
+                if($element->mobile->speed_index > 7){
+                    $mobilePoorSI++;
+                }
+
+
+                if($element->mobile->interactive <= 2){ // TTI
+                    $mobileGoodTTI++;
+                }
+                if($element->mobile->interactive > 2 &&  $element->mobile->interactive <= 7){
+                    $mobileAvgTTI++;
+                }
+                if($element->mobile->interactive > 7){
+                    $mobilePoorTTI++;
+                }
             }
         }
 
@@ -1438,68 +1485,83 @@ class TestDetailsController extends Controller
 
 
 
-
         foreach($elementsHtmlCompression as $element){
-            if($element->status){
-                $htmlCompressed++;       
-            }else{
-                $htmlNotCompressed++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $htmlCompressed++;       
+                }else{
+                    $htmlNotCompressed++;       
+                }
             }
         }
 
         foreach($elementsCssCompression as $element){
-            if($element->status){
-                $cssCompressed++;       
-            }else{
-                $cssNotCompressed++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $cssCompressed++;       
+                }else{
+                    $cssNotCompressed++;       
+                }
             }
         }
 
         foreach($elementsJsCompression as $element){
-            if($element->status){
-                $jsCompressed++;       
-            }else{
-                $jsNotCompressed++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $jsCompressed++;       
+                }else{
+                    $jsNotCompressed++;       
+                }
             }
         }
 
         foreach($elementsGzipCompression as $element){
-            if($element->status){
-                $gzipCompressed++;       
-            }else{
-                $gzipNotCompressed++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $gzipCompressed++;       
+                }else{
+                    $gzipNotCompressed++;       
+                }
             }
         }
 
         foreach($elementsJsCaching as $element){
-            if($element->status){
-                $jsCachingEnable++;       
-            }else{
-                $jsCachingNotEnable++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $jsCachingEnable++;       
+                }else{
+                    $jsCachingNotEnable++;       
+                }
             }
         }
 
         foreach($elementsCssCaching as $element){
-            if($element->status){
-                $cssCachingEnable++;       
-            }else{
-                $cssCachingNotEnable++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $cssCachingEnable++;       
+                }else{
+                    $cssCachingNotEnable++;       
+                }
             }
         }
 
         foreach($elementsNested as $element){
-            if($element->status){
-                $nestedTables++;       
-            }else{
-                $nestedTablesWithout++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $nestedTables++;       
+                }else{
+                    $nestedTablesWithout++;       
+                }
             }
         }
 
         foreach($elementsFrameset as $element){
-            if($element->status){
-                $frameset++;       
-            }else{
-                $framesetWithout++;       
+            if(!$element->testerrorcaught){
+                if($element->status){
+                    $frameset++;       
+                }else{
+                    $framesetWithout++;       
+                }
             }
         }
 

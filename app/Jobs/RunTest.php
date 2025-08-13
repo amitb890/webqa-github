@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Auth;
 
 ini_set('max_execution_time', 180000);
 ini_set('memory_limit', '512M');
+ini_set('default_socket_timeout', 30);
+ini_set('max_input_time', 60);
 
 class RunTest implements ShouldQueue
 {
@@ -29,11 +31,79 @@ class RunTest implements ShouldQueue
 
     public $timeout = 180000; // Increase timeout to 5 minutes
     public $tries = 1; // Prevent multiple retries
+    public $maxExceptions = 3; // Allow up to 3 exceptions before marking as failed
 
     protected $dashboardTest;
     protected $recheck_label;
     protected $type;
     protected $newUrls;
+
+    /**
+     * Safely get image dimensions with timeout protection
+     */
+    private function getImageDimensionsSafely($imageUrl) {
+        $dimensions = null;
+        try {
+            // Set a timeout for the image processing
+            set_time_limit(30); // 30 seconds timeout for image processing
+            
+            // Use cURL with timeout instead of getimagesize for better control
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $imageUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 10); // 10 seconds timeout
+            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // 5 seconds connection timeout
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; WebQA/1.0)');
+            
+            $imageData = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+            
+            if ($httpCode === 200 && $imageData) {
+                // Create temporary file to get dimensions
+                $tempFile = tempnam(sys_get_temp_dir(), 'webqa_img_');
+                file_put_contents($tempFile, $imageData);
+                
+                if (file_exists($tempFile)) {
+                    $imageInfo = getimagesize($tempFile);
+                    if ($imageInfo) {
+                        $dimensions = array('h' => $imageInfo[1], 'w' => $imageInfo[0]);
+                    }
+                    unlink($tempFile); // Clean up temp file
+                }
+            }
+            
+            // Reset time limit
+            set_time_limit(180000);
+            
+        } catch (Exception $e) {
+            // Log error and continue without dimensions
+            Log::warning("Failed to get image dimensions for: " . $imageUrl . " - " . $e->getMessage());
+            $dimensions = null;
+            set_time_limit(180000);
+        }
+        
+        // Fallback to getimagesize if cURL method failed
+        if (!$dimensions) {
+            try {
+                set_time_limit(30);
+                $imageInfo = @getimagesize($imageUrl);
+                if ($imageInfo) {
+                    $dimensions = array('h' => $imageInfo[1], 'w' => $imageInfo[0]);
+                }
+                set_time_limit(180000);
+            } catch (Exception $e) {
+                Log::warning("Fallback getimagesize also failed for: " . $imageUrl . " - " . $e->getMessage());
+                $dimensions = null;
+                set_time_limit(180000);
+            }
+        }
+        
+        return $dimensions;
+    }
 
 
         /**
@@ -101,236 +171,957 @@ class RunTest implements ShouldQueue
                 $url = $urlList[$i]->url;
             }
 
-
-
-            $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
-            $options = [
-                'headers' => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)']
-            ];
-            $crawler = $goutteClient->request('GET', $url, [], [], $options);
-
+            // Set timeout for each URL (2 minutes = 120 seconds)
+            $urlTimeout = 120;
+            $startTime = time();
+            $urlTimedOut = false;
             
-            if ($crawler->count() > 0) {
-                $html = $crawler->html();
-                $statusCode = $goutteClient->getResponse()->getStatusCode();
-
-                $internalResponse = $goutteClient->getInternalResponse();
-                $contentType = $goutteClient->getResponse()->getHeader('Content-Type');
-
-
-        
-
-                $meta = $crawler->filter("table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,link[rel='stylesheet'],script")->each(function($node) {
-                    $name = $node->attr('name');
-                    $content = $node->attr('content');
-
-                    if($name === null){
-                        $name = $node->getNode(0)->tagName;
-                    }
-                    if($name === "meta"){
-                        $name = $node->attr('property');
-                    }
-                    if($content === null){
-                        $content = $node->getNode(0)->textContent;
-                    }
-
-                    if($name === "link"){
-                        $name = $node->extract(array('rel'))[0];
-                        $content = $node->extract(array('href'))[0];
-                    }
-
-                    if($name === "a"){
-                        $content = $node->extract(array('href'))[0];
-                    }
-
-                    if($name === "img"){
-                        $content = [
-                            'src' => $node->attr('src') != "" ? $node->attr('src') : $node->attr('data-src'),
-                            'alt' => $node->attr('alt')
-                        ];
-                    }
-
-                    if($name === "script"){
-                        $content = $node->extract(array('src'))[0];
-                    }
-
-                    if($name === "table"){
-                        $content = $node->html();
-                    }
-
-                    return [
-                        'name' => $name,
-                        'content' => $content,
-                    ];
-                });
-
-
-                $finalRes = $helpers->getTest($meta);
-                $finalRes["html"] = $html;
-                $finalRes["html_status_code"] = $statusCode;
-                $finalRes["internal_response"] = $internalResponse;
-                $finalRes["content_type"] = $contentType;
-                $finalRes["settings"] = json_encode($settings);
-
-
-
-                for($j = 0; $j < count($labels); $j++){
-                    $label = $labels[$j];
-                    $test_title = $label->db_name;
-
-                    $testData;
-                    switch($label->db_name){
-                        case "meta_title":
-                            $testData = $this->title($finalRes, $label, $url);
-                            break;
-                        case "meta_desc":
-                            $testData = $this->description($finalRes, $label, $url);
-                            break;
-                        case "robots_meta":
-                            $testData = $this->robots($finalRes, $label, $url);
-                            break;
-                        case "canonical_url":
-                            $testData = $this->canonical($finalRes, $label, $url);
-                            break;
-                        case "url_slug":
-                            $testData = $this->urlSlug($finalRes, $label, $url);
-                            break;
-                        case "images":
-                            $testData = $this->images($finalRes, $label, $url);
-                            break;
-                        case "xml_sitemap":
-                            $testData = $this->xmlSitemap($finalRes, $label, $url);
-                            break;
-                        case "html_sitemap":
-                            $testData = $this->htmlSitemap($finalRes, $label, $url);
-                            break;
-                        case "open_graph_tags":
-                            $testData = $this->ogTags($finalRes, $label, $url);
-                            break;
-                        case "twitter_tags":
-                            $testData = $this->twitterTags($finalRes, $label, $url);
-                            break;
-                        case "favicon":
-                            $testData = $this->favicon($finalRes, $label, $url);
-                            break;
-                        case "meta_viewport":
-                            $testData = $this->metaViewport($finalRes, $label, $url);
-                            break;
-                        case "doctype":
-                            $testData = $this->doctype($finalRes, $label, $url);
-                            break;
-                        case "google_overall":
-                            
-                            $object = new \stdClass();
-                            $object->learnMoreURL = "https://setmore.com/";
-                            $object->tagName = "Google Lighthouse";
-                            $object->label = $label;
-                            $object->tested_url = $url;
-                            $object->tested_at = time();
-                            $testData = json_encode($object);
-                            break;
-                        case "google_lighthouse":
-                            $object = new \stdClass();
-                            $object->learnMoreURL = "https://setmore.com/";
-                            $object->tagName = "Google Lighthouse";
-                            $object->label = $label;
-                            $object->tested_url = $url;
-                            $object->tested_at = time();
-                            $testData = json_encode($object);
-                            break;
-                        case "core_web_vitals":
-                            $object = new \stdClass();
-                            $object->learnMoreURL = "https://setmore.com/";
-                            $object->tagName = "Google Lighthouse";
-                            $object->label = $label;
-                            $object->tested_url = $url;
-                            $object->tested_at = time();
-                            $testData = json_encode($object);
-                            break;
-                        case "mobile_friendly":
-                            $testData = $this->mobileFriendly($finalRes, $label, $url);
-                            break;
-                        case "content_security_policy_header":
-                            $testData = $this->contentSecurity($finalRes, $label, $url);
-                            break;
-                        case "hsts_header":
-                            $testData = $this->hstsHeader($finalRes, $label, $url);
-                            break;
-                        case "bad_content_type":
-                            $testData = $this->badContentType($finalRes, $label, $url);
-                            break;
-                        case "x_frame_options_header":
-                            $testData = $this->XFrameOptions($finalRes, $label, $url);
-                            break;
-                        case "is_safe_browsing":
-                            $testData = $this->safeBrowsing($finalRes, $label, $url);
-                            break;
-                        case "cross_origin_links":
-                            $testData = $this->crossOriginLinks($finalRes, $label, $url);
-                            break;
-                        case "protocol_relative_resource":
-                            $testData = $this->protocolRelativeResource($finalRes, $label, $url);
-                            break;
-                        case "ssl_certificate_enable":
-                            $testData = $this->checkSSLCertificate($finalRes, $label, $url);
-                            break;
-                        case "folder_browsing_enable":
-                            $testData = $this->directoryBrowsingEnable($finalRes, $label, $url);
-                            break;
-                        case "html_compression":
-                            $testData = $this->htmlCompression($finalRes, $label, $url);
-                            break;
-                        case "css_compression":
-                            $testData = $this->cssCompression($finalRes, $label, $url);
-                            break;
-                        case "js_compression":
-                            $testData = $this->jsCompression($finalRes, $label, $url);
-                            break;
-                        case "gzip_compression":
-                            $testData = $this->gzipCompression($finalRes, $label, $url);
-                            break;
-                        case "css_caching_enable":
-                            $testData = $this->cssCachingEnable($finalRes, $label, $url);
-                            break;
-                        case "js_caching_enable":
-                            $testData = $this->jsCachingEnable($finalRes, $label, $url);
-                            break;
-                        case "nested_tables":
-                            $testData = $this->nestedTables($finalRes, $label, $url);
-                            break;
-                        case "frameset":
-                            $testData = $this->frameset($finalRes, $label, $url);
-                            break;
-                        case "page_size":
-                            $testData = $this->pageSize($finalRes, $label, $url);
-                            break;
-                        case "http_status_code":
-                            $testData = $this->httpStatusCode($finalRes, $label, $url);
-                            break;
-                        case "broken_links":
-                            $testData = $this->brokenLinks($finalRes, $label, $url);
-                            break;
-                    }
-        
-                    $allResults[$url][$label->db_name] = $testData;                    
-
+            try {
+                // Set execution time limit for this URL
+                set_time_limit($urlTimeout);
+                
+                // Create a timeout mechanism using pcntl_alarm if available
+                if (function_exists('pcntl_alarm')) {
+                    pcntl_alarm($urlTimeout);
                 }
-        
+                
+                // Process the URL with timeout protection
+                $goutteClient = new Client(HttpClient::create(['timeout' => $urlTimeout]));
+                $options = [
+                    'headers' => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)']
+                ];
+                
+                // Check if we've exceeded the timeout
+                if (time() - $startTime >= $urlTimeout) {
+                    $urlTimedOut = true;
+                    throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                }
+                
+                $crawler = $goutteClient->request('GET', $url, [], [], $options);
+                
+                // Clear the alarm if it was set
+                if (function_exists('pcntl_alarm')) {
+                    pcntl_alarm(0);
+                }
+                
+                // Check if we've exceeded the timeout after the request
+                if (time() - $startTime >= $urlTimeout) {
+                    $urlTimedOut = true;
+                    throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                }
+                
+                if ($crawler->count() > 0) {
+                    $html = $crawler->html();
+                    $statusCode = $goutteClient->getResponse()->getStatusCode();
 
+                    $internalResponse = $goutteClient->getInternalResponse();
+                    $contentType = $goutteClient->getResponse()->getHeader('Content-Type');
 
-                $this->dashboardTest->update([
-                    'results' => json_encode($allResults),
-                ]);
+                    // Check timeout again before processing meta data
+                    if (time() - $startTime >= $urlTimeout) {
+                        $urlTimedOut = true;
+                        throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                    }
 
-                }else{ 
+                    $meta = $crawler->filter("table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,link[rel='stylesheet'],script")->each(function($node) {
+                        $name = $node->attr('name');
+                        $content = $node->attr('content');
+
+                        if($name === null){
+                            $name = $node->getNode(0)->tagName;
+                        }
+                        if($name === "meta"){
+                            $name = $node->attr('property');
+                        }
+                        if($content === null){
+                            $content = $node->getNode(0)->textContent;
+                        }
+
+                        if($name === "link"){
+                            $name = $node->extract(array('rel'))[0];
+                            $content = $node->extract(array('href'))[0];
+                        }
+
+                        if($name === "a"){
+                            $content = $node->extract(array('href'))[0];
+                        }
+
+                        if($name === "img"){
+                            $content = [
+                                'src' => $node->attr('src') != "" ? $node->attr('src') : $node->attr('data-src'),
+                                'alt' => $node->attr('alt')
+                            ];
+                        }
+
+                        if($name === "script"){
+                            $content = $node->extract(array('src'))[0];
+                        }
+
+                        if($name === "table"){
+                            $content = $node->html();
+                        }
+
+                        return [
+                            'name' => $name,
+                            'content' => $content,
+                        ];
+                    });
+
+                    // Check timeout again before processing test results
+                    if (time() - $startTime >= $urlTimeout) {
+                        $urlTimedOut = true;
+                        throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                    }
+
+                    $finalRes = $helpers->getTest($meta);
+                    $finalRes["html"] = $html;
+                    $finalRes["html_status_code"] = $statusCode;
+                    $finalRes["internal_response"] = $internalResponse;
+                    $finalRes["content_type"] = $contentType;
+                    $finalRes["settings"] = json_encode($settings);
+
+                    // Process all labels for this URL
+                    for($j = 0; $j < count($labels); $j++){
+                        // Check timeout before processing each label
+                        if (time() - $startTime >= $urlTimeout) {
+                            $urlTimedOut = true;
+                            throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                        }
+                        
+                        $label = $labels[$j];
+                        $test_title = $label->db_name;
+
+                        $testData;
+                        switch($label->db_name){
+                            case "meta_title":
+                                $testData = $this->title($finalRes, $label, $url);
+                                break;
+                            case "meta_desc":
+                                $testData = $this->description($finalRes, $label, $url);
+                                break;
+                            case "robots_meta":
+                                $testData = $this->robots($finalRes, $label, $url);
+                                break;
+                            case "canonical_url":
+                                $testData = $this->canonical($finalRes, $label, $url);
+                                break;
+                            case "url_slug":
+                                $testData = $this->urlSlug($finalRes, $label, $url);
+                                break;
+                            case "images":
+                                $testData = $this->images($finalRes, $label, $url);
+                                break;
+                            case "xml_sitemap":
+                                $testData = $this->xmlSitemap($finalRes, $label, $url);
+                                break;
+                            case "html_sitemap":
+                                $testData = $this->htmlSitemap($finalRes, $label, $url);
+                                break;
+                            case "open_graph_tags":
+                                $testData = $this->ogTags($finalRes, $label, $url);
+                                break;
+                            case "twitter_tags":
+                                $testData = $this->twitterTags($finalRes, $label, $url);
+                                break;
+                            case "favicon":
+                                $testData = $this->favicon($finalRes, $label, $url);
+                                break;
+                            case "meta_viewport":
+                                $testData = $this->metaViewport($finalRes, $label, $url);
+                                break;
+                            case "doctype":
+                                $testData = $this->doctype($finalRes, $label, $url);
+                                break;
+                            case "google_overall":
+                                
+                                $object = new \stdClass();
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Google Lighthouse";
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $testData = json_encode($object);
+                                break;
+                            case "google_lighthouse":
+                                $object = new \stdClass();
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Google Lighthouse";
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $testData = json_encode($object);
+                                break;
+                            case "core_web_vitals":
+                                $object = new \stdClass();
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Google Lighthouse";
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $testData = json_encode($object);
+                                break;
+                            case "mobile_friendly":
+                                $testData = $this->mobileFriendly($finalRes, $label, $url);
+                                break;
+                            case "content_security_policy_header":
+                                $testData = $this->contentSecurity($finalRes, $label, $url);
+                                break;
+                            case "hsts_header":
+                                $testData = $this->hstsHeader($finalRes, $label, $url);
+                                break;
+                            case "bad_content_type":
+                                $testData = $this->badContentType($finalRes, $label, $url);
+                                break;
+                            case "x_frame_options_header":
+                                $testData = $this->XFrameOptions($finalRes, $label, $url);
+                                break;
+                            case "is_safe_browsing":
+                                $testData = $this->safeBrowsing($finalRes, $label, $url);
+                                break;
+                            case "cross_origin_links":
+                                $testData = $this->crossOriginLinks($finalRes, $label, $url);
+                                break;
+                            case "protocol_relative_resource":
+                                $testData = $this->protocolRelativeResource($finalRes, $label, $url);
+                                break;
+                            case "ssl_certificate_enable":
+                                $testData = $this->checkSSLCertificate($finalRes, $label, $url);
+                                break;
+                            case "folder_browsing_enable":
+                                $testData = $this->directoryBrowsingEnable($finalRes, $label, $url);
+                                break;
+                            case "html_compression":
+                                $testData = $this->htmlCompression($finalRes, $label, $url);
+                                break;
+                            case "css_compression":
+                                $testData = $this->cssCompression($finalRes, $label, $url);
+                                break;
+                            case "js_compression":
+                                $testData = $this->jsCompression($finalRes, $label, $url);
+                                break;
+                            case "gzip_compression":
+                                $testData = $this->gzipCompression($finalRes, $label, $url);
+                                break;
+                            case "css_caching_enable":
+                                $testData = $this->cssCachingEnable($finalRes, $label, $url);
+                                break;
+                            case "js_caching_enable":
+                                $testData = $this->jsCachingEnable($finalRes, $label, $url);
+                                break;
+                            case "nested_tables":
+                                $testData = $this->nestedTables($finalRes, $label, $url);
+                                break;
+                            case "frameset":
+                                $testData = $this->frameset($finalRes, $label, $url);
+                                break;
+                            case "page_size":
+                                $testData = $this->pageSize($finalRes, $label, $url);
+                                break;
+                            case "http_status_code":
+                                $testData = $this->httpStatusCode($finalRes, $label, $url);
+                                break;
+                            case "broken_links":
+                                $testData = $this->brokenLinks($finalRes, $label, $url);
+                                break;
+                        }
+            
+                        $allResults[$url][$label->db_name] = $testData;                    
+
+                    }
+
+                    $this->dashboardTest->update([
+                        'results' => json_encode($allResults),
+                    ]);
+
+                } else { 
                     $allResults[$url] = "";
                     $this->dashboardTest->update([
                         'results' => json_encode($allResults),
                     ]);
                     Log::warning("Non-200 response for URL: $url");
                 }
+                
+            } catch (\Exception $e) {
+                // Handle timeout or other errors
+                if ($urlTimedOut) {
+                    Log::warning("URL timed out after {$urlTimeout} seconds: $url - Error: " . $e->getMessage());
+                    
+                    // When timeout occurs, run the catch method for all tests
+                    $allResults[$url] = [];
+                    
+                    // Process all labels with timeout error handling
+                    for($j = 0; $j < count($labels); $j++){
+                        $label = $labels[$j];
+                        $test_title = $label->db_name;
+
+                        $testData;
+                        switch($label->db_name){
+                            case "meta_title":
+                                // Create timeout error object similar to title() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Meta Title";
+                                $object->content = "";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Title test timed out";
+                                $object->description = "A meta title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+                                $object->showContent = false;
+                                $object->snippetContent = "";
+                                $object->showSnippet = false;
+                                $object->tagStatus = false;
+                                $object->casingStatus = false;
+                                $object->lengthClass = "result_fail";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Title Tag";
+                                $object->titleCasingCamel = 0;
+                                $object->titleCasingBoth = 0;
+                                $object->titleCasingSentence = 0;
+                                $object->excludedWordsVal = "";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "meta_desc":
+                                // Create timeout error object similar to description() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Meta Description";
+                                $object->content = "";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Description test timed out";
+                                $object->description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
+                                $object->showContent = false;
+                                $object->snippetContent = "";
+                                $object->showSnippet = false;
+                                $object->tagStatus = false;
+                                $object->casingStatus = false;
+                                $object->lengthClass = "result_fail";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Meta Description";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "robots_meta":
+                                // Create timeout error object similar to robots() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Robots Meta";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Robots test timed out";
+                                $object->description = "Robots meta tag test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Robots Meta";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "canonical_url":
+                                // Create timeout error object similar to canonical() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Canonical URL";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Canonical URL test timed out";
+                                $object->description = "Canonical URL test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Canonical URL";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "url_slug":
+                                // Create timeout error object similar to urlSlug() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "URL Slug";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "URL Slug test timed out";
+                                $object->description = "URL Slug test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "URL Slug";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "images":
+                                // Create timeout error object similar to images() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Images";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Images test timed out";
+                                $object->description = "Images test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Images";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "xml_sitemap":
+                                // Create timeout error object similar to xmlSitemap() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "XML Sitemap";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "XML Sitemap test timed out";
+                                $object->description = "XML Sitemap test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "XML Sitemap";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "html_sitemap":
+                                // Create timeout error object similar to htmlSitemap() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "HTML Sitemap";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "HTML Sitemap test timed out";
+                                $object->description = "HTML Sitemap test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "HTML Sitemap";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "open_graph_tags":
+                                // Create timeout error object similar to ogTags() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Open Graph Tags";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Open Graph Tags test timed out";
+                                $object->description = "Open Graph Tags test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Open Graph Tags";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "twitter_tags":
+                                // Create timeout error object similar to twitterTags() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Twitter Tags";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Twitter Tags test timed out";
+                                $object->description = "Twitter Tags test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Twitter Tags";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "favicon":
+                                // Create timeout error object similar to favicon() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Favicon";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Favicon test timed out";
+                                $object->description = "Favicon test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Favicon";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "meta_viewport":
+                                // Create timeout error object similar to metaViewport() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Meta Viewport";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Meta Viewport test timed out";
+                                $object->description = "Meta Viewport test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Meta Viewport";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "doctype":
+                                // Create timeout error object similar to doctype() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Doctype";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Doctype test timed out";
+                                $object->description = "Doctype test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Doctype";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "google_overall":
+                                $object = new \stdClass();
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Google Lighthouse";
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->status = false;
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Google Overall test timed out";
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "google_lighthouse":
+                                $object = new \stdClass();
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Google Lighthouse";
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->status = false;
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Google Lighthouse test timed out";
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "core_web_vitals":
+                                $object = new \stdClass();
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Google Lighthouse";
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->status = false;
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Core Web Vitals test timed out";
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "mobile_friendly":
+                                // Create timeout error object similar to mobileFriendly() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Mobile Friendly";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Mobile Friendly test timed out";
+                                $object->description = "Mobile Friendly test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Mobile Friendly";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "content_security_policy_header":
+                                // Create timeout error object similar to contentSecurity() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Content Security Policy Header";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Content Security Policy Header test timed out";
+                                $object->description = "Content Security Policy Header test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Content Security Policy Header";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "hsts_header":
+                                // Create timeout error object similar to hstsHeader() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "HSTS Header";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "HSTS Header test timed out";
+                                $object->description = "HSTS Header test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "HSTS Header";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "bad_content_type":
+                                // Create timeout error object similar to badContentType() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Bad Content Type";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Bad Content Type test timed out";
+                                $object->description = "Bad Content Type test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Bad Content Type";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "x_frame_options_header":
+                                // Create timeout error object similar to XFrameOptions() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "X-Frame-Options Header";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "X-Frame-Options Header test timed out";
+                                $object->description = "X-Frame-Options Header test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "X-Frame-Options Header";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "is_safe_browsing":
+                                // Create timeout error object similar to safeBrowsing() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Safe Browsing";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Safe Browsing test timed out";
+                                $object->description = "Safe Browsing test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Safe Browsing";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "cross_origin_links":
+                                // Create timeout error object similar to crossOriginLinks() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Cross Origin Links";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Cross Origin Links test timed out";
+                                $object->description = "Cross Origin Links test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Cross Origin Links";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "protocol_relative_resource":
+                                // Create timeout error object similar to protocolRelativeResource() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Protocol Relative Resource";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Protocol Relative Resource test timed out";
+                                $object->description = "Protocol Relative Resource test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Protocol Relative Resource";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "ssl_certificate_enable":
+                                // Create timeout error object similar to checkSSLCertificate() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "SSL Certificate";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "SSL Certificate test timed out";
+                                $object->description = "SSL Certificate test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "SSL Certificate";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "folder_browsing_enable":
+                                // Create timeout error object similar to directoryBrowsingEnable() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Folder Browsing";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Folder Browsing test timed out";
+                                $object->description = "Folder Browsing test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Folder Browsing";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "html_compression":
+                                // Create timeout error object similar to htmlCompression() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "HTML Compression";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "HTML Compression test timed out";
+                                $object->description = "HTML Compression test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "HTML Compression";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "css_compression":
+                                // Create timeout error object similar to cssCompression() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "CSS Compression";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "CSS Compression test timed out";
+                                $object->description = "CSS Compression test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "CSS Compression";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "js_compression":
+                                // Create timeout error object similar to jsCompression() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "JavaScript Compression";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "JavaScript Compression test timed out";
+                                $object->description = "JavaScript Compression test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "JavaScript Compression";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "gzip_compression":
+                                // Create timeout error object similar to gzipCompression() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Gzip Compression";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Gzip Compression test timed out";
+                                $object->description = "Gzip Compression test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Gzip Compression";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "css_caching_enable":
+                                // Create timeout error object similar to cssCachingEnable() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "CSS Caching";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "CSS Caching test timed out";
+                                $object->description = "CSS Caching test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "CSS Caching";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "js_caching_enable":
+                                // Create timeout error object similar to jsCachingEnable() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "JavaScript Caching";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "JavaScript Caching test timed out";
+                                $object->description = "JavaScript Caching test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "JavaScript Caching";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "nested_tables":
+                                // Create timeout error object similar to nestedTables() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Nested Tables";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Nested Tables test timed out";
+                                $object->description = "Nested Tables test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Nested Tables";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "frameset":
+                                // Create timeout error object similar to frameset() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Frameset";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Frameset test timed out";
+                                $object->description = "Frameset test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Frameset";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "page_size":
+                                // Create timeout error object similar to pageSize() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Page Size";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Page Size test timed out";
+                                $object->description = "Page Size test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Page Size";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "http_status_code":
+                                // Create timeout error object similar to httpStatusCode() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "HTTP Status Code";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "HTTP Status Code test timed out";
+                                $object->description = "HTTP Status Code test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "HTTP Status Code";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                            case "broken_links":
+                                // Create timeout error object similar to brokenLinks() catch method
+                                $object = new \stdClass();
+                                $object->status = false;
+                                $object->title = "Broken Links";
+                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
+                                $object->message = "Broken Links test timed out";
+                                $object->description = "Broken Links test failed due to timeout";
+                                $object->learnMoreURL = "https://setmore.com/";
+                                $object->tagName = "Broken Links";
+                                $object->settings = isset($settings) ? $settings->settingsSub : null;
+                                $object->content = '';
+                                $object->status_url = false;
+                                $object->totalBrokenLinks = 0;
+                                $object->label = $label;
+                                $object->tested_url = $url;
+                                $object->tested_at = time();
+                                $object->testerrorcaught = true;
+                                $testData = json_encode($object);
+                                break;
+                        }
+                        
+                        $allResults[$url][$label->db_name] = $testData;
+                    }
+                    
+                    $this->dashboardTest->update([
+                        'results' => json_encode($allResults),
+                    ]);
+                    
+                } else {
+                    // Handle other errors
+                    Log::error("Error processing URL: $url - Error: " . $e->getMessage());
+                    
+                    $allResults[$url] = [
+                        'processing_error' => "Error processing URL",
+                        'error_message' => $e->getMessage(),
+                        'tested_at' => time()
+                    ];
+                    
+                    $this->dashboardTest->update([
+                        'results' => json_encode($allResults),
+                    ]);
+                }
             }
-        
+            
+            // Reset execution time limit for next URL
+            set_time_limit(180000);
+        }
 
 
         // status completed Db
@@ -355,654 +1146,878 @@ class RunTest implements ShouldQueue
 
 
     public function httpStatusCode($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $isExists = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $httpCode = $data["html_status_code"];
-        $httpCodeName = $helpers->getHttpStatusName($httpCode);
-        $httpAllowed = $settings->settings_sub->http_status_code_accepted;
-        $httpAllowedArray = explode(",",$httpAllowed);
-
-
-        $title = "HTTP Status Code";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Your webpage returned an HTTP Status Code - " . $httpCode . " " . $httpCodeName . ".";
-  
+            $status = true;
+            $isExists = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $httpCode = $data["html_status_code"];
+            $httpCodeName = $helpers->getHttpStatusName($httpCode);
+            $httpAllowed = $settings->settings_sub->http_status_code_accepted;
+            $httpAllowedArray = explode(",",$httpAllowed);
 
 
-        if(!in_array($httpCode, $httpAllowedArray)){
-            $status = false;     
+            $title = "HTTP Status Code";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Your webpage returned an HTTP Status Code - " . $httpCode . " " . $httpCodeName . ".";
+      
+
+
+            if(!in_array($httpCode, $httpAllowedArray)){
+                $status = false;     
+            }
+
+
+
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->isExists = $isExists;
+            $object->httpCode = $httpCode;
+            $object->httpCodeName = $httpCodeName;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTTP Status Code";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in httpStatusCode test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "HTTP Status Code";
+            $object->isExists = false;
+            $object->httpCode = 0;
+            $object->httpCodeName = "Error";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing HTTP Status Code.";
+            $object->description = "HTTP Status Code test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTTP Status Code";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->isExists = $isExists;
-        $object->httpCode = $httpCode;
-        $object->httpCodeName = $httpCodeName;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "HTTP Status Code";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
 
     public function brokenLinks($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-        $urlValue = $testedUrl;
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "Broken Links";
-        $description = "Broken Links";
-        $message = '';
-        $content = '';
-        $brokenLinks = $settings->settings_sub->broken_links;  
-      
+            $status = true;
+            $problems = [];
+            $urlValue = $testedUrl;
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "Broken Links";
+            $description = "Broken Links";
+            $message = '';
+            $content = '';
+            $brokenLinks = $settings->settings_sub->broken_links;  
+          
 
-        $output = json_decode($helpers->brokenLinks($urlValue));
+            $output = json_decode($helpers->brokenLinks($urlValue));
 
 
-        if($output->status){
-            if($output->isBrokenLinkPresent){
-                $message = "Your page has " . $output->totalBrokenLinks . " broken links, please see the list below.";
+            if($output->status){
+                if($output->isBrokenLinkPresent){
+                    $message = "Your page has " . $output->totalBrokenLinks . " broken links, please see the list below.";
+                }else{
+                    $message = "There were 0 broken links found in your web page.";
+                }
             }else{
-                $message = "There were 0 broken links found in your web page.";
+                $message = "The url ('" . $urlValue . "') does not allow parsing, please try a different URL.";
             }
-        }else{
-            $message = "The url ('" . $urlValue . "') does not allow parsing, please try a different URL.";
-        }
 
-        $object = new \stdClass();
-        if($output->status){
-            $object->status = !$output->isBrokenLinkPresent;
-        }else{
+            $object = new \stdClass();
+            if($output->status){
+                $object->status = !$output->isBrokenLinkPresent;
+            }else{
+                $object->status = false;
+            }
+            $object->title = $title;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Broken Links";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->status_url = $output->status;
+            $object->totalBrokenLinks = $output->totalBrokenLinks;
+            $object->totalBrokenExternal = $output->external;
+            $object->totalBrokenInternal = $output->internal;
+            if($output->status){
+                $object->allLinks = $output->results;
+            }
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in brokenLinks test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
             $object->status = false;
+            $object->title = "Broken Links";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Broken Links.";
+            $object->description = "Broken Links test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Broken Links";
+            $object->settings = null;
+            $object->content = '';
+            $object->status_url = false;
+            $object->totalBrokenLinks = 0;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-        $object->title = $title;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Broken Links";
-        $object->settings = $settings->settings_sub;
-        $object->content = $content;
-        $object->status_url = $output->status;
-        $object->totalBrokenLinks = $output->totalBrokenLinks;
-        $object->totalBrokenExternal = $output->external;
-        $object->totalBrokenInternal = $output->internal;
-
-        if($output->status){
-            $object->allLinks = $output->results;
-        }
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
 
     public function title($data, $label, $testedUrl){
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
+        try {
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
 
-        $isTitle = $settings->settings_sub->meta_title;
-        $isMax = $settings->settings_sub->max_title_length;
-        $isMin = $settings->settings_sub->min_title_length;
-        $max = $settings->settings_sub->max_title_length_val;
-        $min = $settings->settings_sub->min_title_length_val;
-        $titleCasingCamel = $settings->settings_sub->title_casing_camel;
-        $titleCasingBoth = $settings->settings_sub->title_casing_both;
-        $titleCasingSentence = $settings->settings_sub->title_casing_sentence;
-        $isExcludedWords = $settings->settings_sub->is_excluded_words;
-        $excludedWords = $settings->settings_sub->excluded_words;
-        $excludedWordsVal = "";
-        if($isExcludedWords){
-            $excludedWordsVal = $excludedWords;
-        }
-
-        $title = "Meta Title";
-        $content = $data["title"];
-        $description = "A meta title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Your webpage is using a title tag";
-        $length = strlen($content);
-        $lengthClass = "result_pass";
-        $casingStatus = true;
-        $showContent = true;
-        $showSnippet = true;
-        $tagStatus = true;
-
-        if($isTitle){
-            if($content === "" || $content === null){
-                $status = false;
-                $casingStatus = false;
-                $showContent = false;
-                $tagStatus = false;        
-                $message = "Title tag either does not exist or is empty";
+            $isTitle = $settings->settings_sub->meta_title;
+            $isMax = $settings->settings_sub->max_title_length;
+            $isMin = $settings->settings_sub->min_title_length;
+            $max = $settings->settings_sub->max_title_length_val;
+            $min = $settings->settings_sub->min_title_length_val;
+            $titleCasingCamel = $settings->settings_sub->title_casing_camel;
+            $titleCasingBoth = $settings->settings_sub->title_casing_both;
+            $titleCasingSentence = $settings->settings_sub->title_casing_sentence;
+            $isExcludedWords = $settings->settings_sub->is_excluded_words;
+            $excludedWords = $settings->settings_sub->excluded_words;
+            $excludedWordsVal = "";
+            if($isExcludedWords){
+                $excludedWordsVal = $excludedWords;
             }
-        }
-        if($status){
-            if($isMax){
-                if($length > $max){
+
+            $title = "Meta Title";
+            $content = $data["title"];
+            $description = "A meta title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Your webpage is using a title tag";
+            $length = strlen($content);
+            $lengthClass = "result_pass";
+            $casingStatus = true;
+            $showContent = true;
+            $showSnippet = true;
+            $tagStatus = true;
+
+            if($isTitle){
+                if($content === "" || $content === null){
                     $status = false;
-                    array_push($problems, "Title tag is more than " . $max . " characters.");
-                    $lengthClass = "result_fail";
+                    $casingStatus = false;
+                    $showContent = false;
+                    $tagStatus = false;        
+                    $message = "Title tag either does not exist or is empty";
                 }
             }
-            if($isMin){
-                if($length < $min){
-                    $status = false;
-                    array_push($problems, "Title tag is less than " . $min . " characters.");
-                    $lengthClass = "result_fail";
+            if($status){
+                if($isMax){
+                    if($length > $max){
+                        $status = false;
+                        array_push($problems, "Title tag is more than " . $max . " characters.");
+                        $lengthClass = "result_fail";
+                    }
                 }
-            }
-        };
+                if($isMin){
+                    if($length < $min){
+                        $status = false;
+                        array_push($problems, "Title tag is less than " . $min . " characters.");
+                        $lengthClass = "result_fail";
+                    }
+                }
+            };
 
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->snippetContent = "This is how the content of meta title will appear in Google search.Please note that the content is truncated after 65 characters.";
-        $object->showSnippet = $showSnippet;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = $casingStatus;
-        $object->lengthClass = $lengthClass;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Title Tag";
-        $object->titleCasingCamel = intval($titleCasingCamel);
-        $object->titleCasingBoth = intval($titleCasingBoth);
-        $object->titleCasingSentence = intval($titleCasingSentence);
-        $object->excludedWordsVal = $excludedWordsVal;
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->content = $content;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->snippetContent = "This is how the content of meta title will appear in Google search.Please note that the content is truncated after 65 characters.";
+            $object->showSnippet = $showSnippet;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = $casingStatus;
+            $object->lengthClass = $lengthClass;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Title Tag";
+            $object->titleCasingCamel = intval($titleCasingCamel);
+            $object->titleCasingBoth = intval($titleCasingBoth);
+            $object->titleCasingSentence = intval($titleCasingSentence);
+            $object->excludedWordsVal = $excludedWordsVal;
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in title test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Meta Title";
+            $object->content = "";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "Title test encountered an error";
+            $object->description = "A meta title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $object->showContent = false;
+            $object->snippetContent = "";
+            $object->showSnippet = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->lengthClass = "result_fail";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Title Tag";
+            $object->titleCasingCamel = 0;
+            $object->titleCasingBoth = 0;
+            $object->titleCasingSentence = 0;
+            $object->excludedWordsVal = "";
+            $object->settings = isset($data["settings"]) ? json_decode($data["settings"])->settings_sub : null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
 
     public function description($data, $label, $testedUrl){
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
+        try {
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
 
-        $isDesc = $settings->settings_sub->meta_desc;
-        $isMax = $settings->settings_sub->max_desc_length;
-        $isMin = $settings->settings_sub->min_desc_length;
-        $max = $settings->settings_sub->max_desc_length_val;
-        $min = $settings->settings_sub->min_desc_length_val;
-        $title = "Meta Description";
-        $content = $data["description"];
-        $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page’s content and give searchers a reason to click";
-        $message = "Your webpage is using a meta description tag";
-        $length = strlen($content);
-        $lengthClass = "result_pass";
-        $casingStatus = true;
-        $showContent = true;
-        $showSnippet = true;
-        $tagStatus = true;
+            $isDesc = $settings->settings_sub->meta_desc;
+            $isMax = $settings->settings_sub->max_desc_length;
+            $isMin = $settings->settings_sub->min_desc_length;
+            $max = $settings->settings_sub->max_desc_length_val;
+            $min = $settings->settings_sub->min_desc_length_val;
+            $title = "Meta Description";
+            $content = $data["description"];
+            $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
+            $message = "Your webpage is using a meta description tag";
+            $length = strlen($content);
+            $lengthClass = "result_pass";
+            $casingStatus = true;
+            $showContent = true;
+            $showSnippet = true;
+            $tagStatus = true;
 
-        if($isDesc){
-            if($content === "" || $content === null){
-                $status = false;
-                $casingStatus = false;
-                $showContent = false;
-                $tagStatus = false;      
-                $message = "Meta Description tag either does not exist or is empty";
+            if($isDesc){
+                if($content === "" || $content === null){
+                    $status = false;
+                    $casingStatus = false;
+                    $showContent = false;
+                    $tagStatus = false;      
+                    $message = "Meta Description tag either does not exist or is empty";
+                }
             }
+            if($status){
+                if($isMax){
+                    if(strlen($content) > $max){
+                        $status = false;
+                        array_push($problems, "Meta Description tag is more than " . $max . " characters.");
+                        $lengthClass = "result_fail";
+                    }
+                }
+                if($isMin){
+                    if(strlen($content) < $min){
+                        $status = false;
+                        array_push($problems, "Meta Description tag is less than " . $min . " characters.");
+                        $lengthClass = "result_fail";
+                    }
+                }
+            };
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->content = $content;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->snippetContent = "This is how the content of meta description will appear in Google search.";
+            $object->showSnippet = $showSnippet;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = false;
+            $object->lengthClass = $lengthClass;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Meta Description Tag";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in description test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Meta Description";
+            $object->content = "";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "Description test encountered an error";
+            $object->description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
+            $object->showContent = false;
+            $object->snippetContent = "";
+            $object->showSnippet = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->lengthClass = "result_fail";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Meta Description Tag";
+            $object->settings = isset($data["settings"]) ? json_decode($data["settings"])->settings_sub : null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-        if($status){
-            if($isMax){
-                if(strlen($content) > $max){
-                    $status = false;
-                    array_push($problems, "Meta Description tag is more than " . $max . " characters.");
-                    $lengthClass = "result_fail";
-                }
-            }
-            if($isMin){
-                if(strlen($content) < $min){
-                    $status = false;
-                    array_push($problems, "Meta Description tag is less than " . $min . " characters.");
-                    $lengthClass = "result_fail";
-                }
-            }
-        };
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->snippetContent = "This is how the content of meta description will appear in Google search.";
-        $object->showSnippet = $showSnippet;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = false;
-        $object->lengthClass = $lengthClass;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Meta Description Tag";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
 
     public function metaViewport($data, $label, $testedUrl){
-        $status = true;
-        $problems = [];
-        $isExists = true;
-        $settings = json_decode($data["settings"]);
+        try {
+            $status = true;
+            $problems = [];
+            $isExists = true;
+            $settings = json_decode($data["settings"]);
 
-        $isViewport = $settings->settings_sub->meta_viewport;
+            $isViewport = $settings->settings_sub->meta_viewport;
 
-
-        $title = "Meta Viewport";
-        $content = $data["viewport"];
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Your webpage is using a Meta Viewport tag";
-  
-        if($content === "" || $content === null){ // for dashboard
-            $isExists = false;     
-        }
-
-        if($isViewport){
-            if($content === "" || $content === null){
-                $status = false;     
-                $message = "Meta Viewport tag either does not exist or is empty";
+            $title = "Meta Viewport";
+            $content = $data["viewport"];
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Your webpage is using a Meta Viewport tag";
+      
+            if($content === "" || $content === null){ // for dashboard
+                $isExists = false;     
             }
+
+            if($isViewport){
+                if($content === "" || $content === null){
+                    $status = false;     
+                    $message = "Meta Viewport tag either does not exist or is empty";
+                }
+            }
+       
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->isExists = $isExists;
+            $object->content = $content;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Meta Viewport";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in metaViewport test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Meta Viewport";
+            $object->isExists = false;
+            $object->content = "";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "Meta viewport test encountered an error";
+            $object->description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Meta Viewport";
+            $object->settings = isset($data["settings"]) ? json_decode($data["settings"])->settings_sub : null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-   
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->isExists = $isExists;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Meta Viewport";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
     public function doctype($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $isExists = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
+            $status = true;
+            $isExists = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
 
-        $isDoctype = $settings->settings_sub->doctype;
+            $isDoctype = $settings->settings_sub->doctype;
 
 
-        $title = "Doctype";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Doctype validation check excluded.";
-  
-        if(!$helpers->doctypeExists($html)){
-            $isExists = false;     
-        }
-
-        if($isDoctype){
-            $message = "Your webpage is using a Doctype tag.";
+            $title = "Doctype";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Doctype validation check excluded.";
+      
             if(!$helpers->doctypeExists($html)){
-                $status = false;     
-                $message = "Your webpage is not using a Doctype tag.";
+                $isExists = false;     
             }
+
+            if($isDoctype){
+                $message = "Your webpage is using a Doctype tag.";
+                if(!$helpers->doctypeExists($html)){
+                    $status = false;     
+                    $message = "Your webpage is not using a Doctype tag.";
+                }
+            }
+       
+
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->isExists = $isExists;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Doctype";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in doctype test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Doctype";
+            $object->isExists = false;
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Doctype.";
+            $object->description = "Doctype test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Doctype";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-   
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->isExists = $isExists;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Doctype";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
     public function canonical($data, $label, $testedUrl){
-        $status = true;
-        $statusIsEqualURL = null;
-        
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
+        try {
+            $status = true;
+            $statusIsEqualURL = null;
+            
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
 
-        $isCanonical = $settings->settings_sub->canonical_url;
-        $isCanonicalEqualUrl = $settings->settings_sub->canonical_url_equal_url;
-        $isCanonicalIgnoreSlash = $settings->settings_sub->canonical_url_ignore_slash;
-        $title = "Canonical URL";
-        $content = $data["canonical"];
-        $description = "A canonical tag (rel=canonical) is a snippet of HTML code that defines the main version for duplicate, near-duplicate and similar pages.";
-        $message = "Your webpage is using a canonical link tag";
-        $url = $urlValue;
-        $canonicalURL = $content;
-        $isExists = false;
+            $isCanonical = $settings->settings_sub->canonical_url;
+            $isCanonicalEqualUrl = $settings->settings_sub->canonical_url_equal_url;
+            $isCanonicalIgnoreSlash = $settings->settings_sub->canonical_url_ignore_slash;
+            $title = "Canonical URL";
+            $content = $data["canonical"];
+            $description = "A canonical tag (rel=canonical) is a snippet of HTML code that defines the main version for duplicate, near-duplicate and similar pages.";
+            $message = "Your webpage is using a canonical link tag";
+            $url = $urlValue;
+            $canonicalURL = $content;
+            $isExists = false;
 
 
-        if($isCanonical){
-            if($content === "" || $content === null){
-                $status = false;
-                $isExists = false;
-                $message = "Canonical tag is missing or canonical tag is empty.";
-            }else{
-                $isExists = true;
-            }
-        }
-        if($status){
-            if($isCanonicalEqualUrl){
-                $statusIsEqualURL = true;
-
-                if($isCanonicalIgnoreSlash){
-                    $url = rtrim($urlValue, '/');
-                    $canonicalURL = rtrim($content, '/');
-                }
-
-                if($canonicalURL != $url){
+            if($isCanonical){
+                if($content === "" || $content === null){
                     $status = false;
-                    $statusIsEqualURL = false;
-                    array_push($problems, "Canonical URL is not exactly the same with the actual URL.");
+                    $isExists = false;
+                    $message = "Canonical tag is missing or canonical tag is empty.";
+                }else{
+                    $isExists = true;
                 }
             }
-        };
+            if($status){
+                if($isCanonicalEqualUrl){
+                    $statusIsEqualURL = true;
 
-        if($content === "" || $content === null){
-            $content = "-";
+                    if($isCanonicalIgnoreSlash){
+                        $url = rtrim($urlValue, '/');
+                        $canonicalURL = rtrim($content, '/');
+                    }
+
+                    if($canonicalURL != $url){
+                        $status = false;
+                        $statusIsEqualURL = false;
+                        array_push($problems, "Canonical URL is not exactly the same with the actual URL.");
+                    }
+                }
+            };
+
+            if($content === "" || $content === null){
+                $content = "-";
+            }
+
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->isExists = $isExists;
+            $object->statusIsEqualURL = $statusIsEqualURL;
+            $object->title = $title;
+            $object->status = $status;
+            $object->content = $content;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in canonical test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->isExists = false;
+            $object->statusIsEqualURL = null;
+            $object->title = "Canonical URL";
+            $object->content = "-";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Canonical URL.";
+            $object->description = "Canonical URL test failed due to an error.";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->isExists = $isExists;
-        $object->statusIsEqualURL = $statusIsEqualURL;
-        $object->title = $title;
-        $object->status = $status;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
     public function robots($data, $label, $testedUrl){
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
-        $pageType = "live";
+        try {
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
+            $pageType = "live";
 
-        $robotsLive = $settings->settings_sub->live_urls_robots_meta;
-        $title = "Robots Meta";
-        $content = strtolower($data["robots"]);
-        $description = "A Robots meta tag provide crawlers specific instructions on how to crawl or index web page content. The Noindex tag tells a search engine not to index a page and the Nofollow tag tells a search engine not to follow any links on a page or pass along any link equity.";
-        $message = "Your webpage is not using a Robots Meta Tag";
-        $isExists = false;
-        $noIndexFollowStatus = false;
-        $noIndexStatus = false;
+            $robotsLive = $settings->settings_sub->live_urls_robots_meta;
+            $title = "Robots Meta";
+            $content = strtolower($data["robots"]);
+            $description = "A Robots meta tag provide crawlers specific instructions on how to crawl or index web page content. The Noindex tag tells a search engine not to index a page and the Nofollow tag tells a search engine not to follow any links on a page or pass along any link equity.";
+            $message = "Your webpage is not using a Robots Meta Tag";
+            $isExists = false;
+            $noIndexFollowStatus = false;
+            $noIndexStatus = false;
 
-        if($content === "noindex, nofollow" || $content === "noindex,nofollow"){
-            $isExists = true;
-            $noIndexFollowStatus = true;
-            $message = "Your webpage is using a Robots Meta Tag";
-        }
+            if($content === "noindex, nofollow" || $content === "noindex,nofollow"){
+                $isExists = true;
+                $noIndexFollowStatus = true;
+                $message = "Your webpage is using a Robots Meta Tag";
+            }
 
-        if($content === "noindex"){
-            $noIndexStatus = true;
-        }
+            if($content === "noindex"){
+                $noIndexStatus = true;
+            }
 
-        if($robotsLive){
-            if($pageType === "live"){
-                if(!$isExists){
-                    $status = true;
-                    $message = "Noindex,Nofollow does not exist.";
-                }else{
-                    $status = false;
-                    $message = "Noindex,Nofollow meta tag exists.";
+            if($robotsLive){
+                if($pageType === "live"){
+                    if(!$isExists){
+                        $status = true;
+                        $message = "Noindex,Nofollow does not exist.";
+                    }else{
+                        $status = false;
+                        $message = "Noindex,Nofollow meta tag exists.";
+                    }
                 }
             }
+
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->content = $content;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->isExists = $isExists;
+            $object->noIndexFollowStatus = $noIndexFollowStatus;
+            $object->noIndexStatus = $noIndexStatus;
+            $object->description = $description;
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in robots test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Robots Meta";
+            $object->content = "";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Robots Meta.";
+            $object->isExists = false;
+            $object->noIndexFollowStatus = false;
+            $object->noIndexStatus = false;
+            $object->description = "Robots Meta test failed due to an error.";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->isExists = $isExists;
-        $object->noIndexFollowStatus = $noIndexFollowStatus;
-        $object->noIndexStatus = $noIndexStatus;
-        $object->description = $description;
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
 
     public function urlSlug($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $exists = true;
-        $statusLowercase = true;
-        $statusHyphens = true;
-        $statusSpecial = true;
-        $statusNumbers = true;
-        $statusUnderscore = true;
-        $statusStopWords = true;
-
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-
-        $urlValue = $testedUrl;
-        $urlSlugLowercase = $settings->settings_sub->url_slug_lowercase;
-        $urlNoNumbers = $settings->settings_sub->url_no_numbers;
-        $urlNoSpecial = $settings->settings_sub->url_no_special;
-        $maxUrlLength = $settings->settings_sub->max_url_length;
-        $maxUrlLengthVal = $settings->settings_sub->max_url_length_val;
-        $urlCasingOnlyHyphens = $settings->settings_sub->url_casing_only_hyphens;
-        $urlCasingOnlyUnderscores = intval($settings->settings_sub->url_casing_only_underscores);
-        $urlCasingBoth = $settings->settings_sub->url_casing_both;
-        $urlStopWords = $settings->settings_sub->url_stop_words;
-        $urlStopWordsVal = $settings->settings_sub->url_stop_words_val;
-        $title = "URL Slug";
-        $content = "";
-        if(isset(parse_url($urlValue)["path"])){
-            $path = parse_url($urlValue)["path"];
-            $content = substr($path, strpos($path, '/') + 1);
-        }
-
-        $description = "A URL slug refers to the end part of a URL after the backslash that identifies the specific page or post. Each slug on your web pages needs to be unique, and they provide readers and search engines with information about the content of a page.";
-        $message = "URL Slug has no issues.";
-        $length = strlen($content);
-        $lengthClass = "result_pass";
-        $lowercaseClass = "result_pass";
-        $numbersClass = "result_pass";
-        $specialClass = "result_pass";
-        $hyphenClass = "result_pass";
-        $underscoreClass = "result_pass";
-        $stopWordsClass = "result_pass";
-
-        $showContent = true;
-        $tagStatus = true;
-
-        if(strlen($content) === 0){
+        try {
+            $helpers = new Helper();
             $status = true;
-            $tagStatus = false;
-            $showContent = false;
-            $exists = false;
-            $message = "You have tested the root domain, so there isn't a URL slug available.";
-        }else{
-            if($urlSlugLowercase){
-                if($helpers->hasUppercase($content)){
-                    $status = false;
-                    $statusLowercase = false;
-                    array_push($problems, "URL Slug contains uppercase characters.");
-                }
-            }
-            if($urlNoNumbers){
-                if($helpers->hasNumbers($content)){
-                    $status = false;
-                    $statusNumbers = false;
-                    array_push($problems, "URL Slug contains numbers.");
-                }
-            }
-            if($urlNoSpecial){
-                if($helpers->hasSpecial($content)){
-                    $status = false;
-                    $statusSpecial = false;
-                    array_push($problems, "URL Slug contains special characters.");
-                }
-            }
-            if($maxUrlLength){
-                if(strlen($content) > $maxUrlLengthVal){
-                    $status = false;
-                    array_push($problems, "Length of URL Slug is more than " . $maxUrlLengthVal . " characters.");
-                    $lengthClass = "result_fail";
-                }
-            }
-            if($urlCasingOnlyHyphens){
-                if(!$helpers->onlyHyphen($content)){
-                    $status = false;
-                    $statusHyphens = false;
-                    array_push($problems, "Words in URL slug are not separated by hyphens.");
-                }
+            $exists = true;
+            $statusLowercase = true;
+            $statusHyphens = true;
+            $statusSpecial = true;
+            $statusNumbers = true;
+            $statusUnderscore = true;
+            $statusStopWords = true;
+
+            $problems = [];
+
+            $settings = json_decode($data["settings"]);
+
+            $urlValue = $testedUrl;
+            $urlSlugLowercase = $settings->settings_sub->url_slug_lowercase;
+            $urlNoNumbers = $settings->settings_sub->url_no_numbers;
+            $urlNoSpecial = $settings->settings_sub->url_no_special;
+            $maxUrlLength = $settings->settings_sub->max_url_length;
+            $maxUrlLengthVal = $settings->settings_sub->max_url_length_val;
+            $urlCasingOnlyHyphens = $settings->settings_sub->url_casing_only_hyphens;
+            $urlCasingOnlyUnderscores = intval($settings->settings_sub->url_casing_only_underscores);
+            $urlCasingBoth = $settings->settings_sub->url_casing_both;
+            $urlStopWords = $settings->settings_sub->url_stop_words;
+            $urlStopWordsVal = $settings->settings_sub->url_stop_words_val;
+            $title = "URL Slug";
+            $content = "";
+            if(isset(parse_url($urlValue)["path"])){
+                $path = parse_url($urlValue)["path"];
+                $content = substr($path, strpos($path, '/') + 1);
             }
 
-         
-            if($urlCasingOnlyUnderscores){
-                if(str_contains($content, "-") || str_contains($content, "/") || count(explode(" ", $content)) > 1){
-                    $status = false;
-                    $statusUnderscore = false;
-                    array_push($problems, "Words in URL slug are not separated by underscores.");
-                }
-            }
-            // if($urlCasingBoth){
-            //     if(str_contains($content, "-")){
-            //         $status = false;
-            //         $statusUnderscore = false;
-            //         array_push($problems, "Words in URL slug are not separated by underscores.");
-            //     }
+            $description = "A URL slug refers to the end part of a URL after the backslash that identifies the specific page or post. Each slug on your web pages needs to be unique, and they provide readers and search engines with information about the content of a page.";
+            $message = "URL Slug has no issues.";
+            $length = strlen($content);
+            $lengthClass = "result_pass";
+            $lowercaseClass = "result_pass";
+            $numbersClass = "result_pass";
+            $specialClass = "result_pass";
+            $hyphenClass = "result_pass";
+            $underscoreClass = "result_pass";
+            $stopWordsClass = "result_pass";
 
-            //     if(str_contains($content, "_")){
-            //         $status = false;
-            //         $statusHyphens = false;
-            //         array_push($problems, "Words in URL slug are not separated by hyphens.");
-            //     }
-            // }
-            if($urlStopWords){
-                $urlStopWordsArr = explode(",",$urlStopWordsVal);
-                $status1 = true;
-                foreach($urlStopWordsArr as $word){
-                    if(str_contains($content, $word)){
-                        $status1 = false;
+            $showContent = true;
+            $tagStatus = true;
+
+            if(strlen($content) === 0){
+                $status = true;
+                $tagStatus = false;
+                $showContent = false;
+                $exists = false;
+                $message = "You have tested the root domain, so there isn't a URL slug available.";
+            }else{
+                if($urlSlugLowercase){
+                    if($helpers->hasUppercase($content)){
+                        $status = false;
+                        $statusLowercase = false;
+                        array_push($problems, "URL Slug contains uppercase characters.");
                     }
                 }
-                if(!$status1){
-                    $status = false;
-                    $statusStopWords = false;
-                    array_push($problems, "URL slug contains stop words specified by you in project settings.");
+                if($urlNoNumbers){
+                    if($helpers->hasNumbers($content)){
+                        $status = false;
+                        $statusNumbers = false;
+                        array_push($problems, "URL Slug contains numbers.");
+                    }
+                }
+                if($urlNoSpecial){
+                    if($helpers->hasSpecial($content)){
+                        $status = false;
+                        $statusSpecial = false;
+                        array_push($problems, "URL Slug contains special characters.");
+                    }
+                }
+                if($maxUrlLength){
+                    if(strlen($content) > $maxUrlLengthVal){
+                        $status = false;
+                        array_push($problems, "Length of URL Slug is more than " . $maxUrlLengthVal . " characters.");
+                        $lengthClass = "result_fail";
+                    }
+                }
+                if($urlCasingOnlyHyphens){
+                    if(!$helpers->onlyHyphen($content)){
+                        $status = false;
+                        $statusHyphens = false;
+                        array_push($problems, "Words in URL slug are not separated by hyphens.");
+                    }
+                }
+
+             
+                if($urlCasingOnlyUnderscores){
+                    if(str_contains($content, "-") || str_contains($content, "/") || count(explode(" ", $content)) > 1){
+                        $status = false;
+                        $statusUnderscore = false;
+                        array_push($problems, "Words in URL slug are not separated by underscores.");
+                    }
+                }
+                // if($urlCasingBoth){
+                //     if(str_contains($content, "-")){
+                //         $status = false;
+                //         $statusUnderscore = false;
+                //         array_push($problems, "Words in URL slug are not separated by underscores.");
+                //     }
+
+                //     if(str_contains($content, "_")){
+                //         $status = false;
+                //         $statusHyphens = false;
+                //         array_push($problems, "Words in URL slug are not separated by hyphens.");
+                //     }
+                // }
+                if($urlStopWords){
+                    $urlStopWordsArr = explode(",",$urlStopWordsVal);
+                    $status1 = true;
+                    foreach($urlStopWordsArr as $word){
+                        if(str_contains($content, $word)){
+                            $status1 = false;
+                        }
+                    }
+                    if(!$status1){
+                        $status = false;
+                        $statusStopWords = false;
+                        array_push($problems, "URL slug contains stop words specified by you in project settings.");
+                    }
                 }
             }
+
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->exists = $exists;
+            $object->status = $status;
+            $object->statusLowercase = $statusLowercase;
+            $object->statusHyphens = $statusHyphens;
+            $object->statusSpecial = $statusSpecial;
+            $object->statusNumbers = $statusNumbers;
+            $object->statusUnderscore = $statusUnderscore;
+            $object->statusStopWords = $statusStopWords;
+
+            $object->lowercaseClass = $lowercaseClass;
+            $object->numbersClass = $numbersClass;
+            $object->specialClass = $specialClass;
+            $object->hyphenClass = $hyphenClass;
+            $object->underscoreClass = $underscoreClass;
+            $object->stopWordsClass = $stopWordsClass;
+            $object->content = $content;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = false;
+            $object->lengthClass = $lengthClass;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "URL Slug";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in urlSlug test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "URL Slug";
+            $object->exists = false;
+            $object->statusLowercase = false;
+            $object->statusHyphens = false;
+            $object->statusSpecial = false;
+            $object->statusNumbers = false;
+            $object->statusUnderscore = false;
+            $object->statusStopWords = false;
+            $object->lowercaseClass = "result_fail";
+            $object->numbersClass = "result_fail";
+            $object->specialClass = "result_fail";
+            $object->hyphenClass = "result_fail";
+            $object->underscoreClass = "result_fail";
+            $object->stopWordsClass = "result_fail";
+            $object->content = "";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing URL Slug.";
+            $object->description = "URL Slug test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->lengthClass = "result_fail";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "URL Slug";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->exists = $exists;
-        $object->status = $status;
-        $object->statusLowercase = $statusLowercase;
-        $object->statusHyphens = $statusHyphens;
-        $object->statusSpecial = $statusSpecial;
-        $object->statusNumbers = $statusNumbers;
-        $object->statusUnderscore = $statusUnderscore;
-        $object->statusStopWords = $statusStopWords;
-
-        $object->lowercaseClass = $lowercaseClass;
-        $object->numbersClass = $numbersClass;
-        $object->specialClass = $specialClass;
-        $object->hyphenClass = $hyphenClass;
-        $object->underscoreClass = $underscoreClass;
-        $object->stopWordsClass = $stopWordsClass;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = false;
-        $object->lengthClass = $lengthClass;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "URL Slug";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
 
     public function ogTags($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
         $status = true;
         $statusTitle = true;
@@ -1189,9 +2204,8 @@ class RunTest implements ShouldQueue
         }
 
         if($statusImage){
-            list($width, $height) = getimagesize($contentImage); 
-            $dimensions = array('h' => $height, 'w' => $width );
-            if($ogImageDimensionsMin){
+            $dimensions = $this->getImageDimensionsSafely($contentImage);
+            if($ogImageDimensionsMin && $dimensions){
                 if($dimensions['w'] < $ogImageWidthMin){
                     $status = false;
                     $statusImage = false;
@@ -1207,7 +2221,7 @@ class RunTest implements ShouldQueue
                     $heightImageClass = "result_fail";
                 }
             }
-            if($ogImageDimensionsExact){
+            if($ogImageDimensionsExact && $dimensions){
                 if($dimensions['w'] != $ogImageWidthExact){
                     $status = false;
                     $statusImage = false;
@@ -1222,6 +2236,13 @@ class RunTest implements ShouldQueue
                     $lengthImageClass = "result_fail";
                     $heightImageClass = "result_fail";
                 }
+            }
+            
+            // If we couldn't get dimensions, add a warning
+            if (!$dimensions && $statusImage) {
+                array_push($problemsImage, "Could not retrieve image dimensions - image may be inaccessible or corrupted");
+                $widthImageClass = "result_warning";
+                $heightImageClass = "result_warning";
             }
         }
 
@@ -1323,12 +2344,70 @@ class RunTest implements ShouldQueue
         $object->label = $label;
         $object->tested_url = $testedUrl;
         $object->tested_at = time();
+        $object->testerrorcaught = false;
         return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in ogTags test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Open Graph Tags";
+            $object->statusTitle = false;
+            $object->statusDesc = false;
+            $object->statusURL = false;
+            $object->statusImage = false;
+            $object->isEqualStatus = false;
+            $object->isEqualDescStatus = false;
+            $object->isEqualURLStatus = false;
+            $object->dimensions = null;
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->problemsDesc = ["Test failed due to an error: " . $e->getMessage()];
+            $object->problemsImage = ["Test failed due to an error: " . $e->getMessage()];
+            $object->problemsURL = ["Test failed due to an error: " . $e->getMessage()];
+            $object->content = "";
+            $object->contentDesc = "";
+            $object->contentImage = "";
+            $object->contentURL = "";
+            $object->message = "An error occurred while testing Open Graph Tags.";
+            $object->messageTitle = "An error occurred while testing Open Graph Tags.";
+            $object->messageDesc = "An error occurred while testing Open Graph Tags.";
+            $object->messageImage = "An error occurred while testing Open Graph Tags.";
+            $object->messageURL = "An error occurred while testing Open Graph Tags.";
+            $object->description = "Open Graph Tags test failed due to an error.";
+            $object->showContent = false;
+            $object->showImage = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->lengthClass = "result_fail";
+            $object->isEqualClass = "result_fail";
+            $object->lengthDescClass = "result_fail";
+            $object->isEqualDescClass = "result_fail";
+            $object->lengthImageClass = "result_fail";
+            $object->widthImageClass = "result_fail";
+            $object->heightImageClass = "result_fail";
+            $object->lengthURLClass = "result_fail";
+            $object->isEqualURLClass = "result_fail";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "OG Title Tag";
+            $object->name = "og_tags";
+            $object->type = "title";
+            $object->titleCasingCamel = 0;
+            $object->titleCasingBoth = 0;
+            $object->titleCasingSentence = 0;
+            $object->excludedWordsVal = "";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
     public function twitterTags($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
         $status = true;
         $statusTitle = true;
@@ -1466,9 +2545,67 @@ class RunTest implements ShouldQueue
             }
         }
         if($statusImage){
-            list($width, $height) = getimagesize($contentImage); 
-            $dimensions = array('h' => $height, 'w' => $width );
-            if($twitterImageDimensionsMin){
+            // Add timeout protection for getimagesize
+            $dimensions = null;
+            try {
+                // Set a timeout for the image processing
+                set_time_limit(30); // 30 seconds timeout for image processing
+                
+                // Use cURL with timeout instead of getimagesize for better control
+                $ch = curl_init();
+                curl_setopt($ch, CURLOPT_URL, $contentImage);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_TIMEOUT, 10); // 10 seconds timeout
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5); // 5 seconds connection timeout
+                curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+                curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (compatible; WebQA/1.0)');
+                
+                $imageData = curl_exec($ch);
+                $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+                curl_close($ch);
+                
+                if ($httpCode === 200 && $imageData) {
+                    // Create temporary file to get dimensions
+                    $tempFile = tempnam(sys_get_temp_dir(), 'webqa_img_');
+                    file_put_contents($tempFile, $imageData);
+                    
+                    if (file_exists($tempFile)) {
+                        $imageInfo = getimagesize($tempFile);
+                        if ($imageInfo) {
+                            $dimensions = array('h' => $imageInfo[1], 'w' => $imageInfo[0]);
+                        }
+                        unlink($tempFile); // Clean up temp file
+                    }
+                }
+                
+                // Reset time limit
+                set_time_limit(180000);
+                
+            } catch (Exception $e) {
+                // Log error and continue without dimensions
+                Log::warning("Failed to get image dimensions for: " . $contentImage . " - " . $e->getMessage());
+                $dimensions = null;
+                set_time_limit(180000);
+            }
+            
+            // Fallback to getimagesize if cURL method failed
+            if (!$dimensions) {
+                try {
+                    set_time_limit(30);
+                    $imageInfo = @getimagesize($contentImage);
+                    if ($imageInfo) {
+                        $dimensions = array('h' => $imageInfo[1], 'w' => $imageInfo[0]);
+                    }
+                    set_time_limit(180000);
+                } catch (Exception $e) {
+                    Log::warning("Fallback getimagesize also failed for: " . $contentImage . " - " . $e->getMessage());
+                    $dimensions = null;
+                    set_time_limit(180000);
+                }
+            }
+            if($twitterImageDimensionsMin && $dimensions){
                 if($dimensions['w'] < $twitterImageWidthMin){
                     $status = false;
                     $statusImage = false;
@@ -1484,7 +2621,7 @@ class RunTest implements ShouldQueue
                     $heightImageClass = "result_fail";
                 }
             }
-            if($twitterImageDimensionsExact){
+            if($twitterImageDimensionsExact && $dimensions){
                 if($dimensions['w'] != $twitterImageWidthExact){
                     $status = false;
                     $statusImage = false;
@@ -1499,6 +2636,13 @@ class RunTest implements ShouldQueue
                     $lengthImageClass = "result_fail";
                     $heightImageClass = "result_fail";
                 }
+            }
+            
+            // If we couldn't get dimensions, add a warning
+            if (!$dimensions && $statusImage) {
+                array_push($problemsImage, "Could not retrieve image dimensions - image may be inaccessible or corrupted");
+                $widthImageClass = "result_warning";
+                $heightImageClass = "result_warning";
             }
         }
 
@@ -1571,13 +2715,64 @@ class RunTest implements ShouldQueue
         $object->label = $label;
         $object->tested_url = $testedUrl;
         $object->tested_at = time();
+        $object->testerrorcaught = false;
         return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in twitterTags test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Twitter Tags";
+            $object->statusTitle = false;
+            $object->statusImage = false;
+            $object->statusImageAlt = false;
+            $object->isEqualStatus = false;
+            $object->dimensions = null;
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->problemsImage = ["Test failed due to an error: " . $e->getMessage()];
+            $object->problemsImageAlt = ["Test failed due to an error: " . $e->getMessage()];
+            $object->content = "";
+            $object->contentImage = "";
+            $object->contentImageAlt = "";
+            $object->message = "An error occurred while testing Twitter Tags.";
+            $object->messageTitle = "An error occurred while testing Twitter Tags.";
+            $object->messageImage = "An error occurred while testing Twitter Tags.";
+            $object->messageImageAlt = "An error occurred while testing Twitter Tags.";
+            $object->description = "Twitter Tags test failed due to an error.";
+            $object->length = 0;
+            $object->lengthClass = "result_fail";
+            $object->isEqualClass = "result_fail";
+            $object->casingStatus = false;
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->lengthImage = 0;
+            $object->lengthImageClass = "result_fail";
+            $object->widthImageClass = "result_fail";
+            $object->heightImageClass = "result_fail";
+            $object->showImage = false;
+            $object->lengthImageAlt = 0;
+            $object->lengthImageAltClass = "result_fail";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Twitter Title Tag";
+            $object->name = "twitter_tags";
+            $object->titleCasingCamel = 0;
+            $object->titleCasingBoth = 0;
+            $object->titleCasingSentence = 0;
+            $object->excludedWordsVal = "";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
 
     public function favicon($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
         $status = true;
         $problems = [];
@@ -1619,9 +2814,8 @@ class RunTest implements ShouldQueue
             }
         }
         if($status){
-            list($width, $height) = getimagesize($content); 
-            $dimensions = array('h' => $height, 'w' => $width );
-            if($faviconDimensionsMin){
+            $dimensions = $this->getImageDimensionsSafely($content);
+            if($faviconDimensionsMin && $dimensions){
                 if($dimensions['w'] < $faviconWidthMin){
                     $status = false;
                     array_push($problems, "Width of Favicon is less than " . $faviconWidthMin . " pixels.");
@@ -1633,7 +2827,7 @@ class RunTest implements ShouldQueue
                     $lengthClass = "result_fail";
                 }
             }
-            if($faviconDimensionsExact){
+            if($faviconDimensionsExact && $dimensions){
                 if($dimensions['w'] != $faviconWidthExact){
                     $status = false;
                     array_push($problems, "Width of Favicon is not equal to " . $faviconWidthExact . " pixels.");
@@ -1644,6 +2838,11 @@ class RunTest implements ShouldQueue
                     array_push($problems, "Height of Favicon is not equal to " . $faviconHeightExact . " pixels.");
                     $lengthClass = "result_fail";
                 }
+            }
+            
+            // If we couldn't get dimensions, add a warning
+            if (!$dimensions && $status) {
+                array_push($problems, "Could not retrieve image dimensions - image may be inaccessible or corrupted");
             }
         }
 
@@ -1668,901 +2867,1170 @@ class RunTest implements ShouldQueue
         $object->label = $label;
         $object->tested_url = $testedUrl;
         $object->tested_at = time();
+        $object->testerrorcaught = false;
         return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in favicon test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Favicon";
+            $object->content = "";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Favicon.";
+            $object->description = "Favicon test failed due to an error.";
+            $object->showImage = false;
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->lengthClass = "result_fail";
+            $object->dimensions = null;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Favicon";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
     public function xmlSitemap($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $fileExists = true;
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $fileExists = true;
 
-        $problems = [];
+            $problems = [];
 
-        isset($data["sitemapContent"]) ? $statusSitemapGetValues = $data["sitemapContent"] : 0;
+            isset($data["sitemapContent"]) ? $statusSitemapGetValues = $data["sitemapContent"] : 0;
 
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
-        $urlParse = parse_url($urlValue);
-        $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $urlValueTwo = preg_replace('#^(http(s)?://)?w{3}\.#', '$1', $domain);
-        if(isset($data["sitemapContent"])){
-            $isSitemap = true;
-            $isSitemapVal = $data["xmlSitemap"];
-        }else{
-            $isSitemap = $settings->settings_sub->xml_sitemap;
-            $isSitemapVal = $settings->settings_sub->xml_sitemap_val;
-        }
-
-        $title = "XML Sitemap";
-        $description = "An XML sitemap is a file that lists a website’s important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability and indexability.";
-        $message = "XML Sitemap check excluded.";
-        $xmldata = "";
-
-        if($isSitemap){
-            if(!$helpers->isValidUrl($isSitemapVal)){
-                $status = false;
-                $fileExists = false;
-
-                $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
+            $urlParse = parse_url($urlValue);
+            $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
+            $urlValueTwo = preg_replace('#^(http(s)?://)?w{3}\.#', '$1', $domain);
+            if(isset($data["sitemapContent"])){
+                $isSitemap = true;
+                $isSitemapVal = $data["xmlSitemap"];
             }else{
-                $xmldata = @simplexml_load_file($isSitemapVal);
-                if(!$xmldata){
+                $isSitemap = $settings->settings_sub->xml_sitemap;
+                $isSitemapVal = $settings->settings_sub->xml_sitemap_val;
+            }
+
+            $title = "XML Sitemap";
+            $description = "An XML sitemap is a file that lists a website's important pages, making sure search engines can find and crawl them all. It also helps search engines understand your website structure. <br><br>An XML sitemap can help speed up content discovery, crawlability and indexability.";
+            $message = "XML Sitemap check excluded.";
+            $xmldata = "";
+
+            if($isSitemap){
+                if(!$helpers->isValidUrl($isSitemapVal)){
                     $status = false;
                     $fileExists = false;
 
                     $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
                 }else{
-                    $fileExists = true;
+                    $xmldata = @simplexml_load_file($isSitemapVal);
+                    if(!$xmldata){
+                        $status = false;
+                        $fileExists = false;
 
-                    foreach($xmldata as $data){
-                        if(strcmp($data->loc,$urlValue) === 0 || strcmp($data->loc,$urlValueTwo) === 0){
-                            $status = true;
-                            $message = "Page is added in XML Sitemap";
-                            break;
-                        }else{
-                            $status = false;
-                            $message = "Page is not added in XML Sitemap";
-                        }
-                    }
-                }
-            }
-        }
-
-        $statusA = 1;
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->fileExists = $fileExists;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = false;
-        $object->tagStatus = false;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "XML Sitemap";
-        if(!isset($statusSitemapGetValues)){
-            $object->settings = $settings->settings_sub;
-            $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        }
-        $object->xmldata = $xmldata;
-
-        return json_encode($object);
-    }
-
-    public function htmlSitemap($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $fileExists = true;
-
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
-        $urlParse = parse_url($urlValue);
-        $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $urlValueTwo = rtrim(str_replace("www.", "", $urlValue), "/");
-        $isSitemap = $settings->settings_sub->html_sitemap;
-        $sitemapVal = $settings->settings_sub->html_sitemap_val;
-
-        $title = "HTML Sitemap";
-        $description = "An HTML Sitemap is the same as an XML Sitemap, except that it is meant for actual users. An HTML Sitemap allows your site visitors to find all the content of a website from a single reference page. <br><br>HTML Sitemap is also used by search engines to crawl and index pages, which search engines cannot otherwise find and crawl.";
-        $message = "HTML Sitemap check excluded.";
-
-
-        if($isSitemap){
-            if(!$helpers->isValidUrl($sitemapVal)){
-                $status = false;
-                $fileExists = false;
-                $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
-            }else{
-                $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
-                $crawler = $goutteClient->request('GET', $sitemapVal);
-                $links = $crawler->filter("a")->each(function($node){
-                    return $node->extract(array('href'))[0];
-                });
-
-                if(count($links) > 0){
-                    for($i=0;$i<count($links);$i++){
-                        $content = $links[$i];
-                        $link = $helpers->getAbsolutePath($content, $domain);
-                        $linkCustom = str_replace("www.", "", $link);
-                        if($linkCustom === $urlValueTwo){
-                            $status = true;
-                            $message = "Page is added in HTML Sitemap";
-                            break;
-                        }else{
-                            $status = false;
-                            $message = "Page is not added in HTML Sitemap";
-                        }
-                    }
-                }else{
-                    $status = false;
-                    $fileExists = false;
-                    $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
-                }
-            }
-        }
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->fileExists = $fileExists;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = false;
-        $object->tagStatus = false;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "HTML Sitemap";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        // $object->links = $settings->links;
-        return json_encode($object);
-    }
-
-
-    public function images($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-
-        $images = isset($data["images"]) ? $data["images"] : [];
-        $urlValue = $testedUrl;
-        $urlParse = parse_url($urlValue);
-        $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $origin = explode('.', $urlParse["host"])[1];
-        $imageMaxSize = $settings->settings_sub->image_max_size;
-        $imageMaxSizeVal = $settings->settings_sub->image_max_size_val;
-        $imageNameOnlyHyphens = $settings->settings_sub->image_name_only_hyphens;
-        $imageNameNoUppercase = $settings->settings_sub->image_name_no_uppercase;
-        $imageNameNoSpecial = $settings->settings_sub->image_name_no_special;
-        $imageNameMaxCharacters = $settings->settings_sub->image_name_max_characters;
-        $imageNameMaxCharactersVal = $settings->settings_sub->image_name_max_characters_val;
-        $imageAltDB = $settings->settings_sub->image_alt;
-        $imageAltOnlySpaces = $settings->settings_sub->image_alt_only_spaces;
-
-        $title = "Images";
-        $description = "Images make any content more interesting and appealing by helping readers understand your content better. Plus, images add value to your SEO efforts by increasing user engagement and accessibility of your website. There are a number of important factors that can be optimized to help improve image SEO on your site.<br><br>";
-        $message = "Your webpage has no images.";
-
-        if(count($images) > 0){
-            $message = "All the Images used in the page meet quality requirements";
-            foreach($images as $image){
-                // getting all values again
-                $imageLengthStatus = true;
-                $imageMaxSize = $settings->settings_sub->image_max_size;
-                $imageMaxSizeVal = $settings->settings_sub->image_max_size_val;
-                $imageNameOnlyHyphens = $settings->settings_sub->image_name_only_hyphens;
-                $imageNameNoUppercase = $settings->settings_sub->image_name_no_uppercase;
-                $imageNameNoSpecial = $settings->settings_sub->image_name_no_special;
-                $imageNameMaxCharacters = $settings->settings_sub->image_name_max_characters;
-                $imageNameMaxCharactersVal = $settings->settings_sub->image_name_max_characters_val;
-                $imageAltDB = $settings->settings_sub->image_alt;
-                $imageAltOnlySpaces = $settings->settings_sub->image_alt_only_spaces;
-
-                // if($helpers->isLinkSameAsOrigin($image["content"]["src"], $origin)){
-                $imageAltDB = $settings->settings_sub->image_alt;
-                $imgSize = "";
-                $imageProblems = [];
-                $imageStatus = true;
-                $imageHyphenStatus = true;
-                $imageUppercaseStatus = true;
-                $imageSpecialStatus = true;
-                $imageAltSpacesStatus = true;
-
-                $content = $image["src"];
-                $imageAlt = $image["alt"];
-                $imageSrc = $helpers->removeParams($content);
-                $imageSrc = $helpers->getAbsolutePath($imageSrc, $domain);
-                $imageName = substr($imageSrc, strrpos($imageSrc, '/') + 1);
-                // if($helpers->isSVG($imageName)){
-                //     $imageAltDB = false;
-                //     $imageNameOnlyHyphens = false;
-                //     $imageNameNoUppercase = false;
-                //     $imageNameNoSpecial = false;
-                //     $imageNameMaxCharacters = false;
-                //     $imageLengthStatus = false;
-                //     $imageName = "Since it's an SVG, there is no file name.";
-                // }
-
-
-                $imageNameLength = strlen($imageName);
-                $imageNameClass = "result_pass";
-                $imageAltClass = "result_pass";
-                $imageSizeClass = "result_pass";
-                $imageHyphenClass = "result_pass";
-                $imageLengthClass = "result_pass";
-                $imageUppercaseClass = "result_pass";
-                $imageSpecialClass = "result_pass";
-                $imageAltSpacesClass = "result_pass";
-
-            
-                if(!$helpers->onlyHyphen($imageName)){
-                    $imageHyphenStatus = false;
-                }
-                if($helpers->hasUppercase($imageName) == 0){
-                    $imageUppercaseStatus = false;
-                }
-             
-                if($helpers->hasSpecialImages($imageName) == 0){
-                    $imageSpecialStatus = false;
-                }
-
-                if(!$helpers->onlySpaces($imageAlt)){
-                    $imageAltSpacesStatus = false;
-                }
-
-                $imageAlt = $imageAlt == null ? "" : $imageAlt;
-               
-
-
-                
-                if($imageMaxSize){
-                    $imgDetails = @get_headers($imageSrc, 1);
-                    // Check if headers were successfully retrieved
-                    if ($imgDetails === false) {
-                        continue;
-                    }
-                    if(isset($imgDetails["Content-Length"])){
-                        $imgSize = (int)$imgDetails["Content-Length"];
-                        if($imgSize > 0){
-                            $imgSize = round($imgSize / 1024, 2);
-                        }
+                        $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
                     }else{
-                        $imgSize = 0;
-                    }
-                    // $imgSize = 1000;
+                        $fileExists = true;
 
-                    if($imgSize > $imageMaxSizeVal){
-                        $imageStatus = false;
-                        $status = false;
-                        $imageNameClass = "result_fail";
-                        $imageSizeClass = "result_fail";
-                        $message = "None of the Images used in the page meet quality requirements";
-                        $issueMsg = "Image file size exceeds " . $imageMaxSizeVal . " KB";
-                        array_push($imageProblems, $issueMsg);
-                    }
-                }else{
-
-                }
-
-                if($imageNameOnlyHyphens){
-                    if(!$helpers->onlyHyphen($imageName)){
-                        $imageStatus = false;
-                        $status = false;
-                        $imageNameClass = "result_fail";
-                        $imageHyphenClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
-                        array_push($imageProblems, "Words in file name must be separated by hyphens.");
-                    }
-                } 
-
-                if($imageNameNoUppercase){
-                    if($helpers->hasUppercase($imageName)){
-                        $imageStatus = false;
-                        $status = false;
-                        $imageNameClass = "result_fail";
-                        $imageUppercaseClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
-                        array_push($imageProblems, "Image file name has uppercase characters.");
-                    }
-                } 
-
-                
-                if($imageNameNoSpecial){
-                    if($helpers->hasSpecialImages($imageName)){
-                        $imageStatus = false;
-                        $status = false;
-                        $imageNameClass = "result_fail";
-                        $imageSpecialClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
-                        array_push($imageProblems, "Image file name has special characters.");
-                    }
-                } 
-                if($imageNameMaxCharacters){
-                    if($imageNameLength > $imageNameMaxCharactersVal){
-                        $imageStatus = false;
-                        $status = false;
-                        $imageNameClass = "result_fail";
-                        $imageLengthClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
-                        array_push($imageProblems, "Image file name length exceeds maximum limit of " . $imageNameMaxCharactersVal . " characters.");
-                    }
-                }
-
-                if($imageAltDB){
-                    if($imageAlt === "" || $imageAlt === null){
-                        $imageStatus = false;
-                        $status = false;
-                        $imageAltClass = "result_fail";
-                        $message = "All the Images used in the page do not meet quality requirements";
-                        array_push($imageProblems, "Alternate text either does not exist or is empty.");
-                    }else{
-                        if($imageAltOnlySpaces){
-                            if(!$helpers->onlySpaces($imageAlt)){
-                                $imageStatus = false;
+                        foreach($xmldata as $data){
+                            if(strcmp($data->loc,$urlValue) === 0 || strcmp($data->loc,$urlValueTwo) === 0){
+                                $status = true;
+                                $message = "Page is added in XML Sitemap";
+                                break;
+                            }else{
                                 $status = false;
-                                $imageAltClass = "result_fail";
-                                $imageAltSpacesClass = "result_fail";
-                                $message = "All the Images used in the page do not meet quality requirements";
-                                array_push($imageProblems, "Words in alternate text are not separated by spaces.");
+                                $message = "Page is not added in XML Sitemap";
                             }
                         }
                     }
                 }
-
-                $imageDetail = [
-                    'status' => $imageStatus,
-                    'imageHyphenStatus' => $imageHyphenStatus,
-                    'imageUppercaseStatus' => $imageUppercaseStatus,
-                    'imageSpecialStatus' => $imageSpecialStatus,
-                    'imageAltSpacesStatus' => $imageAltSpacesStatus,
-
-                    'imageSize' => $imageStatus,
-                    'imageSizeClass' => $imageSizeClass,
-                    'imageProblems' => $imageProblems,
-                    'imageAlt' => $imageAlt,
-                    'imageSrc' => $imageSrc,
-                    'imageName' => $imageName,
-                    'imageNameClass' => $imageNameClass,
-                    'imageAltClass' => $imageAltClass,
-                    'imageLengthClass' => $imageLengthClass,
-                    'imageHyphenClass' => $imageHyphenClass,
-                    'imageUppercaseClass' => $imageUppercaseClass,
-                    'imageSpecialClass' => $imageSpecialClass,
-                    'imageAltSpacesClass' => $imageAltSpacesClass,
-                    'imageLengthStatus' => $imageLengthStatus,
-                ];
-
-                $imageDetail["imageSizeValue"] = $imageMaxSize ? $imgSize . " KB" : "File size check excluded.";
-          
-                array_push($problems, $imageDetail);
             }
-        }
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = false;
-        $object->tagStatus = false;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Images";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $statusA = 1;
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->fileExists = $fileExists;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "XML Sitemap";
+            if(!isset($statusSitemapGetValues)){
+                $object->settings = $settings->settings_sub;
+                $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            }
+            $object->xmldata = $xmldata;
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in xmlSitemap test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->fileExists = false;
+            $object->title = "XML Sitemap";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing XML Sitemap.";
+            $object->description = "XML Sitemap test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "XML Sitemap";
+            $object->xmldata = null;
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
+    }
+
+    public function htmlSitemap($data, $label, $testedUrl){
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $fileExists = true;
+
+            $problems = [];
+
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
+            $urlParse = parse_url($urlValue);
+            $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
+            $urlValueTwo = rtrim(str_replace("www.", "", $urlValue), "/");
+            $isSitemap = $settings->settings_sub->html_sitemap;
+            $sitemapVal = $settings->settings_sub->html_sitemap_val;
+
+            $title = "HTML Sitemap";
+            $description = "An HTML Sitemap is the same as an XML Sitemap, except that it is meant for actual users. An HTML Sitemap allows your site visitors to find all the content of a website from a single reference page. <br><br>HTML Sitemap is also used by search engines to crawl and index pages, which search engines cannot otherwise find and crawl.";
+            $message = "HTML Sitemap check excluded.";
+
+
+            if($isSitemap){
+                if(!$helpers->isValidUrl($sitemapVal)){
+                    $status = false;
+                    $fileExists = false;
+                    $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
+                }else{
+                    $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
+                    $crawler = $goutteClient->request('GET', $sitemapVal);
+                    $links = $crawler->filter("a")->each(function($node){
+                        return $node->extract(array('href'))[0];
+                    });
+
+                    if(count($links) > 0){
+                        for($i=0;$i<count($links);$i++){
+                            $content = $links[$i];
+                            $link = $helpers->getAbsolutePath($content, $domain);
+                            $linkCustom = str_replace("www.", "", $link);
+                            if($linkCustom === $urlValueTwo){
+                                $status = true;
+                                $message = "Page is added in HTML Sitemap";
+                                break;
+                            }else{
+                                $status = false;
+                                $message = "Page is not added in HTML Sitemap";
+                            }
+                        }
+                    }else{
+                        $status = false;
+                        $fileExists = false;
+                        $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
+                    }
+                }
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->fileExists = $fileExists;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTML Sitemap";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            // $object->links = $settings->links;
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in htmlSitemap test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->fileExists = false;
+            $object->title = "HTML Sitemap";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing HTML Sitemap.";
+            $object->description = "HTML Sitemap test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTML Sitemap";
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
+    }
+
+
+    public function images($data, $label, $testedUrl){
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $problems = [];
+
+            $settings = json_decode($data["settings"]);
+
+            $images = isset($data["images"]) ? $data["images"] : [];
+            $urlValue = $testedUrl;
+            $urlParse = parse_url($urlValue);
+            $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
+            $origin = explode('.', $urlParse["host"])[1];
+            $imageMaxSize = $settings->settings_sub->image_max_size;
+            $imageMaxSizeVal = $settings->settings_sub->image_max_size_val;
+            $imageNameOnlyHyphens = $settings->settings_sub->image_name_only_hyphens;
+            $imageNameNoUppercase = $settings->settings_sub->image_name_no_uppercase;
+            $imageNameNoSpecial = $settings->settings_sub->image_name_no_special;
+            $imageNameMaxCharacters = $settings->settings_sub->image_name_max_characters;
+            $imageNameMaxCharactersVal = $settings->settings_sub->image_name_max_characters_val;
+            $imageAltDB = $settings->settings_sub->image_alt;
+            $imageAltOnlySpaces = $settings->settings_sub->image_alt_only_spaces;
+
+            $title = "Images";
+            $description = "Images make any content more interesting and appealing by helping readers understand your content better. Plus, images add value to your SEO efforts by increasing user engagement and accessibility of your website. There are a number of important factors that can be optimized to help improve image SEO on your site.<br><br>";
+            $message = "Your webpage has no images.";
+
+            if(count($images) > 0){
+                $message = "All the Images used in the page meet quality requirements";
+                foreach($images as $image){
+                    // getting all values again
+                    $imageLengthStatus = true;
+                    $imageMaxSize = $settings->settings_sub->image_max_size;
+                    $imageMaxSizeVal = $settings->settings_sub->image_max_size_val;
+                    $imageNameOnlyHyphens = $settings->settings_sub->image_name_only_hyphens;
+                    $imageNameNoUppercase = $settings->settings_sub->image_name_no_uppercase;
+                    $imageNameNoSpecial = $settings->settings_sub->image_name_no_special;
+                    $imageNameMaxCharacters = $settings->settings_sub->image_name_max_characters;
+                    $imageNameMaxCharactersVal = $settings->settings_sub->image_name_max_characters_val;
+                    $imageAltDB = $settings->settings_sub->image_alt;
+                    $imageAltOnlySpaces = $settings->settings_sub->image_alt_only_spaces;
+
+                    // if($helpers->isLinkSameAsOrigin($image["content"]["src"], $origin)){
+                    $imageAltDB = $settings->settings_sub->image_alt;
+                    $imgSize = "";
+                    $imageProblems = [];
+                    $imageStatus = true;
+                    $imageHyphenStatus = true;
+                    $imageUppercaseStatus = true;
+                    $imageSpecialStatus = true;
+                    $imageAltSpacesStatus = true;
+
+                    $content = $image["src"];
+                    $imageAlt = $image["alt"];
+                    $imageSrc = $helpers->removeParams($content);
+                    $imageSrc = $helpers->getAbsolutePath($imageSrc, $domain);
+                    $imageName = substr($imageSrc, strrpos($imageSrc, '/') + 1);
+                    // if($helpers->isSVG($imageName)){
+                    //     $imageAltDB = false;
+                    //     $imageNameOnlyHyphens = false;
+                    //     $imageNameNoUppercase = false;
+                    //     $imageNameNoSpecial = false;
+                    //     $imageNameMaxCharacters = false;
+                    //     $imageLengthStatus = false;
+                    //     $imageName = "Since it's an SVG, there is no file name.";
+                    // }
+
+
+                    $imageNameLength = strlen($imageName);
+                    $imageNameClass = "result_pass";
+                    $imageAltClass = "result_pass";
+                    $imageSizeClass = "result_pass";
+                    $imageHyphenClass = "result_pass";
+                    $imageLengthClass = "result_pass";
+                    $imageUppercaseClass = "result_pass";
+                    $imageSpecialClass = "result_pass";
+                    $imageAltSpacesClass = "result_pass";
+
+                
+                    if(!$helpers->onlyHyphen($imageName)){
+                        $imageHyphenStatus = false;
+                    }
+                    if($helpers->hasUppercase($imageName) == 0){
+                        $imageUppercaseStatus = false;
+                    }
+                 
+                    if($helpers->hasSpecialImages($imageName) == 0){
+                        $imageSpecialStatus = false;
+                    }
+
+                    if(!$helpers->onlySpaces($imageAlt)){
+                        $imageAltSpacesStatus = false;
+                    }
+
+                    $imageAlt = $imageAlt == null ? "" : $imageAlt;
+                   
+
+
+                    
+                    if($imageMaxSize){
+                        $imgDetails = @get_headers($imageSrc, 1);
+                        // Check if headers were successfully retrieved
+                        if ($imgDetails === false) {
+                            continue;
+                        }
+                        if(isset($imgDetails["Content-Length"])){
+                            $imgSize = (int)$imgDetails["Content-Length"];
+                            if($imgSize > 0){
+                                $imgSize = round($imgSize / 1024, 2);
+                            }
+                        }else{
+                            $imgSize = 0;
+                        }
+                        // $imgSize = 1000;
+
+                        if($imgSize > $imageMaxSizeVal){
+                            $imageStatus = false;
+                            $status = false;
+                            $imageNameClass = "result_fail";
+                            $imageSizeClass = "result_fail";
+                            $message = "None of the Images used in the page meet quality requirements";
+                            $issueMsg = "Image file size exceeds " . $imageMaxSizeVal . " KB";
+                            array_push($imageProblems, $issueMsg);
+                        }
+                    }else{
+
+                    }
+
+                    if($imageNameOnlyHyphens){
+                        if(!$helpers->onlyHyphen($imageName)){
+                            $imageStatus = false;
+                            $status = false;
+                            $imageNameClass = "result_fail";
+                            $imageHyphenClass = "result_fail";
+                            $message = "All the Images used in the page do not meet quality requirements";
+                            array_push($imageProblems, "Words in file name must be separated by hyphens.");
+                        }
+                    } 
+
+                    if($imageNameNoUppercase){
+                        if($helpers->hasUppercase($imageName)){
+                            $imageStatus = false;
+                            $status = false;
+                            $imageNameClass = "result_fail";
+                            $imageUppercaseClass = "result_fail";
+                            $message = "All the Images used in the page do not meet quality requirements";
+                            array_push($imageProblems, "Image file name has uppercase characters.");
+                        }
+                    } 
+
+                    
+                    if($imageNameNoSpecial){
+                        if($helpers->hasSpecialImages($imageName)){
+                            $imageStatus = false;
+                            $status = false;
+                            $imageNameClass = "result_fail";
+                            $imageSpecialClass = "result_fail";
+                            $message = "All the Images used in the page do not meet quality requirements";
+                            array_push($imageProblems, "Image file name has special characters.");
+                        }
+                    } 
+                    if($imageNameMaxCharacters){
+                        if($imageNameLength > $imageNameMaxCharactersVal){
+                            $imageStatus = false;
+                            $status = false;
+                            $imageNameClass = "result_fail";
+                            $imageLengthClass = "result_fail";
+                            $message = "All the Images used in the page do not meet quality requirements";
+                            array_push($imageProblems, "Image file name length exceeds maximum limit of " . $imageNameMaxCharactersVal . " characters.");
+                        }
+                    }
+
+                    if($imageAltDB){
+                        if($imageAlt === "" || $imageAlt === null){
+                            $imageStatus = false;
+                            $status = false;
+                            $imageAltClass = "result_fail";
+                            $message = "All the Images used in the page do not meet quality requirements";
+                            array_push($imageProblems, "Alternate text either does not exist or is empty.");
+                        }else{
+                            if($imageAltOnlySpaces){
+                                if(!$helpers->onlySpaces($imageAlt)){
+                                    $imageStatus = false;
+                                    $status = false;
+                                    $imageAltClass = "result_fail";
+                                    $imageAltSpacesClass = "result_fail";
+                                    $message = "All the Images used in the page do not meet quality requirements";
+                                    array_push($imageProblems, "Words in alternate text are not separated by spaces.");
+                                }
+                            }
+                        }
+                    }
+
+                    $imageDetail = [
+                        'status' => $imageStatus,
+                        'imageHyphenStatus' => $imageHyphenStatus,
+                        'imageUppercaseStatus' => $imageUppercaseStatus,
+                        'imageSpecialStatus' => $imageSpecialStatus,
+                        'imageAltSpacesStatus' => $imageAltSpacesStatus,
+
+                        'imageSize' => $imageStatus,
+                        'imageSizeClass' => $imageSizeClass,
+                        'imageProblems' => $imageProblems,
+                        'imageAlt' => $imageAlt,
+                        'imageSrc' => $imageSrc,
+                        'imageName' => $imageName,
+                        'imageNameClass' => $imageNameClass,
+                        'imageAltClass' => $imageAltClass,
+                        'imageLengthClass' => $imageLengthClass,
+                        'imageHyphenClass' => $imageHyphenClass,
+                        'imageUppercaseClass' => $imageUppercaseClass,
+                        'imageSpecialClass' => $imageSpecialClass,
+                        'imageAltSpacesClass' => $imageAltSpacesClass,
+                        'imageLengthStatus' => $imageLengthStatus,
+                    ];
+
+                    $imageDetail["imageSizeValue"] = $imageMaxSize ? $imgSize . " KB" : "File size check excluded.";
+              
+                    array_push($problems, $imageDetail);
+                }
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Images";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in images test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Images";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Images.";
+            $object->description = "Images test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Images";
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
     public function gzipCompression($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $problems = [];
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $problems = [];
 
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
 
-        $urlValue = $testedUrl;
-        $isGzipCompression = $settings->settings_sub->is_gzip_compression;
-        $title = "Gzip Compression";
-        $description = "Gzip is a file format used to compress HTTP content before it’s served to a client. GZip is a form of data compression, it takes a chunk of data and makes it smaller. <br><br> When Gzip compression is enabled,people visiting the site will be downloading smaller files which will help in quicker page loads.";
-        $message = "Gzip compression is enabled";
-        $showContent = false;
-        $tagStatus = false;
+            $urlValue = $testedUrl;
+            $isGzipCompression = $settings->settings_sub->is_gzip_compression;
+            $title = "Gzip Compression";
+            $description = "Gzip is a file format used to compress HTTP content before it's served to a client. GZip is a form of data compression, it takes a chunk of data and makes it smaller. <br><br> When Gzip compression is enabled,people visiting the site will be downloading smaller files which will help in quicker page loads.";
+            $message = "Gzip compression is enabled";
+            $showContent = false;
+            $tagStatus = false;
 
-        if($isGzipCompression){
-            $response = $helpers->IsGzip($urlValue);
-            switch($response){
-                case 0:
-                    $status = false;
-                    $message = "Technical error.";
-                    break;
-                case 1:
-                    $status = true;
-                    $message = "Gzip compression is enabled";
-                    break;
-                case 1:
-                    $status = false;
-                    $message = "Gzip compression is not enabled";
-                    break;
-                case 3:
-                    $status = false;
-                    $message = "Technical error.";
-                    break;
-            } 
+            if($isGzipCompression){
+                $response = $helpers->IsGzip($urlValue);
+                switch($response){
+                    case 0:
+                        $status = false;
+                        $message = "Technical error.";
+                        break;
+                    case 1:
+                        $status = true;
+                        $message = "Gzip compression is enabled";
+                        break;
+                    case 1:
+                        $status = false;
+                        $message = "Gzip compression is not enabled";
+                        break;
+                    case 3:
+                        $status = false;
+                        $message = "Technical error.";
+                        break;
+                } 
+            }
+       
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "GZIP Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in gzipCompression test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Gzip Compression";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Gzip Compression.";
+            $object->description = "Gzip Compression test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "GZIP Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-   
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "GZIP Compression";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
     public function htmlCompression($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $problems = [];
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $problems = [];
 
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
 
-        $urlValue = $testedUrl;
-        $isHTMLCompression = $settings->settings_sub->is_html_compression;
-        $title = "HTML Compression";
-        $description = "HTML compression shrinks file size of the page being served to the visitor. Because the HTTP protocol supports compression, your web server can compress the page before sending it to the visitor, and then the visitor's browser can decompress the page back to its original state, resulting in faster page loads.<br><br>";
-        $message = "HTML compression is enabled";
-        $showContent = false;
-        $tagStatus = false;
+            $urlValue = $testedUrl;
+            $isHTMLCompression = $settings->settings_sub->is_html_compression;
+            $title = "HTML Compression";
+            $description = "HTML compression shrinks file size of the page being served to the visitor. Because the HTTP protocol supports compression, your web server can compress the page before sending it to the visitor, and then the visitor's browser can decompress the page back to its original state, resulting in faster page loads.<br><br>";
+            $message = "HTML compression is enabled";
+            $showContent = false;
+            $tagStatus = false;
 
-        if($isHTMLCompression){
-            if($helpers->isHTMLCompressed($html)){
-                $status = true;
-                $message = "HTML Code is compressed.";
-            }else{
-                $status = false;
-                $message = "HTML Code is not compressed.";
+            if($isHTMLCompression){
+                if($helpers->isHTMLCompressed($html)){
+                    $status = true;
+                    $message = "HTML Code is compressed.";
+                }else{
+                    $status = false;
+                    $message = "HTML Code is not compressed.";
+                }
             }
-        }
-   
+       
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "HTML Compression";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTML Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in htmlCompression test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "HTML Compression";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing HTML Compression.";
+            $object->description = "HTML Compression test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTML Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
     public function cssCompression($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $problems = [];
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $problems = [];
 
-        $files = isset($data["stylesheet"]) ? $data["stylesheet"] : [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
+            $files = isset($data["stylesheet"]) ? $data["stylesheet"] : [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
 
-        $urlValue = $testedUrl;
-        $urlParse = parse_url($urlValue);
-        $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $isCSSCompression = $settings->settings_sub->is_css_compression;
-        $title = "CSS Compression";
-        $description = "CSS compression is a methodology to detect and remove older CSS scripts that modern web pages do not use to display your web pages. It also involves minifying unnecessary large CSS rules into much smaller code. The actual style and layout of the web page will not be affected by using this methodology, but it will lead to performance improvements.<br><br>";
-        $message = "CSS compression is enabled";
-        $showContent = false;
-        $tagStatus = false;
+            $urlValue = $testedUrl;
+            $urlParse = parse_url($urlValue);
+            $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
+            $isCSSCompression = $settings->settings_sub->is_css_compression;
+            $title = "CSS Compression";
+            $description = "CSS compression is a methodology to detect and remove older CSS scripts that modern web pages do not use to display your web pages. It also involves minifying unnecessary large CSS rules into much smaller code. The actual style and layout of the web page will not be affected by using this methodology, but it will lead to performance improvements.<br><br>";
+            $message = "CSS compression is enabled";
+            $showContent = false;
+            $tagStatus = false;
 
-        if($isCSSCompression){
-            $response = $helpers->checkMinification($files, ".css", 4, $domain, $urlParse["host"]);
-            if(count($response) > 0){
-                $strNew = "";
-                foreach($response as $key=>$value){
-                    $index = $key+1 === count($response) ? $key+1 : $key+1 . ", ";
-                    $strNew .=  "<a target='_blank' href='$value'>Link $index</a>";
+            if($isCSSCompression){
+                $response = $helpers->checkMinification($files, ".css", 4, $domain, $urlParse["host"]);
+                if(count($response) > 0){
+                    $strNew = "";
+                    foreach($response as $key=>$value){
+                        $index = $key+1 === count($response) ? $key+1 : $key+1 . ", ";
+                        $strNew .=  "<a target='_blank' href='$value'>Link $index</a>";
+                    }
+                    $status = false;
+                    $message = "All CSS Files are not compressed or minified <br>" . $strNew;
+                }else{
+                    $status = true;
+                    $message = "All CSS Files are compressed and minified.";
                 }
-                $status = false;
-                $message = "All CSS Files are not compressed or minified <br>" . $strNew;
-            }else{
-                $status = true;
-                $message = "All CSS Files are compressed and minified.";
-            }
-        }   
-   
+            }   
+       
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "CSS Compression";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "CSS Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in cssCompression test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "CSS Compression";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing CSS Compression.";
+            $object->description = "CSS Compression test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "CSS Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
     public function jsCompression($data, $label, $testedUrl){
-        $helpers = new Helper();
-        $status = true;
-        $problems = [];
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $problems = [];
 
-        $files = isset($data["script"]) ? $data["script"] : [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
+            $files = isset($data["script"]) ? $data["script"] : [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
 
-        $urlValue = $testedUrl;
-        $urlParse = parse_url($urlValue);
-        $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $isJSCompression = $settings->settings_sub->is_js_compression;
-        $title = "JS Compression";
-        $description = "JavaScript compression is a methodology to detect and remove older JS scripts that modern web pages do not use to display in your web pages. It also involves minifying unnecessary large JS files into much smaller code. The actual style, layout and functionality of the web page will not be affected by using this methodology, but it will lead to performance improvements.<br><br>";
-        $message = "JS compression is enabled";
-        $showContent = false;
-        $tagStatus = false;
+            $urlValue = $testedUrl;
+            $urlParse = parse_url($urlValue);
+            $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
+            $isJSCompression = $settings->settings_sub->is_js_compression;
+            $title = "JS Compression";
+            $description = "JavaScript compression is a methodology to detect and remove older JS scripts that modern web pages do not use to display in your web pages. It also involves minifying unnecessary large JS files into much smaller code. The actual style, layout and functionality of the web page will not be affected by using this methodology, but it will lead to performance improvements.<br><br>";
+            $message = "JS compression is enabled";
+            $showContent = false;
+            $tagStatus = false;
 
-        if($isJSCompression){
-            $response = $helpers->checkMinification($files, ".js", 3, $domain, $urlParse["host"]);
-            if(count($response) > 0){
-                $strNew = "";
-                foreach($response as $key=>$value){
-                    $index = $key+1 === count($response) ? $key+1 : $key+1 . ", ";
-                    $strNew .=  "<a target='_blank' href='$value'>Link $index </a>";
+            if($isJSCompression){
+                $response = $helpers->checkMinification($files, ".js", 3, $domain, $urlParse["host"]);
+                if(count($response) > 0){
+                    $strNew = "";
+                    foreach($response as $key=>$value){
+                        $index = $key+1 === count($response) ? $key+1 : $key+1 . ", ";
+                        $strNew .=  "<a target='_blank' href='$value'>Link $index </a>";
+                    }
+                    $status = false;
+                    $message = "All JS Files are not compressed or minified <br>" . $strNew;
+                }else{
+                    $status = true;
+                    $message = "All JS Files are compressed and minified.";
                 }
-                $status = false;
-                $message = "All JS Files are not compressed or minified <br>" . $strNew;
-            }else{
-                $status = true;
-                $message = "All JS Files are compressed and minified.";
-            }
-        }   
-   
+            }   
+       
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->showContent = $showContent;
-        $object->tagStatus = $tagStatus;
-        $object->casingStatus = false;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "JS Compression";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->showContent = $showContent;
+            $object->tagStatus = $tagStatus;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "JS Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in jsCompression test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "JS Compression";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing JS Compression.";
+            $object->description = "JS Compression test failed due to an error.";
+            $object->showContent = false;
+            $object->tagStatus = false;
+            $object->casingStatus = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "JS Compression";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
     public function googleInsights($data, $label, $testedUrl, $dataDesktop, $dataMobile){
-        $status = true;
-        $statusDesktop = true;
-        $statusMobile = true;
+        try {
+            $status = true;
+            $statusDesktop = true;
+            $statusMobile = true;
 
 
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
 
-        $googleInsightsDesktop = $settings->settings_sub->google_insights_desktop;
-        $googleInsightsDesktopVal = $settings->settings_sub->google_insights_desktop_val;
-        $googleInsightsMobile = $settings->settings_sub->google_insights_mobile;
-        $googleInsightsMobileVal = $settings->settings_sub->google_insights_mobile_val;
- 
-        $title = "Google Page Speed Overall Score";
-        $titleDesktop = "Google Page Speed (Desktop)";
-        $titleMobile = "Google Page Speed (Mobile)";
+            $googleInsightsDesktop = $settings->settings_sub->google_insights_desktop;
+            $googleInsightsDesktopVal = $settings->settings_sub->google_insights_desktop_val;
+            $googleInsightsMobile = $settings->settings_sub->google_insights_mobile;
+            $googleInsightsMobileVal = $settings->settings_sub->google_insights_mobile_val;
+     
+            $title = "Google Page Speed Overall Score";
+            $titleDesktop = "Google Page Speed (Desktop)";
+            $titleMobile = "Google Page Speed (Mobile)";
 
-        $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
+            $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
 
-        $message = "Google Page Speed Insights check excluded.";
-        $messageDesktop = "Google Page Speed Insights check excluded.";
-        $messageMobile = "Google Page Speed Insights check excluded.";
-
-
-        $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
-        $scoreMobile = floatval($dataMobile->lighthouseResult->categories->performance->score * 100);
-
-        // screenshots
-        // Retrieve screenshot image data 
-        $screenshotDataDesktop = $dataDesktop->lighthouseResult->audits->{'final-screenshot'}->details->data; 
-        $screenshotDataMobile = $dataMobile->lighthouseResult->audits->{'final-screenshot'}->details->data; 
+            $message = "Google Page Speed Insights check excluded.";
+            $messageDesktop = "Google Page Speed Insights check excluded.";
+            $messageMobile = "Google Page Speed Insights check excluded.";
 
 
-        if($googleInsightsDesktop){
-            $messageDesktop = "Google Page Speed Insights Score for Desktop is meeting quality reqruirements.";
-            if($scoreDesktop < $googleInsightsDesktopVal){
-                $messageDesktop = "Google Page Speed Insights Score for Desktop is not meeting quality reqruirements.";
-                $status = false;
-                $statusDesktop = false;
+            $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
+            $scoreMobile = floatval($dataMobile->lighthouseResult->categories->performance->score * 100);
+
+            // screenshots
+            // Retrieve screenshot image data 
+            $screenshotDataDesktop = $dataDesktop->lighthouseResult->audits->{'final-screenshot'}->details->data; 
+            $screenshotDataMobile = $dataMobile->lighthouseResult->audits->{'final-screenshot'}->details->data; 
+
+
+            if($googleInsightsDesktop){
+                $messageDesktop = "Google Page Speed Insights Score for Desktop is meeting quality reqruirements.";
+                if($scoreDesktop < $googleInsightsDesktopVal){
+                    $messageDesktop = "Google Page Speed Insights Score for Desktop is not meeting quality reqruirements.";
+                    $status = false;
+                    $statusDesktop = false;
+                }
             }
-        }
-      
-        
-        if($googleInsightsMobile){
-            $messageMobile = "Google Page Speed Insights Score for Mobile is meeting quality reqruirements.";
-            if($scoreMobile < $googleInsightsMobileVal){
-                $messageMobile = "Google Page Speed Insights Score for Mobile is not meeting quality reqruirements.";
-                $status = false;
-                $statusMobile = false;
+          
+            
+            if($googleInsightsMobile){
+                $messageMobile = "Google Page Speed Insights Score for Mobile is meeting quality reqruirements.";
+                if($scoreMobile < $googleInsightsMobileVal){
+                    $messageMobile = "Google Page Speed Insights Score for Mobile is not meeting quality reqruirements.";
+                    $status = false;
+                    $statusMobile = false;
+                }
             }
-        }
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->statusDesktop = $statusDesktop;
-        $object->statusMobile = $statusMobile;
-        $object->title = $title;
-        $object->titleDesktop = $titleDesktop;
-        $object->titleMobile = $titleMobile;
-        $object->message = $message;
-        $object->messageDesktop = $messageDesktop;
-        $object->messageMobile = $messageMobile;
-        $object->description = $description;
-        $object->scoreDesktop = $scoreDesktop;
-        $object->scoreMobile = $scoreMobile;
-        $object->screenshotDataDesktop = $screenshotDataDesktop;
-        $object->screenshotDataMobile = $screenshotDataMobile;
-        $object->googleInsightsDesktop = $googleInsightsDesktop;
-        $object->googleInsightsMobile = $googleInsightsMobile;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "insights";
-        $object->name = "google_check";
-        $object->parentCard = "performance";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->statusDesktop = $statusDesktop;
+            $object->statusMobile = $statusMobile;
+            $object->title = $title;
+            $object->titleDesktop = $titleDesktop;
+            $object->titleMobile = $titleMobile;
+            $object->message = $message;
+            $object->messageDesktop = $messageDesktop;
+            $object->messageMobile = $messageMobile;
+            $object->description = $description;
+            $object->scoreDesktop = $scoreDesktop;
+            $object->scoreMobile = $scoreMobile;
+            $object->screenshotDataDesktop = $screenshotDataDesktop;
+            $object->screenshotDataMobile = $screenshotDataMobile;
+            $object->googleInsightsDesktop = $googleInsightsDesktop;
+            $object->googleInsightsMobile = $googleInsightsMobile;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "insights";
+            $object->name = "google_check";
+            $object->parentCard = "performance";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in googleInsights test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->statusDesktop = false;
+            $object->statusMobile = false;
+            $object->title = "Google Page Speed Overall Score";
+            $object->titleDesktop = "Google Page Speed (Desktop)";
+            $object->titleMobile = "Google Page Speed (Mobile)";
+            $object->message = "An error occurred while testing Google Page Speed Insights.";
+            $object->messageDesktop = "An error occurred while testing Google Page Speed Insights for Desktop.";
+            $object->messageMobile = "An error occurred while testing Google Page Speed Insights for Mobile.";
+            $object->description = "Google PageSpeed Insights test failed due to an error.";
+            $object->scoreDesktop = 0;
+            $object->scoreMobile = 0;
+            $object->screenshotDataDesktop = null;
+            $object->screenshotDataMobile = null;
+            $object->googleInsightsDesktop = false;
+            $object->googleInsightsMobile = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "insights";
+            $object->name = "google_check";
+            $object->parentCard = "performance";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
     public function googleLighthouse($data, $label, $testedUrl, $dataDesktop, $dataMobile){
-        $status = true;
-        $statusDesktop = true;
-        $statusMobile = true;
-        $statusPerformanceDesktop = true;
-        $statusPerformanceMobile = true;
-        $statusAccessibilityDesktop = true;
-        $statusAccessibilityMobile = true;
-        $statusBestPracticesDesktop = true;
-        $statusBestPracticesMobile = true;
-        $statusSeoDesktop = true;
-        $statusSeoMobile = true;
+        try {
+            $status = true;
+            $statusDesktop = true;
+            $statusMobile = true;
+            $statusPerformanceDesktop = true;
+            $statusPerformanceMobile = true;
+            $statusAccessibilityDesktop = true;
+            $statusAccessibilityMobile = true;
+            $statusBestPracticesDesktop = true;
+            $statusBestPracticesMobile = true;
+            $statusSeoDesktop = true;
+            $statusSeoMobile = true;
 
 
-        $problems = [];
+            $problems = [];
 
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
 
-        $googlePerformanceDesktop = $settings->settings_sub->google_performance_desktop;
-        $googlePerformanceDesktopVal = $settings->settings_sub->google_performance_desktop_val;
-        $googlePerformanceMobile = $settings->settings_sub->google_performance_mobile;
-        $googlePerformanceMobileVal = $settings->settings_sub->google_performance_mobile_val;
+            $googlePerformanceDesktop = $settings->settings_sub->google_performance_desktop;
+            $googlePerformanceDesktopVal = $settings->settings_sub->google_performance_desktop_val;
+            $googlePerformanceMobile = $settings->settings_sub->google_performance_mobile;
+            $googlePerformanceMobileVal = $settings->settings_sub->google_performance_mobile_val;
+            
+            $googleAccessibilityDesktop = $settings->settings_sub->google_accessibility_desktop;
+            $googleAccessibilityDesktopVal = $settings->settings_sub->google_accessibility_desktop_val;
+            $googleAccessibilityMobile = $settings->settings_sub->google_accessibility_mobile;
+            $googleAccessibilityMobileVal = $settings->settings_sub->google_accessibility_mobile_val;
+
+            $googleBestPracticesDesktop = $settings->settings_sub->google_best_practices_desktop;
+            $googleBestPracticesDesktopVal = $settings->settings_sub->google_best_practices_desktop_val;
+            $googleBestPracticesMobile = $settings->settings_sub->google_best_practices_mobile;
+            $googleBestPracticesMobileVal = $settings->settings_sub->google_best_practices_mobile_val;
+
+            $googleSeoDesktop = $settings->settings_sub->google_seo_desktop;
+            $googleSeoDesktopVal = $settings->settings_sub->google_seo_desktop_val;
+            $googleSeoMobile = $settings->settings_sub->google_seo_mobile;
+            $googleSeoMobileVal = $settings->settings_sub->google_seo_mobile_val;
+
+            $googleLighthouseCheckDesktop = $googlePerformanceDesktop || $googleAccessibilityDesktop || $googleBestPracticesDesktop || $googleSeoDesktop ? true : false;
+            $googleLighthouseCheckMobile = $googlePerformanceMobile || $googleAccessibilityMobile || $googleBestPracticesMobile || $googleSeoMobile ? true : false;
+            $googleLighthouseCheckOverall = $googleLighthouseCheckDesktop || $googleLighthouseCheckMobile ? true : false;
+
+     
+            $title = "Lighthouse Score";
+            $titleDesktop = "Lighthouse Audit (Desktop)";
+            $titleMobile = "Lighthouse Audit (Mobile)";
+
+            $description = "Lighthouse is an open-source, automated tool for improving the quality of web pages. You can run it against any web page, public or requiring authentication. It has audits for performance, accessibility, progressive web apps, SEO and more. Give Lighthouse a URL to audit, it runs a series of audits against the page, and then it generates a report on how well the page did. From there, use the failing audits as indicators on how to improve the page.<br><br>";
+            
+            $message = "Lighthouse audit check excluded.";
+            $messageDesktop = "Lighthouse audit for dekstop is meeting quality reqruirements.";
+            $messageMobile = "Lighthouse audit for mobile is meeting quality reqruirements.";
+
+            $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
+            $scoreMobile = floatval($dataMobile->lighthouseResult->categories->performance->score * 100);
+
+            $accessibilityDesktop = floatval($dataDesktop->lighthouseResult->categories->accessibility->score * 100);
+            $accessibilityMobile = floatval($dataMobile->lighthouseResult->categories->accessibility->score * 100);
+
+            $bestPracticesDesktop = floatval($dataDesktop->lighthouseResult->categories->{"best-practices"}->score * 100);
+            $bestPracticesMobile = floatval($dataMobile->lighthouseResult->categories->{"best-practices"}->score * 100);
+
+            $seoDesktop = floatval($dataDesktop->lighthouseResult->categories->seo->score * 100);
+            $seoMobile = floatval($dataMobile->lighthouseResult->categories->seo->score * 100);
+
+            if($googlePerformanceDesktop){
+                if($scoreDesktop < $googlePerformanceDesktopVal){
+                    $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
+                    $statusDesktop = false;
+                    $statusPerformanceDesktop = false;
+                    $status = false;
+                }
+            }
+
+            if($googlePerformanceMobile){
+                if($scoreMobile < $googlePerformanceMobileVal){
+                    $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
+                    $statusMobile = false;
+                    $statusPerformanceMobile = false;
+                    $status = false;
+                }
+            }
+          
+            
+            if($googleAccessibilityDesktop){
+                if($accessibilityDesktop < $googleAccessibilityDesktopVal){
+                    $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
+                    $statusDesktop = false;
+                    $statusAccessibilityDesktop = false;
+                    $status = false;
+                }
+            }
+
+            if($googleAccessibilityDesktop){
+                if($accessibilityMobile < $googleAccessibilityMobileVal){
+                    $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
+                    $statusMobile = false;
+                    $statusAccessibilityMobile = false;
+                    $status = false;
+                }
+            }
+
+            if($googleBestPracticesDesktop){
+                if($bestPracticesDesktop < $googleBestPracticesDesktopVal){
+                    $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
+                    $statusDesktop = false;
+                    $statusBestPracticesDesktop = false;
+                    $status = false;
+                }
+            }
+
+            if($googleBestPracticesMobile){
+                if($bestPracticesMobile < $googleBestPracticesMobileVal){
+                    $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
+                    $statusMobile = false;
+                    $statusBestPracticesMobile = false;
+                    $status = false;
+                }
+            }
+
+
+            if($googleSeoDesktop){
+                if($seoDesktop < $googleSeoDesktopVal){
+                    $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
+                    $statusDesktop = false;
+                    $statusSeoDesktop = false;
+                    $status = false;
+                }
+            }
+
+            if($googleSeoMobile){
+                if($seoMobile < $googleSeoMobileVal){
+                    $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
+                    $statusMobile = false;
+                    $statusSeoMobile = false;
+                    $status = false;
+                }
+            }
+
         
-        $googleAccessibilityDesktop = $settings->settings_sub->google_accessibility_desktop;
-        $googleAccessibilityDesktopVal = $settings->settings_sub->google_accessibility_desktop_val;
-        $googleAccessibilityMobile = $settings->settings_sub->google_accessibility_mobile;
-        $googleAccessibilityMobileVal = $settings->settings_sub->google_accessibility_mobile_val;
 
-        $googleBestPracticesDesktop = $settings->settings_sub->google_best_practices_desktop;
-        $googleBestPracticesDesktopVal = $settings->settings_sub->google_best_practices_desktop_val;
-        $googleBestPracticesMobile = $settings->settings_sub->google_best_practices_mobile;
-        $googleBestPracticesMobileVal = $settings->settings_sub->google_best_practices_mobile_val;
+            
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->googleLighthouseCheckDesktop = $googleLighthouseCheckDesktop;
+            $object->googleLighthouseCheckMobile = $googleLighthouseCheckMobile;
+            $object->googleLighthouseCheckOverall = $googleLighthouseCheckOverall;
+            $object->statusDesktop = $statusDesktop;
+            $object->statusMobile = $statusMobile;
+            $object->title = $title;
+            $object->titleDesktop = $titleDesktop;
+            $object->titleMobile = $titleMobile;
+            $object->message = $message;
+            $object->messageDesktop = $messageDesktop;
+            $object->messageMobile = $messageMobile;
+            $object->description = $description;
+            $object->scoreDesktop = $scoreDesktop;
+            $object->scoreMobile = $scoreMobile;
+            $object->accessibilityDesktop = $accessibilityDesktop;
+            $object->accessibilityMobile = $accessibilityMobile;
+            $object->bestPracticesDesktop = $bestPracticesDesktop;
+            $object->bestPracticesMobile = $bestPracticesMobile;
+            $object->seoDesktop = $seoDesktop;
+            $object->seoMobile = $seoMobile;
+            $object->googlePerformanceDesktop = $googlePerformanceDesktop;
+            $object->googlePerformanceMobile = $googlePerformanceMobile;
+            $object->googleAccessibilityDesktop = $googleAccessibilityDesktop;
+            $object->googleAccessibilityMobile = $googleAccessibilityMobile;
+            $object->googleBestPracticesDesktop = $googleBestPracticesDesktop;
+            $object->googleBestPracticesMobile = $googleBestPracticesMobile;
+            $object->googleSeoDesktop = $googleSeoDesktop;
+            $object->googleSeoMobile = $googleSeoMobile;
 
-        $googleSeoDesktop = $settings->settings_sub->google_seo_desktop;
-        $googleSeoDesktopVal = $settings->settings_sub->google_seo_desktop_val;
-        $googleSeoMobile = $settings->settings_sub->google_seo_mobile;
-        $googleSeoMobileVal = $settings->settings_sub->google_seo_mobile_val;
+            $object->statusPerformanceDesktop = $statusPerformanceDesktop;
+            $object->statusPerformanceMobile = $statusPerformanceMobile;
+            $object->statusAccessibilityDesktop = $statusAccessibilityDesktop;
+            $object->statusAccessibilityMobile = $statusAccessibilityMobile;
+            $object->statusBestPracticesDesktop = $statusBestPracticesDesktop;
+            $object->statusBestPracticesMobile = $statusBestPracticesMobile;
+            $object->statusSeoDesktop = $statusSeoDesktop;
+            $object->statusSeoMobile = $statusSeoMobile;
 
-        $googleLighthouseCheckDesktop = $googlePerformanceDesktop || $googleAccessibilityDesktop || $googleBestPracticesDesktop || $googleSeoDesktop ? true : false;
-        $googleLighthouseCheckMobile = $googlePerformanceMobile || $googleAccessibilityMobile || $googleBestPracticesMobile || $googleSeoMobile ? true : false;
-        $googleLighthouseCheckOverall = $googleLighthouseCheckDesktop || $googleLighthouseCheckMobile ? true : false;
-
- 
-        $title = "Lighthouse Score";
-        $titleDesktop = "Lighthouse Audit (Desktop)";
-        $titleMobile = "Lighthouse Audit (Mobile)";
-
-        $description = "Lighthouse is an open-source, automated tool for improving the quality of web pages. You can run it against any web page, public or requiring authentication. It has audits for performance, accessibility, progressive web apps, SEO and more. Give Lighthouse a URL to audit, it runs a series of audits against the page, and then it generates a report on how well the page did. From there, use the failing audits as indicators on how to improve the page.<br><br>";
-        
-        $message = "Lighthouse audit check excluded.";
-        $messageDesktop = "Lighthouse audit for dekstop is meeting quality reqruirements.";
-        $messageMobile = "Lighthouse audit for mobile is meeting quality reqruirements.";
-
-        $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
-        $scoreMobile = floatval($dataMobile->lighthouseResult->categories->performance->score * 100);
-
-        $accessibilityDesktop = floatval($dataDesktop->lighthouseResult->categories->accessibility->score * 100);
-        $accessibilityMobile = floatval($dataMobile->lighthouseResult->categories->accessibility->score * 100);
-
-        $bestPracticesDesktop = floatval($dataDesktop->lighthouseResult->categories->{"best-practices"}->score * 100);
-        $bestPracticesMobile = floatval($dataMobile->lighthouseResult->categories->{"best-practices"}->score * 100);
-
-        $seoDesktop = floatval($dataDesktop->lighthouseResult->categories->seo->score * 100);
-        $seoMobile = floatval($dataMobile->lighthouseResult->categories->seo->score * 100);
-
-        if($googlePerformanceDesktop){
-            if($scoreDesktop < $googlePerformanceDesktopVal){
-                $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
-                $statusDesktop = false;
-                $statusPerformanceDesktop = false;
-                $status = false;
-            }
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "lighthouse";
+            $object->name = "google_check";
+            $object->parentCard = "performance";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in googleLighthouse test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->googleLighthouseCheckDesktop = false;
+            $object->googleLighthouseCheckMobile = false;
+            $object->googleLighthouseCheckOverall = false;
+            $object->statusDesktop = false;
+            $object->statusMobile = false;
+            $object->title = "Lighthouse Score";
+            $object->titleDesktop = "Lighthouse Audit (Desktop)";
+            $object->titleMobile = "Lighthouse Audit (Mobile)";
+            $object->message = "An error occurred while testing Lighthouse audit.";
+            $object->messageDesktop = "An error occurred while testing Lighthouse audit for Desktop.";
+            $object->messageMobile = "An error occurred while testing Lighthouse audit for Mobile.";
+            $object->description = "Lighthouse audit test failed due to an error.";
+            $object->scoreDesktop = 0;
+            $object->scoreMobile = 0;
+            $object->accessibilityDesktop = 0;
+            $object->accessibilityMobile = 0;
+            $object->bestPracticesDesktop = 0;
+            $object->bestPracticesMobile = 0;
+            $object->seoDesktop = 0;
+            $object->seoMobile = 0;
+            $object->googlePerformanceDesktop = false;
+            $object->googlePerformanceMobile = false;
+            $object->googleAccessibilityDesktop = false;
+            $object->googleAccessibilityMobile = false;
+            $object->googleBestPracticesDesktop = false;
+            $object->googleBestPracticesMobile = false;
+            $object->googleSeoDesktop = false;
+            $object->googleSeoMobile = false;
+            $object->statusPerformanceDesktop = false;
+            $object->statusPerformanceMobile = false;
+            $object->statusAccessibilityDesktop = false;
+            $object->statusAccessibilityMobile = false;
+            $object->statusBestPracticesDesktop = false;
+            $object->statusBestPracticesMobile = false;
+            $object->statusSeoDesktop = false;
+            $object->statusSeoMobile = false;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "lighthouse";
+            $object->name = "google_check";
+            $object->parentCard = "performance";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-        if($googlePerformanceMobile){
-            if($scoreMobile < $googlePerformanceMobileVal){
-                $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
-                $statusMobile = false;
-                $statusPerformanceMobile = false;
-                $status = false;
-            }
-        }
-      
-        
-        if($googleAccessibilityDesktop){
-            if($accessibilityDesktop < $googleAccessibilityDesktopVal){
-                $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
-                $statusDesktop = false;
-                $statusAccessibilityDesktop = false;
-                $status = false;
-            }
-        }
-
-        if($googleAccessibilityDesktop){
-            if($accessibilityMobile < $googleAccessibilityMobileVal){
-                $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
-                $statusMobile = false;
-                $statusAccessibilityMobile = false;
-                $status = false;
-            }
-        }
-
-        if($googleBestPracticesDesktop){
-            if($bestPracticesDesktop < $googleBestPracticesDesktopVal){
-                $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
-                $statusDesktop = false;
-                $statusBestPracticesDesktop = false;
-                $status = false;
-            }
-        }
-
-        if($googleBestPracticesMobile){
-            if($bestPracticesMobile < $googleBestPracticesMobileVal){
-                $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
-                $statusMobile = false;
-                $statusBestPracticesMobile = false;
-                $status = false;
-            }
-        }
-
-
-        if($googleSeoDesktop){
-            if($seoDesktop < $googleSeoDesktopVal){
-                $messageDesktop = "Lighthouse audit for dekstop does not meet quality requirements.";
-                $statusDesktop = false;
-                $statusSeoDesktop = false;
-                $status = false;
-            }
-        }
-
-        if($googleSeoMobile){
-            if($seoMobile < $googleSeoMobileVal){
-                $messageMobile = "Lighthouse audit for mobile does not meet quality requirements.";
-                $statusMobile = false;
-                $statusSeoMobile = false;
-                $status = false;
-            }
-        }
-
-    
-
-        
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->googleLighthouseCheckDesktop = $googleLighthouseCheckDesktop;
-        $object->googleLighthouseCheckMobile = $googleLighthouseCheckMobile;
-        $object->googleLighthouseCheckOverall = $googleLighthouseCheckOverall;
-        $object->statusDesktop = $statusDesktop;
-        $object->statusMobile = $statusMobile;
-        $object->title = $title;
-        $object->titleDesktop = $titleDesktop;
-        $object->titleMobile = $titleMobile;
-        $object->message = $message;
-        $object->messageDesktop = $messageDesktop;
-        $object->messageMobile = $messageMobile;
-        $object->description = $description;
-        $object->scoreDesktop = $scoreDesktop;
-        $object->scoreMobile = $scoreMobile;
-        $object->accessibilityDesktop = $accessibilityDesktop;
-        $object->accessibilityMobile = $accessibilityMobile;
-        $object->bestPracticesDesktop = $bestPracticesDesktop;
-        $object->bestPracticesMobile = $bestPracticesMobile;
-        $object->seoDesktop = $seoDesktop;
-        $object->seoMobile = $seoMobile;
-        $object->googlePerformanceDesktop = $googlePerformanceDesktop;
-        $object->googlePerformanceMobile = $googlePerformanceMobile;
-        $object->googleAccessibilityDesktop = $googleAccessibilityDesktop;
-        $object->googleAccessibilityMobile = $googleAccessibilityMobile;
-        $object->googleBestPracticesDesktop = $googleBestPracticesDesktop;
-        $object->googleBestPracticesMobile = $googleBestPracticesMobile;
-        $object->googleSeoDesktop = $googleSeoDesktop;
-        $object->googleSeoMobile = $googleSeoMobile;
-
-        $object->statusPerformanceDesktop = $statusPerformanceDesktop;
-        $object->statusPerformanceMobile = $statusPerformanceMobile;
-        $object->statusAccessibilityDesktop = $statusAccessibilityDesktop;
-        $object->statusAccessibilityMobile = $statusAccessibilityMobile;
-        $object->statusBestPracticesDesktop = $statusBestPracticesDesktop;
-        $object->statusBestPracticesMobile = $statusBestPracticesMobile;
-        $object->statusSeoDesktop = $statusSeoDesktop;
-        $object->statusSeoMobile = $statusSeoMobile;
-
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "lighthouse";
-        $object->name = "google_check";$object->parentCard = "performance";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
     public function googleCoreWebVitals($data, $label, $testedUrl, $dataDesktop, $dataMobile){
@@ -2632,7 +4100,7 @@ class RunTest implements ShouldQueue
         $title = "Core Web Vitals";
         $titleDesktop = "Core Web Vitals (Desktop)";
         $titleMobile = "Core Web Vitals (Mobile)";
-        $description = "Core Web Vitals are a set of specific factors that Google considers important in a webpage’s overall user experience. Core Web Vitals are made up of three specific page speed and user interaction measurements: largest contentful paint, first input delay, and cumulative layout shift.Core Web Vitals are a subset of factors that is part of Google’s page experience score.<br><br>";
+        $description = "Core Web Vitals are a set of specific factors that Google considers important in a webpage's overall user experience. Core Web Vitals are made up of three specific page speed and user interaction measurements: largest contentful paint, first input delay, and cumulative layout shift.Core Web Vitals are a subset of factors that is part of Google's page experience score.<br><br>";
         
         $message = "Core web vitals check excluded";
         $messageDesktop = "Core web vitals for dekstop is meeting quality reqruirements.";
@@ -2865,102 +4333,142 @@ class RunTest implements ShouldQueue
     }
 
     public function mobileFriendly($data, $label, $testedUrl){
-        $status = true;
-
-
-        $settings = json_decode($data["settings"]);
-        $urlValue = $testedUrl;
-
-        $googleMobileFriendly = $settings->settings_sub->mobile_friendly;
-
- 
-        $title = "Google Mobile Friendly Test";
-        $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
-        $message = "Google Mobile Friendly check excluded.";
-
-        if($googleMobileFriendly){
-            $message = "Google Mobile Friendly Test is meeting quality reqruirements.";
+        try {
             $status = true;
+
+
+            $settings = json_decode($data["settings"]);
+            $urlValue = $testedUrl;
+
+            $googleMobileFriendly = $settings->settings_sub->mobile_friendly;
+
+     
+            $title = "Google Mobile Friendly Test";
+            $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
+            $message = "Google Mobile Friendly check excluded.";
+
+            if($googleMobileFriendly){
+                $message = "Google Mobile Friendly Test is meeting quality reqruirements.";
+                $status = true;
+            }
+          
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Mobile Friendly Test";
+            $object->parentCard = "performance";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in mobileFriendly test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Google Mobile Friendly Test";
+            $object->message = "An error occurred while testing Mobile Friendly Test.";
+            $object->description = "Mobile Friendly Test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Mobile Friendly Test";
+            $object->parentCard = "performance";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-      
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Mobile Friendly Test";
-        $object->parentCard = "performance";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     } 
 
     public function checkSSLCertificate($data, $label, $testedUrl){
-        $helpers = new Helper();
-
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $internalResponse = $data["internal_response"];
-        $title = "SSL Cetificate enable";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $websiteUrl = $testedUrl;
-        $isSslCertificateEnable = $settings->settings_sub->ssl_certificate_enable;
-        $message = '';
-
-        if ($isSslCertificateEnable) {
-          
-        // Add a default scheme (e.g., "http") if the URL doesn't have one
-        if (!parse_url($websiteUrl, PHP_URL_SCHEME)) {
-            $websiteUrl = "http://" . $websiteUrl;
-        }
-
-        $websiteUrl = parse_url($websiteUrl, PHP_URL_HOST);
-        set_error_handler([$this, 'customErrorHandler']);
-
         try {
-            // Attempt to create the SSL connection
-                $stream = $helpers->checkSSLCertificate($websiteUrl);
+            $helpers = new Helper();
 
-            if ($stream === false) {
-                // Handle the case when stream_socket_client fails
-                $status = false;
-                $message = 'SSL Certificate not found or expired';
-            } else {
-                $status = true;
-                $message = 'SSL Certificate enable';
+            $status = true;
+            $problems = [];
+
+            $settings = json_decode($data["settings"]);
+            $internalResponse = $data["internal_response"];
+            $title = "SSL Cetificate enable";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $websiteUrl = $testedUrl;
+            $isSslCertificateEnable = $settings->settings_sub->ssl_certificate_enable;
+            $message = '';
+
+            if ($isSslCertificateEnable) {
+              
+            // Add a default scheme (e.g., "http") if the URL doesn't have one
+            if (!parse_url($websiteUrl, PHP_URL_SCHEME)) {
+                $websiteUrl = "http://" . $websiteUrl;
             }
 
-            // Handle a successful connection here.
-        } catch (Exception $e) {
-            $status = false;
-            $message = 'SSL Certificate not found or expired';
-        } finally {
-            // Restore the default error handler
-            restore_error_handler();
+            $websiteUrl = parse_url($websiteUrl, PHP_URL_HOST);
+            set_error_handler([$this, 'customErrorHandler']);
+
+            try {
+                // Attempt to create the SSL connection
+                    $stream = $helpers->checkSSLCertificate($websiteUrl);
+
+                if ($stream === false) {
+                    // Handle the case when stream_socket_client fails
+                    $status = false;
+                    $message = 'SSL Certificate not found or expired';
+                } else {
+                    $status = true;
+                    $message = 'SSL Certificate enable';
+                }
+
+                // Handle a successful connection here.
+            } catch (Exception $e) {
+                $status = false;
+                $message = 'SSL Certificate not found or expired';
+            } finally {
+                // Restore the default error handler
+                restore_error_handler();
+            }
         }
-    }
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "SSL Certificate";
-        $object->parentCard = "security";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
-
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "SSL Certificate";
+            $object->parentCard = "security";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in checkSSLCertificate test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "SSL Certificate";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing SSL Certificate.";
+            $object->description = "SSL Certificate test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "SSL Certificate";
+            $object->parentCard = "security";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
     public function customErrorHandler($errno, $errstr, $errfile, $errline)
@@ -2975,206 +4483,291 @@ class RunTest implements ShouldQueue
 
     public function directoryBrowsingEnable($data, $label, $testedUrl)
     {
+        try {
+            $helpers = new Helper();
 
-        $helpers = new Helper();
-
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $title = "Directory Browsing";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $url = $testedUrl;
-        $message = '';
-        $isFolderBrowsingEnable = $settings->settings_sub->folder_browsing_enable;
-        if($isFolderBrowsingEnable) {
-        
-            // Check if the content contains typical directory listing keywords
-            if (strpos($html, '<title>Index of /</title>') !== false) {
-                // These are common keywords found in directory listing pages.
-                $message = "Directory listing is likely enabled for $url";
-                $status = false;
-            } else {
-                // The URL is accessible, but it does not appear to be a directory listing page.
-                $message = "Directory listing is likely disabled for $url";
-                $status = true;
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $title = "Directory Browsing";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $url = $testedUrl;
+            $message = '';
+            $isFolderBrowsingEnable = $settings->settings_sub->folder_browsing_enable;
+            if($isFolderBrowsingEnable) {
+            
+                // Check if the content contains typical directory listing keywords
+                if (strpos($html, '<title>Index of /</title>') !== false) {
+                    // These are common keywords found in directory listing pages.
+                    $message = "Directory listing is likely enabled for $url";
+                    $status = false;
+                } else {
+                    // The URL is accessible, but it does not appear to be a directory listing page.
+                    $message = "Directory listing is likely disabled for $url";
+                    $status = true;
+                }
+           
             }
-       
-        }
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Directory Browsing";
-        $object->parentCard = "security";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Directory Browsing";
+            $object->parentCard = "security";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in directoryBrowsingEnable test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Directory Browsing";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Directory Browsing.";
+            $object->description = "Directory Browsing test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Directory Browsing";
+            $object->parentCard = "security";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
     public function badContentType($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "Bad content type";
-        $description = "Bad content type";
-        $url = $testedUrl;
-        $message = '';
-        
-        $isBadContentType = $settings->settings_sub->bad_content_type;  
-        if($isBadContentType) { 
-       
-        $contentTypeElement = $helpers->badContentTypeTest($html);
-        if ($contentTypeElement->count() > 0) {
-            // Extract the content attribute value from the meta tag
-            $contentTypeHtml = $contentTypeElement->attr('content');
-            $contentType = $data["content_type"];
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "Bad content type";
+            $description = "Bad content type";
+            $url = $testedUrl;
+            $message = '';
             
-            if ($contentTypeHtml != $contentType) {
-                $status = false;
-                $message = 'Bad content type found';
+            $isBadContentType = $settings->settings_sub->bad_content_type;  
+            if($isBadContentType) { 
+           
+            $contentTypeElement = $helpers->badContentTypeTest($html);
+            if ($contentTypeElement->count() > 0) {
+                // Extract the content attribute value from the meta tag
+                $contentTypeHtml = $contentTypeElement->attr('content');
+                $contentType = $data["content_type"];
+                
+                if ($contentTypeHtml != $contentType) {
+                    $status = false;
+                    $message = 'Bad content type found';
+                } else {
+                    $status = true;
+                    $message = 'Bad content type not found';
+                }
+                // return $contentType;
             } else {
                 $status = true;
-                $message = 'Bad content type not found';
+                $message = 'Content type not define';
+                }
             }
-            // return $contentType;
-        } else {
-            $status = true;
-            $message = 'Content type not define';
-            }
-        }
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Bad content type";
-        $object->parentCard = "security";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Bad content type";
+            $object->parentCard = "security";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in badContentType test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Bad content type";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Bad content type.";
+            $object->description = "Bad content type test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Bad content type";
+            $object->parentCard = "security";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
 
 
     public function cssCachingEnable($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "CSS Caching";
-        $description = "CSS Caching";
-        $url = $testedUrl;
-        $message = '';
-        $content = '';
-        $cssData = [];
-        
-        $iscssCachingEnable = $settings->settings_sub->css_caching_enable;  
-        if($iscssCachingEnable) { 
-          $cssData = $helpers->cssCachingEnable($url, $html);
-          if(count($cssData) > 0) {
             $status = true;
-            $message = 'CSS caching enabled for this page';
+            $problems = [];
 
-          } else {
-            $status = false;
-            $message = 'CSS caching disabled for this page';
-          }
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "CSS Caching";
+            $description = "CSS Caching";
+            $url = $testedUrl;
+            $message = '';
+            $content = '';
+            $cssData = [];
+            
+            $iscssCachingEnable = $settings->settings_sub->css_caching_enable;  
+            if($iscssCachingEnable) { 
+              $cssData = $helpers->cssCachingEnable($url, $html);
+              if(count($cssData) > 0) {
+                $status = true;
+                $message = 'CSS caching enabled for this page';
+
+              } else {
+                $status = false;
+                $message = 'CSS caching disabled for this page';
+              }
+            }
+            
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "CSS Caching Enable";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->cssData = $cssData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in cssCachingEnable test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "CSS Caching";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing CSS Caching.";
+            $object->description = "CSS Caching test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "CSS Caching Enable";
+            $object->settings = null;
+            $object->content = '';
+            $object->cssData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-        
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "CSS Caching Enable";
-        $object->settings = $settings->settings_sub;
-        $object->content = $content;
-        $object->cssData = $cssData;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     } 
 
     public function jsCachingEnable($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "JS Caching";
-        $description = "JS Caching";
-        $url = $testedUrl;
-        $message = '';
-        $content = '';
-        $jsData = [];
-        
-        $isjsCachingEnable = $settings->settings_sub->js_caching_enable;  
-        if($isjsCachingEnable) { 
-          $jsData = $helpers->jsCachingEnable($url, $html);
-          if(count($jsData) > 0) {
             $status = true;
-            $message = 'JS caching enabled for this page';
+            $problems = [];
 
-        }else{
-            $status = false;
-            $message = 'JS caching disabled for this page';
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "JS Caching";
+            $description = "JS Caching";
+            $url = $testedUrl;
+            $message = '';
+            $content = '';
+            $jsData = [];
+            
+            $isjsCachingEnable = $settings->settings_sub->js_caching_enable;  
+            if($isjsCachingEnable) { 
+              $jsData = $helpers->jsCachingEnable($url, $html);
+              if(count($jsData) > 0) {
+                $status = true;
+                $message = 'JS caching enabled for this page';
+
+            }else{
+                $status = false;
+                $message = 'JS caching disabled for this page';
+            }
+
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "JS Caching Enable";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->jsData = $jsData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in jsCachingEnable test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "JS Caching";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing JS Caching.";
+            $object->description = "JS Caching test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "JS Caching Enable";
+            $object->settings = null;
+            $object->content = '';
+            $object->jsData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-        }
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "JS Caching Enable";
-        $object->settings = $settings->settings_sub;
-        $object->content = $content;
-        $object->jsData = $jsData;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     } 
 
 
@@ -3182,532 +4775,755 @@ class RunTest implements ShouldQueue
 
    public function safeBrowsing($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $title = "Safe Browsing";
-        $description = "Safe Browsing";
-        $url = $testedUrl;
-        $message = '';
-        $content = '';
-        
-        $isSafeBrowsing = $settings->settings_sub->is_safe_browsing;  
-        if($isSafeBrowsing) { 
-          $isSafe = $helpers->isUrlSafe($url);
-          if($isSafe) {
             $status = true;
-            $message = 'URL is safe for browsing';
-          } else {
-            $status = false;
-            $message = 'URL is not safe browsing';
-          }
-        }
+            $problems = [];
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Safe Browsing";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $title = "Safe Browsing";
+            $description = "Safe Browsing";
+            $url = $testedUrl;
+            $message = '';
+            $content = '';
+            
+            $isSafeBrowsing = $settings->settings_sub->is_safe_browsing;  
+            if($isSafeBrowsing) { 
+              $isSafe = $helpers->isUrlSafe($url);
+              if($isSafe) {
+                $status = true;
+                $message = 'URL is safe for browsing';
+              } else {
+                $status = false;
+                $message = 'URL is not safe browsing';
+              }
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Safe Browsing";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error("Error in safeBrowsing test for URL: " . $testedUrl . " - " . $e->getMessage());
+            
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Safe Browsing";
+            $object->problems = ["Test failed due to an error: " . $e->getMessage()];
+            $object->message = "An error occurred while testing Safe Browsing.";
+            $object->description = "Safe Browsing test failed due to an error.";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Safe Browsing";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     } 
     
     public function crossOriginLinks($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "Unsafe Cross Origin Links";
-        $description = "Unsafe Cross Origin Links";
-        $url = $testedUrl;
-        $message = '';
-        $content = '';
-        $crossOriginLinksData = [];
-        
-        $isCrossOriginLinks = $settings->settings_sub->cross_origin_links;  
-        if($isCrossOriginLinks) { 
-          $crossOriginLinksData = $helpers->crossOriginLinks($url, $html);
-          if(count($crossOriginLinksData) > 0) {
-            $status = false;
-            $message = 'Cross Origin Links';
-
-          } else {
             $status = true;
-            $message = 'Cross origin links not found';
-          }
-        }
+            $problems = [];
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Unsafe Cross Origin Links";
-        $object->settings = $settings->settings_sub;
-        $object->content = $content;
-        $object->crossOriginLinksData = $crossOriginLinksData;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "Unsafe Cross Origin Links";
+            $description = "Unsafe Cross Origin Links";
+            $url = $testedUrl;
+            $message = '';
+            $content = '';
+            $crossOriginLinksData = [];
+            
+            $isCrossOriginLinks = $settings->settings_sub->cross_origin_links;  
+            if($isCrossOriginLinks) { 
+              $crossOriginLinksData = $helpers->crossOriginLinks($url, $html);
+              if(count($crossOriginLinksData) > 0) {
+                $status = false;
+                $message = 'Cross Origin Links';
+
+              } else {
+                $status = true;
+                $message = 'Cross origin links not found';
+              }
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Unsafe Cross Origin Links";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->crossOriginLinksData = $crossOriginLinksData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            return json_encode($object);
+            $object->testerrorcaught = false;
+        } catch (\Exception $e) {
+            Log::error('Error in crossOriginLinks: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Unsafe Cross Origin Links";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking cross origin links';
+            $object->description = "Unsafe Cross Origin Links";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Unsafe Cross Origin Links";
+            $object->settings = null;
+            $object->content = '';
+            $object->crossOriginLinksData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            return json_encode($object);
+            $object->testerrorcaught = true;
+        }
     }
     
     public function protocolRelativeResource($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
 
-        $status = true;
-        $problems = [];
-
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "Protocol Relative Resource Links";
-        $description = "Protocol Relative Resource Links";
-        $url = $testedUrl;
-        $message = '';
-        $content = '';
-        $protocolRelativeResourceData = [];
-        $protocolRelativeResourceDataCleanArray = [];
-        $isProtocolRelativeResource = $settings->settings_sub->protocol_relative_resource;  
-        if($isProtocolRelativeResource) { 
-          $protocolRelativeResourceData = $helpers->protocolRelativeResource($url, $html);
-          
-          foreach($protocolRelativeResourceData as $key=>$data) {
-             $protocolRelativeResourceDataCleanArray[] = preg_replace('/href=|"| /', '', $data);
-          }
-          if(count($protocolRelativeResourceData) > 0) {
-            $status = false;
-            $message = 'Protocol Relative Resource Links';
-
-          } else {
             $status = true;
-            $message = 'Protocol Relative Resource Links not found';
-          }
-        }
+            $problems = [];
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Protocol Relative Resource Links";
-        $object->settings = $settings->settings_sub;
-        $object->content = $content;
-        $object->protocolRelativeResourceData = $protocolRelativeResourceDataCleanArray;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "Protocol Relative Resource Links";
+            $description = "Protocol Relative Resource Links";
+            $url = $testedUrl;
+            $message = '';
+            $content = '';
+            $protocolRelativeResourceData = [];
+            $protocolRelativeResourceDataCleanArray = [];
+            $isProtocolRelativeResource = $settings->settings_sub->protocol_relative_resource;  
+            if($isProtocolRelativeResource) { 
+              $protocolRelativeResourceData = $helpers->protocolRelativeResource($url, $html);
+              
+              foreach($protocolRelativeResourceData as $key=>$data) {
+                 $protocolRelativeResourceDataCleanArray[] = preg_replace('/href=|"| /', '', $data);
+              }
+              if(count($protocolRelativeResourceData) > 0) {
+                $status = false;
+                $message = 'Protocol Relative Resource Links';
+
+              } else {
+                $status = true;
+                $message = 'Protocol Relative Resource Links not found';
+              }
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Protocol Relative Resource Links";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->protocolRelativeResourceData = $protocolRelativeResourceDataCleanArray;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in protocolRelativeResource: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Protocol Relative Resource Links";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking protocol relative resource links';
+            $object->description = "Protocol Relative Resource Links";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Protocol Relative Resource Links";
+            $object->settings = null;
+            $object->content = '';
+            $object->protocolRelativeResourceData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
+        }
     }
 
     public function h1HeadindTag($data, $label, $testedUrl)
     {
-        $helpers = new Helper();
-        $status = true;
-        $problems = [];
+        try {
+            $helpers = new Helper();
+            $status = true;
+            $problems = [];
 
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-        $title = "Headings";
-        $description = "Headings";
-        $url = $testedUrl;
-        $message = '';
-        $content = '';
-        $hideDetails=true;
-        
-        $headingArray = $helpers->h1HeadindTag($url);
-        if (count($headingArray) > 0) {
-            $h1HeadingTagSubSetting = $settings->settings_sub->h1_heading_tag_length;
-            $h2HeadingTagSubSetting = $settings->settings_sub->h2_heading_tag_length;
-            $h3HeadingTagSubSetting = $settings->settings_sub->h3_heading_tag_length;
-            $h4HeadingTagSubSetting = $settings->settings_sub->h4_heading_tag_length;
-            $h5HeadingTagSubSetting = $settings->settings_sub->h5_heading_tag_length;
-            $h6HeadingTagSubSetting = $settings->settings_sub->h6_heading_tag_length;
-
-            $h1HeadingTagSubValSetting = $settings->settings_sub->h1_heading_tag_length_val;
-            $h2HeadingTagSubValSetting = $settings->settings_sub->h2_heading_tag_length_val;
-            $h3HeadingTagSubValSetting = $settings->settings_sub->h3_heading_tag_length_val;
-            $h4HeadingTagSubValSetting = $settings->settings_sub->h4_heading_tag_length_val;
-            $h5HeadingTagSubValSetting = $settings->settings_sub->h5_heading_tag_length_val;
-            $h6HeadingTagSubValSetting = $settings->settings_sub->h6_heading_tag_length_val;
-
-            $h1HeadingTag = $settings->settings_sub->h1_heading_tag;
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+            $title = "Headings";
+            $description = "Headings";
+            $url = $testedUrl;
+            $message = '';
+            $content = '';
+            $hideDetails=true;
             
-            if ($h1HeadingTag) {
-                if (count($headingArray['h1']) == 0) {
-                    $status = false;
-                    
+            $headingArray = $helpers->h1HeadindTag($url);
+            if (count($headingArray) > 0) {
+                $h1HeadingTagSubSetting = $settings->settings_sub->h1_heading_tag_length;
+                $h2HeadingTagSubSetting = $settings->settings_sub->h2_heading_tag_length;
+                $h3HeadingTagSubSetting = $settings->settings_sub->h3_heading_tag_length;
+                $h4HeadingTagSubSetting = $settings->settings_sub->h4_heading_tag_length;
+                $h5HeadingTagSubSetting = $settings->settings_sub->h5_heading_tag_length;
+                $h6HeadingTagSubSetting = $settings->settings_sub->h6_heading_tag_length;
+
+                $h1HeadingTagSubValSetting = $settings->settings_sub->h1_heading_tag_length_val;
+                $h2HeadingTagSubValSetting = $settings->settings_sub->h2_heading_tag_length_val;
+                $h3HeadingTagSubValSetting = $settings->settings_sub->h3_heading_tag_length_val;
+                $h4HeadingTagSubValSetting = $settings->settings_sub->h4_heading_tag_length_val;
+                $h5HeadingTagSubValSetting = $settings->settings_sub->h5_heading_tag_length_val;
+                $h6HeadingTagSubValSetting = $settings->settings_sub->h6_heading_tag_length_val;
+
+                $h1HeadingTag = $settings->settings_sub->h1_heading_tag;
+                
+                if ($h1HeadingTag) {
+                    if (count($headingArray['h1']) == 0) {
+                        $status = false;
+                        
+                    }
                 }
-            }
+            
+
+                if ($h1HeadingTagSubSetting) {
+                    if (count($headingArray['h1']) > $h1HeadingTagSubValSetting) {
+                        $status = false;
+                        // $message .= count($headingArray['h1']). ' H1 heading tag, ';
+                    }
+                }
+
+                if ($h2HeadingTagSubSetting) {
+                    if (count($headingArray['h2']) > $h2HeadingTagSubValSetting) {
+                        $status = false;
+                        // $message .= count($headingArray['h2']). ' H2 heading tag, ';
+                    }
+                }
+
+                if ($h3HeadingTagSubSetting) {
+                    if (count($headingArray['h3']) > $h3HeadingTagSubValSetting) {
+                        $status = false;
+                        // $message .= count($headingArray['h3']). ' H3 heading tag, ';
+                    }
+                }
+
+
+                if ($h4HeadingTagSubSetting) {
+                    if (count($headingArray['h4']) > $h4HeadingTagSubValSetting) {
+                        $status = false;
+                        // $message .= 'H4 tag found more than ' . $h4HeadingTagSubValSetting . "<br>";
+                    }
+                }
+
+                if ($h5HeadingTagSubSetting) {
+                    if (count($headingArray['h5']) > $h5HeadingTagSubValSetting) {
+                        $status = false;
+                        // $message .= 'H5 tag found more than ' . $h5HeadingTagSubValSetting . "<br>";
+                    }
+                }
+              
+                if ($h6HeadingTagSubSetting) {
+                    if (count($headingArray['h6']) > $h6HeadingTagSubValSetting) {
+                        $status = false;
+                        // $message .= 'H6 tag found more than ' . $h6HeadingTagSubValSetting . "<br>";
+                    }
+                }
         
-
-            if ($h1HeadingTagSubSetting) {
-                if (count($headingArray['h1']) > $h1HeadingTagSubValSetting) {
-                    $status = false;
-                    // $message .= count($headingArray['h1']). ' H1 heading tag, ';
-                }
             }
 
-            if ($h2HeadingTagSubSetting) {
-                if (count($headingArray['h2']) > $h2HeadingTagSubValSetting) {
-                    $status = false;
-                    // $message .= count($headingArray['h2']). ' H2 heading tag, ';
-                }
-            }
+            $message = 'Your webpage is using';
+            $message .= count($headingArray['h1']). ' H1 heading tag, ';
+            $message .= count($headingArray['h2']). ' H2 heading tag, ';
+            $message .= 'and '.(count($headingArray['h3']) + count($headingArray['h4']) + count($headingArray['h5']) + count($headingArray['h6'])). ' other types of heading tags.';
 
-            if ($h3HeadingTagSubSetting) {
-                if (count($headingArray['h3']) > $h3HeadingTagSubValSetting) {
-                    $status = false;
-                    // $message .= count($headingArray['h3']). ' H3 heading tag, ';
-                }
-            }
-
-
-            if ($h4HeadingTagSubSetting) {
-                if (count($headingArray['h4']) > $h4HeadingTagSubValSetting) {
-                    $status = false;
-                    // $message .= 'H4 tag found more than ' . $h4HeadingTagSubValSetting . "<br>";
-                }
-            }
-
-            if ($h5HeadingTagSubSetting) {
-                if (count($headingArray['h5']) > $h5HeadingTagSubValSetting) {
-                    $status = false;
-                    // $message .= 'H5 tag found more than ' . $h5HeadingTagSubValSetting . "<br>";
-                }
-            }
-          
-            if ($h6HeadingTagSubSetting) {
-                if (count($headingArray['h6']) > $h6HeadingTagSubValSetting) {
-                    $status = false;
-                    // $message .= 'H6 tag found more than ' . $h6HeadingTagSubValSetting . "<br>";
-                }
-            }
-    
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Headings";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->headingArray = $headingArray;
+            $object->hideDetails = $hideDetails;
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in h1HeadindTag: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Headings";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking heading tags';
+            $object->description = "Headings";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Headings";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->headingArray = [];
+            $object->hideDetails = true;
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-
-        $message = 'Your webpage is using';
-        $message .= count($headingArray['h1']). ' H1 heading tag, ';
-        $message .= count($headingArray['h2']). ' H2 heading tag, ';
-        $message .= 'and '.(count($headingArray['h3']) + count($headingArray['h4']) + count($headingArray['h5']) + count($headingArray['h6'])). ' other types of heading tags.';
-
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Headings";
-        $object->content = $content;
-        $object->settings = $settings->settings_sub;
-        $object->headingArray = $headingArray;
-        $object->hideDetails = $hideDetails;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
-    }   
+    }
 
 
     public function hstsHeader($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
     
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $hstsVal = $internalResponse->getHeader('Strict-Transport-Security');
-    
-        $isHSTS = $settings->settings_sub->hsts_header;
-    
-    
-        $title = "HSTS Header";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "HSTS Header check excluded.";
-    
-    
-        if($isHSTS){
-            $message = "HSTS Header is enabled.";
-            if($hstsVal == ""){
-                $status = false;     
-                $message = "HSTS Header is not enabled.";
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $hstsVal = $internalResponse->getHeader('Strict-Transport-Security');
+        
+            $isHSTS = $settings->settings_sub->hsts_header;
+        
+        
+            $title = "HSTS Header";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "HSTS Header check excluded.";
+        
+        
+            if($isHSTS){
+                $message = "HSTS Header is enabled.";
+                if($hstsVal == ""){
+                    $status = false;     
+                    $message = "HSTS Header is not enabled.";
+                }
             }
+    
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HSTS Header";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->hstsHeaderData = $hstsHeaderData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in hstsHeader: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "HSTS Header";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking HSTS header';
+            $object->description = "HSTS Header";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HSTS Header";
+            $object->settings = null;
+            $object->content = '';
+            $object->hstsHeaderData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-    
-    
-    
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "HSTS Header";
-        $object->parentCard = "security";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
     
     public function XFrameOptions($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
     
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $xFrameVal = $internalResponse->getHeader('X-Frame-Options');
-    
-        $isXFrame = $settings->settings_sub->x_frame_options_header;
-    
-    
-        $title = "X Frame Options Header";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "X Frame Options Header check excluded.";
-    
-    
-        if($isXFrame){
-            $message = "X Frame Options Header is enabled.";
-            if($xFrameVal == ""){
-                $status = false;     
-                $message = "X Frame Options Header is not enabled.";
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $xFrameVal = $internalResponse->getHeader('X-Frame-Options');
+        
+            $isXFrame = $settings->settings_sub->x_frame_options_header;
+        
+        
+            $title = "X Frame Options Header";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "X Frame Options Header check excluded.";
+        
+        
+            if($isXFrame){
+                $message = "X Frame Options Header is enabled.";
+                if($xFrameVal == ""){
+                    $status = false;     
+                    $message = "X Frame Options Header is not enabled.";
+                }
             }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "X-Frame-Options Header";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->xFrameOptionsData = $xFrameOptionsData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in XFrameOptions: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "X-Frame-Options Header";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking X-Frame-Options header';
+            $object->description = "X-Frame-Options Header";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "X-Frame-Options Header";
+            $object->settings = null;
+            $object->content = '';
+            $object->xFrameOptionsData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+                return json_encode($object);
         }
-    
-    
-    
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "X Frame Options Header";
-        $object->parentCard = "security";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
     
     
     public function contentSecurity($data, $label, $testedUrl){
-        $helpers = new Helper();
+        try {
+            $helpers = new Helper();
     
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
-    
-        $isContentSecurity = $settings->settings_sub->content_security_policy_header;
-    
-    
-        $title = "Content Security Policy Header";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Content Security Policy Header check excluded.";
-    
-    
-        if($isContentSecurity){
-            $message = "Content Security Policy Header is enabled.";
-            if($contentSecurityVal == ""){
-                $status = false;     
-                $message = "Content Security Policy Header is not enabled.";
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
+        
+            $isContentSecurity = $settings->settings_sub->content_security_policy_header;
+        
+        
+            $title = "Content Security Policy Header";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Content Security Policy Header check excluded.";
+        
+        
+            if($isContentSecurity){
+                $message = "Content Security Policy Header is enabled.";
+                if($contentSecurityVal == ""){
+                    $status = false;     
+                    $message = "Content Security Policy Header is not enabled.";
+                }
             }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Content Security Policy";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->contentSecurityData = $contentSecurityData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in contentSecurity: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Content Security Policy";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking content security policy';
+            $object->description = "Content Security Policy";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Content Security Policy";
+            $object->settings = null;
+            $object->content = '';
+            $object->contentSecurityData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-    
-    
-    
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Content Security Policy Header";
-        $object->parentCard = "security";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
 
     public function frameset($data, $label, $testedUrl){
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-    
-        $isFrameset = $settings->settings_sub->no_frameset;
-    
-    
-        $title = "Frameset";
-        $content = isset($data["frameset"]) ? isset($data["frameset"]) : null;
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Frameset tag check excluded.";
-    
-    
-        if($isFrameset){
-            $message = "Your webpage is not using a frameset tag.";
-            if($content != null){
-                $status = false;     
-                $message = "Your webpage is using a frameset tag.";
+        try {
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+        
+            $isFrameset = $settings->settings_sub->no_frameset;
+        
+        
+            $title = "Frameset";
+            $content = isset($data["frameset"]) ? isset($data["frameset"]) : null;
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Frameset tag check excluded.";
+        
+        
+            if($isFrameset){
+                $message = "Your webpage is not using a frameset tag.";
+                if($content != null){
+                    $status = false;     
+                    $message = "Your webpage is using a frameset tag.";
+                }
             }
+        
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Frameset";
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->framesetData = $framesetData;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in frameset: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Frameset";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking frameset';
+            $object->description = "Frameset";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Frameset";
+            $object->settings = null;
+            $object->content = '';
+            $object->framesetData = [];
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-    
-    
-    
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->content = $content;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Frameset";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
     
     public function nestedTables($data, $label, $testedUrl){
-        $helpers = new Helper();
-    
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-    
-        $noNested = $settings->settings_sub->no_nested_tables;
-    
-    
-        $title = "Nested Tables";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "Nested Tables check excluded.";
-    
-        $tables = isset($data["table"]) ? $data["table"] : [];
-    
-        if($noNested){
-            $message = "HTML Page does not consist of Nested Tables.";
-            if($helpers->nestedTablesExist($tables)){
-                $status = false;     
-                $message = "HTML Page consists of Nested Tables.";
+        try {
+            $helpers = new Helper();
+        
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+        
+            $noNested = $settings->settings_sub->no_nested_tables;
+        
+        
+            $title = "Nested Tables";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "Nested Tables check excluded.";
+        
+            $tables = isset($data["table"]) ? $data["table"] : [];
+        
+            if($noNested){
+                $message = "HTML Page does not consist of Nested Tables.";
+                if($helpers->nestedTablesExist($tables)){
+                    $status = false;     
+                    $message = "HTML Page consists of Nested Tables.";
+                }
             }
+        
+        
+        
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Nested Tables";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in nestedTables: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "Nested Tables";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking nested tables';
+            $object->description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "Nested Tables";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-    
-    
-    
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "Nested Tables";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
     }
 
     public function pageSize($data, $label, $testedUrl){
-        $helpers = new Helper();
-    
-        $status = true;
-        $problems = [];
-        $settings = json_decode($data["settings"]);
-        $html = $data["html"];
-        $internalResponse = $data["internal_response"];
-        $contentLength = $helpers->convertBytesToKb($internalResponse->getHeader('Content-Length')); // converting bytes to KBs
-        $contentLengthUnits = $helpers->formatSizeUnits($internalResponse->getHeader('Content-Length')); // converting bytes to units
-    
-        $isPageSize = $settings->settings_sub->page_size;
-        $pageSizeVal = $settings->settings_sub->page_size_val;
-    
-    
-        $title = "HTML Page Size";
-        $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-        $message = "HTML Page Size check excluded.";
-    
-    
-        if($isPageSize){
-            $message = "HTML Page Size(" . $contentLengthUnits . ") is less than the maximum limit.";
-            if($contentLength > $pageSizeVal){
-                $status = false;
-                $message = "HTML Page Size(" . $contentLengthUnits . ") exceeds the maximum limit.";
+        try {
+            $helpers = new Helper();
+        
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data["settings"]);
+            $html = $data["html"];
+            $internalResponse = $data["internal_response"];
+            $contentLength = $helpers->convertBytesToKb($internalResponse->getHeader('Content-Length')); // converting bytes to KBs
+            $contentLengthUnits = $helpers->formatSizeUnits($internalResponse->getHeader('Content-Length')); // converting bytes to units
+        
+            $isPageSize = $settings->settings_sub->page_size;
+            $pageSizeVal = $settings->settings_sub->page_size_val;
+        
+        
+            $title = "HTML Page Size";
+            $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $message = "HTML Page Size check excluded.";
+        
+        
+            if($isPageSize){
+                $message = "HTML Page Size(" . $contentLengthUnits . ") is less than the maximum limit.";
+                if($contentLength > $pageSizeVal){
+                    $status = false;
+                    $message = "HTML Page Size(" . $contentLengthUnits . ") exceeds the maximum limit.";
+                }
             }
+        
+        
+        
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->status = $status;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->contentLengthUnits = $contentLengthUnits;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTML Page Size";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = $settings->settings_sub;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in pageSize: ' . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = "HTML Page Size";
+            $object->problems = [];
+            $object->message = 'Error occurred while checking page size';
+            $object->description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
+            $object->contentLengthUnits = '0 KB';
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "HTML Page Size";
+            $object->parentCard = "codingBestPractices";
+            $object->settings = null;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+            return json_encode($object);
         }
-    
-    
-    
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->title = $title;
-        $object->status = $status;
-        $object->problems = $problems;
-        $object->message = $message;
-        $object->description = $description;
-        $object->contentLengthUnits = $contentLengthUnits;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "HTML Page Size";
-        $object->parentCard = "codingBestPractices";
-        $object->settings = $settings->settings_sub;
-        $object->label = $label;
-        $object->tested_url = $testedUrl;
-        $object->tested_at = time();
-        return json_encode($object);
+    }
+
+    /**
+     * Handle a job failure.
+     */
+    public function failed(\Throwable $exception)
+    {
+        Log::error('RunTest job failed: ' . $exception->getMessage(), [
+            'job_id' => $this->job ? $this->job->getJobId() : 'unknown',
+            'exception' => $exception->getMessage(),
+            'trace' => $exception->getTraceAsString()
+        ]);
+        
+        // You can add additional failure handling here, such as:
+        // - Sending notifications
+        // - Updating database status
+        // - Cleaning up resources
     }
 
 }

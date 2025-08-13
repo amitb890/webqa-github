@@ -87,8 +87,7 @@ class TestController2 extends Controller
                 'user_id' => Auth::id(),
                 'project_id' => $project_id,
                 'urls' => json_encode($urls),
-                'status' => 'in_progress',
-                'user_id' => auth()->id()
+                'status' => 'in_progress'
             ]);
     
         }
