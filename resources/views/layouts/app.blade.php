@@ -72,21 +72,21 @@ if(isset($_COOKIE["activeProject"])){
 
 
         <!-- bootstrap styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}"/>
         <!-- font awesome styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- custom styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- nice select -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbniXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('new-assets/assets/images/apple-icon-180x180.png') }}">
-        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('new-assets/assets/images/android-chrome-192x192.png') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbNiXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}{{ \App\Http\Helpers::getCacheBuster() }}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('new-assets/assets/images/apple-icon-180x180.png') }}{{ \App\Http\Helpers::getCacheBuster() }}">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('new-assets/assets/images/android-chrome-192x192.png') }}{{ \App\Http\Helpers::getCacheBuster() }}">
         
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -1128,7 +1128,7 @@ if(isset($_COOKIE["activeProject"])){
           <nav>
             <ul>
               <li><a href="#">Privacy Policy</a></li>
-              <li><a href="#">FAQ’s</a></li>
+              <li><a href="#">FAQ's</a></li>
               <li><a href="#">How It Works</a></li>
               <li><a href="#">Help</a></li>
             </ul>
@@ -1139,23 +1139,23 @@ if(isset($_COOKIE["activeProject"])){
     <!-- footer -->
 
     <!-- jQuery -->
-    <script src="{{ asset('new-assets/vendor/jQurey/jquery-3.6.1.min.js') }}"></script>
+    <script src="{{ asset('new-assets/vendor/jQurey/jquery-3.6.1.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <!-- bootstrap scripts -->
-    <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
-    <script src="{{ asset('new-assets/vendor/fontawesome/js/all.min.js') }}"></script>
+    <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/vendor/fontawesome/js/all.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.all.min.js"></script>
     <!-- nice select -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha512-NqYds8su6jivy1/WLoW8x1tZMRD7/1ZfhWG/jcRQLOzV1k1rIODCpMgoBnar5QXshKJGV7vi0LXLNXPoFsM5Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{{ asset('new-assets/vendor/luxon/luxon.min.js') }}"></script>
-    <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('new-assets/vendor/luxon/luxon.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
 
     <!-- custom scripts -->
-    <script src="{{ asset('js/app.js') }}"></script>
-    <script src="{{ asset('new-assets/js/functions.js') }}"></script>
-    <script src="{{ asset('new-assets/js/main.js') }}"></script>
-    <script src="{{ asset('new-assets/js/app.js') }}"></script>
+    <script src="{{ asset('js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
     <!-- Project selection session update script -->
     <script>

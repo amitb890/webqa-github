@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1
-  var recheckMax = 20, recheckGoogle = 1, recheckSingleMax = 20
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var recheckMax = 50, recheckGoogle = 1, recheckSingleMax = 50
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
@@ -490,10 +490,11 @@ $(document).ready(function () {
     static buildLoaderCards(data){
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
-            if(key === "security_labels" || key === "cbp_labels" || element.length > 0){
+            if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
               let status = false
               let label 
               let show_dashboard_status = Controls.getShowDashboardStatus(element)
+
 
               if(key === "security_labels"){
                   status = show_dashboard_status
@@ -514,7 +515,13 @@ $(document).ready(function () {
                 }
 
               }else{
-                label = Controls.getActiveLabel(element[0].label.db_name)
+
+                if(key === "images"){
+                  label = Controls.getActiveLabel("images")
+                }else{
+                  label = Controls.getActiveLabel(element[0].label.db_name)
+                }
+
                 if(label.db_name === "xml_sitemap"){
                   label.display_name = "Sitemap"
                 }
@@ -943,7 +950,7 @@ $(document).ready(function () {
               case "broken_links":
                 element =  `
                 <div class="deshboard_inner_description border_bottom total-broken-links-container">
-                    <p class="total-broken-links"><b>${data.totalBrokenLinks}</b></p>
+                    <p class="total-broken-links"><b>${data.totalBrokenInternal + data.totalBrokenExternal}</b></p>
                     <p>Broken links found on this website</p>
                 </div>
                 <div class="deshboard_inner_description">
@@ -2026,7 +2033,6 @@ $(document).ready(function () {
             break;
         }
         div.innerHTML =  UI.getSingleLoaderCardElement(label, JSON.parse(data))
-        console.log(div)
         if(document.getElementById(`card_${label}`).querySelector(".page_speed_content")){
           document.getElementById(`card_${label}`).querySelector(".page_speed_content").remove()
           document.getElementById(`card_${label}`).querySelector(".single_dashboard_card").appendChild(div)
@@ -2111,6 +2117,9 @@ $(document).ready(function () {
     static buildDashboardLoader(){
         const ul = document.createElement("ul")
         allLabels.forEach((label, i)=>{
+            if(!label.initialTestingState){
+              return;
+            }
             if(!ignore_tests.includes(label.db_name)){
               const li = UI.getLoaderElement(label, urls)
               ul.appendChild(li)
@@ -2539,6 +2548,7 @@ $(document).ready(function () {
                         clearInterval(interval);
 
                         Controls.endTest()
+                        
 
                         window.setTimeout(function(){
                           recheckAllowed = true
@@ -2718,7 +2728,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                Controls.buildGoogleElements()
+                // Controls.buildGoogleElements()
             });
             
         });
@@ -2749,27 +2759,27 @@ $(document).ready(function () {
       })
 
 
-      async function checkStatus() {
-          const interval = setInterval(async () => {
-              const response = await fetch(`/api/check-status/${projectId}`);
-              const { status, results } = await response.json();
-              Controls.updateGoogleCards(results)
+      // async function checkStatus() {
+      //     const interval = setInterval(async () => {
+      //         const response = await fetch(`/api/check-status/${projectId}`);
+      //         const { status, results } = await response.json();
+      //         Controls.updateGoogleCards(results)
 
-              const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
+      //         const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
-                                        if (status === 'completed') {
-                            handleGoogleResults(results, googleTiles)
+      //                                   if (status === 'completed') {
+      //                       handleGoogleResults(results, googleTiles)
 
-                              clearInterval(interval);
-                              Controls.finalizeGoogleElements(results)
+      //                         clearInterval(interval);
+      //                         Controls.finalizeGoogleElements(results)
                               
-                              // Re-enable recheck button after Google tests completion
-                              UI.updateRecheckButtonState(false)
-                          }
-          }, 5000); // Check every 5 seconds
-        }
+      //                         // Re-enable recheck button after Google tests completion
+      //                         UI.updateRecheckButtonState(false)
+      //                     }
+      //     }, 5000); // Check every 5 seconds
+      //   }
 
-        checkStatus()
+      //   checkStatus()
     }
 
     static submitIdeaSubmit(){
@@ -2830,6 +2840,7 @@ $(document).ready(function () {
       $(".refresh-tile").on("click", (e)=>{
         if(!refreshTileDisabled){
           refreshTileDisabled = true
+          recheckSingleIntervalStatus = true
           const target = e.target.closest(".single_dashboard_card_main")
           const elementDbName = target.getAttribute("data-label")
           if(ignore_tests.includes(elementDbName)){
@@ -3011,10 +3022,28 @@ $(document).ready(function () {
             UI.updateSingleTileProgress(target, results, dbName, originalUrls.length);
 
             if (status === 'completed') {
-                clearInterval(interval);
-                Controls.endTest("single_recheck")
-                // Re-enable recheck button after single recheck completion
-                UI.updateRecheckButtonState(false)
+                if(recheckSingleIntervalStatus){
+                  obj = Controls.updateTestDataForm(results)
+                  Controls.manageSingleCard(obj[dbName], dbName, obj[dbName][0].label, false, false)
+
+
+                  // Re-enable recheck button after single recheck completion
+                  UI.updateRecheckButtonState(false)
+
+
+                  displayAlert(".analysis-content-body-message", {
+                    status: 1,
+                    msg: "Recheck for the selected tile has been completed successfully.",
+                    notHide: true
+                  })
+                  $('.analysis-content-body-message').show()
+
+                  // disable
+                  refreshTileDisabled = false
+                  clearInterval(interval);
+                  recheckSingleIntervalStatus = false
+                }
+
             }
         }, 1000); // Check every 5 seconds
       }
@@ -3054,7 +3083,6 @@ $(document).ready(function () {
  
 
     static buildCards(testDetails){
-      console.log(testDetails)
         UI.buildLoaderCards(testDetails)
         UI.buildSubmitIdeaWidget(testDetails)
         UI.buildAddWidget(testDetails)
@@ -3138,17 +3166,8 @@ $(document).ready(function () {
 
       }
 
-      // For single_recheck, show message instead of rebuilding dashboard
-      if(type === "single_recheck"){
-        displayAlert(".analysis-content-body-message", {
-          status: 1,
-          msg: "Recheck completed! Please refresh the page to see the updated results.",
-          notHide: true
-        })
-        $('.analysis-content-body-message').show()
-      } else {
-        Controls.buildDashboard()
-      }
+      Controls.buildDashboard()
+
 
       // Re-enable recheck button after test completion
       UI.updateRecheckButtonState(false)

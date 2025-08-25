@@ -4,7 +4,7 @@
 @include("components.modal-update-status-robots")
 @include("components.modal-failed-urls")
 @include("components.modal-email")
-<link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}" />
+<link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
 
     <!-- main sections starts -->
     <main class="main-sections">
@@ -2917,5 +2917,5 @@
 <script src="/new-assets/js/exceljs.min.js"></script>
 <script src="/new-assets/js/bulk.js"></script>
 <script src="/new-assets/js/exportXlsx.js"></script>
-<script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}"></script>
+<script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 @endsection

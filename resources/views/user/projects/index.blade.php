@@ -1,8 +1,8 @@
 @extends('layouts.app')
 @section('title', 'Webqa - Projects')
 @section('css')
-<link rel="stylesheet" href="{{ asset('new-assets/vendor/sweet-alert/css/sweetalert2.min.css') }}">
-<link rel="stylesheet" href="{{ asset('new-assets/css/project.list.css') }}">
+<link rel="stylesheet" href="{{ asset('new-assets/vendor/sweet-alert/css/sweetalert2.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}">
+<link rel="stylesheet" href="{{ asset('new-assets/css/project.list.css') }}{{ \App\Http\Helpers::getCacheBuster() }}">
 @endsection
 @section('content')
     <!-- Ui-Element Start -->
@@ -74,6 +74,6 @@
     </div>
 @endsection
 @section('js')
-    <script src="{{ asset('new-assets/vendor/sweet-alert/js/sweetalert2.all.min.js') }}"></script>
-    <script src="{{ asset('new-assets/js/project-list.js') }}"></script>
+    <script src="{{ asset('new-assets/vendor/sweet-alert/js/sweetalert2.all.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/project-list.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 @endsection

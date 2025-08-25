@@ -282,151 +282,160 @@ class RunTest implements ShouldQueue
 
                     // Process all labels for this URL
                     for($j = 0; $j < count($labels); $j++){
-                        // Check timeout before processing each label
-                        if (time() - $startTime >= $urlTimeout) {
-                            $urlTimedOut = true;
-                            throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                        }
-                        
-                        $label = $labels[$j];
-                        $test_title = $label->db_name;
 
-                        $testData;
-                        switch($label->db_name){
-                            case "meta_title":
-                                $testData = $this->title($finalRes, $label, $url);
-                                break;
-                            case "meta_desc":
-                                $testData = $this->description($finalRes, $label, $url);
-                                break;
-                            case "robots_meta":
-                                $testData = $this->robots($finalRes, $label, $url);
-                                break;
-                            case "canonical_url":
-                                $testData = $this->canonical($finalRes, $label, $url);
-                                break;
-                            case "url_slug":
-                                $testData = $this->urlSlug($finalRes, $label, $url);
-                                break;
-                            case "images":
-                                $testData = $this->images($finalRes, $label, $url);
-                                break;
-                            case "xml_sitemap":
-                                $testData = $this->xmlSitemap($finalRes, $label, $url);
-                                break;
-                            case "html_sitemap":
-                                $testData = $this->htmlSitemap($finalRes, $label, $url);
-                                break;
-                            case "open_graph_tags":
-                                $testData = $this->ogTags($finalRes, $label, $url);
-                                break;
-                            case "twitter_tags":
-                                $testData = $this->twitterTags($finalRes, $label, $url);
-                                break;
-                            case "favicon":
-                                $testData = $this->favicon($finalRes, $label, $url);
-                                break;
-                            case "meta_viewport":
-                                $testData = $this->metaViewport($finalRes, $label, $url);
-                                break;
-                            case "doctype":
-                                $testData = $this->doctype($finalRes, $label, $url);
-                                break;
-                            case "google_overall":
-                                
-                                $object = new \stdClass();
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Google Lighthouse";
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $testData = json_encode($object);
-                                break;
-                            case "google_lighthouse":
-                                $object = new \stdClass();
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Google Lighthouse";
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $testData = json_encode($object);
-                                break;
-                            case "core_web_vitals":
-                                $object = new \stdClass();
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Google Lighthouse";
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $testData = json_encode($object);
-                                break;
-                            case "mobile_friendly":
-                                $testData = $this->mobileFriendly($finalRes, $label, $url);
-                                break;
-                            case "content_security_policy_header":
-                                $testData = $this->contentSecurity($finalRes, $label, $url);
-                                break;
-                            case "hsts_header":
-                                $testData = $this->hstsHeader($finalRes, $label, $url);
-                                break;
-                            case "bad_content_type":
-                                $testData = $this->badContentType($finalRes, $label, $url);
-                                break;
-                            case "x_frame_options_header":
-                                $testData = $this->XFrameOptions($finalRes, $label, $url);
-                                break;
-                            case "is_safe_browsing":
-                                $testData = $this->safeBrowsing($finalRes, $label, $url);
-                                break;
-                            case "cross_origin_links":
-                                $testData = $this->crossOriginLinks($finalRes, $label, $url);
-                                break;
-                            case "protocol_relative_resource":
-                                $testData = $this->protocolRelativeResource($finalRes, $label, $url);
-                                break;
-                            case "ssl_certificate_enable":
-                                $testData = $this->checkSSLCertificate($finalRes, $label, $url);
-                                break;
-                            case "folder_browsing_enable":
-                                $testData = $this->directoryBrowsingEnable($finalRes, $label, $url);
-                                break;
-                            case "html_compression":
-                                $testData = $this->htmlCompression($finalRes, $label, $url);
-                                break;
-                            case "css_compression":
-                                $testData = $this->cssCompression($finalRes, $label, $url);
-                                break;
-                            case "js_compression":
-                                $testData = $this->jsCompression($finalRes, $label, $url);
-                                break;
-                            case "gzip_compression":
-                                $testData = $this->gzipCompression($finalRes, $label, $url);
-                                break;
-                            case "css_caching_enable":
-                                $testData = $this->cssCachingEnable($finalRes, $label, $url);
-                                break;
-                            case "js_caching_enable":
-                                $testData = $this->jsCachingEnable($finalRes, $label, $url);
-                                break;
-                            case "nested_tables":
-                                $testData = $this->nestedTables($finalRes, $label, $url);
-                                break;
-                            case "frameset":
-                                $testData = $this->frameset($finalRes, $label, $url);
-                                break;
-                            case "page_size":
-                                $testData = $this->pageSize($finalRes, $label, $url);
-                                break;
-                            case "http_status_code":
-                                $testData = $this->httpStatusCode($finalRes, $label, $url);
-                                break;
-                            case "broken_links":
-                                $testData = $this->brokenLinks($finalRes, $label, $url);
-                                break;
+                        if($this->type == "single_recheck"){
+                            $labels[$j]->initialTestingState = true;
                         }
+
+
+                        if($labels[$j]->initialTestingState){
+
+                            // Check timeout before processing each label
+                            if (time() - $startTime >= $urlTimeout) {
+                                $urlTimedOut = true;
+                                throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                            }
+                            
+                            $label = $labels[$j];
+                            $test_title = $label->db_name;
+
+                            $testData;
+                            switch($label->db_name){
+                                case "meta_title":
+                                    $testData = $this->title($finalRes, $label, $url);
+                                    break;
+                                case "meta_desc":
+                                    $testData = $this->description($finalRes, $label, $url);
+                                    break;
+                                case "robots_meta":
+                                    $testData = $this->robots($finalRes, $label, $url);
+                                    break;
+                                case "canonical_url":
+                                    $testData = $this->canonical($finalRes, $label, $url);
+                                    break;
+                                case "url_slug":
+                                    $testData = $this->urlSlug($finalRes, $label, $url);
+                                    break;
+                                case "images":
+                                    $testData = $this->images($finalRes, $label, $url);
+                                    break;
+                                case "xml_sitemap":
+                                    $testData = $this->xmlSitemap($finalRes, $label, $url);
+                                    break;
+                                case "html_sitemap":
+                                    $testData = $this->htmlSitemap($finalRes, $label, $url);
+                                    break;
+                                case "open_graph_tags":
+                                    $testData = $this->ogTags($finalRes, $label, $url);
+                                    break;
+                                case "twitter_tags":
+                                    $testData = $this->twitterTags($finalRes, $label, $url);
+                                    break;
+                                case "favicon":
+                                    $testData = $this->favicon($finalRes, $label, $url);
+                                    break;
+                                case "meta_viewport":
+                                    $testData = $this->metaViewport($finalRes, $label, $url);
+                                    break;
+                                case "doctype":
+                                    $testData = $this->doctype($finalRes, $label, $url);
+                                    break;
+                                case "google_overall":
+                                    
+                                    $object = new \stdClass();
+                                    $object->learnMoreURL = "https://setmore.com/";
+                                    $object->tagName = "Google Lighthouse";
+                                    $object->label = $label;
+                                    $object->tested_url = $url;
+                                    $object->tested_at = time();
+                                    $testData = json_encode($object);
+                                    break;
+                                case "google_lighthouse":
+                                    $object = new \stdClass();
+                                    $object->learnMoreURL = "https://setmore.com/";
+                                    $object->tagName = "Google Lighthouse";
+                                    $object->label = $label;
+                                    $object->tested_url = $url;
+                                    $object->tested_at = time();
+                                    $testData = json_encode($object);
+                                    break;
+                                case "core_web_vitals":
+                                    $object = new \stdClass();
+                                    $object->learnMoreURL = "https://setmore.com/";
+                                    $object->tagName = "Google Lighthouse";
+                                    $object->label = $label;
+                                    $object->tested_url = $url;
+                                    $object->tested_at = time();
+                                    $testData = json_encode($object);
+                                    break;
+                                case "mobile_friendly":
+                                    $testData = $this->mobileFriendly($finalRes, $label, $url);
+                                    break;
+                                case "content_security_policy_header":
+                                    $testData = $this->contentSecurity($finalRes, $label, $url);
+                                    break;
+                                case "hsts_header":
+                                    $testData = $this->hstsHeader($finalRes, $label, $url);
+                                    break;
+                                case "bad_content_type":
+                                    $testData = $this->badContentType($finalRes, $label, $url);
+                                    break;
+                                case "x_frame_options_header":
+                                    $testData = $this->XFrameOptions($finalRes, $label, $url);
+                                    break;
+                                case "is_safe_browsing":
+                                    $testData = $this->safeBrowsing($finalRes, $label, $url);
+                                    break;
+                                case "cross_origin_links":
+                                    $testData = $this->crossOriginLinks($finalRes, $label, $url);
+                                    break;
+                                case "protocol_relative_resource":
+                                    $testData = $this->protocolRelativeResource($finalRes, $label, $url);
+                                    break;
+                                case "ssl_certificate_enable":
+                                    $testData = $this->checkSSLCertificate($finalRes, $label, $url);
+                                    break;
+                                case "folder_browsing_enable":
+                                    $testData = $this->directoryBrowsingEnable($finalRes, $label, $url);
+                                    break;
+                                case "html_compression":
+                                    $testData = $this->htmlCompression($finalRes, $label, $url);
+                                    break;
+                                case "css_compression":
+                                    $testData = $this->cssCompression($finalRes, $label, $url);
+                                    break;
+                                case "js_compression":
+                                    $testData = $this->jsCompression($finalRes, $label, $url);
+                                    break;
+                                case "gzip_compression":
+                                    $testData = $this->gzipCompression($finalRes, $label, $url);
+                                    break;
+                                case "css_caching_enable":
+                                    $testData = $this->cssCachingEnable($finalRes, $label, $url);
+                                    break;
+                                case "js_caching_enable":
+                                    $testData = $this->jsCachingEnable($finalRes, $label, $url);
+                                    break;
+                                case "nested_tables":
+                                    $testData = $this->nestedTables($finalRes, $label, $url);
+                                    break;
+                                case "frameset":
+                                    $testData = $this->frameset($finalRes, $label, $url);
+                                    break;
+                                case "page_size":
+                                    $testData = $this->pageSize($finalRes, $label, $url);
+                                    break;
+                                case "http_status_code":
+                                    $testData = $this->httpStatusCode($finalRes, $label, $url);
+                                    break;
+                                case "broken_links":
+                                    $testData = $this->brokenLinks($finalRes, $label, $url);
+                                    break;
+                            }
             
-                        $allResults[$url][$label->db_name] = $testData;                    
+                            $allResults[$url][$label->db_name] = $testData;                    
 
+                        }
                     }
 
                     $this->dashboardTest->update([
@@ -1231,9 +1240,14 @@ class RunTest implements ShouldQueue
             $message = '';
             $content = '';
             $brokenLinks = $settings->settings_sub->broken_links;  
-          
+            $excludeUrls = $settings->settings_sub->broken_links_exclude_urls;
+            $excludedUrls = [];
+            
+                            if ($excludeUrls && !empty($settings->settings_sub->broken_links_excluded_urls)) {
+                    $excludedUrls = array_map('trim', explode("\n", $settings->settings_sub->broken_links_excluded_urls));
+                }
 
-            $output = json_decode($helpers->brokenLinks($urlValue));
+            $output = json_decode($helpers->brokenLinks($urlValue, $excludedUrls));
 
 
             if($output->status){
@@ -4884,8 +4898,8 @@ class RunTest implements ShouldQueue
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
-            return json_encode($object);
             $object->testerrorcaught = false;
+            return json_encode($object);
         } catch (\Exception $e) {
             Log::error('Error in crossOriginLinks: ' . $e->getMessage());
             $object = new \stdClass();
@@ -4902,8 +4916,8 @@ class RunTest implements ShouldQueue
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
-            return json_encode($object);
             $object->testerrorcaught = true;
+            return json_encode($object);
         }
     }
     

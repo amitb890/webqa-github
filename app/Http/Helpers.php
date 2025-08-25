@@ -1270,7 +1270,7 @@ public function getContentType($response)
     }
 
 
-    public function brokenLinks($url){
+    public function brokenLinks($url, $excludedUrls = []){
         global $isBrokenLinkPresent, $totalBrokenLinks; // Access global variables
 
         // List of file extensions to ignore
@@ -1323,6 +1323,16 @@ public function getContentType($response)
             foreach ($ignoredKeywords as $keyword) {
                 if (stripos($resource, $keyword) !== false) {
                     continue 2; // Skip this URL
+                }
+            }
+
+            // Skip excluded URLs
+            if (!empty($excludedUrls)) {
+                foreach ($excludedUrls as $excludedUrl) {
+                    $excludedUrl = trim($excludedUrl);
+                    if (!empty($excludedUrl) && stripos($resource, $excludedUrl) !== false) {
+                        continue 2; // Skip this URL
+                    }
                 }
             }
 
@@ -1965,5 +1975,15 @@ public function getContentType($response)
             "data" => $data,
         ];
         
+    }
+
+    /**
+     * Generate a cache-busting parameter for assets
+     * @return string
+     */
+    public static function getCacheBuster()
+    {
+        // Use a combination of timestamp and random string for better cache busting
+        return '?cached=' . time() . '_' . substr(md5(uniqid()), 0, 8);
     }
 }

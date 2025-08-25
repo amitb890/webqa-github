@@ -66,5 +66,5 @@
     </div>
 @endsection
 @section('js')
-<script src="{{ asset('new-assets/js/project-main.js') }}"></script>
+        <script src="{{ asset('new-assets/js/project-main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 @endsection

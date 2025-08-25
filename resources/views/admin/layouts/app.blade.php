@@ -10,7 +10,7 @@
   href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" 
   rel="stylesheet"  type='text/css'>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
-  <link rel="stylesheet" href="{{ asset('css/admin.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/admin.css') }}{{ \App\Http\Helpers::getCacheBuster() }}">
 </head>
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
@@ -36,7 +36,7 @@
     </div>
 
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/all.js" integrity="sha384-SlE991lGASHoBfWbelyBPLsUlwY1GwNDJo3jSJO04KZ33K2bwfV9YBauFfnzvynJ" crossorigin="anonymous"></script>
-    <script src="{{ asset('js/admin.js') }}" defer></script>
+    <script src="{{ asset('js/admin.js') }}{{ \App\Http\Helpers::getCacheBuster() }}" defer></script>
     @yield("js")
 </body>
 </html>

@@ -23,5 +23,5 @@ webqa - Analysis
 @endsection
 
 @section("js")
-<script src="{{ asset('new-assets/js/analysis.js') }}"></script>
+<script src="{{ asset('new-assets/js/analysis.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 @endsection

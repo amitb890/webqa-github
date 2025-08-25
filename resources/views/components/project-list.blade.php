@@ -1,5 +1,5 @@
-<script src="{{ asset('new-assets/js/project-list.js') }}"></script>
-<script src="{{ asset('new-assets/vendor/datatable/js/jquery.dataTables.min.js') }}"></script>
+<script src="{{ asset('new-assets/js/project-list.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('new-assets/vendor/datatable/js/jquery.dataTables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
 <script>
     $(document).ready(function() {

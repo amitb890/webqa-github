@@ -579,7 +579,7 @@ function isStringBoolean(){
 
 function getSettingsVal(inputs){
     let obj1 = {}
-    const elementArray = ["excludedWordsCasingVal", "UrlStopWordsVal", "excluded_words"]
+    const elementArray = ["excludedWordsCasingVal", "UrlStopWordsVal", "excluded_words", "brokenLinksExcludedUrlsVal"]
     inputs.forEach(el=>{
         let val
         if(elementArray.includes(el.id)){
@@ -815,7 +815,7 @@ function validateFront(data, type){
 
 
     checkedBoxes.forEach(el=>{
-        if(el.id === "is_excluded_words" || el.id === "url_stop_words" || el.id === "xml_sitemap_custom" || el.id === "html_sitemap_custom"){
+        if(el.id === "is_excluded_words" || el.id === "url_stop_words" || el.id === "xml_sitemap_custom" || el.id === "html_sitemap_custom" || el.id === "brokenLinksExcludeUrls"){
             const newEl = el.parentElement.nextElementSibling.children[0]
             if(newEl.value === ""){
                 const alert = buildAlertNew("You need to enter at least one word.")
@@ -1262,6 +1262,15 @@ function getAllValues(className){
         switch(el.id){
             case "excludedWordsCasingVal":case "UrlStopWordsVal":
                 val = val.split(",")
+                val = trimArray(val)
+                val = removeDuplicates(val)
+                val = val.toString()
+
+                el.value = val
+                el.innerHTML = val
+                break;
+            case "brokenLinksExcludedUrlsVal":
+                val = val.split("\n")
                 val = trimArray(val)
                 val = removeDuplicates(val)
                 val = val.toString()

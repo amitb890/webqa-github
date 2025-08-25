@@ -4921,7 +4921,7 @@
                       <div class="learn_more_right_single">
                         <h6>Speed up your response times</h6>
                         <p>
-                          Quickly book time to solve customers’ needs and help
+                          Quickly book time to solve customers' needs and help
                           them self-serve to support their goals.
                         </p>
                       </div>
@@ -4957,7 +4957,7 @@
                       <div class="learn_more_right_single">
                         <h6>Speed up your response times</h6>
                         <p>
-                          Quickly book time to solve customers’ needs and help
+                          Quickly book time to solve customers' needs and help
                           them self-serve to support their goals.
                         </p>
                       </div>
@@ -4978,7 +4978,7 @@
                       <div class="learn_more_right_single">
                         <h6>Speed up your response times</h6>
                         <p>
-                          Quickly book time to solve customers’ needs and help
+                          Quickly book time to solve customers' needs and help
                           them self-serve to support their goals.
                         </p>
                       </div>
@@ -5022,7 +5022,7 @@
                       <div class="learn_more_right_single">
                         <h6>Speed up your response times</h6>
                         <p>
-                          Quickly book time to solve customers’ needs and help
+                          Quickly book time to solve customers' needs and help
                           them self-serve to support their goals.
                         </p>
                       </div>
@@ -5488,6 +5488,6 @@
 
 
     @section("js")
-<script src="{{ asset('/new-assets/js/home.js') }}"></script>
+<script src="{{ asset('/new-assets/js/home.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 @endsection
 @endsection

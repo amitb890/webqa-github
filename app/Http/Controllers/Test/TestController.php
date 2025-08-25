@@ -3790,9 +3790,14 @@ class TestController extends Controller
         $message = '';
         $content = '';
         $brokenLinks = $settings->settings_sub->broken_links;  
-      
+        $excludeUrls = $settings->settings_sub->broken_links_exclude_urls;
+        $excludedUrls = [];
+        
+                    if ($excludeUrls && !empty($settings->settings_sub->broken_links_excluded_urls)) {
+                $excludedUrls = array_map('trim', explode("\n", $settings->settings_sub->broken_links_excluded_urls));
+            }
 
-        $output = json_decode($helpers->brokenLinks($url));
+        $output = json_decode($helpers->brokenLinks($url, $excludedUrls));
 
 
         if($output->status){

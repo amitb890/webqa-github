@@ -9,17 +9,17 @@
         <meta name="description" content="@yield('meta-description')">
 
         <!-- bootstrap styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.css') }}"/>
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}"/>
 
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/magnific-popup/magnific-popup.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/magnific-popup/magnific-popup.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
 
         <!-- font awesome styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- custom styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
     
         <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}">
@@ -57,11 +57,11 @@
 
 
         <!-- jQuery -->
-        <script src="{{ asset('new-assets/vendor/jQurey/jquery-3.6.1.min.js') }}"></script>
+        <script src="{{ asset('new-assets/vendor/jQurey/jquery-3.6.1.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
         <!-- bootstrap scripts -->
-        <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
-        <script src="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.js') }}"></script>
-        <script src="{{ asset('new-assets/vendor/fontawesome/js/all.min.js') }}"></script>
+        <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+        <script src="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+        <script src="{{ asset('new-assets/vendor/fontawesome/js/all.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.all.min.js"></script>
 
         <!-- custom scripts -->

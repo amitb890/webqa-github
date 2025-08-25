@@ -225,7 +225,7 @@ class TestDetailsController extends Controller
         }
 
         $object = new \stdClass();
-        $object->settings = $elements[0]->settings;
+        $object->settings = isset($elements[0]->settings) ? $elements[0]->settings : [];
         $object->imageSizeOver = $imageSizeOver;
         $object->imageNameMissingAlt = $imageNameMissingAlt;
         $object->imageNameLengthOver = $imageNameLengthOver;

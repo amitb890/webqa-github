@@ -455,6 +455,7 @@ class ProjectsController extends Controller
                     'has_dashboard_parent' => $d['has_dashboard_parent'],
                     'dashboard_parent' => $d['dashboard_parent'],
                     'parent' => $d['parent'],
+                    'initialTestingState' => $d['initialTestingState'],
                 ]);
             }
 

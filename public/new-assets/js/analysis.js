@@ -145,6 +145,9 @@ $( document ).ready(function() {
     static getBrokenLinks(allLinks, limit){
       let html = ""
       let i = 0
+      let brokenUrls = []
+      
+      // Collect all broken URLs first
       for (var key in allLinks) {
         if (allLinks.hasOwnProperty(key)) {
             let status
@@ -152,43 +155,46 @@ $( document ).ready(function() {
 
             if(state == "fulfilled"){
               const value = allLinks[key]["value"];
-
               status = value["status"]
             }else{
               status = 404
             }
 
             if(status != 200 && status != 0 && status != 405){
-              i++
-
-              if(limit){
-                if(i < 6){
-                  html+=`<p>
-                  <span>${i}</span>
-                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.3333 5.33333C11.1565 5.33333 10.987 5.40357 10.8619 5.5286C10.7369 5.65362 10.6667 5.82319 10.6667 6V10C10.6667 10.1768 10.5964 10.3464 10.4714 10.4714C10.3464 10.5964 10.1768 10.6667 10 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H6C6.17681 1.33333 6.34638 1.2631 6.4714 1.13807C6.59643 1.01305 6.66667 0.843478 6.66667 0.666667C6.66667 0.489856 6.59643 0.320286 6.4714 0.195262C6.34638 0.0702379 6.17681 0 6 0H2C1.46957 0 0.960859 0.210714 0.585787 0.585787C0.210714 0.960859 0 1.46957 0 2V10C0 10.5304 0.210714 11.0391 0.585787 11.4142C0.960859 11.7893 1.46957 12 2 12H10C10.5304 12 11.0391 11.7893 11.4142 11.4142C11.7893 11.0391 12 10.5304 12 10V6C12 5.82319 11.9298 5.65362 11.8047 5.5286C11.6797 5.40357 11.5101 5.33333 11.3333 5.33333Z" fill="#8F8F8F"></path>
-                    <path d="M8.66532 1.33333H9.71866L5.52532 5.52C5.46284 5.58198 5.41324 5.65571 5.3794 5.73695C5.34555 5.81819 5.32812 5.90533 5.32812 5.99333C5.32812 6.08134 5.34555 6.16848 5.3794 6.24972C5.41324 6.33096 5.46284 6.40469 5.52532 6.46667C5.5873 6.52915 5.66103 6.57875 5.74227 6.61259C5.82351 6.64644 5.91065 6.66387 5.99866 6.66387C6.08667 6.66387 6.1738 6.64644 6.25504 6.61259C6.33628 6.57875 6.41002 6.52915 6.47199 6.46667L10.6653 2.28V3.33333C10.6653 3.51014 10.7356 3.67971 10.8606 3.80474C10.9856 3.92976 11.1552 4 11.332 4C11.5088 4 11.6784 3.92976 11.8034 3.80474C11.9284 3.67971 11.9987 3.51014 11.9987 3.33333V0.666667C11.9987 0.489856 11.9284 0.320286 11.8034 0.195262C11.6784 0.0702379 11.5088 0 11.332 0H8.66532C8.48851 0 8.31894 0.0702379 8.19392 0.195262C8.0689 0.320286 7.99866 0.489856 7.99866 0.666667C7.99866 0.843478 8.0689 1.01305 8.19392 1.13807C8.31894 1.2631 8.48851 1.33333 8.66532 1.33333Z" fill="#8F8F8F"></path>
-                  </svg>
-                  <a href="${key}" target="_blank">${key}</a>
-                  <strong>${status}</strong>
-                </p>`
-                }else{
-                  break
-                }
-              }else{
-                html+=`<p>
-                <span>${i}</span>
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11.3333 5.33333C11.1565 5.33333 10.987 5.40357 10.8619 5.5286C10.7369 5.65362 10.6667 5.82319 10.6667 6V10C10.6667 10.1768 10.5964 10.3464 10.4714 10.4714C10.3464 10.5964 10.1768 10.6667 10 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H6C6.17681 1.33333 6.34638 1.2631 6.4714 1.13807C6.59643 1.01305 6.66667 0.843478 6.66667 0.666667C6.66667 0.489856 6.59643 0.320286 6.4714 0.195262C6.34638 0.0702379 6.17681 0 6 0H2C1.46957 0 0.960859 0.210714 0.585787 0.585787C0.210714 0.960859 0 1.46957 0 2V10C0 10.5304 0.210714 11.0391 0.585787 11.4142C0.960859 11.7893 1.46957 12 2 12H10C10.5304 12 11.0391 11.7893 11.4142 11.4142C11.7893 11.0391 12 10.5304 12 10V6C12 5.82319 11.9298 5.65362 11.8047 5.5286C11.6797 5.40357 11.5101 5.33333 11.3333 5.33333Z" fill="#8F8F8F"></path>
-                  <path d="M8.66532 1.33333H9.71866L5.52532 5.52C5.46284 5.58198 5.41324 5.65571 5.3794 5.73695C5.34555 5.81819 5.32812 5.90533 5.32812 5.99333C5.32812 6.08134 5.34555 6.16848 5.3794 6.24972C5.41324 6.33096 5.46284 6.40469 5.52532 6.46667C5.5873 6.52915 5.66103 6.57875 5.74227 6.61259C5.82351 6.64644 5.91065 6.66387 5.99866 6.66387C6.08667 6.66387 6.1738 6.64644 6.25504 6.61259C6.33628 6.57875 6.41002 6.52915 6.47199 6.46667L10.6653 2.28V3.33333C10.6653 3.51014 10.7356 3.67971 10.8606 3.80474C10.9856 3.92976 11.1552 4 11.332 4C11.5088 4 11.6784 3.92976 11.8034 3.80474C11.9284 3.67971 11.9987 3.51014 11.9987 3.33333V0.666667C11.9987 0.489856 11.9284 0.320286 11.8034 0.195262C11.6784 0.0702379 11.5088 0 11.332 0H8.66532C8.48851 0 8.31894 0.0702379 8.19392 0.195262C8.0689 0.320286 7.99866 0.489856 7.99866 0.666667C7.99866 0.843478 8.0689 1.01305 8.19392 1.13807C8.31894 1.2631 8.48851 1.33333 8.66532 1.33333Z" fill="#8F8F8F"></path>
-                </svg>
-                <a href="${key}" target="_blank">${key}</a>
-                <strong>${status}</strong>
-              </p>`
-              }
+              brokenUrls.push({url: key, status: status})
             }
         }
       }
+      
+      // Add table header
+      html += `<table class="broken-links-table">
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>HTTP Status Code</th>
+            <th>
+              <a href="#" class="ignore-all-link" data-urls='${JSON.stringify(brokenUrls.map(item => item.url))}'>Ignore All</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>`
+      
+      // Display broken links
+      brokenUrls.forEach((item, index) => {
+        if(limit && index >= 5) return; // Limit to 5 items in card view
+        
+        html+=`<tr>
+          <td>
+            <div class="url-cell">
+              <a href="${item.url}" target="_blank">${item.url}</a>
+            </div>
+          </td>
+          <td><strong>${item.status}</strong></td>
+          <td><button class="btn btn-sm btn-outline-secondary ignore-link-btn" data-url="${item.url}">Ignore</button></td>
+        </tr>`
+      })
+      
+      html += `</tbody></table>`
       return html
     }
 
@@ -979,10 +985,11 @@ $( document ).ready(function() {
       return false
     }
 
-    static handleAlert(status, msg, classVal){
+    static handleAlert(status, msg, classVal, notHide = false){
       displayAlert(classVal, {
         status: status,
-        msg: msg
+        msg: msg,
+        notHide: notHide
       })
     }
 
@@ -4560,8 +4567,125 @@ $( document ).ready(function() {
           }
       })
   }
+
+
+
+
+
+    // Broken Links Individual Ignore Functionality
+    $(document).on('click', '.ignore-link-btn', function(e) {
+      e.preventDefault();
+      const url = $(this).data('url');
+      let project = document.querySelector("#activeProject").getAttribute("data-val")
+      const projectId = getStringPart(project, "-", 1)
+      
+      if (!url) {
+        Controls.handleAlert(0, "No URL to ignore.", ".analysis-content-body", true);
+        return;
+      }
+      
+      // Show confirmation dialog
+      if (!confirm(`Are you sure you want to ignore this broken link: ${url}?`)) {
+        return;
+      }
+      
+      $.ajax({
+        url: '/api/ignore-broken-link',
+        type: 'POST',
+        data: {
+          project_id: projectId,
+          url: url,
+          _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+          if (response.success) {
+            // Show success alert
+            Controls.handleAlert(3, `URL "${url}" has been added to the ignore list.`, ".analysis-content-body", true);
+            
+            // Change the button to show "Ignored" and disable it
+            $(e.target).text('Ignored').prop('disabled', true).css({
+              'pointer-events': 'none',
+              'color': '#6c757d',
+              'background-color': '#e9ecef'
+            });
+            
+            // Remove the row after a short delay
+            setTimeout(() => {
+              $(e.target).closest('tr').fadeOut(300, function() {
+                $(this).remove();
+              });
+            }, 1500);
+          } else {
+            Controls.handleAlert(0, response.message || "Failed to ignore URL.", ".analysis-content-body", true);
+          }
+        },
+        error: function(xhr) {
+          const response = xhr.responseJSON || {};
+          Controls.handleAlert(0, response.message || "An error occurred while ignoring the URL.", ".analysis-content-body", true);
+        }
+      });
+    });
+
+    // Broken Links Ignore All Functionality
+    $(document).on('click', '.ignore-all-link', function(e) {
+      e.preventDefault();
+      const urls = $(this).data('urls');
+      let project = document.querySelector("#activeProject").getAttribute("data-val")
+      const projectId = getStringPart(project, "-", 1)
+      
+      if (!urls || urls.length === 0) {
+        Controls.handleAlert(0, "No URLs to ignore.", ".analysis-content-body", true);
+        return;
+      }
+      
+      // Show confirmation dialog
+      if (!confirm(`Are you sure you want to ignore all ${urls.length} broken links?`)) {
+        return;
+      }
+      
+      $.ajax({
+        url: '/api/ignore-all-broken-links',
+        type: 'POST',
+        data: {
+          project_id: projectId,
+          urls: urls,
+          _token: $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function(response) {
+          if (response.success) {
+            // Show success alert
+            Controls.handleAlert(3, `${response.total_added} URL(s) have been added to the ignore list.`, ".analysis-content-body", true);
+            
+            // Change all ignore all links to show "Ignored" and disable them
+            $('.ignore-all-link').text('Ignored').css({
+              'pointer-events': 'none',
+              'color': '#6c757d',
+              'background-color': '#e9ecef'
+            });
+            
+            // Remove all broken link rows after a short delay
+            setTimeout(() => {
+              $('.broken-links-table tbody tr').fadeOut(300, function() {
+                $(this).remove();
+              });
+            }, 1500);
+          } else {
+            Controls.handleAlert(0, response.message || "Failed to ignore URLs.", ".analysis-content-body", true);
+          }
+        },
+        error: function(xhr) {
+          const response = xhr.responseJSON || {};
+          Controls.handleAlert(0, response.message || "An error occurred while ignoring the URLs.", ".analysis-content-body", true );
+        }
+      });
+    });
+  
   
 })
+
+
+
+
 function buildDatatable(testLabels) {
   if ($('.custom-dataTable').length) {
   createDatatableElement()

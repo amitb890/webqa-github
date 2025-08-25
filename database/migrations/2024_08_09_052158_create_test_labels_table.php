@@ -30,6 +30,7 @@ class CreateTestLabelsTable extends Migration
             $table->boolean("has_dashboard_parent")->nullable();
             $table->string("dashboard_parent")->nullable();
             $table->string("parent");
+            $table->boolean("initialTestingState");
             $table->timestamps();
         });
     }

@@ -791,6 +791,8 @@ class SettingsController extends Controller
             $settingsSub->protocol_relative_resource = $data["isProtocolRelativeResourceEnable"];
             $settingsSub->cross_origin_links = $data["isCrossOriginLinksEnable"];
             $settingsSub->broken_links = $data["isBrokenLinksEnable"];
+            $settingsSub->broken_links_exclude_urls = $data["brokenLinksExcludeUrls"];
+            $settingsSub->broken_links_excluded_urls = $data["brokenLinksExcludedUrlsVal"];
 
             // Robot.txt test
             $settingsSub->robot_text_test_block_url = $data["isRobotTextTestBlockUrlEnable"];

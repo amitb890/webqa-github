@@ -43,6 +43,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.15.0/TweenMax.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.17.0/utils/Draggable.min.js"></script>
 
-<script src="{{ asset('new-assets/js/dashboard.js') }}"></script>
+<script src="{{ asset('new-assets/js/dashboard.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 @endsection
 @endsection

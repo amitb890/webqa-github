@@ -12986,6 +12986,41 @@ nav .nav-tabs{
   width: 900px;
 }
 
+.broken-links-table tbody tr:first-child td{
+  width: 80%;
+}
+
+
+.broken-links-table thead{
+  padding-bottom: 20px;
+}
+
+
+.broken-links-table tbody td{
+  padding: 0px;
+  padding-bottom: 2px;
+}
+
+.broken-links-table tbody tr td:nth-child(2){
+  text-align: center;
+}
+
+.broken-links-table .ignore-all{
+  color: #0d6efd;
+}
+
+.ignore-link-btn{
+  background: none;
+  border: none;
+  color: #0d6efd;
+}
+.broken-links-table thead th{
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+  padding-bottom: 20px;
+}
+
 
 .bulk-tooltips-contents {
   z-index: 999;
@@ -13277,4 +13312,126 @@ nav .nav-tabs{
   max-width: 100%;
   height: auto;
   border-radius: 8px;
+}
+
+/* Broken Links Table Styling */
+.total-broken-links{
+  font-size: 2rem!important;
+  text-align: center;
+  margin: auto;
+  color: var(--dark);
+}
+
+.total-broken-links-container p{
+  margin: auto;
+}
+
+.broken-links-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.broken-links-table thead {
+  background: #f8f9fa;
+}
+
+.broken-links-table th {
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 14px;
+}
+
+.broken-links-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #dee2e6;
+  vertical-align: middle;
+}
+
+.broken-links-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.broken-links-table .url-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+}
+
+.broken-links-table .url-cell a {
+  color: #007bff;
+  text-decoration: none;
+  word-break: break-all;
+  display: inline-block;
+}
+
+.broken-links-table .url-cell a:hover {
+  text-decoration: underline;
+}
+
+.broken-links-table .ignore-all-link {
+  color: #007bff;
+}
+
+.broken-links-table .ignore-all-link:hover {
+  color: #0056b3;
+}
+
+.broken-links-table .ignore-all-row {
+  background-color: #fff3cd;
+  border-top: 2px solid #ffc107;
+}
+
+.broken-links-table .ignore-all-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+
+.broken-links-table .ignore-all-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.broken-links-table .btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  color: white;
+}
+
+.broken-links-table .btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+/* Responsive design for broken links table */
+@media (max-width: 768px) {
+  .broken-links-table {
+    font-size: 12px;
+  }
+  
+  .broken-links-table th,
+  .broken-links-table td {
+    padding: 8px 10px;
+  }
+  
+  .broken-links-table .url-cell a {
+    max-width: 200px;
+  }
+  
+
+  
+  .broken-links-table .ignore-all-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 }
