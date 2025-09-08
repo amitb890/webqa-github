@@ -5593,28 +5593,6 @@
                       Check for all broken links(links that do not have 200 status code)
                       </label>
                     </div>
-                    <div class="form-check">
-                      <input
-                        class="form-check-input hideInputCheck"
-                        type="checkbox"
-                        id="brokenLinksExcludeUrls"
-                        {{ $settings->settingsSub->broken_links_exclude_urls ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="brokenLinksExcludeUrls"
-                      >
-                                            Exclude specific URLs from broken links check
-                      (enter each URL on a new line)
-                    </label>
-                  </div>
-                  <textarea
-                    class="hideInputCheckElement"
-                    placeholder="Enter each URL on a new line"
-                    id="brokenLinksExcludedUrlsVal"
-                      cols="30"
-                      rows="10"
-                    >{{$settings->settingsSub->broken_links_excluded_urls}}</textarea>
                 </div>
                 <div class="accor-content-button">
                   <input
@@ -5980,8 +5958,6 @@
     const defaultBrokenLinks = {
         "switchBrokenLinksHeader": 1,
         "isBrokenLinksEnable": 1,
-        "brokenLinksExcludeUrls": 0,
-        "brokenLinksExcludedUrlsVal": "",
     }
 
     
@@ -6297,8 +6273,6 @@
             "isCrossOriginLinksEnable": 1,
 
             "isBrokenLinksEnable": 1,
-            "brokenLinksExcludeUrls": 0,
-            "brokenLinksExcludedUrlsVal": "",
 
             "isProtocolRelativeResourceEnable": 1,
 

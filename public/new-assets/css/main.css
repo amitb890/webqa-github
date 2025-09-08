@@ -12986,9 +12986,6 @@ nav .nav-tabs{
   width: 900px;
 }
 
-.broken-links-table tbody tr:first-child td{
-  width: 80%;
-}
 
 
 .broken-links-table thead{
@@ -12999,10 +12996,12 @@ nav .nav-tabs{
 .broken-links-table tbody td{
   padding: 0px;
   padding-bottom: 2px;
+  border: 0;
 }
 
 .broken-links-table tbody tr td:nth-child(2){
   text-align: center;
+  margin-left: 40px;
 }
 
 .broken-links-table .ignore-all{
@@ -13014,11 +13013,18 @@ nav .nav-tabs{
   border: none;
   color: #0d6efd;
 }
+
+.ignore-link-btn:hover{
+  color: #0d6efd;
+  background: none;
+  border: none;
+}
 .broken-links-table thead th{
   font-size: 14px;
   font-weight: 500;
   color: var(--dark);
   padding-bottom: 20px;
+  border: 0;
 }
 
 
@@ -13330,18 +13336,15 @@ nav .nav-tabs{
   width: 100%;
   border-collapse: collapse;
   margin: 15px 0;
-  background: #fff;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  margin: 0;
 }
 
 .broken-links-table thead {
-  background: #f8f9fa;
 }
 
 .broken-links-table th {
-  padding: 12px 15px;
   text-align: left;
   font-weight: 600;
   color: #495057;
@@ -13350,27 +13353,70 @@ nav .nav-tabs{
 }
 
 .broken-links-table td {
-  padding: 12px 15px;
   border-bottom: 1px solid #dee2e6;
   vertical-align: middle;
 }
 
-.broken-links-table tbody tr:hover {
-  background-color: #f8f9fa;
-}
 
 .broken-links-table .url-cell {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px;
+  padding: 5px;
+  padding-left: 0px;
 }
 
+#broken-links-modal .card-body{
+  background: var(--bg-mostly-white-200);
+}
+
+
+
+
+
+.broken-links-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.broken-links-table thead tr,
+.broken-links-table tbody tr {
+  display: flex;
+  width: 100%;
+  align-items: center;
+
+}
+
+.broken-links-table thead th,
+.broken-links-table tbody td {
+  display: block;
+  box-sizing: border-box;
+  text-align: left; /* or center if desired */
+}
+
+.broken-links-table thead th:first-child,
+.broken-links-table tbody td:first-child {
+  width: 70%;
+}
+
+.broken-links-table thead th:last-child,
+.broken-links-table tbody td:last-child {
+  margin-left: auto;
+}
+
+
+
+
+
 .broken-links-table .url-cell a {
-  color: #007bff;
+  display: flex;
   text-decoration: none;
+}
+
+.broken-link-url{
+  color: #007bff;
+  text-decoration: underline;
   word-break: break-all;
-  display: inline-block;
 }
 
 .broken-links-table .url-cell a:hover {
@@ -13379,12 +13425,18 @@ nav .nav-tabs{
 
 .broken-links-table .ignore-all-link {
   color: #007bff;
+  text-decoration: none;
 }
 
 .broken-links-table .ignore-all-link:hover {
   color: #0056b3;
 }
 
+.broken-link-index{
+  font-weight: 600;
+  color: var(--dark);
+  padding-right: 10px;
+}
 .broken-links-table .ignore-all-row {
   background-color: #fff3cd;
   border-top: 2px solid #ffc107;

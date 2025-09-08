@@ -186,7 +186,7 @@ $( document ).ready(function() {
         html+=`<tr>
           <td>
             <div class="url-cell">
-              <a href="${item.url}" target="_blank">${item.url}</a>
+              <a href="${item.url}" target="_blank"><span class="broken-link-index">${index+1}. </span><span class="broken-link-url">${item.url}</span></a>
             </div>
           </td>
           <td><strong>${item.status}</strong></td>
@@ -1380,6 +1380,13 @@ $( document ).ready(function() {
         const result = data.result[label.name]
         Controls.buildTest(result, label, labels, true)
         
+        // If this is a broken links test, store the data globally for ignore functionality
+        if (label.name === 'broken_links' && result.allLinks) {
+          window.currentAnalysisData = {
+            allLinks: result.allLinks,
+            totalBrokenLinks: result.totalBrokenLinks || 0
+          };
+        }
       })
       endTest(JSON.parse(data.test_labels));
       removeLoader();
@@ -3141,6 +3148,11 @@ $( document ).ready(function() {
   function buildElement1(data, intentionalState){
     if(data.title === 'Broken Links'){
       brokenLinksData = data
+      // Store the broken links data globally for the ignore functionality
+      window.currentAnalysisData = {
+        allLinks: data.allLinks,
+        totalBrokenLinks: data.totalBrokenLinks || 0
+      };
     }
       // building problems
       let ul
@@ -4584,10 +4596,7 @@ $( document ).ready(function() {
         return;
       }
       
-      // Show confirmation dialog
-      if (!confirm(`Are you sure you want to ignore this broken link: ${url}?`)) {
-        return;
-      }
+
       
       $.ajax({
         url: '/api/ignore-broken-link',
@@ -4602,19 +4611,54 @@ $( document ).ready(function() {
             // Show success alert
             Controls.handleAlert(3, `URL "${url}" has been added to the ignore list.`, ".analysis-content-body", true);
             
-            // Change the button to show "Ignored" and disable it
-            $(e.target).text('Ignored').prop('disabled', true).css({
-              'pointer-events': 'none',
-              'color': '#6c757d',
-              'background-color': '#e9ecef'
-            });
-            
-            // Remove the row after a short delay
-            setTimeout(() => {
+            // Find and update the current analysis data to remove the ignored URL
+            const currentAnalysisData = window.currentAnalysisData;
+            if (currentAnalysisData && currentAnalysisData.allLinks) {
+              // Remove the ignored URL from allLinks
+              delete currentAnalysisData.allLinks[url];
+              
+              // Re-render both broken links tables
+              const brokenLinksCard = document.querySelector('.broken-links-card .meta-list-single');
+              const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
+              
+              if (brokenLinksCard) {
+                brokenLinksCard.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, true);
+              }
+              
+              if (brokenLinksModal) {
+                brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+              }
+              
+              // Update the broken links count if it exists
+              const totalBrokenLinksElement = document.querySelector('.broken-links-card');
+              if (totalBrokenLinksElement && currentAnalysisData.totalBrokenLinks !== undefined) {
+                const remainingBrokenLinks = Object.keys(currentAnalysisData.allLinks).filter(key => {
+                  const state = currentAnalysisData.allLinks[key]["state"];
+                  let status = 404;
+                  if (state === "fulfilled") {
+                    const value = currentAnalysisData.allLinks[key]["value"];
+                    status = value["status"];
+                  }
+                  return status != 200 && status != 0 && status != 405;
+                }).length;
+                
+                currentAnalysisData.totalBrokenLinks = remainingBrokenLinks;
+                totalBrokenLinksElement.textContent = remainingBrokenLinks;
+                
+                // Hide the broken links section if no more broken links
+                if (remainingBrokenLinks === 0) {
+                  const brokenLinksSection = document.querySelector('.card-inner-content');
+                  if (brokenLinksSection) {
+                    brokenLinksSection.classList.add('d-none');
+                  }
+                }
+              }
+            } else {
+              // Fallback: if global data is not available, just remove the row from current view
               $(e.target).closest('tr').fadeOut(300, function() {
                 $(this).remove();
               });
-            }, 1500);
+            }
           } else {
             Controls.handleAlert(0, response.message || "Failed to ignore URL.", ".analysis-content-body", true);
           }
@@ -4638,10 +4682,10 @@ $( document ).ready(function() {
         return;
       }
       
-      // Show confirmation dialog
-      if (!confirm(`Are you sure you want to ignore all ${urls.length} broken links?`)) {
-        return;
-      }
+      // // Show confirmation dialog
+      // if (!confirm(`Are you sure you want to ignore all ${urls.length} broken links?`)) {
+      //   return;
+      // }
       
       $.ajax({
         url: '/api/ignore-all-broken-links',
@@ -4652,23 +4696,61 @@ $( document ).ready(function() {
           _token: $('meta[name="csrf-token"]').attr('content')
         },
         success: function(response) {
-          if (response.success) {
+          if (response.success) {            
+            // Find and update the current analysis data to remove all ignored URLs
+            const currentAnalysisData = window.currentAnalysisData;
+
             // Show success alert
-            Controls.handleAlert(3, `${response.total_added} URL(s) have been added to the ignore list.`, ".analysis-content-body", true);
-            
-            // Change all ignore all links to show "Ignored" and disable them
-            $('.ignore-all-link').text('Ignored').css({
-              'pointer-events': 'none',
-              'color': '#6c757d',
-              'background-color': '#e9ecef'
-            });
-            
-            // Remove all broken link rows after a short delay
-            setTimeout(() => {
+            Controls.handleAlert(3, `All URL(s) have been added to the ignore list.`, ".analysis-content-body", true);
+
+            if (currentAnalysisData && currentAnalysisData.allLinks) {
+              // Remove all ignored URLs from allLinks
+              urls.forEach(url => {
+                delete currentAnalysisData.allLinks[url];
+              });
+              
+              // Re-render both broken links tables
+              const brokenLinksCard = document.querySelector('.broken-links-card .meta-list-single');
+              const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
+              
+              if (brokenLinksCard) {
+                brokenLinksCard.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, true);
+              }
+              
+              if (brokenLinksModal) {
+                brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+              }
+              
+              // Update the broken links count if it exists
+              const totalBrokenLinksElement = document.querySelector('.broken-links-card');
+              if (totalBrokenLinksElement && currentAnalysisData.totalBrokenLinks !== undefined) {
+                const remainingBrokenLinks = Object.keys(currentAnalysisData.allLinks).filter(key => {
+                  const state = currentAnalysisData.allLinks[key]["state"];
+                  let status = 404;
+                  if (state === "fulfilled") {
+                    const value = currentAnalysisData.allLinks[key]["value"];
+                    status = value["status"];
+                  }
+                  return status != 200 && status != 0 && status != 405;
+                }).length;
+                
+                currentAnalysisData.totalBrokenLinks = remainingBrokenLinks;
+                totalBrokenLinksElement.textContent = remainingBrokenLinks;
+                
+                                // Hide the broken links section if no more broken links
+                if (remainingBrokenLinks === 0) {
+                  const brokenLinksSection = document.querySelector('.card-inner-content');
+                  if (brokenLinksSection) {
+                    brokenLinksSection.classList.add('d-none');
+                  }
+                }
+              }
+            } else {
+              // Fallback: if global data is not available, just remove all rows from current view
               $('.broken-links-table tbody tr').fadeOut(300, function() {
                 $(this).remove();
               });
-            }, 1500);
+            }
           } else {
             Controls.handleAlert(0, response.message || "Failed to ignore URLs.", ".analysis-content-body", true);
           }

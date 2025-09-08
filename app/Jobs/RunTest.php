@@ -283,18 +283,18 @@ class RunTest implements ShouldQueue
                     // Process all labels for this URL
                     for($j = 0; $j < count($labels); $j++){
 
+                        // Check timeout before processing each label
+                        if (time() - $startTime >= $urlTimeout) {
+                            $urlTimedOut = true;
+                            throw new \Exception("URL timeout after {$urlTimeout} seconds");
+                        }
+
                         if($this->type == "single_recheck"){
                             $labels[$j]->initialTestingState = true;
                         }
 
 
                         if($labels[$j]->initialTestingState){
-
-                            // Check timeout before processing each label
-                            if (time() - $startTime >= $urlTimeout) {
-                                $urlTimedOut = true;
-                                throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                            }
                             
                             $label = $labels[$j];
                             $test_title = $label->db_name;
