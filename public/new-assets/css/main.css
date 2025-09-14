@@ -4337,10 +4337,16 @@ h6 {
   color: var(--text-gray);
   font-weight: 400;
 }
+
+.btn_prev{
+  padding-left: 0;
+}
+
+
 .onboard-form-button .btn_primary {
   font-weight: 400;
-  padding: 7px 34px;
 }
+
 .onboard-main-form .form-card-input input:invalid,
 .onboard-main-form .form-control.is-valid:focus,
 .was-validated .form-control:valid:focus,

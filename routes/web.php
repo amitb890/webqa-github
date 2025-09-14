@@ -33,6 +33,11 @@ Route::get('test1', [App\Http\Controllers\PagesController::class, 'test']);
 Route::get('test2', [App\Http\Controllers\Test\TestController2::class, 'collectDashboard']);
 Route::get('test12', [App\Http\Controllers\Test\TestController::class, 'brokenLinks']);
 
+// Onboarding API routes
+Route::post('/onboarding/detect-sitemaps', [App\Http\Controllers\OnboardingController::class, 'detectSitemaps']);
+Route::post('/onboarding/fetch-urls', [App\Http\Controllers\OnboardingController::class, 'fetchUrls']);
+
+
 Route::get('get-all-labels/{id}', [App\Http\Controllers\ProjectsController::class, 'getLabels']);
 
 

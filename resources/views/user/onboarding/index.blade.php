@@ -147,7 +147,6 @@
                     <span class="progress-dot two"></span>
                     <span class="progress-dot three"></span>
                     <span class="progress-dot four"></span>
-                    <span class="progress-dot five"></span>
                   </div>
                 </div>
             <div class="row align-items-center onboard-main-items">
@@ -237,60 +236,6 @@
                         </div>
                         <div id="formSetp3" class="form-setp">
                           <div class="form-card-title">
-                            <h3>Enter HTML sitemap</h3>
-                          </div>
-                          <div class="form-card-input">
-                            <input
-                            id="htmlSitemap"
-                              type="url"
-                              class="form-control"
-                              required
-                            />
-                          </div>
-
-                          <div class="onboard-form-button">
-                            <button
-                              id="BtnPrev2"
-                              class="btn btn_transparent btn_prev rounded-pill onbordingButtonClass  "
-                              type="button"
-                            >
-                              <span>
-                                <svg
-                                  width="5"
-                                  height="8"
-                                  viewBox="0 0 5 8"
-                                  fill="none"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                >
-                                  <path
-                                    d="M4 7L1 4L4 1"
-                                    stroke="#6E6E6E"
-                                    stroke-width="1.5"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                  />
-                                </svg>
-                              </span>
-                              Previous
-                            </button>
-                            <button
-                              id="BtnSkip2"
-                              class="btn btn_transparent btn_next rounded-pill ms-auto me-3 onbordingButtonClass "
-                              type="button"
-                            >
-                              Skip
-                            </button>
-                            <button
-                              id="formTriggerBtn3"
-                              class="btn btn_primary rounded-pill onbordingButtonClass"
-                              type="button"
-                            >
-                              Next
-                            </button>
-                          </div>
-                        </div>
-                        <div id="formSetp4" class="form-setp">
-                          <div class="form-card-title">
                             <h3>Enter URLs list</h3>
                           </div>
                           <div class="form-card-input urls-list-container">
@@ -301,7 +246,7 @@
 
                           <div class="onboard-form-button">
                             <button
-                              id="BtnPrev3"
+                              id="BtnPrev2"
                               class="btn btn_transparent btn_prev rounded-pill  onbordingButtonClass"
                               type="button"
                             >
@@ -325,14 +270,14 @@
                               Previous
                             </button>
                             <button
-                              id="BtnSkip3"
+                              id="BtnSkip2"
                               class="btn btn_transparent btn_next rounded-pill ms-auto me-3 onbordingButtonClass"
                               type="button"
                             >
                               Skip
                             </button>
                             <button
-                              id="formTriggerBtn4"
+                              id="formTriggerBtn3"
                               class="btn btn_primary rounded-pill  onbordingButtonClass"
                               type="button"
                             >
@@ -340,7 +285,7 @@
                             </button>
                           </div>
                         </div>
-                        <div id="formSetp5" class="form-setp">
+                        <div id="formSetp4" class="form-setp">
                           <div class="form-card-title">
                             <h3>Enter project name</h3>
                           </div>
@@ -356,7 +301,7 @@
 
                           <div class="onboard-form-button">
                             <button
-                              id="BtnPrev4"
+                              id="BtnPrev3"
                               class="btn btn_transparent btn_prev rounded-pill"
                               type="button"
                             >
@@ -380,7 +325,7 @@
                               Previous
                             </button>
                             <button
-                              id="formTriggerBtn5"
+                              id="formTriggerBtn4"
                               class="btn btn_primary rounded-pill onbordingButtonClass"
                               type="button"
                             >
@@ -388,7 +333,7 @@
                             </button>
                           </div>
                         </div>
-                        <div id="formSetp6" class="form-setp">
+                        <div id="formSetp5" class="form-setp">
                           <div class="form-card-input">
                             <div class="form-final-content">
                               <svg
@@ -450,6 +395,6 @@
     <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- custom scripts -->
     <script src="{{ asset('new-assets/js/functions.js') }}"></script>
-    <script src="{{ asset('new-assets/js/main.js') }}"></script>
+    <script src="{{ asset('new-assets/js/onboarding.js') }}"></script>
   </body>
 </html>
