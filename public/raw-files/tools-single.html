@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WebQA - Tools</title>
+    <!-- bootstrap styles -->
+    <link rel="stylesheet" href="./vendor/bootstrap/css/bootstrap.min.css" />
+    <!-- magnific-popup -->
+    <link rel="stylesheet" href="./vendor/magnific-popup/magnific-popup.css">
+    <!-- custom styles -->
+    <link rel="stylesheet" href="./assets/fonts/font-styles.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.res.css" />
+  </head>
+  <body class="body_padding">
+    <!-- header main starts -->
+    <header id="headerMain" class="header_main genarel_header_main">
+      <nav class="navbar_main">
+        <div class="container-fluid">
+          <a href="./index.html" class="navbar-brand">
+            <img
+              src="./assets/images/webQA_logo.png"
+              alt="WebQA"
+              width="78"
+              height="16"
+              class="img-fluid"
+            />
+          </a>
+
+          <ul class="genarel_header_items">
+            <li><a href="#">Tools</a></li>
+            <li><a href="#">Features</a></li>
+            <li>
+              <div class="dropdown">
+                <a
+                  class="dropdown-toggle"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <span>Pricing</span>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="#">Action</a></li>
+                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                </ul>
+              </div>
+            </li>
+          </ul>
+          <div class="login_area">
+            <a type="button" class="header_login" data-bs-toggle="modal" data-bs-target="#LoginexampleModal">Login</a>
+            <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+          </div>
+          <!-- Modal -->
+          <div class="modal fade logIn_modal_area" id="LoginexampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"    aria-hidden="true">
+            <div class="modal-dialog login_modal">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  <p>Fill your existing account details</p>
+                  <div class="login_modal_form">
+                    <form action="#" method="POST">
+                      <input type="email" placeholder="Email">
+                      <div class="login_input_password">
+                        <label for="login_pass" class="login_input_label">
+                          <span><img src="assets/images/eye.png" alt="icon"></span>
+                        </label>
+                        <input type="password" placeholder="Password" id="login_pass">
+                      </div>
+                      <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
+                      <a href="#" class="login_forgetPass">Forgotten your password?</a>
+                      <div class="loginOr">
+                        <span>Or</span>
+                      </div>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/google.png" alt="icon">
+                        <span>Login with Google</span>
+                      </a>
+                      <a href="#" class="loginOr_btn">
+                        <img src="assets/images/facebook.png" alt="icon">
+                        <span>Login with Facebook</span>
+                      </a>
+                    </form>
+                    <div class="signUp_modal_area">
+                      <span>Need an account?</span>
+                      <a href="#">Sign up</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <button id="header_menuBtn" class="header_menu_btn ms-3" type="button">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </nav>
+    </header>
+    <!-- header main ends -->
+
+    
+    <!-- main sections starts -->
+    <main class="main-sections">
+      <div class="inner_content">
+        <div class="container-fluid">
+          <div class="tools_top_area">
+            <div class="tools_sidebar">
+              <div class="accordion" id="accordionPanelsStayOpenExample">
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_1" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                      Meta Tags
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapse_tools_1" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+                    <div class="accordion-body">
+                      <a href="#">Meta Title <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Meta Description <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Robots Meta Tag <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Canonical URL <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">URL Slug <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">OpenGraph Tag <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Twitter Title <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Twitter Image <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Twitter Image Alt <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Favicon <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">XML sitemap <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">HTML sitemap <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_2" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      Images
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapse_tools_2" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                      <a href="#">Items1 <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Items2 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_3" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      Performance
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapse_tools_3" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                      <a href="#">Items1 <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Items2 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_4" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      Coding Practices
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapse_tools_4" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                      <a href="#">Items1 <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Items2 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_5" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      HTML Practices
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapse_tools_5" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                      <a href="#">Items1 <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Items2 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+                <div class="accordion-item tools-last-accordion">
+                  <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse_tools_6" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                      Others
+                    </button>
+                  </h2>
+                  <div id="panelsStayOpen-collapse_tools_6" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+                    <div class="accordion-body">
+                      <a href="#">Items1 <i class="fa-solid fa-angle-right"></i></a>
+                      <a href="#">Items2 <i class="fa-solid fa-angle-right"></i></a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="tools_body">
+              <div class="tools_body_content">
+                <h1>Robots Meta Tag Test</h1>
+                <p>Robots Meta Test is to ensure whether or not the robots meta tags have been used correctly on the pages of your website.
+                  It is also to check if the tags have been used mistakenly, resulting in non-indexing of the pages.</p>
+                  
+                <div class="footer_search_item">
+                  <form class="footer_search_box">
+                    <input
+                      type="text"
+                      class="footer_control"
+                      name="search"
+                      placeholder=""
+                    />
+                    <div class="footer_utils">
+                      <a href="#" class="btn btn_primary rounded-pill">Test Now</a>
+                    </div>
+                  </form>
+                </div>
+                <div class="dropdown">
+                  <p class="test_criteria">Add Test Criteria <i class="fa-solid fa-angle-up"></i></p>
+                  
+  
+                  <div class="home-meta-content tools_meta_content">
+                    <div class="meta-content tools_meta_inner_content">
+                      <div class="accor-content">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="metatitle1" checked="">
+                          <label class="form-check-label" for="metatitle1">
+                            Every page must have a meta title tag
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="metatitle2">
+                          <label class="form-check-label" for="metatitle2">
+                            Maximum length of Title tag should be
+                            <input type="number" value="68" min="0" max="100" id="ex21-input"> characters
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="metatitle3">
+                          <label class="form-check-label" for="metatitle3">
+                            Minimum length of Title tag should be
+                            <input type="number" value="61" min="0" max="100" id="ex22-input"> Characters
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="metatitle4">
+                          <label class="form-check-label" for="metatitle4">
+                            Title Tag must not be equal to H1 heading tag
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" value="" id="metatitle5" checked="">
+                          <label class="form-check-label" for="metatitle5">
+                            Exclude specific words from casing checks
+                            (separate each word with a comma)
+                          </label>
+                        </div>
+                        <textarea placeholder="Separate each word with a comma" name="" id="" cols="30" rows="10"></textarea>
+                        <div class="form-check form-check-black">
+                          <input class="form-check-input" type="checkbox" value="" id="metatitle6" checked="">
+                          <label class="form-check-label" for="metatitle6">
+                            Enable Casing Checks
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="metatitle7" checked="">
+                          <label class="form-check-label" for="metatitle7">
+                            Title Tag must be either in Camel casing or
+                            Sentence casing
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="metatitle8">
+                          <label class="form-check-label" for="metatitle8">
+                            Title Tag must be in Camel casing
+                          </label>
+                        </div>
+                        <div class="form-check">
+                          <input class="form-check-input" type="radio" name="flexRadioDefault" id="metatitle9">
+                          <label class="form-check-label" for="metatitle9">
+                            Title Tag must be in Sentence casing
+                          </label>
+                        </div>
+                      </div>
+                      <div class="home-content-button">
+                        <input class="btn-cancel btn btn_primary rounded-pill" type="submit" value="Cancel">
+                        <input class="btn btn_primary rounded-pill" type="submit" value="Done">
+                      </div>
+                    </div>
+                    <div class="accor-content-button">
+                      <input class="btn btn_primary rounded-pill" type="reset" value="Reset to Default">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Result Area Start -->
+          <div class="test_result_area">
+            <h2>Test Results</h2>
+            <div class="test_result_table">
+              <div class="table-responsive">
+                <table class="table table-bordered">
+                  <div class="download_result">
+                    <ul>
+                      <li><button><img src="assets/images/pdf.png" alt="icon">Download PDF</button></li>
+                      <li><button><img src="assets/images/xl.png" alt="icon">Download CSV</button></li>
+                      <li><button><img src="assets/images/htdocs.png" alt="icon">Google Sheet</button></li>
+                      <li><button><img src="assets/images/email.png" alt="icon">Email This</button></li>
+                    </ul>
+                  </div>
+                  <thead class="result_data_header">
+                    <tr>
+                      <th>#</th>
+                      <th class="result_header"> <input type="search" value="URL">  <img src="assets/images/search.png" alt="icon"></th>
+                      <th>Robots Meta tag Exist?</th>
+                      <th>Content</th>
+                      <th></th>
+                      <th>Result</th>
+                    </tr>
+                  </thead>
+                  <tbody class="result_data_body">
+                    <tr class="result_1st_tr">
+                      <td >1</td>
+                      <td class="result_data_url">https://www.setmore.com <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-danger exit_data result_span">Yes <span>Is this intentional?</span></td>
+                      <td>noindex,nofollow</td>
+                      <td class="result_span"><span>Is this intentional?</span></td>
+                      <td><p class="result_pass">PASS</p></td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td class="result_data_url">https://www.setmore.com/integrations <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-success exit_data">No</td>
+                      <td>noindex</td>
+                      <td></td>
+                      <td><p class="result_fail">FAIL</p></td>
+                    </tr>
+                    <tr>
+                      <td>3</td>
+                      <td class="result_data_url">https://www.setmore.com <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-danger exit_data result_span">Yes <span>Is this intentional?</span></td>
+                      <td>noindex,nofollow</td>
+                      <td class="result_span"><span>Is this intentional?</span></td>
+                      <td><p class="result_pass">PASS</p></td>
+                    </tr>
+                    <tr>
+                      <td>4</td>
+                      <td class="result_data_url">https://www.hindustantimes.com/cities/delhi-news/antisikh-riots... <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-success exit_data">No</td>
+                      <td>noindex</td>
+                      <td></td>
+                      <td><p class="result_fail">FAIL</p></td>
+                    </tr>
+                    <tr>
+                      <td>5</td>
+                      <td class="result_data_url">https://www.setmore.com <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-danger exit_data result_span">Yes <span>Is this intentional?</span></td>
+                      <td>noindex,nofollow</td>
+                      <td class="result_span"><span>Is this intentional?</span></td>
+                      <td><p class="result_pass">PASS</p></td>
+                    </tr>
+                    <tr>
+                      <td>6</td>
+                      <td class="result_data_url">https://www.setmore.com/integrations <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-success exit_data">No</td>
+                      <td>noindex</td>
+                      <td></td>
+                      <td><p class="result_fail">FAIL</p></td>
+                    </tr>
+                    <tr>
+                      <td>7</td>
+                      <td class="result_data_url">https://www.setmore.com <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-danger exit_data result_span">Yes <span>Is this intentional?</span></td>
+                      <td>noindex,nofollow</td>
+                      <td class="result_span"><span>Is this intentional?</span></td>
+                      <td><p class="result_pass">PASS</p></td>
+                    </tr>
+                    <tr>
+                      <td>8</td>
+                      <td class="result_data_url">https://www.setmore.com/integrations <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-success exit_data">No</td>
+                      <td>noindex</td>
+                      <td></td>
+                      <td><p class="result_fail">FAIL</p></td>
+                    </tr>
+                    <tr>
+                      <td>9</td>
+                      <td class="result_data_url">https://www.setmore.com <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-danger exit_data result_span">Yes <span>Is this intentional?</span></td>
+                      <td>noindex,nofollow</td>
+                      <td class="result_span"><span>Is this intentional?</span></td>
+                      <td><p class="result_pass">PASS</p></td>
+                    </tr>
+                    <tr>
+                      <td>10</td>
+                      <td class="result_data_url">https://www.setmore.com/integrations <img src="assets/images/copy-link.png" alt="icon"></td>
+                      <td class="collumn-success exit_data">No</td>
+                      <td>noindex</td>
+                      <td></td>
+                      <td><p class="result_fail">FAIL</p></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="main-pagination2">
+                <!-- Pagination Start -->
+                <div class="table-pagination">
+                  <div class="show-row">
+                    <span>Show rows:</span>
+                    <select name="" id="" class="btn btn-outline-gray">
+                      <option value="">10</option>
+                      <option value="">20</option>
+                      <option value="">30</option>
+                      <option value="">40</option>
+                      <option value="">50</option>
+                      <option value="">60</option>
+                      <option value="">70</option>
+                      <option value="">80</option>
+                      <option value="">90</option>
+                      <option value="">100</option>
+                    </select>
+                  </div>
+                  <div class="total-row result_go">
+                    <span>Go to:</span>
+                    <button class="btn btn-outline-gray">2</button>
+                  </div>
+                  <div class="showing-pagination">
+                    <span>Showing 71 - 80 of 500</span>
+                    <div
+                      class="btn-group me-2 showing-pagination-btn"
+                      role="group"
+                      aria-label="First group"
+                    >
+                      <button type="button" class="btn btn-outline-gray">
+                        <i class="fa-solid fa-angle-left"></i>
+                      </button>
+                      <button type="button" class="btn btn_primary">
+                        <i class="fa-solid fa-angle-right"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <!-- Pagination End -->
+              </div>
+            </div>
+          </div>
+          <!-- Test Result Area End -->
+
+          <!-- Tools Meta Description Start-->
+          <div class="main_tools_meta_description">
+            <div class="blog-main-area single-post-main">
+              <!-- post page blog start -->
+              <div class="single-post-content-main">
+                <div class="single-post-left-sidebar">
+                  <ul>
+                    <li><a href="#">How to pass the Robots Meta Tag test?</a></li>
+                    <li><a href="#">What is a Robots Meta Tag?</a></li>
+                    <li><a href="#">Understanding the Directives and Attributes Of Robots Meta Tag</a></li>
+                    <li><a href="#">Name Attribute</a></li>
+                    <li><a href="#">Content Attribute</a></li>
+                    <li><a href="#">Understanding NoIndex & NoFollow</a></li>
+                    <li><a href="#">What is the difference between NoFollow and NoIndex?</a></li>
+                    <li><a href="#">Using “NoIndex” and “NoFollow” Separately</a></li>
+                    <li><a href="#">How Can a Page Be Marked as Noindex?</a></li>
+                    <li><a href="#">How to Mark an Already Indexed Page as NoIndex?</a></li>
+                    <li><a href="#">Functions of Robots Meta Tag</a></li>
+                    <li><a href="#">SEO Importance of Robots Meta Tag</a></li>
+                    <li><a href="#">FAQs</a></li>
+                  </ul>
+                </div>
+                <div class="single-post-content">
+                  <h2 class="tools_des_fastheading">How to pass the Robots Meta Tag test?</h2>
+                  <p>In order to pass the Robots Meta Tag test, one must understand its functions, attributes, and importance. Below, we have explained every detail related to the Robots meta tag in great depth. This will assist you in figuring out how to pass the test and optimize your web pages accordingly.</p>
+                  
+                  <div class="tools_video_popup">
+                    <span class="tools_video_img">
+                      <img src="assets/images/blog/tools-popup.png" alt="icon">
+                      <a class="test-popup-link" href="https://www.youtube.com/watch?v=vQkXF5__TQI"><img src="assets/images/youtube_color.png" alt="play"></a>
+                    </span>
+                  </div>
+                  <h2>What is a Robots Meta Tag?</h2>
+                  <p>A Robots meta tag is a piece of HTML code that is incorporated into the section of a web page and tells search engines whether a given page should be indexed and shown in search engine result pages or not.</p>
+                  
+                  <p class="pera_padding">In the source code of a page, a robots meta tag appears like this:</p>
+
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="noindex" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <p>There are situations when you do not want specific pages on your website to show up in Google search results. By using the Robots meta tag, you can control which pages show up and which pages do not show up in the search results. Put simply, you can use these page-specific tags to stop required pages from being indexed. Robots meta tags, however, are also frequently used mistakenly. As a result, even the desired pages do not show up in the Google search results. Therefore, it becomes necessary to understand the ins and outs of Robots meta tags and how to check for them.</p>
+
+                  <h2>Understanding the Directives and Attributes Of Robots Meta Tag</h2>
+
+                  <p>There are two attributes: name and content. Each of these properties must have a value assigned to it. Please note that both attributes are non-case sensitive. Let's take a closer look at these attributes.
+                  </p>
+                  
+                  <h2>Name Attribute</h2>
+
+                  <p>The name attribute defines which crawlers should follow the mentioned instructions. This attribute is also known as a user-agent (UA). Your user-agent (UA) indicates the browser in use. However, Google's user agents include Googlebot and Googlebot-image.</p>
+
+                  <p class="pera_padding">For example,</p>
+                  
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="googlebot" content="noindex"></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+                  
+                  <p>All crawlers are represented by the UA variable "robots". Furthermore, you are permitted to include as many robots meta tags as you require to instruct different crawlers. The most common user agents are Google and Bing.</p>
+
+                  <h2>Content Attribute</h2>
+
+                  <p>The content attribute specifies how to crawl and index the page's content. In the event that a web page's meta robots tag is missing, search engines will automatically crawl the page and follow all of its links (unless there is the rel="nofollow" attribute given).
+                  </p>
+
+                  <p>Mentioned below are some of the most common values used for content attributes:</p>
+
+                  <h4>noindex</h4>
+                  <p class="pera_padding">Stops search engine from indexing the page.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="noindex" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>nofollow</h4>
+                  <p class="pera_padding">Stops search engine from following the links on the page.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="nofollow" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>all</h4>
+                  <p class="pera_padding">The default value to specify both index and follow. Not supported by Bing.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span> meta name="robots" content="all" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>none</h4>
+                  <p class="pera_padding">The value to specify both noindex and nofollow. Not supported by Bing.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="none" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>noarchive</h4>
+                  <p class="pera_padding">Stops search engine from showing a cached version of the page in the SERP.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="noarchive" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>notranslate</h4>
+                  <p class="pera_padding">Stops search engine from offering page translation in the SERP. Not supported by Bing.
+                  </p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="notranslate" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>noimageindex</h4>
+                  <p class="pera_padding">Stops search engine from indexing images embedded on the page. Not supported by Bing.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="noimageindex" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h4>unavailable_after</h4>
+                  <p class="pera_padding">Instructs search engine not to display a page in search results after a specified date/time.</p>
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="unavailable_after: Wednesday, 02-Nov-22 12:20:36
+                      GMT" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+                  
+                  <h2 class="tools-des-heading">Understanding NoIndex & NoFollow</h2>
+
+                  <h2>What is a "NoIndex" tag?</h2>
+
+                  <p>NoIndex is a meta tag that is placed in a web page's header code to inform search engines that they can crawl the particular page to examine its content but cannot index the page to show it in search engine results. Here's an example of how the NoIndex tag appears in a source code-
+                  </p>
+
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="noindex" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <p>Indexing is the technique by which Google searches or crawls the internet for new content, which is then incorporated into Google's database of searchable content.
+                  </p>
+
+                  <h2>What is a "NoFollow" tag?</h2>
+
+                  <p>NoFollow is a meta tag that is placed into the header code of a webpage to instruct search engines not to follow the links on that page. In practice, this rejects all of the links on that page. Additionally, any of the pages linked through that particular web page will not receive its SERP ranking authority. Please remember that the links on that page might still be indexable, particularly if there are backlinks directed to them. Here's an example of how the NoIndex tag appears in a source code-
+                  </p>
+
+                  <button class="tools_link_btn"> 
+                    <p><span><</span>meta name="robots" content="nofollow" /></p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <h2>What is the difference between NoFollow and
+                    NoIndex?</h2>
+
+                  <p>The functionality of NoIndex and NoFollow is significantly different. NoFollow is used to tell search engine crawlers not to follow the links on your page, while NoIndex is used to tell search engines not to keep your web page for appearance in search results. In brief, NoIndex functions primarily for your web pages and NoFollow for the links on those web pages.
+                  </p>
+
+                  <h2>Using “NoIndex” and “NoFollow” Separately</h2>
+
+                  <p>If you want to prevent a search engine from indexing your web page but still want it to follow the links on it, simply use the "noindex" tag. This will give the other pages your page links to better ranking authority. But, when you want a search engine to index your web page but not follow the links on that page, use the "nofollow" tag.
+                  </p>
+
+                  <h2>Using “NoIndex, NoFollow” Together</h2>
+
+                  <p class="pera_padding">When you don't want a webpage to be indexed in search results and you also don't want the links on that page to be followed, add both a "noindex" and "nofollow" tag.</p>
+                  <p>For instance, you wouldn't need search engines to index or follow the links on the pages where you might have explained an ongoing company offer.</p>
+
+                  <h2>How Can a Page Be Marked as Noindex?</h2>
+                  <p class="pera_padding">A NoIndex directive may be given in one of two ways:</p>
+                  <ul>
+                    <li>Incorporate a “noindex” meta tag into the HTML code of the page</li>
+                    <li>In the HTTP response, add a “noindex” header</li>
+                  </ul>
+
+                  <h2>How to Mark an Already Indexed Page as NoIndex?</h2>
+
+                  <p class="pera_padding">If you classify a page as “noindex” after it has already been indexed by a search engine, the page   will be eliminated from the search results once it has been crawled again.
+                  </p>
+                  <p> Remember, if you are mistakenly using the robots.txt file to stop the crawler, this technique of pulling a page from the index won't function. The “noindex” value won't be visible to a crawler if you instruct it not to read the page. Thus, the page will continue to be indexed while its contents won't be updated.</p>
+
+                  <h2>Functions of Robots Meta Tag</h2>
+                  <p class="pera_padding">Robots meta tags are used to govern how Google reads and follows the content of your website. This comprises-</p>
+                  <ul>
+                    <li>If a page should be displayed in search results.</li>
+                    <li>deciding whether or not to click on a link (irrespective of the index tag)</li>
+                    <li>Prevent the indexing of images on a page</li>
+                    <li> Stop search engines from displaying cached copies of a web page</li>
+                    <li> Requests that the page's snippet (meta description) not appear on the SERPs</li>
+                  </ul>
+
+                  <h2>SEO Importance of Robots Meta Tag</h2>
+                  <p class="pera_padding">Despite having other functions, the meta robots tag is frequently used to prevent pages from appearing in search results. You may want to stop search engines from crawling certain content types, including cache, photos, and more.</p>
+                  <p>In general, the wider your website is, the more administration of crawling and indexing there is to do. For SEO, it's imperative to adequately combine robots.txt, sitemaps, and page-level instructions.</p>
+
+                  <h2>What is an X-Robots-Tag?</h2>
+                  <p class="pera_padding">The robots meta tag is appropriate for enforcing noindex directives on individual HTML pages. But what if you want to stop content such as PDFs from being indexed by search engines? X-robots-tags are then utilized in this situation. While adding meta robots tags to HTML pages is quite simple, adding x-robots-tag is tricky. Any directive that may be used as a meta robots tag can also be utilized as an x-robots-tag because this is an HTTP header response rather than an HTML tag. </p>
+                  <p>You must have access to your website's header or server configuration file in order to use the x-robots-tag. If you don't have the authorization for this, you'll have to utilize meta robots tags to guide crawlers. Example of x-robots-tag header response-</p>
+
+                  <button class="tools_link_btn"> 
+                    <p>x-robots-tag: noindex, nofollow</p>
+                    <span><i class="fa-regular fa-clone"></i></span>
+                  </button>
+
+                  <div class="tools_accordion_area">
+                    <div class="getting-recover-main recover-faq-area">
+                      <h3>FAQs</h3>
+                      <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="recover_headingOne">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false" aria-controls="panelsStayOpen-collapseOne">
+                              How many time I can change the password
+                            </button>
+                          </h2>
+                          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="recover_headingOne">
+                            <div class="accordion-body">
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus, quod numquam! Iste officia mollitia quasi impedit beatae libero ipsam accusantium unde sapiente optio atque dolore sit ducimus rem magnam,</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="recover_headingTwo">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                              Can I change the password via OTP on mobile and email address?
+                            </button>
+                          </h2>
+                          <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="recover_headingTwo">
+                            <div class="accordion-body">
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus, quod numquam! Iste officia mollitia quasi impedit beatae libero ipsam accusantium unde sapiente optio atque dolore sit ducimus rem magnam,</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="recover_headingThree">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseThree" aria-expanded="false" aria-controls="panelsStayOpen-collapseThree">
+                              What if I forgot my current password?
+                            </button>
+                          </h2>
+                          <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="recover_headingThree">
+                            <div class="accordion-body">
+                              <p>Please note that if there are conflicting values, Google will use the most restrictive one. For example, if you give both index and noindex values, Google will follow the noindex value.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="recover_headingFour">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFour" aria-expanded="false" aria-controls="panelsStayOpen-collapseFour">
+                              Do I require password if I signup directly with my google account?
+                            </button>
+                          </h2>
+                          <div id="panelsStayOpen-collapseFour" class="accordion-collapse collapse" aria-labelledby="recover_headingFour">
+                            <div class="accordion-body">
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus, quod numquam! Iste officia mollitia quasi impedit beatae libero ipsam accusantium unde sapiente optio atque dolore sit ducimus rem magnam,</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="accordion-item">
+                          <h2 class="accordion-header" id="recover_headingFive">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseFive" aria-expanded="false" aria-controls="panelsStayOpen-collapseFive">
+                              Can I set a new password without knowing my current password?
+                            </button>
+                          </h2>
+                          <div id="panelsStayOpen-collapseFive" class="accordion-collapse collapse" aria-labelledby="recover_headingFive">
+                            <div class="accordion-body">
+                              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus, quod numquam! Iste officia mollitia quasi impedit beatae libero ipsam accusantium unde sapiente optio atque dolore sit ducimus rem magnam,</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- post page blog end -->
+            </div>
+          </div>
+          <!-- Tools Meta Description End-->
+
+          <!-- Trial Area -->
+          <div class="trial-area">
+            <div class="trial-content">
+              <h2>Wondering why your content isn't
+                showing up on the SERPs?</h2>
+                <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- main sections ends -->
+
+    <!-- Footer Area Start -->
+    <footer class="genarel_footer_area">
+      <div class="container-fluid">
+        <div class="g_footer_main">
+          <div class="single_footer_item footer-fast-item">
+            <img src="assets/images/webQA_logo.png" alt="icon">
+            <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
+            <div class="footer_social">
+              <ul>
+                <li><a href="#"><i class="fa-brands fa-facebook-f"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
+                <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
+                <li><a href="#"><img src="assets/images/youtube.png" alt="icon"> </a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="single_footer_item">
+            <div class="footer_list_items">
+              <ul>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">7 Day Free Trial</a></li>
+                <li><a href="#">Tools</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Contact Us</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="single_footer_item">
+            <div class="footer_list_items">
+              <ul>
+                <li><a href="#">Login</a></li>
+                <li><a href="#">FAQ’s</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Terms of Use</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer_search_item">
+            <h5>Test Your Website’s Performance for Free!</h5>
+            <form class="footer_search_box">
+              <input
+                type="text"
+                class="footer_control"
+                name="search"
+                placeholder="Enter your website url.."
+              />
+              <div class="footer_utils">
+                <a href="#" class="btn btn_primary rounded-pill">Test Now</a>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="copy_right_area">
+          <p>© WebQA 2022 | All rights reserved</p>
+        </div>
+      </div>
+    </footer>
+    <!-- Footer Area End -->
+
+  
+    <!-- jQuery -->
+    <script src="./vendor/jQurey/jquery-3.6.1.min.js"></script>
+    <!-- bootstrap scripts -->
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- font awesome scripts -->
+    <script src="./vendor/fontawesome/js/all.min.js" async defer></script>
+    <!-- magnific-popup -->
+    <script src="./vendor/magnific-js/jquery.magnific-popup.min.js"></script>
+    <!-- custom scripts -->
+    <script src="./js/main.js"></script>
+  </body>
+</html>

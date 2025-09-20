@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Results Dropdown</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: auto;
+        }
+        .dropdown {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: Circular Std;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 17.71px;
+            letter-spacing: 0%;
+
+        }
+        .content {
+            display: none;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .status-table td {
+            padding: 8px;
+        }
+        .pass {
+            color: green;
+        }
+        .fail {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="dropdown" onclick="toggleDropdown('seo-content')">SEO <span style="color:green;">All Tests Passed</span></div>
+    <div id="seo-content" class="content"></div>
+    
+    <div class="dropdown" onclick="toggleDropdown('performance-content')">Performance <span style="color:green;">3 Tests Passed</span> <span style="color:red;">1 Test Failed</span></div>
+    <div id="performance-content" class="content">
+        <table class="status-table">
+            <tr><td>GZIP Compression</td><td>Tested</td><td class="pass">Pass</td></tr>
+            <tr><td>HTML Compression</td><td>Testing Done</td><td class="fail">Fail</td></tr>
+            <tr><td>CSS Compression</td><td>Testing Done</td><td class="pass">Pass</td></tr>
+            <tr><td>JS Compression</td><td>Testing Done</td><td class="fail">Fail</td></tr>
+            <tr><td>CSS Caching</td><td>Testing Done</td><td class="pass">Pass</td></tr>
+            <tr><td>Page Size</td><td>Testing Done</td><td class="pass">Pass</td></tr>
+        </table>
+    </div>
+    
+    <div class="dropdown" onclick="toggleDropdown('security-content')">Security</div>
+    <div id="security-content" class="content"></div>
+    
+    <script>
+        function toggleDropdown(id) {
+            var content = document.getElementById(id);
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        }
+    </script>
+</body>
+</html>

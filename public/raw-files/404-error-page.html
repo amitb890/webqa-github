@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 error page</title>
+    <!-- bootstrap styles -->
+    <link rel="stylesheet" href="./vendor/bootstrap/css/bootstrap.min.css" />
+    <!-- custom styles -->
+    <link rel="stylesheet" href="./assets/fonts/font-styles.css" />
+    <link rel="stylesheet" href="./css/main.css" />
+    <link rel="stylesheet" href="./css/main.res.css" />
+</head>
+<body style="background-color: #fff;">
+
+    <!-- header starts -->
+        <header id="headerMain" class="header_main genarel_header_main">
+        <nav class="navbar_main">
+            <div class="container-fluid">
+            <a href="./index.html" class="navbar-brand">
+                <img
+                src="./assets/images/webQA_logo.png"
+                alt="WebQA"
+                width="78"
+                height="16"
+                class="img-fluid"
+                />
+            </a>
+
+            <ul class="genarel_header_items">
+                <li><a href="aboutus.html">Tools</a></li>
+                <li><a href="#">Features</a></li>
+                <li>
+                <div class="dropdown">
+                    <a
+                    class="dropdown-toggle"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                    >
+                    <span>Pricing</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#">Stuff</a></li>
+                        <li><a class="dropdown-item" href="#">Stuff</a></li>
+                    </ul>
+                </div>
+                </li>
+            </ul>
+            <div class="login_area">
+                <a type="button" class="header_login" data-bs-toggle="modal" data-bs-target="#LoginexampleModal">Login</a>
+                <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade logIn_modal_area" id="LoginexampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"    aria-hidden="true">
+                <div class="modal-dialog login_modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Login</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                    <p>Fill your existing account details</p>
+                    <div class="login_modal_form">
+                        <form action="#" method="POST">
+                        <input type="email" placeholder="Email">
+                        <div class="login_input_password">
+                            <label for="login_pass" class="login_input_label">
+                            <span><img src="assets/images/eye.png" alt="icon"></span>
+                            </label>
+                            <input type="password" placeholder="Password" id="login_pass">
+                        </div>
+                        <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
+                        <a href="#" class="login_forgetPass">Forgotten your password?</a>
+                        <div class="loginOr">
+                            <span>Or</span>
+                        </div>
+                        <a href="#" class="loginOr_btn">
+                            <img src="assets/images/google.png" alt="icon">
+                            <span>Login with Google</span>
+                        </a>
+                        <a href="#" class="loginOr_btn">
+                            <img src="assets/images/facebook.png" alt="icon">
+                            <span>Login with Facebook</span>
+                        </a>
+                        </form>
+                        <div class="signUp_modal_area">
+                        <span>Need an account?</span>
+                        <a href="#">Sign up</a>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            
+            <button id="header_menuBtn" class="header_menu_btn ms-3" type="button">
+                <span></span><span></span><span></span>
+            </button>
+            </div>
+        </nav>
+        </header>
+    <!-- header ends -->
+
+    <!-- Section 1 starts -->
+     <section class="ep1 container">
+            <div class="ep1-dleft">
+                <div class="ep1-dleft-h">
+                    <h1 style="font-weight: bolder;" class="ep1-dright-h1">Oops!</h1>
+                    <h1 style="font-weight: bolder;" class="ep1-dright-h2">This link is broken</h1>
+                </div>
+                <p class="ep1-dright-p">Even the best sites can have crawl issues. Let’s get you back to optimized content and <span style="font-weight: bolder; font-size: 1.2rem;">boost your website.</span>
+                </p>
+                <a class="ep1-dright-ref" href="index.html">
+                    <button class="ep1-dright-button">Go to Homepage</button>
+                </a>
+            </div>
+            <div class="ep1-dright">
+                <img class="ep1-dleft-img" src="../raw-files/assets/images/404-error-page/c1568bfffff642df9edd3ef84394c09cd5def696 (1).gif" alt="">
+            </div>
+     </section>
+    <!-- Section 1 ends -->
+
+
+    <script src="./vendor/jQurey/jquery-3.6.1.min.js"></script>
+    <!-- bootstrap scripts -->
+    <script src="./vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- font awesome scripts -->
+    <script src="./vendor/fontawesome/js/all.min.js" async defer></script>
+    <!-- custom scripts -->
+    <script src="./js/main.js"></script>
+</body>
+</html>
