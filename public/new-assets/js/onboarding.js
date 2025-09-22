@@ -7,6 +7,9 @@ $(document).ready(function(){
             this.formData = {};
             this.isProcessing = false;
             this.step = 1; // For image management
+            this.maxExecutionTime = 60000; // 1 minute in milliseconds (easily changeable)
+            this.activeRequests = []; // Track active requests
+            this.activeTimeouts = []; // Track active timeouts
             this.init();
         }
 
@@ -112,17 +115,35 @@ $(document).ready(function(){
                 return;
             }
 
+            const controller = new AbortController();
+            this.addActiveRequest(controller);
+
             try {
+                // Set up timeout
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    console.log('URL detection timed out after', this.maxExecutionTime, 'ms');
+                }, this.maxExecutionTime);
+                this.addActiveTimeout(timeoutId);
+
                 let res = await fetch('/onboarding/fetch-urls', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
                     },
-                    body: JSON.stringify({ sitemaps: selectedSitemaps })
+                    body: JSON.stringify({ sitemaps: selectedSitemaps }),
+                    signal: controller.signal
                 });
                 
+                // Clear timeout since request completed
+                clearTimeout(timeoutId);
+                this.removeActiveTimeout(timeoutId);
+                
                 if (!res.ok) {
+                    if (res.status === 403) {
+                        throw new Error('FORBIDDEN_403');
+                    }
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
                 
@@ -149,39 +170,104 @@ $(document).ready(function(){
                     $("#urlsList").html(rootUrl);
                     $('.xml-sitemap-message').text('We were not able to detect any URLs from the sitemap. Added the root URL to the list.');
                     $('.form-single-text').show();
+                    // Show alert for limited URLs
+                    this.showLimitedUrlsAlert();
                 }
                 
                 return data.urls;
                 
             } catch (error) {
+                // Clear timeout on error
+                this.activeTimeouts.forEach(id => clearTimeout(id));
+                this.activeTimeouts = [];
+                
                 console.error('Error fetching URLs:', error);
-                // Fallback on error - add root URL
-                const rootUrl = $('#homepage').val();
-                $("#urlsList").html(rootUrl);
-                $('.xml-sitemap-message').text('Error detecting URLs from sitemap. Added the root URL to the list.');
-                $('.form-single-text').show();
+                
+                if (error.name === 'AbortError') {
+                    console.log('URL detection was aborted or timed out');
+                    // Add root URL as fallback
+                    const rootUrl = $('#homepage').val();
+                    $("#urlsList").html(rootUrl);
+                    $('.xml-sitemap-message').text('URL detection timed out. Added the root URL to the list.');
+                    $('.form-single-text').show();
+                    // Show alert for limited URLs
+                    this.showLimitedUrlsAlert();
+                } else if (error.message === 'FORBIDDEN_403') {
+                    console.log('URL detection forbidden (403)');
+                    // Show 403 error message
+                    this.showUrls403Error();
+                } else {
+                    // Fallback on error - add root URL
+                    const rootUrl = $('#homepage').val();
+                    $("#urlsList").html(rootUrl);
+                    $('.xml-sitemap-message').text('Error detecting URLs from sitemap. Added the root URL to the list.');
+                    $('.form-single-text').show();
+                    // Show alert for limited URLs
+                    this.showLimitedUrlsAlert();
+                }
+                
                 return [];
+            } finally {
+                this.removeActiveRequest(controller);
             }
         }
 
         async detectSitemaps(homepage) {
-            const response = await fetch('/onboarding/detect-sitemaps', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-                body: JSON.stringify({ root_url: homepage })
-            });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+            const controller = new AbortController();
+            this.addActiveRequest(controller);
+
+            try {
+                // Set up timeout
+                const timeoutId = setTimeout(() => {
+                    controller.abort();
+                    console.log('Sitemap detection timed out after', this.maxExecutionTime, 'ms');
+                }, this.maxExecutionTime);
+                this.addActiveTimeout(timeoutId);
+
+                const response = await fetch('/onboarding/detect-sitemaps', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                    body: JSON.stringify({ root_url: homepage }),
+                    signal: controller.signal
+                });
+                
+                // Clear timeout since request completed
+                clearTimeout(timeoutId);
+                this.removeActiveTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    if (response.status === 403) {
+                        throw new Error('FORBIDDEN_403');
+                    }
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log('Sitemap detection result:', data);
+                
+                // Process sitemap data using the same logic as main.js
+                this.updateSitemapInputsServer(data.sitemaps || [], homepage);
+                
+                return data;
+            } catch (error) {
+                // Clear timeout on error
+                this.activeTimeouts.forEach(id => clearTimeout(id));
+                this.activeTimeouts = [];
+                
+                if (error.name === 'AbortError') {
+                    console.log('Sitemap detection was aborted or timed out');
+                    // Add fallback - just add the homepage as a basic sitemap
+                    this.updateSitemapInputsServer([], homepage);
+                } else if (error.message === 'FORBIDDEN_403') {
+                    console.log('Sitemap access forbidden (403)');
+                    // Show 403 error message
+                    this.showSitemap403Error();
+                } else {
+                    throw error;
+                }
+            } finally {
+                this.removeActiveRequest(controller);
             }
-            
-            const data = await response.json();
-            console.log('Sitemap detection result:', data);
-            
-            // Process sitemap data using the same logic as main.js
-            this.updateSitemapInputsServer(data.sitemaps || [], homepage);
-            
-            return data;
         }
 
         updateSitemapInputsServer(xmlSitemap, url) {
@@ -194,7 +280,7 @@ $(document).ready(function(){
             
             if (xmlSitemap.length == 0) {
                 $(".form-single-text").addClass("warning");
-                $('.xml-sitemap-message').text("We could not autodetect an XML Sitemap on your website. Please enter your XML Sitemap in 'Enter Sitemap XML field");
+                $('.xml-sitemap-message').text("We could not autodetect an XML Sitemap on your website. This might be because the sitemap returnd a 403/404. Please enter your XML Sitemap in 'Enter Sitemap XML field");
                 $('.form-single-text').css({display: "flex"});
             } else {
                 const sitemapJson = JSON.stringify(xmlSitemap);
@@ -252,10 +338,92 @@ $(document).ready(function(){
             );
         }
 
+        // Request and timeout management methods
+        addActiveRequest(controller) {
+            this.activeRequests.push(controller);
+        }
+
+        removeActiveRequest(controller) {
+            const index = this.activeRequests.indexOf(controller);
+            if (index > -1) {
+                this.activeRequests.splice(index, 1);
+            }
+        }
+
+        addActiveTimeout(timeoutId) {
+            this.activeTimeouts.push(timeoutId);
+        }
+
+        removeActiveTimeout(timeoutId) {
+            const index = this.activeTimeouts.indexOf(timeoutId);
+            if (index > -1) {
+                this.activeTimeouts.splice(index, 1);
+            }
+        }
+
+        stopAllExecutions() {
+            // Abort all active requests
+            this.activeRequests.forEach(controller => {
+                if (controller && controller.abort) {
+                    controller.abort();
+                }
+            });
+            this.activeRequests = [];
+
+            // Clear all active timeouts
+            this.activeTimeouts.forEach(timeoutId => {
+                if (timeoutId) {
+                    clearTimeout(timeoutId);
+                }
+            });
+            this.activeTimeouts = [];
+
+            // Reset processing state
+            this.isProcessing = false;
+            this.updateButtonStates();
+        }
+
 
         handlePrevious(stepNumber) {
-            if (this.isProcessing) return;
+            // Stop all executions and reset to previous screen
+            this.stopAllExecutions();
+            
+            // Reset button states
+            this.resetAllButtons();
+            
+            // Go to previous step
             this.goToStep(stepNumber - 1);
+        }
+
+        resetAllButtons() {
+            // Reset all button states to initial
+            $('.onbordingButtonClass').prop('disabled', false);
+            $('#formTriggerBtn1, #formTriggerBtn2, #formTriggerBtn3, #formTriggerBtn4').text('Next');
+            $('#BtnSkip1, #BtnSkip2').text('Skip');
+        }
+
+        showSitemap403Error() {
+            $(".form-single-text").addClass("warning");
+            $('.xml-sitemap-message').text('Your sitemap returned a 403 Forbidden error and cannot be accessed. Please enter your sitemap URL manually in the XML Sitemap field.');
+            $('.form-single-text').css({display: "flex"});
+            $(".sitemap-link").remove();
+            $(".load-more-sitemap").remove();
+        }
+
+        showUrls403Error() {
+            // Add root URL as fallback and show 403 message
+            const rootUrl = $('#homepage').val();
+            $("#urlsList").html(rootUrl);
+            $('.xml-sitemap-message').text('Your sitemap returned a 403 Forbidden error and cannot be tested. Added the root URL to the list instead.');
+            $('.form-single-text').css({display: "flex"});
+            // Show alert for limited URLs
+            this.showLimitedUrlsAlert();
+        }
+
+        showLimitedUrlsAlert() {
+            // Show alert when only root URL is available due to errors/timeout
+            const alertHtml = buildAlertNew('We couldn\'t detect more URLs from your sitemap due to timeout, 403/404 errors, or other issues. Only the root URL has been added. You can add more URLs manually if needed.');
+            $('#formSetp3 .form-card-input').after(alertHtml);
         }
 
         async handleSkip(stepNumber) {
