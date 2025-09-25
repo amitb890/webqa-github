@@ -90,6 +90,26 @@ class SettingsController extends Controller
         }
     }
 
+    public function saveBrokenLinksExcluded(Request $request, $id)
+    {
+        $user = Auth::user();
+        $project = Projects::find($id);
+        if(!$project){
+            return abort(404);
+        }
+        $excludedUrlsString = $request->input('excludedUrlsString');
+        $settingsSub = SettingsSub::where("project_settings_id", $id)->get()->first();
+        $settingsSub->broken_links_excluded_urls = $excludedUrlsString;
+
+        $settingsSubState = $settingsSub->save();
+
+        if($settingsSubState){
+            return response()->json(['status'=>1,'msg'=>'Excluded URLs updated successfully']);
+        }else{
+            return response()->json(['status'=>0,'msg'=>'There was an error while updating excluded URLs, please try again later.']);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *

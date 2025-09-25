@@ -538,11 +538,13 @@ function buildAlertNewSuccess(txt){
 function clearAlerts(){
     $(`.alert`).remove()
     $(`.invalid-feedback`).remove()
+    $(`.success-feedback`).remove()
 }
 
 function clearAlertsNew(){
     $(`.alert`).remove()
     $(`.invalid-feedback`).remove()
+    $(`.success-feedback`).remove()
   }
 
 function scrollToTop(){

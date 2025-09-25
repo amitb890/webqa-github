@@ -1,30 +1,30 @@
-<div class="modal fade" id="addSitemapModal" aria-hidden="true" aria-labelledby="addSitemapModalLabel"
+<div class="modal fade" id="addBrokenLinksExcludedModal" aria-hidden="true" aria-labelledby="addBrokenLinksExcludedModalLabel"
       tabindex="-1">
     <div class="modal-dialog modal-dialog-centered analysis-profile-dialog">
     <div class="modal-content">
         <div class="modal-header analysis-profile-header">
-        <h1 class="modal-title fs-5" id="addSitemapModalLabel">
-            Enter XML Sitemaps
+        <h1 class="modal-title fs-5" id="addBrokenLinksExcludedModalLabel">
+            Exclude URLs from Broken Links Check
         </h1>
         </div>
         <div class="modal-body">
             <?php
-                      $cleaned = preg_replace('/\s+/', '', $settings->settingsSub->xml_sitemap_val);
+                      $cleaned = preg_replace('/\s+/', '', $settings->settingsSub->broken_links_excluded_urls);
                       $lines = explode(",", $cleaned);
                       $formatted = implode("\n", $lines);?>
             <div class="sitemap-container">
-                <div class="sitemap-numbers" id="sitemapNumbers"></div>
+                <div class="sitemap-numbers" id="brokenLinksExcludedNumbers"></div>
                 <textarea
                       class="sitemap-textarea"
-                        placeholder="Enter each url in a new line"
-                        id="addSitemapVal"
+                        placeholder="Enter each URL in a new line"
+                        id="addBrokenLinksExcludedVal"
                         cols="30"
                         rows="10">{{ htmlspecialchars($formatted) }}</textarea>
             </div>
 
                     <div class="modal-footer-alert"></div>
         <div class="modal-footer">
-        <button class="btn btn_primary rounded-pill" id="confirmAddSitemap">
+        <button class="btn btn_primary rounded-pill" id="confirmAddBrokenLinksExcluded">
             Save
         </button>
         </div>

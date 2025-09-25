@@ -4314,6 +4314,10 @@ h6 {
   color: #222222;
 }
 
+.urls-list-container textarea{
+  margin-bottom: 15px;
+}
+
 .form-card-input{
   position: relative;
 }
@@ -13492,4 +13496,45 @@ nav .nav-tabs{
     padding: 6px 12px;
     font-size: 12px;
   }
+}
+
+/* Sitemap numbering styles */
+.sitemap-container {
+  position: relative;
+  display: flex;
+  font-family: monospace;
+}
+
+.sitemap-numbers {
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-right: none;
+  border-radius: 4px 0 0 4px;
+  color: #6c757d;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre;
+  user-select: none;
+  z-index: 1;
+  min-height: 200px;
+  box-sizing: border-box;
+}
+
+.sitemap-textarea {
+  padding-left: 50px !important;
+  border-radius: 0 4px 4px 0 !important;
+  font-family: monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  resize: vertical;
+  border-left: none !important;
+}
+
+.sitemap-textarea:focus {
+  border-left: none !important;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }

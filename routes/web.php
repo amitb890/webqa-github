@@ -113,7 +113,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/app-analysis', [App\Http\Controllers\PagesController::class, 'appAnalysis'])->name('app-analysis');
         Route::resource('profile', App\Http\Controllers\ProfileController::class);
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
-        Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap'); 
+        Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap');
+        Route::put('settings/save-broken-links-excluded/{id}', [App\Http\Controllers\SettingsController::class, 'saveBrokenLinksExcluded'])->name('saveBrokenLinksExcluded'); 
         Route::resource('reports', App\Http\Controllers\ReportsController::class);
         Route::post('set-active-project', [App\Http\Controllers\ReportsController::class, 'setActiveProject'])->name('setActiveProject');
 

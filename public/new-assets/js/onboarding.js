@@ -7,7 +7,7 @@ $(document).ready(function(){
             this.formData = {};
             this.isProcessing = false;
             this.step = 1; // For image management
-            this.maxExecutionTime = 60000; // 1 minute in milliseconds (easily changeable)
+            this.maxExecutionTime = 600000; // 1 minute in milliseconds (easily changeable)
             this.activeRequests = []; // Track active requests
             this.activeTimeouts = []; // Track active timeouts
             this.init();
@@ -157,6 +157,9 @@ $(document).ready(function(){
                         list += i === data.urls.length - 1 ? url.trim() : url.trim() + "\n";
                     });
                     $("#urlsList").html(list);
+                    
+                    // Show success message in formSetp3
+                    this.showUrlsSuccessMessage(data.urls.length);
                     
                     // Update UI with success message
                     $(".form-single-text").addClass("success");
@@ -422,8 +425,23 @@ $(document).ready(function(){
 
         showLimitedUrlsAlert() {
             // Show alert when only root URL is available due to errors/timeout
-            const alertHtml = buildAlertNew('We couldn\'t detect more URLs from your sitemap due to timeout, 403/404 errors, or other issues. Only the root URL has been added. You can add more URLs manually if needed.');
-            $('#formSetp3 .form-card-input').after(alertHtml);
+            const alertHtml = displayAlertSimple({
+                msg: 'We couldn\'t detect more URLs from your sitemap due to timeout, 403/404 errors, or other issues. Only the root URL has been added. You can add more URLs manually if needed.',
+                status: 0
+            });
+            $('#urlsList')[0].parentElement.appendChild(alertHtml);
+        }
+
+        showUrlsSuccessMessage(urlCount) {
+            // Clear any existing alerts first
+            $('#formSetp3 .alert').remove();
+            
+            // Show success message for URLs detected using webqa__alert styling
+            const successAlert = buildAlert({
+                msg: `Successfully detected ${urlCount} URLs from your sitemap and added them to the list.`,
+                status: 1
+            });
+            $('#urlsList')[0].parentElement.appendChild(successAlert);
         }
 
         async handleSkip(stepNumber) {

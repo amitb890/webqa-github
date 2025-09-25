@@ -9,6 +9,7 @@
 <div class="setting-area">
 
 @include("components.modal-add-sitemap", ["settings" => $settings])
+@include("components.modal-add-broken-links-excluded", ["settings" => $settings])
 
   <!-- setting menu area start -->
   <div class="setting-menu-area d-none d-sm-block">
@@ -5546,8 +5547,8 @@
 
 
 
-          <!-- single accordion -->
-          <div class="accor-single-item">
+           <!-- single accordion -->
+           <div class="accor-single-item">
             <div class="accor-head">
               <div class="accor-title-btn">
                 <button>
@@ -5593,6 +5594,26 @@
                       Check for all broken links(links that do not have 200 status code)
                       </label>
                     </div>
+                    <div class="form-check">
+                      <input
+                        class="form-check-input hideInputCheck"
+                        type="checkbox"
+                        id="brokenLinksExcludeUrls"
+                        {{ $settings->settingsSub->broken_links_exclude_urls ? "checked" : "" }}
+                      />
+                      <label
+                        class="form-check-label"
+                        for="brokenLinksExcludeUrls"
+                      >
+                                            Exclude specific URLs from broken links check
+                    </label>
+                  </div>
+                  <div class="hideInputCheckElement">
+                    <button type="button" class="btn btn-outline-primary add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                      <i class="fas fa-plus"></i> Add Excluded URLs
+                    </button>
+                    <div class="mt-2" id="brokenLinksExcludedPreview"></div>
+                  </div>
                 </div>
                 <div class="accor-content-button">
                   <input
@@ -5756,8 +5777,20 @@
     var addSitemapModal = new bootstrap.Modal(document.getElementById('addSitemapModal'), {
       keyboard: false
     })
+    var addBrokenLinksExcludedModal = new bootstrap.Modal(document.getElementById('addBrokenLinksExcludedModal'), {
+      keyboard: false
+    })
     const settings = {!! $settings->toJson() !!};
     const project = {!! $project->toJson() !!};
+
+    // Initialize broken links excluded preview on page load
+    $(document).ready(function() {
+      const excludedUrls = settings.settingsSub.broken_links_excluded_urls;
+      if (excludedUrls) {
+        const urlsArray = excludedUrls.split(',').map(url => url.trim()).filter(url => url);
+        updateBrokenLinksExcludedPreview(urlsArray);
+      }
+    });
 
     const defaultMetaTitle = {
         "switchMetaTitle": 1,
@@ -6730,6 +6763,77 @@
     addMoreSitemap(this)
   })
 
+  // Initialize sitemap numbering when modal is shown
+  $('#addSitemapModal').on('shown.bs.modal', function () {
+    updateSitemapNumbers();
+  });
+
+  // Handle textarea input and Enter key for sitemap numbering
+  $("#addSitemapVal").on('input keydown', function(e) {
+    if (e.key === 'Enter') {
+      // Allow the default behavior first
+      setTimeout(() => {
+        updateSitemapNumbers();
+      }, 0);
+    } else {
+      // Update numbers on any input change
+      updateSitemapNumbers();
+    }
+  });
+
+  // Handle paste events
+  $("#addSitemapVal").on('paste', function() {
+    setTimeout(() => {
+      updateSitemapNumbers();
+    }, 0);
+  });
+
+  // Sync scroll between textarea and numbers
+  $("#addSitemapVal").on('scroll', function() {
+    const numbersDiv = document.getElementById('sitemapNumbers');
+    if (numbersDiv) {
+      numbersDiv.scrollTop = this.scrollTop;
+    }
+  });
+
+  // Broken Links Excluded Modal Event Handlers
+  $(".add-more-broken-links-excluded").on("click", function(){
+    addMoreBrokenLinksExcluded(this)
+  })
+
+  // Initialize broken links excluded numbering when modal is shown
+  $('#addBrokenLinksExcludedModal').on('shown.bs.modal', function () {
+    updateBrokenLinksExcludedNumbers();
+  });
+
+  // Handle textarea input and Enter key for broken links excluded numbering
+  $("#addBrokenLinksExcludedVal").on('input keydown', function(e) {
+    if (e.key === 'Enter') {
+      // Allow the default behavior first
+      setTimeout(() => {
+        updateBrokenLinksExcludedNumbers();
+      }, 0);
+    } else {
+      // Update numbers on any input change
+      updateBrokenLinksExcludedNumbers();
+    }
+  });
+
+  // Handle paste events for broken links excluded
+  $("#addBrokenLinksExcludedVal").on('paste', function() {
+    setTimeout(() => {
+      updateBrokenLinksExcludedNumbers();
+    }, 0);
+  });
+
+  // Sync scroll between textarea and numbers for broken links excluded
+  $("#addBrokenLinksExcludedVal").on('scroll', function() {
+    const numbersDiv = document.getElementById('brokenLinksExcludedNumbers');
+    if (numbersDiv) {
+      numbersDiv.scrollTop = this.scrollTop;
+    }
+  });
+
   $("#confirmAddSitemap").on("click", function(){
     clearAlerts()
     const val = $("#addSitemapVal").val();
@@ -6805,6 +6909,33 @@
     }
   })
 
+  $("#confirmAddBrokenLinksExcluded").on("click", function(){
+    clearAlerts()
+    const val = $("#addBrokenLinksExcludedVal").val();
+    // Split, trim, filter, and remove duplicates
+    let excludedUrlsArray = val
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line);
+    excludedUrlsArray = Array.from(new Set(excludedUrlsArray));
+    const lines = excludedUrlsArray.join(',');
+
+    if(validateAddBrokenLinksExcluded(val)){
+      saveBrokenLinksExcluded(lines)
+        .done(function(data){
+          if(data.status === 1){
+            addBrokenLinksExcludedModal.toggle()
+            const alert = new Toast("Excluded URLs updated successfully. Refresh the page to take effect");
+            alert.display()
+            // Update textarea with only unique URLs (one per line)
+            $("#addBrokenLinksExcludedVal").val(excludedUrlsArray.join('\n'));
+            // Update preview
+            updateBrokenLinksExcludedPreview(excludedUrlsArray);
+          }
+      });
+    }
+  })
+
 
   function saveSitemap(val){
     return $.ajax({
@@ -6844,6 +6975,101 @@
 
   function addMoreSitemap(element){
     addSitemapModal.toggle()
+  }
+
+  function updateSitemapNumbers() {
+    const textarea = document.getElementById('addSitemapVal');
+    const numbersDiv = document.getElementById('sitemapNumbers');
+    
+    if (!textarea || !numbersDiv) return;
+    
+    const lines = textarea.value.split('\n');
+    const lineCount = lines.length;
+    
+    // Generate numbers for each line
+    let numbersText = '';
+    for (let i = 1; i <= lineCount; i++) {
+      numbersText += i + '\n';
+    }
+    
+    // Update the numbers display
+    numbersDiv.textContent = numbersText;
+    
+    // Sync scroll position
+    numbersDiv.scrollTop = textarea.scrollTop;
+  }
+
+  function updateBrokenLinksExcludedNumbers() {
+    const textarea = document.getElementById('addBrokenLinksExcludedVal');
+    const numbersDiv = document.getElementById('brokenLinksExcludedNumbers');
+    
+    if (!textarea || !numbersDiv) return;
+    
+    const lines = textarea.value.split('\n');
+    const lineCount = lines.length;
+    
+    // Generate numbers for each line
+    let numbersText = '';
+    for (let i = 1; i <= lineCount; i++) {
+      numbersText += i + '\n';
+    }
+    
+    // Update the numbers display
+    numbersDiv.textContent = numbersText;
+    
+    // Sync scroll position
+    numbersDiv.scrollTop = textarea.scrollTop;
+  }
+
+  function addMoreBrokenLinksExcluded(element){
+    addBrokenLinksExcludedModal.toggle()
+  }
+
+  function updateBrokenLinksExcludedPreview(urls) {
+    const previewDiv = document.getElementById('brokenLinksExcludedPreview');
+    if (!previewDiv) return;
+    
+    if (urls.length === 0) {
+      previewDiv.innerHTML = '<small class="text-muted">No excluded URLs added yet.</small>';
+    } else {
+      let previewHtml = '<small class="text-muted">Excluded URLs (' + urls.length + '):</small><br>';
+      urls.forEach((url, index) => {
+        previewHtml += '<small class="text-muted">' + (index + 1) + '. ' + url + '</small><br>';
+      });
+      previewDiv.innerHTML = previewHtml;
+    }
+  }
+
+  function validateAddBrokenLinksExcluded(excludedUrlsString){
+    clearAlerts()
+    let msg
+    if(excludedUrlsString === ""){
+      msg = "Please enter at least one URL to exclude"
+      alertData = {
+          status: 0,
+          msg: msg
+      }
+      displayAlertSimple(".modal-footer-alert", alertData)
+      return false
+    }else{
+      return true
+    }
+  }
+
+  function saveBrokenLinksExcluded(val){
+    return $.ajax({
+          url : `/settings/save-broken-links-excluded/${settings.id}`,
+          type : 'put',
+          aysnc: false,
+          data: {
+              "_token": $('meta[name="csrf-token"]').attr('content'), 
+              "excludedUrlsString": val,
+          },       
+          success: function(data) {
+            
+          },error: function(data){
+          }
+    });
   }
 
   function updateHTTPInput(){
