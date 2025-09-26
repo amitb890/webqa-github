@@ -2,10 +2,13 @@
       tabindex="-1">
     <div class="modal-dialog modal-dialog-centered analysis-profile-dialog">
     <div class="modal-content">
-        <div class="modal-header analysis-profile-header">
+        <div class="modal-header modal-header-ignore-list analysis-profile-header">
         <h1 class="modal-title fs-5" id="addBrokenLinksExcludedModalLabel">
-            Exclude URLs from Broken Links Check
+            Ignore List
         </h1>
+        <p>
+           The below links will not be checked for Broken Links test for this project.
+        </p>
         </div>
         <div class="modal-body">
             <?php

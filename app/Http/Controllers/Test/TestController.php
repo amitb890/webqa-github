@@ -3802,7 +3802,7 @@ class TestController extends Controller
 
         if($output->status){
             if($output->isBrokenLinkPresent){
-                $message = "Your page has " . $output->totalBrokenLinks . " broken links, please see the list below.";
+                $message = "Your page has " . count((array) $output->results) . " broken links, please see the list below.";
             }else{
                 $message = "There were 0 broken links found in your web page.";
             }

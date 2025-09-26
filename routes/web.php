@@ -257,4 +257,30 @@ Route::namespace("Admin")->prefix('control')->group(function(){
     });
 });
 
+
+
+
+
+Route::get('/aboutus', function () {
+    return view('imran-live-pages.aboutus');
+});
+Route::get('/404-error-page', function () {
+    return view('imran-live-pages.404-error-page');
+});
+Route::get('/feature-root-page', function () {
+    return view('imran-live-pages.feature-root-page');
+});
+Route::get('/feature-childpage-webtracker', function () {
+    return view('imran-live-pages.feature-childpage-webtracker');
+});
+Route::get('/feature-childpage-settings', function () {
+    return view('imran-live-pages.feature-childpage-settings');
+});
+Route::get('/feature-childpage-reports', function () {
+    return view('imran-live-pages.feature-childpage-reports');
+});
+Route::get('/feature-childpage-audtest', function () {
+    return view('imran-live-pages.feature-childpage-audtest');
+});
+
 require __DIR__.'/auth.php';

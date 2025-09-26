@@ -93,6 +93,9 @@ h6 {
   color: var(--dark);
 }
 
+.modal-title {
+  font-weight: 300;
+}
 .table-responsive {
   white-space: nowrap;
   overflow-x: auto;
@@ -5570,10 +5573,7 @@ h6 {
   color: #6e6e6e;
   margin-left: auto;
 }
-.meta-list-brokenBody h1 {
-  font-size: 15px !important;
-  color: #222222;
-}
+
 .meta-list-brokenBody .modal-header > div {
   display: block;
   align-items: center;
@@ -5596,10 +5596,10 @@ h6 {
   gap: 5px;
 }
 .meta-list-brokenBody .modal-header .btn-close {
-  top: 10px;
   position: absolute;
-  right: 10px;
   opacity: 0.3;
+  top: 13px;
+  right: 13px;
 }
 .meta-list-brokenBody .modal-header .btn-close:focus {
   box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
@@ -12993,10 +12993,33 @@ nav .nav-tabs{
 
 .broken-links-card{
   background: #f6e1e2;
-  width: 900px;
 }
 
+.add-more-broken-links-excluded{
+  font-size: 14px;
+}
 
+.modal-footer, .modal-header{
+  border: 0;
+}
+
+.modal-footer-alert {
+  padding: 15px 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+.modal-header-ignore-list{
+  display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.modal-header-ignore-list h1{
+  font-weight: 400!important;
+  margin-bottom: 10px;
+}
 
 .broken-links-table thead{
   padding-bottom: 20px;
@@ -13021,7 +13044,7 @@ nav .nav-tabs{
 .ignore-link-btn{
   background: none;
   border: none;
-  color: #0d6efd;
+  color: var(--primary);
 }
 
 .ignore-link-btn:hover{
@@ -13033,7 +13056,7 @@ nav .nav-tabs{
   font-size: 14px;
   font-weight: 500;
   color: var(--dark);
-  padding-bottom: 20px;
+  padding-bottom: 10px;
   border: 0;
 }
 
@@ -13402,6 +13425,7 @@ nav .nav-tabs{
   display: block;
   box-sizing: border-box;
   text-align: left; /* or center if desired */
+  font-weight: 300;
 }
 
 .broken-links-table thead th:first-child,
@@ -13423,10 +13447,18 @@ nav .nav-tabs{
   text-decoration: none;
 }
 
+#broken-links-modal .broken-link-url{
+  max-width: 400px;
+}
+
 .broken-link-url{
-  color: #007bff;
-  text-decoration: underline;
+  color: #333;
   word-break: break-all;
+  font-weight: 100;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 600px;
 }
 
 .broken-links-table .url-cell a:hover {
@@ -13434,7 +13466,7 @@ nav .nav-tabs{
 }
 
 .broken-links-table .ignore-all-link {
-  color: #007bff;
+  color: var(--primary);
   text-decoration: none;
 }
 
@@ -13509,12 +13541,10 @@ nav .nav-tabs{
   position: absolute;
   left: 0;
   top: 0;
-  padding: 8px 12px;
-  background-color: #f8f9fa;
-  border: 1px solid #dee2e6;
+  padding: 4px 12px;
   border-right: none;
   border-radius: 4px 0 0 4px;
-  color: #6c757d;
+  color: #ccc;
   font-size: 14px;
   line-height: 1.5;
   white-space: pre;
@@ -13522,18 +13552,27 @@ nav .nav-tabs{
   z-index: 1;
   min-height: 200px;
   box-sizing: border-box;
+  height: 100%;
+  border: 0;
+  padding-top: 12px;
 }
 
 .sitemap-textarea {
   padding-left: 50px !important;
-  border-radius: 0 4px 4px 0 !important;
   font-family: monospace;
   font-size: 14px;
   line-height: 1.5;
   resize: vertical;
-  border-left: none !important;
+  width: 100%;
+  padding-top: 10px;
+  border-radius: 10px;
+  border-color: #ccc;
+  color: #666;
 }
 
+.sitemap-textarea:focus {
+  outline: none; /* removes blue outline */
+}
 .sitemap-textarea:focus {
   border-left: none !important;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);

@@ -5609,9 +5609,9 @@
                     </label>
                   </div>
                   <div class="hideInputCheckElement">
-                    <button type="button" class="btn btn-outline-primary add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
-                      <i class="fas fa-plus"></i> Add Excluded URLs
-                    </button>
+                    <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                      Ignore List
+                    </a>
                     <div class="mt-2" id="brokenLinksExcludedPreview"></div>
                   </div>
                 </div>
@@ -6925,7 +6925,7 @@
         .done(function(data){
           if(data.status === 1){
             addBrokenLinksExcludedModal.toggle()
-            const alert = new Toast("Excluded URLs updated successfully. Refresh the page to take effect");
+            const alert = new Toast("Excluded URLs updated successfully.");
             alert.display()
             // Update textarea with only unique URLs (one per line)
             $("#addBrokenLinksExcludedVal").val(excludedUrlsArray.join('\n'));
@@ -7011,7 +7011,7 @@
     // Generate numbers for each line
     let numbersText = '';
     for (let i = 1; i <= lineCount; i++) {
-      numbersText += i + '\n';
+      numbersText += i + ". " + '\n';
     }
     
     // Update the numbers display
@@ -7026,18 +7026,18 @@
   }
 
   function updateBrokenLinksExcludedPreview(urls) {
-    const previewDiv = document.getElementById('brokenLinksExcludedPreview');
-    if (!previewDiv) return;
+    // const previewDiv = document.getElementById('brokenLinksExcludedPreview');
+    // if (!previewDiv) return;
     
-    if (urls.length === 0) {
-      previewDiv.innerHTML = '<small class="text-muted">No excluded URLs added yet.</small>';
-    } else {
-      let previewHtml = '<small class="text-muted">Excluded URLs (' + urls.length + '):</small><br>';
-      urls.forEach((url, index) => {
-        previewHtml += '<small class="text-muted">' + (index + 1) + '. ' + url + '</small><br>';
-      });
-      previewDiv.innerHTML = previewHtml;
-    }
+    // if (urls.length === 0) {
+    //   previewDiv.innerHTML = '<small class="text-muted">No excluded URLs added yet.</small>';
+    // } else {
+    //   let previewHtml = '<small class="text-muted">Excluded URLs (' + urls.length + '):</small><br>';
+    //   urls.forEach((url, index) => {
+    //     previewHtml += '<small class="text-muted">' + (index + 1) + '. ' + url + '</small><br>';
+    //   });
+    //   previewDiv.innerHTML = previewHtml;
+    // }
   }
 
   function validateAddBrokenLinksExcluded(excludedUrlsString){

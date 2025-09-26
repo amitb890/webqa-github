@@ -1259,7 +1259,6 @@ function getAllValues(className){
     let obj = {}
     inputs.forEach(el=>{
         let val = el.value
-
         // building casing excluded values
         switch(el.id){
             case "excludedWordsCasingVal":case "UrlStopWordsVal":
@@ -1271,7 +1270,8 @@ function getAllValues(className){
                 el.value = val
                 el.innerHTML = val
                 break;
-            case "brokenLinksExcludedUrlsVal":
+            case "addBrokenLinksExcludedVal":
+                console.log(val)
                 val = val.split("\n")
                 val = trimArray(val)
                 val = removeDuplicates(val)

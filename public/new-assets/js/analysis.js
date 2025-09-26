@@ -3146,12 +3146,32 @@ $( document ).ready(function() {
 
 
   function buildElement1(data, intentionalState){
+    let brokenLinksCount = 0
     if(data.title === 'Broken Links'){
+      // Count actual broken links by looping through data.allLinks
+      for (var key in data.allLinks) {
+        if (data.allLinks.hasOwnProperty(key)) {
+          let status
+          const state = data.allLinks[key]["state"];
+
+          if(state == "fulfilled"){
+            const value = data.allLinks[key]["value"];
+            status = value["status"]
+          }else{
+            status = 404
+          }
+
+          if(status != 200 && status != 0 && status != 405){
+            brokenLinksCount++
+          }
+        }
+      }
+
       brokenLinksData = data
       // Store the broken links data globally for the ignore functionality
       window.currentAnalysisData = {
         allLinks: data.allLinks,
-        totalBrokenLinks: data.totalBrokenLinks || 0
+        totalBrokenLinks: brokenLinksCount
       };
     }
       // building problems
@@ -3175,6 +3195,7 @@ $( document ).ready(function() {
           <path d="M13.8329 6.41288C13.7399 6.31915 13.6293 6.24476 13.5075 6.19399C13.3856 6.14322 13.2549 6.11708 13.1229 6.11708C12.9909 6.11708 12.8602 6.14322 12.7383 6.19399C12.6164 6.24476 12.5058 6.31915 12.4129 6.41288L10.1229 8.71288L7.83288 6.41288C7.64458 6.22458 7.38918 6.11879 7.12288 6.11879C6.85658 6.11879 6.60119 6.22458 6.41288 6.41288C6.22458 6.60119 6.11879 6.85658 6.11879 7.12288C6.11879 7.38918 6.22458 7.64458 6.41288 7.83288L8.71288 10.1229L6.41288 12.4129C6.31915 12.5058 6.24476 12.6164 6.19399 12.7383C6.14322 12.8602 6.11708 12.9909 6.11708 13.1229C6.11708 13.2549 6.14322 13.3856 6.19399 13.5075C6.24476 13.6293 6.31915 13.7399 6.41288 13.8329C6.50585 13.9266 6.61645 14.001 6.73831 14.0518C6.86016 14.1025 6.99087 14.1287 7.12288 14.1287C7.25489 14.1287 7.3856 14.1025 7.50746 14.0518C7.62932 14.001 7.73992 13.9266 7.83288 13.8329L10.1229 11.5329L12.4129 13.8329C12.5058 13.9266 12.6164 14.001 12.7383 14.0518C12.8602 14.1025 12.9909 14.1287 13.1229 14.1287C13.2549 14.1287 13.3856 14.1025 13.5075 14.0518C13.6293 14.001 13.7399 13.9266 13.8329 13.8329C13.9266 13.7399 14.001 13.6293 14.0518 13.5075C14.1025 13.3856 14.1287 13.2549 14.1287 13.1229C14.1287 12.9909 14.1025 12.8602 14.0518 12.7383C14.001 12.6164 13.9266 12.5058 13.8329 12.4129L11.5329 10.1229L13.8329 7.83288C13.9266 7.73992 14.001 7.62932 14.0518 7.50746C14.1025 7.3856 14.1287 7.25489 14.1287 7.12288C14.1287 6.99087 14.1025 6.86016 14.0518 6.73831C14.001 6.61645 13.9266 6.50585 13.8329 6.41288ZM17.1929 3.05288C16.2704 2.09778 15.167 1.33596 13.9469 0.811868C12.7269 0.287778 11.4147 0.0119157 10.0869 0.000377568C8.7591 -0.0111606 7.44231 0.241856 6.21334 0.744665C4.98438 1.24747 3.86786 1.99001 2.92893 2.92893C1.99001 3.86786 1.24747 4.98438 0.744665 6.21334C0.241856 7.44231 -0.0111606 8.7591 0.000377568 10.0869C0.0119157 11.4147 0.287778 12.7269 0.811868 13.9469C1.33596 15.167 2.09778 16.2704 3.05288 17.1929C3.97535 18.148 5.0788 18.9098 6.29884 19.4339C7.51888 19.958 8.83108 20.2339 10.1589 20.2454C11.4867 20.2569 12.8035 20.0039 14.0324 19.5011C15.2614 18.9983 16.3779 18.2558 17.3168 17.3168C18.2558 16.3779 18.9983 15.2614 19.5011 14.0324C20.0039 12.8035 20.2569 11.4867 20.2454 10.1589C20.2339 8.83108 19.958 7.51888 19.4339 6.29884C18.9098 5.0788 18.148 3.97535 17.1929 3.05288ZM15.7829 15.7829C14.4749 17.0923 12.7534 17.9077 10.9117 18.0902C9.06993 18.2727 7.22189 17.8109 5.6824 16.7837C4.14292 15.7564 3.00724 14.2271 2.46886 12.4564C1.93047 10.6856 2.02269 8.78302 2.7298 7.07267C3.4369 5.36231 4.71516 3.95003 6.34677 3.07644C7.97839 2.20286 9.86242 1.92201 11.6779 2.28176C13.4934 2.6415 15.1279 3.61957 16.3031 5.04934C17.4783 6.47911 18.1214 8.27212 18.1229 10.1229C18.1265 11.1742 17.9215 12.2157 17.5198 13.1873C17.1182 14.1588 16.5278 15.041 15.7829 15.7829Z" fill="#FA5457"></path>
         </svg>`
       }
+
       
       div.innerHTML =  `
                   <div class="card">
@@ -3327,7 +3348,7 @@ $( document ).ready(function() {
 
                         ${
                           data.title === 'Broken Links' ? `
-                            <div class="card-inner-content ${data.totalBrokenLinks > 0 ? '' : 'd-none'}">
+                            <div class="card-inner-content ${brokenLinksCount > 0 ? '' : 'd-none'}">
                               <div class="card broken-links-card">
                                 <div class="card-body">
                                   <div class="meta-list-single">
@@ -3363,6 +3384,7 @@ $( document ).ready(function() {
                                         </div>
                                       </div>
                                     </div>
+                                    <div class="modal-footer-alert"></div>
                                   </div>
                                 </div>
                               </div>
@@ -4591,8 +4613,30 @@ $( document ).ready(function() {
       let project = document.querySelector("#activeProject").getAttribute("data-val")
       const projectId = getStringPart(project, "-", 1)
       
+      // Detect if the button was clicked from modal or card body
+      const isFromModal = $(this).closest('#broken-links-modal').length > 0;
+      let alertContainer;
+      let closestCardBody = null;
+      
+      if (isFromModal) {
+        alertContainer = '.modal-footer-alert';
+      } else {
+        // Find the closest card body from the clicked button and get its selector
+        closestCardBody = $(this).closest('.content-element');
+        if (closestCardBody.length > 0) {
+          // Create a unique selector for this specific card body
+          const cardBodyId = closestCardBody.attr('id') || 'content-element-' + Math.random().toString(36).substr(2, 9);
+          if (!closestCardBody.attr('id')) {
+            closestCardBody.attr('id', cardBodyId);
+          }
+          alertContainer = '#' + cardBodyId;
+        } else {
+          alertContainer = '.analysis-content-body';
+        }
+      }
+      
       if (!url) {
-        Controls.handleAlert(0, "No URL to ignore.", ".analysis-content-body", true);
+        Controls.handleAlert(0, "No URL to ignore.", alertContainer, true);
         return;
       }
       
@@ -4608,8 +4652,8 @@ $( document ).ready(function() {
         },
         success: function(response) {
           if (response.success) {
-            // Show success alert
-            Controls.handleAlert(3, `URL "${url}" has been added to the ignore list.`, ".analysis-content-body", true);
+            // Show success alert in appropriate container
+            Controls.handleAlert(3, `URL "${url}" has been added to the ignore list.`, alertContainer, true);
             
             // Find and update the current analysis data to remove the ignored URL
             const currentAnalysisData = window.currentAnalysisData;
@@ -4617,42 +4661,62 @@ $( document ).ready(function() {
               // Remove the ignored URL from allLinks
               delete currentAnalysisData.allLinks[url];
               
-              // Re-render both broken links tables
-              const brokenLinksCard = document.querySelector('.broken-links-card .meta-list-single');
-              const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
-              
-              if (brokenLinksCard) {
-                brokenLinksCard.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, true);
-              }
-              
-              if (brokenLinksModal) {
-                brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
-              }
-              
-              // Update the broken links count if it exists
-              const totalBrokenLinksElement = document.querySelector('.broken-links-card');
-              if (totalBrokenLinksElement && currentAnalysisData.totalBrokenLinks !== undefined) {
-                const remainingBrokenLinks = Object.keys(currentAnalysisData.allLinks).filter(key => {
-                  const state = currentAnalysisData.allLinks[key]["state"];
-                  let status = 404;
-                  if (state === "fulfilled") {
-                    const value = currentAnalysisData.allLinks[key]["value"];
-                    status = value["status"];
-                  }
-                  return status != 200 && status != 0 && status != 405;
-                }).length;
+              // Re-render based on context
+              if (isFromModal) {
+                // If clicked from modal, update both modal and card
+                const brokenLinksCard = document.querySelector('.broken-links-card .meta-list-single');
+                const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
                 
-                currentAnalysisData.totalBrokenLinks = remainingBrokenLinks;
-                totalBrokenLinksElement.textContent = remainingBrokenLinks;
+                if (brokenLinksCard) {
+                  brokenLinksCard.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, true);
+                }
                 
-                // Hide the broken links section if no more broken links
-                if (remainingBrokenLinks === 0) {
-                  const brokenLinksSection = document.querySelector('.card-inner-content');
-                  if (brokenLinksSection) {
-                    brokenLinksSection.classList.add('d-none');
+                if (brokenLinksModal) {
+                  brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+                }
+              } else {
+                // If clicked from card body, update the specific card body directly
+                if (closestCardBody && closestCardBody.length > 0) {
+                  const cardMetaListSingle = closestCardBody.find('.meta-list-single');
+                  if (cardMetaListSingle.length > 0) {
+                    cardMetaListSingle.html(UI.getBrokenLinks(currentAnalysisData.allLinks, true));
                   }
                 }
+                
+                // Also update the modal if it exists (for consistency)
+                const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
+                if (brokenLinksModal) {
+                  brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+                }
               }
+
+
+                 // Update the broken links count if it exists
+                 const totalBrokenLinksElement = document.querySelector('.broken-links-card');
+                 if (totalBrokenLinksElement && currentAnalysisData.totalBrokenLinks !== undefined) {
+                   const remainingBrokenLinks = Object.keys(currentAnalysisData.allLinks).filter(key => {
+                     const state = currentAnalysisData.allLinks[key]["state"];
+                     let status = 404;
+                     if (state === "fulfilled") {
+                       const value = currentAnalysisData.allLinks[key]["value"];
+                       status = value["status"];
+                     }
+                     return status != 200 && status != 0 && status != 405;
+                   }).length;
+                   
+                  //  currentAnalysisData.totalBrokenLinks = remainingBrokenLinks;
+                  //  totalBrokenLinksElement.textContent = remainingBrokenLinks;
+                   
+                   // Hide the broken links section if no more broken links
+                   if (remainingBrokenLinks === 0) {
+                     const brokenLinksSection = document.querySelector('.card-inner-content');
+                     if (brokenLinksSection) {
+                       brokenLinksSection.classList.add('d-none');
+                     }
+                   }
+                 }
+              
+    
             } else {
               // Fallback: if global data is not available, just remove the row from current view
               $(e.target).closest('tr').fadeOut(300, function() {
@@ -4660,12 +4724,12 @@ $( document ).ready(function() {
               });
             }
           } else {
-            Controls.handleAlert(0, response.message || "Failed to ignore URL.", ".analysis-content-body", true);
+            Controls.handleAlert(0, response.message || "Failed to ignore URL.", alertContainer, true);
           }
         },
         error: function(xhr) {
           const response = xhr.responseJSON || {};
-          Controls.handleAlert(0, response.message || "An error occurred while ignoring the URL.", ".analysis-content-body", true);
+          Controls.handleAlert(0, response.message || "An error occurred while ignoring the URL.", alertContainer, true);
         }
       });
     });
@@ -4677,8 +4741,30 @@ $( document ).ready(function() {
       let project = document.querySelector("#activeProject").getAttribute("data-val")
       const projectId = getStringPart(project, "-", 1)
       
+      // Detect if the button was clicked from modal or card body
+      const isFromModal = $(this).closest('#broken-links-modal').length > 0;
+      let alertContainer;
+      let closestCardBody = null;
+      
+      if (isFromModal) {
+        alertContainer = '.modal-footer-alert';
+      } else {
+        // Find the closest card body from the clicked button and get its selector
+        closestCardBody = $(this).closest('.content-element');
+        if (closestCardBody.length > 0) {
+          // Create a unique selector for this specific card body
+          const cardBodyId = closestCardBody.attr('id') || 'content-element-' + Math.random().toString(36).substr(2, 9);
+          if (!closestCardBody.attr('id')) {
+            closestCardBody.attr('id', cardBodyId);
+          }
+          alertContainer = '#' + cardBodyId;
+        } else {
+          alertContainer = '.analysis-content-body';
+        }
+      }
+      
       if (!urls || urls.length === 0) {
-        Controls.handleAlert(0, "No URLs to ignore.", ".analysis-content-body", true);
+        Controls.handleAlert(0, "No URLs to ignore.", alertContainer, true);
         return;
       }
       
@@ -4700,8 +4786,8 @@ $( document ).ready(function() {
             // Find and update the current analysis data to remove all ignored URLs
             const currentAnalysisData = window.currentAnalysisData;
 
-            // Show success alert
-            Controls.handleAlert(3, `All URL(s) have been added to the ignore list.`, ".analysis-content-body", true);
+            // Show success alert in appropriate container
+            Controls.handleAlert(3, `All URL(s) have been added to the ignore list.`, alertContainer, true);
 
             if (currentAnalysisData && currentAnalysisData.allLinks) {
               // Remove all ignored URLs from allLinks
@@ -4709,16 +4795,33 @@ $( document ).ready(function() {
                 delete currentAnalysisData.allLinks[url];
               });
               
-              // Re-render both broken links tables
-              const brokenLinksCard = document.querySelector('.broken-links-card .meta-list-single');
-              const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
-              
-              if (brokenLinksCard) {
-                brokenLinksCard.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, true);
-              }
-              
-              if (brokenLinksModal) {
-                brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+              // Re-render based on context
+              if (isFromModal) {
+                // If clicked from modal, update both modal and card
+                const brokenLinksCard = document.querySelector('.broken-links-card .meta-list-single');
+                const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
+                
+                if (brokenLinksCard) {
+                  brokenLinksCard.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, true);
+                }
+                
+                if (brokenLinksModal) {
+                  brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+                }
+              } else {
+                // If clicked from card body, update the specific card body directly
+                if (closestCardBody && closestCardBody.length > 0) {
+                  const cardMetaListSingle = closestCardBody.find('.meta-list-single');
+                  if (cardMetaListSingle.length > 0) {
+                    cardMetaListSingle.html(UI.getBrokenLinks(currentAnalysisData.allLinks, true));
+                  }
+                }
+                
+                // Also update the modal if it exists (for consistency)
+                const brokenLinksModal = document.querySelector('#broken-links-modal .meta-list-single');
+                if (brokenLinksModal) {
+                  brokenLinksModal.innerHTML = UI.getBrokenLinks(currentAnalysisData.allLinks, false);
+                }
               }
               
               // Update the broken links count if it exists
@@ -4752,12 +4855,12 @@ $( document ).ready(function() {
               });
             }
           } else {
-            Controls.handleAlert(0, response.message || "Failed to ignore URLs.", ".analysis-content-body", true);
+            Controls.handleAlert(0, response.message || "Failed to ignore URLs.", alertContainer, true);
           }
         },
         error: function(xhr) {
           const response = xhr.responseJSON || {};
-          Controls.handleAlert(0, response.message || "An error occurred while ignoring the URLs.", ".analysis-content-body", true );
+          Controls.handleAlert(0, response.message || "An error occurred while ignoring the URLs.", alertContainer, true );
         }
       });
     });
