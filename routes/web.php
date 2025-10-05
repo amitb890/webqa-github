@@ -262,25 +262,22 @@ Route::namespace("Admin")->prefix('control')->group(function(){
 
 
 Route::get('/aboutus', function () {
-    return view('imran-live-pages.aboutus');
+    return view('aboutus');
 });
-Route::get('/404-error-page', function () {
-    return view('imran-live-pages.404-error-page');
+Route::get('/features', function () {
+    return view('feature-root-page');
 });
-Route::get('/feature-root-page', function () {
-    return view('imran-live-pages.feature-root-page');
+Route::get('/features/website-tracker', function () {
+    return view('feature-childpage-webtracker');
 });
-Route::get('/feature-childpage-webtracker', function () {
-    return view('imran-live-pages.feature-childpage-webtracker');
+Route::get('/features/settings', function () {
+    return view('feature-childpage-settings');
 });
-Route::get('/feature-childpage-settings', function () {
-    return view('imran-live-pages.feature-childpage-settings');
+Route::get('/features/reports', function () {
+    return view('feature-childpage-reports');
 });
-Route::get('/feature-childpage-reports', function () {
-    return view('imran-live-pages.feature-childpage-reports');
-});
-Route::get('/feature-childpage-audtest', function () {
-    return view('imran-live-pages.feature-childpage-audtest');
+Route::get('/features/webpage-audit', function () {
+    return view('feature-childpage-audtest');
 });
 
 require __DIR__.'/auth.php';

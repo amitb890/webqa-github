@@ -1,9 +1,9 @@
 <header id="headerMain" class="header_main genarel_header_main">
         <nav class="navbar_main">
             <div class="container-fluid">
-            <a href="./index.html" class="navbar-brand">
+            <a href="{{ route('index') }}" class="navbar-brand">
                 <img
-                src="{{ asset('raw-files-css-js/assets/images/webQA_logo.png') }}"
+                src="{{ asset('new-assets/assets/images/webQA_logo.png') }}"
                 alt="WebQA"
                 width="78"
                 height="16"
@@ -12,6 +12,8 @@
             </a>
 
             <ul class="genarel_header_items">
+                <li><a href="#">Tools</a></li>
+                <li><a href="#">Features</a></li>
                 <li>
                 <div class="dropdown">
                     <a
@@ -21,7 +23,7 @@
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
                     >
-                    <span>Features</span>
+                    <span>Pricing</span>
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-end">
@@ -30,30 +32,10 @@
                     </ul>
                 </div>
                 </li>
-                <li>
-                <div class="dropdown">
-                    <a
-                    class="dropdown-toggle"
-                    href="#"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false"
-                    >
-                    <span>Tools</span>
-                    </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#">Stuff</a></li>
-                        <li><a class="dropdown-item" href="#">Stuff</a></li>
-                    </ul>
-                </div>
-                </li>
-                <li><a href="aboutus.html">About Us</a></li>
-                <li><a href="#">FAQ</a></li>
             </ul>
             <div class="login_area">
                 <a type="button" class="header_login" data-bs-toggle="modal" data-bs-target="#LoginexampleModal">Login</a>
-                <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+                <a href="#" class="btn btn_primary rounded-pill" data-bs-toggle="modal" data-bs-target="#LoginexampleModal">Start Free Trial</a>
             </div>
             <!-- Modal -->
             <div class="modal fade logIn_modal_area" id="LoginexampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"    aria-hidden="true">
@@ -70,7 +52,7 @@
                         <input type="email" placeholder="Email">
                         <div class="login_input_password">
                             <label for="login_pass" class="login_input_label">
-                            <span><img src="{{ asset('raw-files-css-js/assets/images/eye.png') }}" alt="icon"></span>
+                            <span><img src="{{ asset('new-assets/assets/images/eye.png') }}" alt="icon"></span>
                             </label>
                             <input type="password" placeholder="Password" id="login_pass">
                         </div>
@@ -80,11 +62,11 @@
                             <span>Or</span>
                         </div>
                         <a href="#" class="loginOr_btn">
-                            <img src="{{ asset('raw-files-css-js/assets/images/google.png') }}" alt="icon">
+                            <img src="{{ asset('new-assets/assets/images/google.png') }}" alt="icon">
                             <span>Login with Google</span>
                         </a>
                         <a href="#" class="loginOr_btn">
-                            <img src="{{ asset('raw-files-css-js/assets/images/facebook.png') }}" alt="icon">
+                            <img src="{{ asset('new-assets/assets/images/facebook.png') }}" alt="icon">
                             <span>Login with Facebook</span>
                         </a>
                         </form>

@@ -1318,3 +1318,507 @@ $(".sibar_collaps2").click(function () {
 });
 
 
+
+// IMRANS CODE
+
+// About Page FAQs, question dropdown
+function aboutUsFaqFunctionality(){
+  document.querySelectorAll(".as6-card").forEach((card) => {
+  card.addEventListener("click", function () {
+    const toggle = card.querySelector(".as6-card-toggle");
+    const arrow  = card.querySelector(".as6-card-question img");
+
+    // Toggle active class directly on the card
+    card.classList.toggle("active");
+
+    // Change arrow source smoothly
+    if (card.classList.contains("active")) {
+      arrow.src = "../new-assets/assets/images/aboutUs/up-arrow.svg";
+    } else {
+      arrow.src = "../new-assets/assets/images/aboutUs/down-arrow.svg";
+    }
+  });
+});
+
+document.querySelectorAll(".as6-card").forEach((card) => {
+  card.addEventListener("click", function () {
+    const heading = card.querySelector(".as6-card-question h5");
+
+    if (heading.style.color === "rgb(43, 86, 165)") { 
+      // reset styles
+      heading.style.color = "";
+      card.style.background = "";
+    } else {
+      // apply styles
+      heading.style.color = "#2b56a5";
+      card.style.background = "#f1f4f9";
+    }
+  });
+});
+}
+aboutUsFaqFunctionality();
+
+
+// About Page carousel, functionality
+function aboutUsCarouselFunctionality(){
+const cardsContainer = document.querySelector(".as5-cards");
+  const leftBtn = document.querySelector(".as5-bottom1");
+  const rightBtn = document.querySelector(".as5-bottom2");
+  if (!cardsContainer || !leftBtn || !rightBtn) return;
+
+  const cards = cardsContainer.querySelectorAll(".as5-card");
+  if (!cards.length) return;
+
+  const firstCard = cards[0];
+  const lastCard = cards[cards.length - 1];
+
+  // helper to update UI and store disabled state on the element
+  function applyUI({ leftDisabled, rightDisabled }) {
+    if (leftDisabled) {
+      leftBtn.style.background = "#e4e4e4";
+      leftBtn.style.cursor = "not-allowed";
+      leftBtn.dataset.disabled = "true";
+    } else {
+      leftBtn.style.background = "#2b56a5";
+      leftBtn.style.cursor = "pointer";
+      leftBtn.dataset.disabled = "false";
+    }
+
+    if (rightDisabled) {
+      rightBtn.style.background = "#e4e4e4";
+      rightBtn.style.cursor = "not-allowed";
+      rightBtn.dataset.disabled = "true";
+    } else {
+      rightBtn.style.background = "#2b56a5";
+      rightBtn.style.cursor = "pointer";
+      rightBtn.dataset.disabled = "false";
+    }
+  }
+
+  function isScrollable() {
+    // returns true if there's actually overflow to scroll
+    return cardsContainer.scrollWidth > cardsContainer.clientWidth + 1;
+  }
+
+  // compute card step (card width + gap)
+  function getStep() {
+    if (cards.length > 1) {
+      return cards[1].offsetLeft - cards[0].offsetLeft;
+    }
+    const gapStr = getComputedStyle(cardsContainer).gap || "0";
+    const gap = parseFloat(gapStr) || 0;
+    return cards[0].offsetWidth + gap;
+  }
+  let step = getStep();
+
+  // Fallback update using scrollLeft (if IntersectionObserver not available)
+  function updateByScroll() {
+    const maxScroll = Math.max(0, cardsContainer.scrollWidth - cardsContainer.clientWidth);
+    const scrollPos = Math.round(cardsContainer.scrollLeft);
+
+    if (!isScrollable()) {
+      applyUI({ leftDisabled: true, rightDisabled: true });
+      return;
+    }
+
+    const atStart = scrollPos <= 2; // tolerance for subpixel
+    const atEnd = scrollPos >= maxScroll - 2;
+    applyUI({ leftDisabled: atStart, rightDisabled: atEnd });
+  }
+
+  // IntersectionObserver approach (more robust)
+  let io = null;
+  if ("IntersectionObserver" in window) {
+    io = new IntersectionObserver(
+      (entries) => {
+        // determine the visibility of first and last card
+        let firstVisible = false;
+        let lastVisible = false;
+        for (const e of entries) {
+          if (e.target === firstCard) firstVisible = e.intersectionRatio >= 0.6;
+          if (e.target === lastCard) lastVisible = e.intersectionRatio >= 0.6;
+        }
+
+        if (!isScrollable()) {
+          applyUI({ leftDisabled: true, rightDisabled: true });
+          return;
+        }
+
+        // if first is mostly visible -> left disabled; if last mostly visible -> right disabled
+        applyUI({ leftDisabled: firstVisible, rightDisabled: lastVisible });
+      },
+      { root: cardsContainer, threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    io.observe(firstCard);
+    io.observe(lastCard);
+
+    // Force a tiny paint/scroll so IO triggers initial state reliably
+    requestAnimationFrame(() => {
+      cardsContainer.scrollLeft = Math.min(cardsContainer.scrollLeft + 0.001, cardsContainer.scrollWidth);
+      cardsContainer.scrollLeft = Math.max(cardsContainer.scrollLeft - 0.001, 0);
+    });
+  } else {
+    // fallback: wire scroll event
+    cardsContainer.addEventListener("scroll", updateByScroll, { passive: true });
+    // run initially
+    setTimeout(updateByScroll, 0);
+  }
+
+  // Guarded scrolling (do nothing if the button is disabled)
+  function guardScroll(dir) {
+    // recompute max scroll and pos for guard
+    const maxScroll = Math.max(0, cardsContainer.scrollWidth - cardsContainer.clientWidth);
+    const pos = Math.round(cardsContainer.scrollLeft);
+
+    if ((dir === -1 && pos <= 2) || (dir === 1 && pos >= maxScroll - 2)) {
+      return; // already at edge, ignore click
+    }
+
+    cardsContainer.scrollBy({ left: dir * step, behavior: "smooth" });
+  }
+
+  rightBtn.addEventListener("click", () => {
+    if (rightBtn.dataset.disabled === "true") return;
+    guardScroll(1);
+  });
+
+  leftBtn.addEventListener("click", () => {
+    if (leftBtn.dataset.disabled === "true") return;
+    guardScroll(-1);
+  });
+
+  // Keep step and UI accurate on resize / images/fonts load
+  window.addEventListener("resize", () => {
+    step = getStep();
+    if (!io) updateByScroll();
+  });
+
+  window.addEventListener("load", () => {
+    step = getStep();
+    if (!io) updateByScroll();
+  });
+
+  // final initial run (ensure something runs fast)
+  if (!io) {
+    updateByScroll();
+  } else {
+    // if IO exists, let it settle with a tiny delay
+    setTimeout(() => {
+      // defensive: if IO didn't mark anything (edge case), fallback to scroll-based check
+      // this also ensures UI is set even if IO timing is odd
+      const maxScroll = Math.max(0, cardsContainer.scrollWidth - cardsContainer.clientWidth);
+      const pos = Math.round(cardsContainer.scrollLeft);
+      if (!isScrollable()) applyUI({ leftDisabled: true, rightDisabled: true });
+      else applyUI({ leftDisabled: pos <= 2, rightDisabled: pos >= maxScroll - 2 });
+    }, 60);
+  }
+}
+aboutUsCarouselFunctionality();
+
+// Feature Child Page carousel functionality
+function featureChildPageSettingsCarousel() {
+  const cards = document.querySelectorAll(".fcs3-d2-card");
+  let activeIndex = Array.from(cards).findIndex(card => card.classList.contains("card-active"));
+
+  const leftArrow = document.querySelector(".fcs3-d3-d1"); // left div
+  const rightArrow = document.querySelector(".fcs3-d3-d2"); // right div
+
+  // Stop the function if the required elements don’t exist
+  if (cards.length === 0 || !leftArrow || !rightArrow) {
+    return;
+  }
+
+  function updateActiveCard(newIndex) {
+    if (newIndex < 0 || newIndex >= cards.length) return; // stop at edges
+
+    // remove active class from old card
+    cards[activeIndex].classList.remove("card-active");
+
+    // add active class to new card
+    activeIndex = newIndex;
+    cards[activeIndex].classList.add("card-active");
+
+    // optional: center/scroll the active card
+    cards[activeIndex].scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest"
+    });
+  }
+
+  leftArrow.addEventListener("click", () => {
+    updateActiveCard(activeIndex - 1);
+
+    // toggle arrow-active class
+    leftArrow.classList.add("arrow-active");
+    rightArrow.classList.remove("arrow-active");
+  });
+
+  rightArrow.addEventListener("click", () => {
+    updateActiveCard(activeIndex + 1);
+
+    // toggle arrow-active class
+    rightArrow.classList.add("arrow-active");
+    leftArrow.classList.remove("arrow-active");
+  });
+}
+
+featureChildPageSettingsCarousel();
+
+
+// feature Child Page Settings FAQs, Coding Best Practices dropdown
+function featureChildPageSettingsFaq(){
+  document.querySelectorAll(".fcs5-card").forEach((card) => {
+    card.addEventListener("click", function () {
+      const heading = card.querySelector(".fcs5-card-question h5");
+      const arrow   = card.querySelector(".fcs5-card-question img");
+
+      // toggle active class
+      card.classList.toggle("active");
+
+      // arrow change
+      if (card.classList.contains("active")) {
+        arrow.src = "../new-assets/assets/images/aboutUs/up-arrow.svg";
+        heading.style.color = "#2b56a5";
+        card.style.background = "#f1f4f9";
+      } else {
+        arrow.src = "../new-assets/assets/images/aboutUs/down-arrow.svg";
+        heading.style.color = "";
+        card.style.background = "";
+      }
+    });
+  });
+}
+featureChildPageSettingsFaq();
+
+function featureChildPageSecSet() {
+  const cardsContainer = document.querySelector(".fcs6-cards");
+  const leftBtn = document.querySelector(".fcs6-bottom1");
+  const rightBtn = document.querySelector(".fcs6-bottom2");
+  if (!cardsContainer || !leftBtn || !rightBtn) return;
+
+  const cards = cardsContainer.querySelectorAll(".fcs6-card");
+  if (!cards.length) return;
+
+  const firstCard = cards[0];
+  const lastCard = cards[cards.length - 1];
+
+  // helper to update UI and store disabled state on the element
+  function applyUI({ leftDisabled, rightDisabled }) {
+    if (leftDisabled) {
+      leftBtn.style.background = "#e4e4e4";
+      leftBtn.style.cursor = "not-allowed";
+      leftBtn.dataset.disabled = "true";
+    } else {
+      leftBtn.style.background = "#2b56a5";
+      leftBtn.style.cursor = "pointer";
+      leftBtn.dataset.disabled = "false";
+    }
+
+    if (rightDisabled) {
+      rightBtn.style.background = "#e4e4e4";
+      rightBtn.style.cursor = "not-allowed";
+      rightBtn.dataset.disabled = "true";
+    } else {
+      rightBtn.style.background = "#2b56a5";
+      rightBtn.style.cursor = "pointer";
+      rightBtn.dataset.disabled = "false";
+    }
+  }
+
+  function isScrollable() {
+    // returns true if there's actually overflow to scroll
+    return cardsContainer.scrollWidth > cardsContainer.clientWidth + 1;
+  }
+
+  // compute card step (card width + gap)
+  function getStep() {
+    if (cards.length > 1) {
+      return cards[1].offsetLeft - cards[0].offsetLeft;
+    }
+    const gapStr = getComputedStyle(cardsContainer).gap || "0";
+    const gap = parseFloat(gapStr) || 0;
+    return cards[0].offsetWidth + gap;
+  }
+  let step = getStep();
+
+  // Fallback update using scrollLeft (if IntersectionObserver not available)
+  function updateByScroll() {
+    const maxScroll = Math.max(0, cardsContainer.scrollWidth - cardsContainer.clientWidth);
+    const scrollPos = Math.round(cardsContainer.scrollLeft);
+
+    if (!isScrollable()) {
+      applyUI({ leftDisabled: true, rightDisabled: true });
+      return;
+    }
+
+    const atStart = scrollPos <= 2; // tolerance for subpixel
+    const atEnd = scrollPos >= maxScroll - 2;
+    applyUI({ leftDisabled: atStart, rightDisabled: atEnd });
+  }
+
+  // IntersectionObserver approach (more robust)
+  let io = null;
+  if ("IntersectionObserver" in window) {
+    io = new IntersectionObserver(
+      (entries) => {
+        // determine the visibility of first and last card
+        let firstVisible = false;
+        let lastVisible = false;
+        for (const e of entries) {
+          if (e.target === firstCard) firstVisible = e.intersectionRatio >= 0.6;
+          if (e.target === lastCard) lastVisible = e.intersectionRatio >= 0.6;
+        }
+
+        if (!isScrollable()) {
+          applyUI({ leftDisabled: true, rightDisabled: true });
+          return;
+        }
+
+        // if first is mostly visible -> left disabled; if last mostly visible -> right disabled
+        applyUI({ leftDisabled: firstVisible, rightDisabled: lastVisible });
+      },
+      { root: cardsContainer, threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    io.observe(firstCard);
+    io.observe(lastCard);
+
+    // Force a tiny paint/scroll so IO triggers initial state reliably
+    requestAnimationFrame(() => {
+      cardsContainer.scrollLeft = Math.min(cardsContainer.scrollLeft + 0.001, cardsContainer.scrollWidth);
+      cardsContainer.scrollLeft = Math.max(cardsContainer.scrollLeft - 0.001, 0);
+    });
+  } else {
+    // fallback: wire scroll event
+    cardsContainer.addEventListener("scroll", updateByScroll, { passive: true });
+    // run initially
+    setTimeout(updateByScroll, 0);
+  }
+
+  // Guarded scrolling (do nothing if the button is disabled)
+  function guardScroll(dir) {
+    // recompute max scroll and pos for guard
+    const maxScroll = Math.max(0, cardsContainer.scrollWidth - cardsContainer.clientWidth);
+    const pos = Math.round(cardsContainer.scrollLeft);
+
+    if ((dir === -1 && pos <= 2) || (dir === 1 && pos >= maxScroll - 2)) {
+      return; // already at edge, ignore click
+    }
+
+    cardsContainer.scrollBy({ left: dir * step, behavior: "smooth" });
+  }
+
+  rightBtn.addEventListener("click", () => {
+    if (rightBtn.dataset.disabled === "true") return;
+    guardScroll(1);
+  });
+
+  leftBtn.addEventListener("click", () => {
+    if (leftBtn.dataset.disabled === "true") return;
+    guardScroll(-1);
+  });
+
+  // Keep step and UI accurate on resize / images/fonts load
+  window.addEventListener("resize", () => {
+    step = getStep();
+    if (!io) updateByScroll();
+  });
+
+  window.addEventListener("load", () => {
+    step = getStep();
+    if (!io) updateByScroll();
+  });
+
+  // final initial run (ensure something runs fast)
+  if (!io) {
+    updateByScroll();
+  } else {
+    // if IO exists, let it settle with a tiny delay
+    setTimeout(() => {
+      // defensive: if IO didn't mark anything (edge case), fallback to scroll-based check
+      // this also ensures UI is set even if IO timing is odd
+      const maxScroll = Math.max(0, cardsContainer.scrollWidth - cardsContainer.clientWidth);
+      const pos = Math.round(cardsContainer.scrollLeft);
+      if (!isScrollable()) applyUI({ leftDisabled: true, rightDisabled: true });
+      else applyUI({ leftDisabled: pos <= 2, rightDisabled: pos >= maxScroll - 2 });
+    }, 60);
+  }
+}
+featureChildPageSecSet();
+
+
+function sliderWebTracker(){
+  const container = document.querySelector('.fcwt3-d2');
+  const wrapper = document.querySelector('.fcwt3-d2-wrapper');
+  const slides = Array.from(wrapper.querySelectorAll('.fcwt3-d2-slide'));
+
+  let current = 1; // middle slide active by default
+
+  function getCurrentTranslateX(el){
+    const st = window.getComputedStyle(el).transform;
+    if (!st || st === 'none') return 0;
+    // handle matrix(...) and matrix3d(...)
+    const m2 = st.match(/^matrix\((.+)\)$/);
+    if (m2) {
+      const parts = m2[1].split(',').map(s => s.trim());
+      return parseFloat(parts[4]) || 0; // tx
+    }
+    const m3 = st.match(/^matrix3d\((.+)\)$/);
+    if (m3) {
+      const parts = m3[1].split(',').map(s => s.trim());
+      return parseFloat(parts[12]) || 0; // tx in 3d matrix
+    }
+    return 0;
+  }
+
+  function updateSlider() {
+    if (!slides.length) return;
+
+    // visible container & slide geometry (absolute coordinates)
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
+
+    const slideRect = slides[current].getBoundingClientRect();
+    const slideCenter = slideRect.left + slideRect.width / 2;
+
+    // how much we need to move (positive => move wrapper right)
+    const delta = containerCenter - slideCenter;
+
+    // apply change relative to current translate (to avoid jumps)
+    const currentTranslate = getCurrentTranslateX(wrapper);
+    const newTranslate = currentTranslate + delta;
+
+    wrapper.style.transform = `translateX(${newTranslate}px)`;
+
+    // toggle active class
+    slides.forEach(s => s.classList.remove('active'));
+    slides[current].classList.add('active');
+  }
+
+  // click events
+  slides.forEach((slide, index) => {
+    slide.addEventListener('click', () => {
+      if (index === current) return; // do nothing if already active
+      current = index;
+      updateSlider();
+    });
+  });
+
+  // recalc when images load (their widths may change)
+  slides.forEach(slide => {
+    const img = slide.querySelector('img');
+    if (img && !img.complete) img.addEventListener('load', updateSlider);
+  });
+
+  // also recalc on resize
+  window.addEventListener('resize', updateSlider);
+
+  // init (run on next tick so layout is stable)
+  requestAnimationFrame(updateSlider);
+}
+
+sliderWebTracker();
+
+// IMRANS CODE ENDS HERE

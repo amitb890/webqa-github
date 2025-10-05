@@ -2,7 +2,7 @@
       <div class="container-fluid">
         <div class="g_footer_main">
           <div class="single_footer_item footer-fast-item">
-            <img src="{{ asset('raw-files-css-js/assets/images/webQA_logo.png') }}" alt="icon">
+            <img src="{{ asset('new-assets/assets/images/webQA_logo.png') }}" alt="icon">
             <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</p>
             <div class="footer_social">
               <ul>
@@ -10,7 +10,7 @@
                 <li><a href="#"><i class="fa-brands fa-twitter"></i></a></li>
                 <li><a href="#"><i class="fa-brands fa-instagram"></i></a></li>
                 <li><a href="#"><i class="fa-brands fa-linkedin-in"></i></a></li>
-                <li><a href="#"><img src="{{ asset('raw-files-css-js/assets/images/youtube.png') }}" alt="icon"> </a></li>
+                <li><a href="#"><img src="{{ asset('new-assets/assets/images/youtube.png') }}" alt="icon"> </a></li>
               </ul>
             </div>
           </div>
@@ -45,7 +45,7 @@
                 placeholder="Enter your website url.."
               />
               <div class="footer_utils">
-                <a href="#" class="btn btn_primary rounded-pill">Test Now</a>
+                <a href="" class="btn btn_primary rounded-pill">Test Now</a>
               </div>
             </form>
           </div>

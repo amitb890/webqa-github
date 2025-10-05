@@ -13,9 +13,16 @@
 <meta name="twitter:creator" content=""/>
 <link rel="canonical" href=""/>
 
+
+<!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <!-- bootstrap styles -->
-    <link rel="stylesheet" href="{{ asset('raw-files-css-js/vendor/bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}">
+
+    
     <!-- custom styles -->
-    <link rel="stylesheet" href="{{ asset('raw-files-css-js/assets/fonts/font-styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('raw-files-css-js/css/main.css') }}">
-    <link rel="stylesheet" href="{{ asset('raw-files-css-js/css/main.res.css') }}">
+    <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}">
+    <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}">
+    <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}">
+    

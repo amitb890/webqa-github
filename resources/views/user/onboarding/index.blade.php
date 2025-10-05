@@ -7,16 +7,16 @@
 
         <title>Webqa - Onboarding</title>
         <!-- bootstrap styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- font awesome styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- custom styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}" />
-        <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}">
-        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('new-assets/assets/images/apple-icon-180x180.png') }}">
-        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('new-assets/assets/images/android-chrome-192x192.png') }}">
+        <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}{{ \App\Http\Helpers::getCacheBuster() }}  ">
+        <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('new-assets/assets/images/apple-icon-180x180.png') }}{{ \App\Http\Helpers::getCacheBuster() }}  ">
+        <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('new-assets/assets/images/android-chrome-192x192.png') }}{{ \App\Http\Helpers::getCacheBuster() }}  ">
   </head>
   <body>
     <div id="app">
@@ -390,11 +390,11 @@
     </div>
 
     <!-- jQuery -->
-    <script src="{{ asset('new-assets/vendor/jQurey/jquery-3.6.1.min.js') }}"></script>
+    <script src="{{ asset('new-assets/vendor/jQurey/jquery-3.6.1.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <!-- bootstrap scripts -->
-    <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ asset('new-assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <!-- custom scripts -->
-    <script src="{{ asset('new-assets/js/functions.js') }}"></script>
-    <script src="{{ asset('new-assets/js/onboarding.js') }}"></script>
+    <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/onboarding.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
   </body>
 </html>
