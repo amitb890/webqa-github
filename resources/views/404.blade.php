@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
-@section('title', 'Features | Webqa')
-@section('meta-description', 'This is features page meta description.')
+@section('title', 'Page not found | Webqa')
+@section('meta-description', 'The page that you are looking for does not exist.')
 @section("content")
 
     <!-- Section 1 starts -->
@@ -9,9 +9,9 @@
             <div class="ep1-dleft">
                 <div class="ep1-dleft-h">
                     <h1 style="font-weight: bolder;" class="ep1-dright-h1">Oops!</h1>
-                    <h1 style="font-weight: bolder;" class="ep1-dright-h2">This link is broken</h1>
+                    <h1 style="font-weight: bolder;" class="ep1-dright-h2">This page didn’t pass the test.</h1>
                 </div>
-                <p class="ep1-dright-p">Even the best sites can have crawl issues. Let’s get you back to optimized content and <span style="font-weight: bolder; font-size: 1.2rem;">boost your website.</span>
+                <p class="ep1-dright-p">Looks like this page does not exist. <br>Let’s get you back to optimizing your website with WebQA.</span>
                 </p>
                 <a class="ep1-dright-ref" href="{{ route('index') }}">
                     <button class="ep1-dright-button">Go to Homepage</button>

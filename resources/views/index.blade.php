@@ -10,8 +10,8 @@
           <div class="home-title">
           <h1>Test Your Website for <span class="typing-text"></span></h1>
             <p>
-              Test a webpage for Technical SEO, HTML Code, Pagespeed,
-              Performance, Mobile friendliness best practices and standards.
+              Test a webpage for SEO, Page speed,
+              Mobile Friendliness, HTML best practices and standards.
             </p>
           </div>
           <div class="home-search">
@@ -4327,7 +4327,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="robot_text_test_block_url">
-                            <label class="form-check-label" for="robot_text_test_block_url">No page on the website should be blockes in Robots.txt</label>
+                            <label class="form-check-label" for="robot_text_test_block_url">No page on the website should be blocked in Robots.txt</label>
                         </div>
                         
                           </div>
@@ -4644,9 +4644,7 @@
             <div class="home_section_title">
               <h2>What is WebQA?</h2>
               <p>
-                WebQA is a website quality assurance tool which let's you check
-                whether best practices and standards are maintained for a
-                website or not.
+                WebQA is more than just a website audit tool — it’s a customizable platform that helps you uncover hidden issues, improve performance, and keep your site secure. With flexible settings, actionable insights, and clear reports, WebQA adapts to your needs and makes optimizing your website simple and effective.
               </p>
             </div>
             <div class="what_webqa_content">
@@ -4654,23 +4652,21 @@
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
                   <p>
-                    Have a fully customisable QA Process for your website -
-                    bring developers, marketers, designers and everyone else on
-                    the same page.
+                    <b>Customisable QA process</b> - Tailor every test with your own rules and benchmarks for truly relevant results.
                   </p>
                 </div>
               </div>
               <div class="single_what_item_main">
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
-                  <p>Periodically Track Page Speed of All your website pages</p>
+                  <p><b>Comprehensive Checks </b>- From SEO and speed to security and best practices — WebQA covers it all.</p>
                 </div>
               </div>
               <div class="single_what_item_main">
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
                   <p>
-                    Perform SEO Audits customised to your acceptance criteria
+                    <b>Actionable Insights</b> - Get clear pass/fail results with recommendations you can implement right away.
                   </p>
                 </div>
               </div>
@@ -4678,14 +4674,13 @@
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
                   <p>
-                    Have an always updating Website Tracker - track every single
-                    detail of your website on a weekly basis
+                    <b>Easy reporting</b> - Turn audits into shareable reports that track progress and prove value.
                   </p>
                 </div>
               </div>
             </div>
             <div class="Features_btn_area">
-              <a href="#" class="Features_btn">See All Features</a>
+              <a href="https://webqa.co/features" class="Features_btn">See All Features</a>
             </div>
           </div>
           <!--  what_webqa_area Css End -->
@@ -4708,10 +4703,9 @@
           <!-- Designed Area Start -->
           <div class="Designed_area">
             <div class="home_section_title">
-              <h2>Designed for teams who conduct meetings at scale</h2>
+              <h2>Built for teams who want flawless websites</h2>
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
+                WebQA is built for anyone who cares about website performance, security, and growth. Whether you optimize for search, manage projects, build websites, or run a business, WebQA gives you the insights you need to fix issues and keep your site at its best.
               </p>
             </div>
             <div class="Designed_content">
@@ -4904,25 +4898,21 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Improve lead response times</h6>
+                        <h6>Optimize every meta tag</h6>
                         <p>
-                          Gain a competitive advantage when you qualify, route,
-                          and book leads instantly.
+                          Set custom rules for titles, descriptions, and keywords to maximize SEO impact.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Drive more retention</h6>
+                        <h6>Boost SERP visibility</h6>
                         <p>
-                          Bring all of your experts together and connect with
-                          customers at every stage of their journey to build
-                          long-lasting partnerships.
+                          Identify speed, mobile, and technical issues that hold your rankings back.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Speed up your response times</h6>
+                        <h6>Show results with reports</h6>
                         <p>
-                          Quickly book time to solve customers' needs and help
-                          them self-serve to support their goals.
+                          Deliver clear, data-backed insights to prove ROI to stakeholders.
                         </p>
                       </div>
                     </div>
@@ -4940,25 +4930,21 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Drive more retention</h6>
+                        <h6>Fix issues with ease</h6>
                         <p>
-                          Bring all of your experts together and connect with
-                          customers at every stage of their journey to build
-                          long-lasting partnerships.
+                          Spot problems without needing deep technical knowledge or coding skills.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Improve lead response times</h6>
+                        <h6>Keep your site healthy</h6>
                         <p>
-                          Gain a competitive advantage when you qualify, route,
-                          and book leads instantly.
+                          Ensure speed, security, and usability are always up to standard.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Speed up your response times</h6>
+                        <h6>Protect your growth</h6>
                         <p>
-                          Quickly book time to solve customers' needs and help
-                          them self-serve to support their goals.
+                          Avoid missed opportunities by staying on top of your website’s performance.
                         </p>
                       </div>
                     </div>
@@ -4976,25 +4962,21 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Speed up your response times</h6>
+                        <h6>Catch errors early</h6>
                         <p>
-                          Quickly book time to solve customers' needs and help
-                          them self-serve to support their goals.
+                          Find broken HTML, code flaws, and best-practice gaps before launch.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Drive more retention</h6>
+                        <h6>Secure your website</h6>
                         <p>
-                          Bring all of your experts together and connect with
-                          customers at every stage of their journey to build
-                          long-lasting partnerships.
+                          Run checks for vulnerabilities and safeguard your users’ data.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Improve lead response times</h6>
+                        <h6>Save time with automation</h6>
                         <p>
-                          Gain a competitive advantage when you qualify, route,
-                          and book leads instantly.
+                         Automated audits help you focus on building, not fixing.
                         </p>
                       </div>
                     </div>
@@ -5012,18 +4994,21 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Drive more retention</h6>
+                        <h6>Track site health at a glance</h6>
                         <p>
-                          Bring all of your experts together and connect with
-                          customers at every stage of their journey to build
-                          long-lasting partnerships.
+                          Monitor project progress with easy-to-read reports and test results.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Speed up your response times</h6>
+                        <h6>Ensure delivery standards</h6>
                         <p>
-                          Quickly book time to solve customers' needs and help
-                          them self-serve to support their goals.
+                          Guarantee websites meet quality, security, and performance goals.
+                        </p>
+                      </div>
+                      <div class="learn_more_right_single">
+                        <h6>Align your team</h6>
+                        <p>
+                         Use pass/fail criteria to keep everyone on the same page.
                         </p>
                       </div>
                     </div>
@@ -5037,10 +5022,9 @@
           <!-- problems Area Start -->
           <div class="problems_area">
             <div class="home_section_title">
-              <h2>What problems you can solve?</h2>
+              <h2>Solve Website Issues Before They Hurt Your Growth</h2>
               <p>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
+                WebQA helps you uncover and fix the issues holding your website back — from slow-loading pages and broken meta tags to poor security and missed best practices. With clear insights and customizable audits, you can resolve problems early, boost performance, and keep your site search-engine and user-friendly.
               </p>
             </div>
             <div class="problems_content">
@@ -5067,11 +5051,10 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry.
+                          Spot errors, broken HTML tags, and performance issues instantly.
                         </p>
 
-                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                        <a href="https://webqa.co/features/webpage-audit" class="tryFreeBtn">Learn more</a>
                       </div>
                     </div>
                   </div>
@@ -5096,11 +5079,10 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry.
+                          Monitor your site’s health and track changes over time.
                         </p>
 
-                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                        <a href="https://webqa.co/features/website-tracker" class="tryFreeBtn">Learn more</a>
                       </div>
                     </div>
                   </div>
@@ -5114,7 +5096,7 @@
                         aria-expanded="false"
                         aria-controls="collapseThree"
                       >
-                        Proactive Alerts
+                        Customised Audits
                       </button>
                     </h2>
                     <div
@@ -5125,11 +5107,10 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry.
+                          Set your own rules and audit your site your way.
                         </p>
 
-                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                        <a href="https://webqa.co/features/settings" class="tryFreeBtn">Learn more</a>
                       </div>
                     </div>
                   </div>
@@ -5143,7 +5124,7 @@
                         aria-expanded="false"
                         aria-controls="collapseFore"
                       >
-                        Page Speed Reports
+                        Reports
                       </button>
                     </h2>
                     <div
@@ -5154,11 +5135,10 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Lorem Ipsum is simply dummy text of the printing and
-                          typesetting industry.
+                          Get clear pass/fail results with actionable insights.
                         </p>
 
-                        <a href="#" class="tryFreeBtn">Try For Free</a>
+                        <a href="https://webqa.co/features/reports" class="tryFreeBtn">Learn more</a>
                       </div>
                     </div>
                   </div>
@@ -5213,16 +5193,9 @@
           <!-- customisable Area Start -->
           <div class="customisable_area">
             <div class="home_section_title">
-              <h2>Everything is customisable to your needs</h2>
+              <h2>Customize Your Website Audit, Your Way</h2>
               <p>
-                Most of the SEO tools do not offer any customisation and come
-                with a pre-built acceptance criteria. We do not do that. We
-                understand you might have your own definitions of what is
-                acceptable and what is not acceptable. Hence, we allow you to
-                completely customise the acceptance criteria for all the checks
-                that are made on your webiste. This includes Meta tags, Images,
-                Performance, Page Speed, HTML Best practices. You can find more
-                information about each parameter below.
+                WebQA goes beyond generic audits. With flexible settings and customizable criteria, you decide how each test is performed. Whether it’s setting the ideal length for meta titles or defining performance thresholds, WebQA adapts to your preferences — giving you accurate, tailored results that match your goals.
               </p>
             </div>
             <div class="customisable_tab_content">
@@ -5238,7 +5211,7 @@
                     aria-controls="home-meta-tags"
                     aria-selected="true"
                   >
-                    Meta Tags
+                    SEO
                   </button>
                 </li>
 
@@ -5267,7 +5240,7 @@
                     aria-controls="home-coding"
                     aria-selected="false"
                   >
-                    Coding Practices
+                    Best Practices
                   </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -5281,23 +5254,10 @@
                     aria-controls="home-html"
                     aria-selected="false"
                   >
-                    HTML Practices
+                    Website Security
                   </button>
                 </li>
-                <li class="nav-item" role="presentation">
-                  <button
-                    class="nav-link"
-                    id="home-others-tab"
-                    data-bs-toggle="tab"
-                    data-bs-target="#home-others"
-                    type="button"
-                    role="tab"
-                    aria-controls="home-others"
-                    aria-selected="false"
-                  >
-                    Others
-                  </button>
-                </li>
+                
               </ul>
               <div class="tab-content" id="myTabContent">
                 <div
@@ -5308,15 +5268,13 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>Meta Tags</h3>
+                      <h3>SEO</h3>
                       <p>
-                        You can Customize the maximum length, minimum length,
-                        casing and many other parameters for meta tags to ensure
-                        it meets your acceptance criteria.
+                        Fine-tune your SEO by setting custom rules for titles, descriptions, and keywords. WebQA checks each page against your criteria to ensure your tags are optimized exactly how you want.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
                       </div>
                     </div>
                     <div
@@ -5336,15 +5294,13 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>Images</h3>
+                      <h3>Performance</h3>
                       <p>
-                        You can Customize the maximum length, minimum length,
-                        casing and many other parameters for meta tags to ensure
-                        it meets your acceptance criteria.
+                        Define speed benchmarks and loading thresholds that matter to your business. WebQA highlights bottlenecks and helps you keep your website fast and user-friendly.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
                       </div>
                     </div>
                     <div
@@ -5366,13 +5322,11 @@
                     <div class="home_images_tab_left">
                       <h3>Performance</h3>
                       <p>
-                        You can Customize the maximum length, minimum length,
-                        casing and many other parameters for meta tags to ensure
-                        it meets your acceptance criteria.
+                        Define speed benchmarks and loading thresholds that matter to your business. WebQA highlights bottlenecks and helps you keep your website fast and user-friendly.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
                       </div>
                     </div>
                     <div
@@ -5392,15 +5346,13 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>Coding Practices</h3>
+                      <h3>Best practices</h3>
                       <p>
-                        You can Customize the maximum length, minimum length,
-                        casing and many other parameters for meta tags to ensure
-                        it meets your acceptance criteria.
+                        From clean HTML to mobile readiness, WebQA ensures your site follows modern web standards. Customize your checks to meet your own quality bar.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
                       </div>
                     </div>
                     <div
@@ -5420,15 +5372,13 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>HTML Practices</h3>
+                      <h3>Website security</h3>
                       <p>
-                        You can Customize the maximum length, minimum length,
-                        casing and many other parameters for meta tags to ensure
-                        it meets your acceptance criteria.
+                        Protect your website and users by auditing for vulnerabilities. WebQA lets you enforce specific security checks to reduce risks and keep your site safe.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
                       </div>
                     </div>
                     <div
@@ -5440,34 +5390,7 @@
                     ></div>
                   </div>
                 </div>
-                <div
-                  class="tab-pane fade"
-                  id="home-others"
-                  role="tabpanel"
-                  aria-labelledby="home-others-tab"
-                >
-                  <div class="home_images_tab_content">
-                    <div class="home_images_tab_left">
-                      <h3>Others</h3>
-                      <p>
-                        You can Customize the maximum length, minimum length,
-                        casing and many other parameters for meta tags to ensure
-                        it meets your acceptance criteria.
-                      </p>
-                      <div class="home_images_btn_area">
-                        <a href="#" class="learn_more_btn">Learn More</a>
-                        <a href="#" class="sign_up_free">Sign Up for Free</a>
-                      </div>
-                    </div>
-                    <div
-                      class="home_images_tab_right"
-                      style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
-                          no-repeat scroll center center / cover;
-                      "
-                    ></div>
-                  </div>
-                </div>
+                
               </div>
             </div>
           </div>
@@ -5476,9 +5399,9 @@
           <!-- Trial Area Css -->
           <div class="trial-area">
             <div class="trial-content">
-              <h2>Wondering why your content isn't showing up on the SERPs?</h2>
-              <a href="#" class="btn btn_primary rounded-pill"
-                >Start Free Trial</a
+              <h2>Think your site is flawless? Test it with WebQA for hidden issues.</h2>
+              <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="btn btn_primary rounded-pill"
+                >Sign up</a
               >
             </div>
           </div>
