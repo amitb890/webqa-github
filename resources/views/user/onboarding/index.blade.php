@@ -149,7 +149,7 @@
                     <span class="progress-dot four"></span>
                   </div>
                 </div>
-            <div class="row align-items-center onboard-main-items">
+            <div class="row onboard-main-items">
               <input type="hidden" id="sitemapInput" name="sitemapData">
 
               <div class="col-md-6">

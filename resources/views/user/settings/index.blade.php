@@ -80,7 +80,7 @@
                 aria-controls="v-pills-coding"
                 aria-selected="false"
               >
-                Coding Best Practices
+                Best Practices
               </button>
 
               <button

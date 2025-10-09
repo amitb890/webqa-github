@@ -4302,7 +4302,10 @@ h6 {
   background-color: var(--primary) !important;
 }
 
-.onboard-main-form {
+.onboard-main-items{
+  align-items: start;
+}
+.onboard-main-form, .form-image {
   margin-top: 80px;
 }
 .onboard-main-form .card {

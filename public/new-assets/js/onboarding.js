@@ -38,8 +38,19 @@ $(document).ready(function(){
             // Finish button
             $("#finishOnboarding").click(() => this.handleFinish());
 
+            // Auto-populate project name from homepage URL
+            $("#homepage").on('input', () => {
+                const url = $("#homepage").val();
+                const domainName = this.extractDomainName(url);
+                if (domainName) {
+                    $("#name").val(domainName);
+                }
+                this.clearErrorMessages();
+                this.updateButtonStates();
+            });
+
             // Form input events - clear errors when user starts typing
-            $("#homepage, #xmlSitemap, #urlsList, #name").on('input', () => {
+            $("#xmlSitemap, #urlsList, #name").on('input', () => {
                 this.clearErrorMessages();
                 // Update button states for real-time validation
                 this.updateButtonStates();
@@ -112,6 +123,8 @@ $(document).ready(function(){
             // If no sitemap selected, use homepage
             if (!selectedSitemaps || selectedSitemaps.length === 0) {
                 $("#urlsList").html($('#homepage').val());
+                // Show alert for limited URLs
+                this.showLimitedUrlsAlert();
                 return;
             }
 
@@ -158,21 +171,25 @@ $(document).ready(function(){
                     });
                     $("#urlsList").html(list);
                     
-                    // Show success message in formSetp3
-                    this.showUrlsSuccessMessage(data.urls.length);
-                    
-                    // Update UI with success message
-                    $(".form-single-text").addClass("success");
-                    $('.xml-sitemap-message').html('Detected ' + data.urls.length + ' URLs from the XML Sitemap');
-                    $('.form-single-text').show();
-                    $(".sitemap-link").remove();
-                    $(".load-more-sitemap").remove();
+                    // Check if only 1 URL was detected
+                    if (data.urls.length === 1) {
+                        // Show warning for single URL
+                        this.showLimitedUrlsAlert();
+                    } else {
+                        // Show success message in formSetp3 for multiple URLs
+                        this.showUrlsSuccessMessage(data.urls.length);
+                        
+                        // Update UI with success message
+                        $(".form-single-text").removeClass("warning").addClass("success");
+                        $('.xml-sitemap-message').html('Detected ' + data.urls.length + ' URLs from the XML Sitemap');
+                        $('.form-single-text').css({display: "flex"});
+                        $(".sitemap-link").remove();
+                        $(".load-more-sitemap").remove();
+                    }
                 } else {
                     // No URLs detected - add root URL
                     const rootUrl = $('#homepage').val();
                     $("#urlsList").html(rootUrl);
-                    $('.xml-sitemap-message').text('We were not able to detect any URLs from the sitemap. Added the root URL to the list.');
-                    $('.form-single-text').show();
                     // Show alert for limited URLs
                     this.showLimitedUrlsAlert();
                 }
@@ -191,8 +208,6 @@ $(document).ready(function(){
                     // Add root URL as fallback
                     const rootUrl = $('#homepage').val();
                     $("#urlsList").html(rootUrl);
-                    $('.xml-sitemap-message').text('URL detection timed out. Added the root URL to the list.');
-                    $('.form-single-text').show();
                     // Show alert for limited URLs
                     this.showLimitedUrlsAlert();
                 } else if (error.message === 'FORBIDDEN_403') {
@@ -203,8 +218,6 @@ $(document).ready(function(){
                     // Fallback on error - add root URL
                     const rootUrl = $('#homepage').val();
                     $("#urlsList").html(rootUrl);
-                    $('.xml-sitemap-message').text('Error detecting URLs from sitemap. Added the root URL to the list.');
-                    $('.form-single-text').show();
                     // Show alert for limited URLs
                     this.showLimitedUrlsAlert();
                 }
@@ -417,19 +430,25 @@ $(document).ready(function(){
             // Add root URL as fallback and show 403 message
             const rootUrl = $('#homepage').val();
             $("#urlsList").html(rootUrl);
-            $('.xml-sitemap-message').text('Your sitemap returned a 403 Forbidden error and cannot be tested. Added the root URL to the list instead.');
-            $('.form-single-text').css({display: "flex"});
             // Show alert for limited URLs
             this.showLimitedUrlsAlert();
         }
 
         showLimitedUrlsAlert() {
-            // Show alert when only root URL is available due to errors/timeout
-            const alertHtml = displayAlertSimple({
-                msg: 'We couldn\'t detect more URLs from your sitemap due to timeout, 403/404 errors, or other issues. Only the root URL has been added. You can add more URLs manually if needed.',
+            // Clear any existing alerts first
+            $('#formSetp3 .alert').remove();
+            
+            // Show form-single-text warning
+            $(".form-single-text").removeClass("success").addClass("warning");
+            $('.xml-sitemap-message').text("We could not autodetect an XML Sitemap on your website. This might be because the sitemap returned a 403/404. Please enter your XML Sitemap in 'Enter Sitemap XML field'");
+            $('.form-single-text').css({display: "flex"});
+            
+            // Show warning alert for limited URLs using webqa__alert styling
+            const warningAlert = buildAlert({
+                msg: 'We could not autodetect an XML Sitemap on your website. This might be because the sitemap returned a 403/404. Only the root URL has been added. You can add more URLs manually if needed.',
                 status: 0
             });
-            $('#urlsList')[0].parentElement.appendChild(alertHtml);
+            $('#urlsList')[0].parentElement.appendChild(warningAlert);
         }
 
         showUrlsSuccessMessage(urlCount) {
@@ -601,7 +620,7 @@ $(document).ready(function(){
                 const url = $('#homepage').val();
                 if (url && !this.isValidUrl(url)) {
                     isValid = false;
-                    errorMessages.push('Please enter a valid URL');
+                    errorMessages.push('Please enter a valid homepage URL (e.g., https://example.com). Files and direct paths are not allowed.');
                 }
             }
 
@@ -643,10 +662,73 @@ $(document).ready(function(){
 
         isValidUrl(string) {
             try {
-                new URL(string);
+                // Remove leading/trailing whitespace
+                string = string.trim();
+                
+                // Check for invalid characters at the start
+                if (string.startsWith('@') || string.includes('@http')) {
+                    return false;
+                }
+                
+                // Parse the URL
+                const urlObj = new URL(string);
+                
+                // Check if protocol is http or https
+                if (!['http:', 'https:'].includes(urlObj.protocol)) {
+                    return false;
+                }
+                
+                // Check if hostname is valid (not empty, not just whitespace)
+                if (!urlObj.hostname || urlObj.hostname.trim() === '' || urlObj.hostname === 'www.') {
+                    return false;
+                }
+                
+                // Check if hostname has at least one dot (e.g., example.com)
+                if (!urlObj.hostname.includes('.')) {
+                    return false;
+                }
+                
+                // For homepage validation in step 1, ensure it's not pointing to a specific file
+                if (this.currentStep === 1) {
+                    const pathname = urlObj.pathname;
+                    // Check if pathname ends with common file extensions
+                    const fileExtensions = ['.txt', '.xml', '.html', '.htm', '.php', '.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png', '.gif', '.css', '.js', '.json'];
+                    const hasFileExtension = fileExtensions.some(ext => pathname.toLowerCase().endsWith(ext));
+                    
+                    if (hasFileExtension) {
+                        return false;
+                    }
+                }
+                
                 return true;
             } catch (_) {
                 return false;
+            }
+        }
+
+        extractDomainName(url) {
+            try {
+                // Parse the URL
+                const urlObj = new URL(url);
+                let hostname = urlObj.hostname;
+                
+                // Remove 'www.' prefix if present
+                hostname = hostname.replace(/^www\./, '');
+                
+                // Extract the domain name (without TLD)
+                // Split by dots and get the first part (main domain)
+                const parts = hostname.split('.');
+                
+                // If there are multiple parts, return the second-to-last part
+                // (handles cases like example.co.uk)
+                if (parts.length >= 2) {
+                    return parts[0];
+                }
+                
+                return hostname;
+            } catch (error) {
+                // If URL is invalid or incomplete, return empty string
+                return '';
             }
         }
 
