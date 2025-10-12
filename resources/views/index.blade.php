@@ -144,7 +144,7 @@
                                     checked
                                     data-name="robots"
                                   />
-                                  Robots Meta Tag
+                                  Robots Meta
                                 </label>
                               </button>
                               <button
@@ -203,7 +203,7 @@
                                     checked
                                     data-name="robot_text_test"
                                   />
-                                  Robot.txt Test
+                                  Robots.txt
                                 </label>
                               </button>
 
@@ -262,7 +262,7 @@
                                     checked
                                     data-name="og:title"
                                   />
-                                  OpenGraph Tags
+                                  Open Graph Tags
                                 </label>
                               </button>
                               <button
@@ -438,7 +438,7 @@
                                     checked
                                     data-name="mobile_friendly"
                                   />
-                                  Mobile friendly
+                                  Mobile Friendliness
                                 </label>
                               </button>
 
@@ -467,7 +467,7 @@
                           aria-controls="flush-collapseFour"
                         >
 
-                          Coding Best Practices
+                          Best Practices
                         </label>
                       </h2>
                       <div
@@ -689,7 +689,7 @@
                                     checked
                                     data-name="cross_origin_links"
                                   />
-                                  Cross Origin Links
+                                  Unsafe Cross Origin Links
                                 </label>
                               </button>
 
@@ -704,7 +704,7 @@
                                     checked
                                     data-name="protocol_relative_resource"
                                   />
-                                  Protocol Relative Resource
+                                  Protocol Relative Resource Links
                                 </label>
                               </button>
 
@@ -720,7 +720,7 @@
                                     checked
                                     data-name="broken_links"
                                   />
-                                  Broken Links Test
+                                  Broken Links
                                 </label>
                               </button>
 
@@ -780,7 +780,7 @@
                                     checked
                                     data-name="ssl_certificate_enable"
                                   />
-                                  SSL Certificate Enable
+                                  SSL Certificate
                                 </label>
                               </button>
 
@@ -810,7 +810,7 @@
                                     checked
                                     data-name="folder_browsing_enable"
                                   />
-                                  Folder Browsing
+                                  Directory Browsing
                                 </label>
                               </button>
 
