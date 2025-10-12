@@ -2678,15 +2678,15 @@
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 4 seconds</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>2.5 - 4 (seconds)</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 2.5 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -2756,15 +2756,15 @@
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 3 seconds</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                           <h6>1.8 - 3 (seconds)</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 1.8 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -2831,15 +2831,15 @@
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                           <h6>more than 0.25</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>0.1 - 0.25</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 0.1</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -2903,21 +2903,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The time (in milliseconds) from a user’s first interaction to the browser’s response on desktop; lower values indicate better responsiveness.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 300 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>100 - 300 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 100 (milliseconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -2978,21 +2978,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The total time (in milliseconds) when the main thread was blocked long enough to delay input on desktop; lower values indicate better responsiveness.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 600 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>200 - 600 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 200 (milliseconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3056,21 +3056,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The time (in seconds) until the page is fully interactive for desktop users; lower values indicate better responsiveness.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 7.3 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>3.9 - 7.3 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 3.8 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3134,21 +3134,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
-                                          The time (in seconds) showing how quickly content becomes visually complete on desktop; lower values indicate faster rendering
+                                          The time (in seconds) showing how quickly content becomes visually complete on mobile; lower values indicate faster rendering.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 5.8 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>3.4 - 5.8 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 3.4 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3240,15 +3240,15 @@
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 4 seconds</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>2.5 - 4 (seconds)</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 2.5 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3315,15 +3315,15 @@
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 3 seconds</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                           <h6>1.8 - 3 (seconds)</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 1.8 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3393,15 +3393,15 @@
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 0.25</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>0.1 - 0.25</h6>
                                         </div>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 0.1</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3465,21 +3465,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The time (in milliseconds) from a user’s first interaction to the browser’s response on mobile; lower values indicate better responsiveness.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;" >
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 300 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>100 - 300 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 100 (milliseconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3539,25 +3539,25 @@
                                         class="form-check-label"
                                         for="google_tbt_mobile"
                                       >
-                                        Total Blocking TIme
+                                        Total Blocking Time
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The total time (in milliseconds) when the main thread was blocked long enough to delay input on mobile; lower values indicate better responsiveness.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 600 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>200 - 600 (milliseconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 200 (milliseconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3621,21 +3621,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The time (in seconds) until the page is fully interactive on mobile devices; lower values indicate better responsiveness
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 7.3 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>3.9 - 7.3 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 3.8 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
@@ -3699,21 +3699,21 @@
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
-                                      <div class="tooltips-contents">
+                                      <div class="tooltips-contents" style="width:300px;">
                                         <p>
                                           The time (in seconds) showing how quickly content becomes visually complete on mobile; lower values indicate faster rendering.
                                         </p>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Poor</p>
-                                          <h6>0-49</h6>
+                                          <h6>more than 5.8 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Average</p>
-                                          <h6>50-89</h6>
+                                          <h6>3.4 - 5.8 (seconds)</h6>
                                         </div>
-                                        <div class="color-flex">
+                                        <div class="color-flex" style="max-width:230px;">
                                           <p><span></span>&nbsp; Good</p>
-                                          <h6>90-100</h6>
+                                          <h6>0 - 3.4 (seconds)</h6>
                                         </div>
                                       </div>
                                       <svg
