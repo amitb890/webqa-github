@@ -3248,7 +3248,7 @@ $( document ).ready(function() {
                           <div class="card-single-content ${data.status ? "text-success-custom" : "text-danger-custom"} problem-help">
                             <p>
                               <span class="badge status_pdf">${data.status ? "PASS" : "FAIL"}</span>
-                              <span class="message_pdf">${data.message}</span>
+                              <span class="message_pdf">${data.label.name === "broken_links"  ? `Your page has ${window.currentAnalysisData.totalBrokenLinks} broken links, please see the list below.` : data.message}</span>
                             </p>
 
                             ${data.showSnippet ? `
@@ -4459,7 +4459,7 @@ $( document ).ready(function() {
                                   fill="#D3D5D8" />
                               </svg>
                               <div class="card-help-body">
-                                <p>Learn more</p>
+                                <p>Health Score is a quick snapshot of your page’s overall quality. More passes lead to a higher score. Aim high!</p>
                               </div>
                           </span>
                         </div>
