@@ -3839,7 +3839,7 @@
 
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="is_html_compression">
-                            <label class="form-check-label" for="is_html_compression">HTML Code has to be compressed and minified</label>
+                            <label class="form-check-label" for="is_html_compression">HTML Code should be compressed and minified</label>
                           </div>
                         
                           </div>
@@ -3878,7 +3878,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="is_css_compression">
-                            <label class="form-check-label" for="is_css_compression">All external stylesheets code must be compressed and minified</label>
+                            <label class="form-check-label" for="is_css_compression">All external stylesheets must be compressed and minified</label>
                         </div>
                         
                           </div>
@@ -3916,7 +3916,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="is_js_compression">
-                            <label class="form-check-label" for="is_js_compression">All external JavaScript code must be compressed and minified</label>
+                            <label class="form-check-label" for="is_js_compression">All external JavaScript must be compressed and minified</label>
                         </div>
                         
                           </div>
@@ -3995,7 +3995,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="css_caching_enable">
-                            <label class="form-check-label" for="css_caching_enable">CSS Caching</label>
+                            <label class="form-check-label" for="css_caching_enable">CSS files must have browser caching enabled via appropriate Cache-Control/ETag headers.</label>
                         </div>
                         
                           </div>
@@ -4033,7 +4033,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="js_caching_enable">
-                            <label class="form-check-label" for="js_caching_enable">JS Caching</label>
+                            <label class="form-check-label" for="js_caching_enable">JavaScript files must have browser caching enabled via appropriate Cache-Control/ETag headers</label>
                         </div>
                         
                           </div>
@@ -4186,7 +4186,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="is_safe_browsing">
-                            <label class="form-check-label" for="is_safe_browsing">Safe Browsing.</label>
+                            <label class="form-check-label" for="is_safe_browsing">The website must not be flagged by Google Safe Browsing for malware, phishing, deceptive, or harmful content.</label>
                         </div>
                         
                           </div>
@@ -4224,7 +4224,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="cross_origin_links">
-                            <label class="form-check-label" for="cross_origin_links">Cross Origin Links</label>
+                            <label class="form-check-label" for="cross_origin_links">Cross-origin links that open in a new tab (target="_blank") must include rel="noopener noreferrer" to prevent window.opener tabnabbing and related security risks.</label>
                         </div>
                         
                           </div>
@@ -4263,7 +4263,7 @@
                                      
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="protocol_relative_resource">
-                            <label class="form-check-label" for="protocol_relative_resource">Protocol Relative Resource Links</label>
+                            <label class="form-check-label" for="protocol_relative_resource">Don’t use // links. Always use full HTTPS URLs so resources load securely and consistently.</label>
                         </div>
                         
                           </div>
@@ -4341,7 +4341,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="broken_links">
-                            <label class="form-check-label" for="broken_links">Broken Links</label>
+                            <label class="form-check-label" for="broken_links">Linked pages must return a valid HTTP 200 OK response—not 3xx loops, 4xx errors, or 5xx failures.</label>
                         </div>
                         
                         
@@ -4380,7 +4380,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="content_security_policy_header">
-                            <label class="form-check-label" for="content_security_policy_header">Content Security Policy Header must be enabled.</label>
+                            <label class="form-check-label" for="content_security_policy_header">The site must include a CSP header that restricts where scripts and other resources can load from, helping prevent cross-site scripting and similar attacks.</label>
                         </div>
                         
                           </div>
@@ -4418,7 +4418,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="x_frame_options_header">
-                            <label class="form-check-label" for="x_frame_options_header">X Frame Options Header must be enabled.</label>
+                            <label class="form-check-label" for="x_frame_options_header">The site must send an X-Frame-Options header to prevent the page from being embedded on other sites and reduce clickjacking risk.</label>
                         </div>
                         
                           </div>
@@ -4456,7 +4456,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="hsts_header">
-                            <label class="form-check-label" for="hsts_header">Every page must have HSTS enabled</label>
+                            <label class="form-check-label" for="hsts_header">The site must send an HSTS header to force HTTPS for all future requests, helping prevent downgrade attacks</label>
                         </div>
                         
                           </div>
@@ -4494,7 +4494,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="ssl_certificate_enable">
-                            <label class="form-check-label" for="ssl_certificate_enable">SSL Certificate</label>
+                            <label class="form-check-label" for="ssl_certificate_enable">The site must use a valid, non-expired SSL/TLS certificate from a trusted authority that matches the domain and is correctly installed (no mixed-content errors).</label>
                         </div>
                         
                           </div>
@@ -4532,7 +4532,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="bad_content_type">
-                            <label class="form-check-label" for="bad_content_type">Bad Content Type.</label>
+                            <label class="form-check-label" for="bad_content_type">Pages and files must be served with the correct Content-Type header.</label>
                         </div>
                         
                           </div>
@@ -4564,13 +4564,13 @@
                       id="v-pills-folder"
                     >
                       <div class="home-meta-content">
-                        <h5 class="home-meta-title">Bad Content Type</h5>
+                        <h5 class="home-meta-title">Directory Browsing</h5>
                         <div class="meta-content">
                           <div class="accor-content">
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="folder_browsing_enable">
-                            <label class="form-check-label" for="folder_browsing_enable">Directory Browsing</label>
+                            <label class="form-check-label" for="folder_browsing_enable">Folder listing must be disabled so visitors cannot view server directories.</label>
                         </div>
                         
                           </div>
