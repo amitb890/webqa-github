@@ -1,7 +1,7 @@
 @extends('layouts.master')
 
-@section('title', 'Webqa | Features')
-@section('meta-description', 'This is features page meta description.')
+@section('title', 'Features for Smarter Website Auditing | Webqa')
+@section('meta-description', 'Explore Webqa features—customizable page audits, shareable results, website tracker, per-metric reports, and bulk tools to keep every page release-ready.')
 
 @section("content")
     
@@ -9,9 +9,9 @@
     <!-- Section 1 starts -->
      <section class="fr1">
         <div class="fr1-d1">
-            <h1 class="fr1-d1-h">Feature to Make Website Management Easy</h1>
+            <h1 class="fr1-d1-h">Features that turn audits into action</h1>
             <p class="fr1-d1-p">
-                We analyze every element — design, performance, SEO, and user experience to uncover growth opportunities.
+                Define your own standards, audit any page, and move from findings to fixes with shareable results, reports, and site-wide tracking.
             </p>
             <div>
                 <button class="fr1-d1-button" data-bs-toggle="modal" data-bs-target="#registerModal">
@@ -21,7 +21,7 @@
         </div>
         <div class="fr1-d2">
             <img class="fr1-d2-img" 
-            src="{{ asset('new-assets/assets/images/feature-root-page/Group-1064.svg') }}" alt="">
+            src="{{ asset('new-assets/assets/images/feature-root-page/Group-1064.svg') }}" alt="A woman using a laptop to run website audit">
         </div>
      </section>
     <!-- Section 1 ends -->
@@ -31,33 +31,33 @@
      <section class="fr2">
         <div class="fr2-d">
             <h1 class="fr2-d-h">
-                Website Auditing
+                Webpage Audit
             </h1>
             <p class="fr2-d-p">
-                Our Customized Auditing Settings let you define exactly what matters for your website’s success. Choose specific metrics, focus areas, and performance goals tailored to your business. From SEO to speed optimization.
+                Run precise, per-URL audits against criteria you control (e.g., title length, casing rules, “must not equal H1”) and get clear Pass/Fail outcomes. Every analysis has a shareable URL and export options (PDF/CSV/XLSX).
             </p>
             <img class="fr2-d-img" 
-            src="{{ asset('new-assets/assets/images/feature-root-page/Group-1017.svg') }}" alt="">
+            src="{{ asset('new-assets/assets/images/feature-root-page/Group-1017.svg') }}" alt="A sample webpage audit report">
             <div class="fr2-d-d">
-                <h6 class="fr2-d-d-h6">Features that make auditing effortless</h6>
+                <h6 class="fr2-d-d-h6">Standards-based checks you can act on fast</h6>
                 <div class="fr2-d-d-d container">
                     <div class="fr2-d-d-dDivs">
                         <h6>
-                            SEO Performance
+                            Standards based auditing
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Define acceptance criteria per test. Webqa returns clear Pass/Fail results against your rules—not generic ones</p>
                     </div>
                     <div class="fr2-d-d-dDivs">
                         <h6>
-                            User Experience
+                            Shareable results
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Every analysis gets a permanent, shareable URL; export findings as PDF, CSV, or XLSX for smooth reviews and hand-offs.</p>
                     </div>
                     <div class="fr2-d-d-dDivs">
                         <h6>
-                            Website Security
+                            Bulk checks at scale
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Use Tools to run a single check on up to 100 URLs—perfect for templates and key sections—then download results as CSV/XLSX</p>
                     </div>
                 </div>
                 <div>
@@ -80,30 +80,30 @@
                 </h1>
             </div>
             <p class="fr3-d-p">
-                Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries.
+                Define acceptance criteria at the project level so every audit reflects your standards—not generic ones. Tune only the parameters you care about.
             </p>
             <img class="fr3-d-img" 
-            src="{{ asset('new-assets/assets/images/feature-root-page/Group-1036-(1).svg') }}" alt="">
+            src="{{ asset('new-assets/assets/images/feature-root-page/Group-1036-(1).svg') }}" alt="customised auditing settings in webqa">
             <div class="fr3-d-d">
-                <h6 class="fr3-d-d-h6">Features that make auditing effortless</h6>
+                <h6 class="fr3-d-d-h6">Your rules, consistently applied across every audit</h6>
                 <div class="fr3-d-d-d container">
                     <div class="fr3-d-d-dDivs">
                         <h6>
-                            SEO Performance
+                            Define rules per test
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Set min/max lengths, casing rules, “must not equal H1,” and more to match your standards.</p>
                     </div>
                     <div class="fr3-d-d-dDivs">
                         <h6>
-                            User Experience
+                            Choose only what matters
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Toggle off checks you don’t need and set custom values for the ones you do.</p>
                     </div>
                     <div class="fr3-d-d-dDivs">
                         <h6>
-                            Website Security
+                            Keep settings consistent
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Save criteria at the project level and use the same rules in bulk Tools runs.</p>
                     </div>
                 </div>
                 {{-- <div>
@@ -120,8 +120,8 @@
      <section class="fr4 margin-top-50 margin-bottom-50">
         <div class="fr4-inner">
             <div class="fr4-d1">
-                <h3>Increase Your Website Performance with Premium Features</h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer.</p>
+                <h3>Ship better webpages with smarter, customised audits</h3>
+                <p>Set your standards, audit any URL, and act on clear Pass/Fail results—plus shareable reports and bulk tools.</p>
                 <div>
                     <button class="fr4-d1-button" data-bs-toggle="modal" data-bs-target="#registerModal">
                         Sign Up Free
@@ -129,7 +129,7 @@
                 </div>
             </div>
             <div class="fr4-d2" id="fr4-d2">
-                <img src="{{ asset('new-assets/assets/images/feature-root-page/image-71.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-root-page/image-71.svg') }}" alt="Man working on a laptop">
             </div>
         </div>
      </section>
@@ -143,30 +143,30 @@
                 Website Tracker
             </h1>
             <p class="fr2-d-p">
-                Our Customized Auditing Settings let you define exactly what matters for your website’s success. Choose specific metrics, focus areas, and performance goals tailored to your business. From SEO to speed optimization.
+                See all key metrics for every tracked URL in one large, filterable table—perfect for spotting patterns across templates and catching regressions early.
             </p>
             <img class="fr2-d-img"
-             src="{{ asset('new-assets/assets/images/feature-root-page/Group-1036-(2).svg') }}" alt="">
+             src="{{ asset('new-assets/assets/images/feature-root-page/Group-1036-(2).svg') }}" alt="Website tracker interface of Webqa">
             <div class="fr2-d-d">
-                <h6 class="fr2-d-d-h6">Features that make auditing effortless</h6>
+                <h6 class="fr2-d-d-h6">All your page metrics in one, always-current view</h6>
                 <div class="fr2-d-d-d container">
                     <div class="fr2-d-d-dDivs">
                         <h6>
-                            SEO Performance
+                            All metrics, all URLs
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>View every tracked metric for your project in one large, tabular view—so everything’s in one place.</p>
                     </div>
                     <div class="fr2-d-d-dDivs">
                         <h6>
-                            User Experience
+                            Drill into details fast
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Jump from high-level summaries to per-metric, tabular reports whenever you need deeper analysis.</p>
                     </div>
                     <div class="fr2-d-d-dDivs">
                         <h6>
-                            Website Security
+                            Keep results up to date
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Re-check the project anytime and refresh the tracker with the latest findings.</p>
                     </div>
                 </div>
                 <div>
@@ -188,30 +188,30 @@
                 </h1>
             </div>
             <p class="fr3-d-p">
-                Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries.
+                Turn findings into focused action with per-metric, tabular reports you can open straight from the dashboard—then export to PDF, CSV, or XLSX for quick reviews and hand-offs.
             </p>
             <img class="fr3-d-img"
-             src="{{ asset('new-assets/assets/images/feature-root-page/Group-1037.svg') }}" alt="">
+             src="{{ asset('new-assets/assets/images/feature-root-page/Group-1037.svg') }}" alt="A custom website report in Webqa">
             <div class="fr3-d-d">
-                <h6 class="fr3-d-d-h6">Features that make auditing effortless</h6>
+                <h6 class="fr3-d-d-h6">Per-metric tables that turn findings into fixes</h6>
                 <div class="fr3-d-d-d container">
                     <div class="fr3-d-d-dDivs">
                         <h6>
-                            SEO Performance
+                            Per-metric, tabular reports
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>See detailed tables for each metric (titles, descriptions, canonicals, speed, and more).</p>
                     </div>
                     <div class="fr3-d-d-dDivs">
                         <h6>
-                            User Experience
+                            Jump in from the dashboard
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Open any report directly from its dashboard widget to drill down fast.</p>
                     </div>
                     <div class="fr3-d-d-dDivs">
                         <h6>
-                            Website Security
+                            Export & share results
                         </h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword.</p>
+                        <p>Download reports as PDF, CSV, or XLSX for easy reviews and hand-offs.</p>
                     </div>
                 </div>
                 {{-- <div>
@@ -228,8 +228,8 @@
      <section class="frlast">
         <div class="frlast-inner">
             <div class="frlast-d1">
-                <h3>Increase Your Website Performance with Premium Features</h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer.</p>
+                <h3>Raise your website’s quality bar</h3>
+                <p>Set the rules once—Webqa applies them everywhere, surfaces issues, and helps you prioritize what to fix next.</p>
                 <div>
                     <button class="fr4-d1-button" data-bs-toggle="modal" data-bs-target="#registerModal">
                         Sign Up Free
@@ -238,7 +238,7 @@
             </div>
             <div class="frlast-d2">
                 <img
-                 src="{{ asset('new-assets/assets/images/feature-root-page/young-person-intership-Photoroom-1.svg') }}" alt="">
+                 src="{{ asset('new-assets/assets/images/feature-root-page/young-person-intership-Photoroom-1.svg') }}" alt="Two team members working on a laptop">
             </div>
         </div>
      </section>
