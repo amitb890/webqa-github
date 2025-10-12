@@ -858,7 +858,7 @@
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="is_title_equal_h1">
-                                <label class="form-check-label" for="is_title_equal_h1">Title tag must not be equal to H1 heading tag</label>
+                                <label class="form-check-label" for="is_title_equal_h1">Title tag content must not be equal to H1 heading tag content</label>
                             </div>
 
                             <div class="form-check">
@@ -931,11 +931,11 @@
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" max-value-check checked type="checkbox" id="max_desc_length">
-                                <label class="form-check-label" for="max_desc_length">Maximum length of the description tag should be <input value="160" id="max_desc_length_val" type="number"> characters</label>
+                                <label class="form-check-label" for="max_desc_length">Maximum length of the meta description tag should be <input value="160" id="max_desc_length_val" type="number"> characters</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" min-value-check type="checkbox" id="min_desc_length">
-                                <label class="form-check-label" for="min_desc_length">Minimum length of the description tag should be <input value="0" id="min_desc_length_val" type="number"> characters</label>
+                                <label class="form-check-label" for="min_desc_length">Minimum length of the meta description tag should be <input value="0" id="min_desc_length_val" type="number"> characters</label>
                             </div>
                           </div>
                           <div class="home-content-button">
@@ -970,9 +970,7 @@
                           <div class="accor-content">
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="live_urls_robots_meta">
-                                <label class="form-check-label" for="live_urls_robots_meta">Live URLs Must Not have Robots meta tag
-                          (noindex,nofollow), Unless intentionally added
-                          on a case by case basis</label>
+                                <label class="form-check-label" for="live_urls_robots_meta">Content of Robots meta tag should not be equal to noindex,nofollow</label>
                             </div>
                           </div>
                           <div class="home-content-button">
@@ -1072,11 +1070,11 @@
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="image_alt">
-                            <label class="form-check-label" for="image_alt">An image must have an alt text</label>
+                            <label class="form-check-label" for="image_alt">An image must have an alternate text</label>
                         </div>
                         <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="image_alt_only_spaces">
-                            <label class="form-check-label" for="image_alt_only_spaces">Words in alt text must be separated by spaces only</label>
+                            <label class="form-check-label" for="image_alt_only_spaces">Words in alternate text must be separated by spaces only</label>
                         </div>
 
                           </div>
@@ -1125,7 +1123,7 @@
                               </div>
                               <div class="form-check">
                                   <input class="form-check-input" checked type="checkbox" id="max_url_length">
-                                  <label class="form-check-label" for="max_url_length">Maximum length of a URL should be <input value="60" id="max_url_length_val" type="number" /> Characters (excluding the domain name)</label>
+                                  <label class="form-check-label" for="max_url_length">Maximum length of a URL should be <input value="60" id="max_url_length_val" type="number" /> Characters <br>(excluding the domain name)</label>
                               </div>
                               <div class="form-check">
                                   <input class="form-check-input" type="checkbox" id="url_stop_words">
@@ -1207,7 +1205,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="robot_text_test_block_url">
-                            <label class="form-check-label" for="robot_text_test_block_url">No page on the website should be blockes in Robots.txt</label>
+                            <label class="form-check-label" for="robot_text_test_block_url">No page on the website should be blocked in Robots.txt</label>
                         </div>
                         
                           </div>
@@ -1343,19 +1341,19 @@
                             <h6>OG Title</h6>
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="og_title">
-                                <label class="form-check-label" for="og_title">Every page must have a OG Title tag</label>
+                                <label class="form-check-label" for="og_title">Every page must have a Open Graph Title tag</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" max-value-check checked type="checkbox" id="max_og_title_length">
-                                <label class="form-check-label" for="max_og_title_length">Maximum length of OG Title should be <input value="95" id="max_og_title_length_val" type="number"> characters</label>
+                                <label class="form-check-label" for="max_og_title_length">Maximum length of Open Graph Title should be <input value="95" id="max_og_title_length_val" type="number"> characters</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" min-value-check checked type="checkbox" id="min_og_title_length">
-                                <label class="form-check-label" for="min_og_title_length">Minimum length of OG Title should be <input value="40" id="min_og_title_length_val" type="number"> characters</label>
+                                <label class="form-check-label" for="min_og_title_length">Minimum length of Open Graph Title should be <input value="40" id="min_og_title_length_val" type="number"> characters</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="is_og_title_equal_title">
-                                <label class="form-check-label" for="is_og_title_equal_title">OG Title be equal to Title tag</label>
+                                <label class="form-check-label" for="is_og_title_equal_title">The content of Open Graph Title cannot be equal to content of Title tag</label>
                             </div>
 
                             <div class="form-check form-check-black">
@@ -1370,62 +1368,62 @@
 
                             <div class="form-check">
                                 <input name="radioOgTitleCasing" class="form-check-input casing-check-input" checked type="radio" id="og_title_casing_camel">
-                                <label class="form-check-label" for="og_title_casing_camel">OG Title must be in camel casing</label>
+                                <label class="form-check-label" for="og_title_casing_camel">Open Graph Title must be in camel casing</label>
                             </div>
                             <div class="form-check">
                                 <input name="radioOgTitleCasing" class="form-check-input casing-check-input" type="radio" id="og_title_casing_sentence">
-                                <label class="form-check-label" for="og_title_casing_sentence">OG Title must be in sentence casing</label>
+                                <label class="form-check-label" for="og_title_casing_sentence">Open Graph Title must be in sentence casing</label>
                             </div>
                             <div class="form-check">
                                 <input name="radioOgTitleCasing" class="form-check-input casing-check-input" type="radio" id="og_title_casing_both">
-                                <label class="form-check-label" for="og_title_casing_both">OG Title must be either in camel casing or sentence casing</label>
+                                <label class="form-check-label" for="og_title_casing_both">Open Graph Title must be either in camel casing or sentence casing</label>
                             </div>
                         </div>
 
                         <div>
                             <br>
-                            <h6>OG Description</h6>
+                            <h6>Open Graph Description</h6>
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="og_desc">
-                                <label class="form-check-label" for="og_desc">Every page must have a OG Description tag</label>
+                                <label class="form-check-label" for="og_desc">Every page must have a Open Graph Description tag</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" max-value-check checked type="checkbox" id="max_og_desc_length">
-                                <label class="form-check-label" for="max_og_desc_length">Maximum length of the OG description tag should be <input value="200" id="max_og_desc_length_val" type="number"> characters</label>
+                                <label class="form-check-label" for="max_og_desc_length">Maximum length of the Open Graph description tag should be <input value="200" id="max_og_desc_length_val" type="number"> characters</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" min-value-check checked type="checkbox" id="min_og_desc_length">
-                                <label class="form-check-label" for="min_og_desc_length">Minimum length of the OG description tag should be <input value="40" id="min_og_desc_length_val" type="number"> characters</label>
+                                <label class="form-check-label" for="min_og_desc_length">Minimum length of the Open Graph description tag should be <input value="40" id="min_og_desc_length_val" type="number"> characters</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="is_og_desc_equal_desc">
-                                <label class="form-check-label" for="is_og_desc_equal_desc">OG Description must be the same as Meta description</label>
+                                <label class="form-check-label" for="is_og_desc_equal_desc">Open Graph Description must not be the same as Meta description</label>
                             </div>
                         </div>
 
                         <div>
                             <br>
-                            <h6>OG Image</h6>
+                            <h6>Open Graph Image</h6>
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="og_image">
-                                <label class="form-check-label" for="og_image">Every page must have a OG Image tag</label>
+                                <label class="form-check-label" for="og_image">Every page must have a Open Graph Image tag</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" image-check has-disabled="true" disabled type="checkbox" id="og_image_dimensions_min">
-                                <label class="form-check-label" for="og_image_dimensions_min">Width of OG Image should be at least <input id="og_image_width_min" value="0" type="number" /> pixels and height of OG Image should be at least<input id="og_image_height_min" value="0" type="number" /> pixels</label>   
+                                <label class="form-check-label" for="og_image_dimensions_min">Width of Open Graph Image should be at least <input id="og_image_width_min" value="0" type="number" /> pixels and height of Open Graph Image should be at least<input id="og_image_height_min" value="0" type="number" /> pixels</label>   
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" image-check has-disabled="true" checked type="checkbox" id="og_image_dimensions_exact">
-                                <label class="form-check-label" for="og_image_dimensions_exact">Width of OG Image should be exactly <input id="og_image_width_exact" value="1200" type="number" /> pixels and height of OG Image should be exactly<input id="og_image_height_exact" value="630" type="number" /> pixels</label>   
+                                <label class="form-check-label" for="og_image_dimensions_exact">Width of Open Graph Image should be exactly <input id="og_image_width_exact" value="1200" type="number" /> pixels and height of Open Graph Image should be exactly<input id="og_image_height_exact" value="630" type="number" /> pixels</label>   
                             </div>
                         </div>
                         
                         <div>
                             <br>
-                            <h6>OG URL</h6>
+                            <h6>Open Graph URL</h6>
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="og_url">
-                                <label class="form-check-label" for="og_url">Every page must have a OG URL tag</label>
+                                <label class="form-check-label" for="og_url">Every page must have an Open Graph URL tag</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="is_og_url_equal_url">
@@ -1433,7 +1431,7 @@
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" checked type="checkbox" id="max_og_url_length">
-                                <label class="form-check-label" for="max_og_url_length">Maximum length of OG URL should be <input value="60" id="max_og_url_length_val" type="number" /> characters</label>
+                                <label class="form-check-label" for="max_og_url_length">Maximum length of Open Graph URL should be <input value="60" id="max_og_url_length_val" type="number" /> characters</label>
                             </div>
                         </div>
 
@@ -1486,7 +1484,7 @@
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="is_twitter_title_equal_title">
-                                <label class="form-check-label" for="is_twitter_title_equal_title">Twitter Title be equal to Title tag</label>
+                                <label class="form-check-label" for="is_twitter_title_equal_title">Twitter Title Content cannot be equal to Title tag Content</label>
                             </div>
 
                             <div class="form-check form-check-black">
@@ -1782,8 +1780,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects the page’s loading speed for users on desktop; higher scores denote better performance.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -1875,8 +1872,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects the page’s loading speed for users on mobile networks and devices; higher scores denote better performance.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2000,14 +1996,13 @@
                                         class="form-check-label"
                                         for="google_performance_desktop"
                                       >
-                                        Performance Score
+                                        Performance
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects page speed and responsiveness for desktop users; higher scores denote better performance.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2082,8 +2077,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects how usable the page is for people with disabilities on desktop; higher scores denote better accessibility.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2158,8 +2152,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects adherence to modern web development and security practices on desktop; higher scores denote better compliance.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2231,8 +2224,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects how well the page follows basic search optimization guidelines for desktop; higher scores denote better discoverability.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2320,14 +2312,13 @@
                                         checked
                                       />
                                       <label class="form-check-label" for="google_performance_mobile">
-                                        Performance Score
+                                        Performance
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects page speed and responsiveness on mobile devices and networks; higher scores denote better performance.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2402,8 +2393,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects how usable the page is for people with disabilities on mobile devices; higher scores denote better accessibility.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2478,8 +2468,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects adherence to modern web development and security practices on mobile; higher scores denote better compliance.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2554,8 +2543,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A 0–100 rating that reflects how well the page follows basic search optimization guidelines on mobile; higher scores denote better discoverability.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2686,8 +2674,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) for the largest content element to render for desktop users; lower values indicate faster loading.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2759,14 +2746,13 @@
                                         class="form-check-label"
                                         for="google_fcp_desktop"
                                       >
-                                        First CP Score
+                                        First Contentful Paint
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) until the first text or image appears for desktop users; lower values indicate faster loading.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2841,8 +2827,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A unitless score that measures unexpected layout movement on desktop; lower values indicate better stability.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2920,8 +2905,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in milliseconds) from a user’s first interaction to the browser’s response on desktop; lower values indicate better responsiveness.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -2990,14 +2974,13 @@
                                         checked
                                       />
                                       <label class="form-check-label" for="google_tbt_desktop">
-                                        Total Blocking TIme
+                                        Total Blocking Time
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The total time (in milliseconds) when the main thread was blocked long enough to delay input on desktop; lower values indicate better responsiveness.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3075,8 +3058,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) until the page is fully interactive for desktop users; lower values indicate better responsiveness.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3154,8 +3136,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) showing how quickly content becomes visually complete on desktop; lower values indicate faster rendering
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3255,8 +3236,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) for the largest content element to render on mobile devices and networks; lower values indicate faster loading.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3325,14 +3305,13 @@
                                         checked
                                       />
                                       <label class="form-check-label" for="google_fcp_mobile">
-                                        First CP Score
+                                        First Contentful Paint
                                       </label>
                                     </div>
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) until the first text or image appears on mobile devices and networks; lower values indicate faster loading
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3410,8 +3389,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          A unitless score that measures unexpected layout movement on mobile devices; lower values indicate better stability.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3489,8 +3467,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in milliseconds) from a user’s first interaction to the browser’s response on mobile; lower values indicate better responsiveness.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3568,8 +3545,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The total time (in milliseconds) when the main thread was blocked long enough to delay input on mobile; lower values indicate better responsiveness.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3647,8 +3623,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) until the page is fully interactive on mobile devices; lower values indicate better responsiveness
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
@@ -3726,8 +3701,7 @@
                                     <div class="overall-tooltips">
                                       <div class="tooltips-contents">
                                         <p>
-                                          Lorem Ipsum is simply dummy text of the
-                                          printing and typesetting industry.
+                                          The time (in seconds) showing how quickly content becomes visually complete on mobile; lower values indicate faster rendering.
                                         </p>
                                         <div class="color-flex">
                                           <p><span></span>&nbsp; Poor</p>
