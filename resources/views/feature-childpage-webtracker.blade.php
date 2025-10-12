@@ -10,7 +10,7 @@
      <section class="fcwt1">
         <div class="fcwt1-d1">
             <h1>Effortless Website Tracking in One Place</h1>
-            <p>Our tool simplifies website tracking by replacing complex Excel sheets with an intuitive, automated platform. Monitor performance, analyze data, and access real-time insights—all in one place. Save time, reduce errors, and focus on growth while we handle the tracking, so you can make smarter, faster decisions effortlessly.</p>
+            <p>Replace scattered sheets with a single, filterable tracker for every URL—see key metrics at a glance, spot patterns, drill into reports, re-check in one click, share what matters, and keep teams aligned.</p>
             <div>
                 <button class="fr1-d1-button">
                     Try Website Tracker Free
@@ -19,7 +19,7 @@
         </div>
         <div class="fcwt1-d2">
             <img 
-            src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1044.svg') }}" alt="">
+            src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1044.svg') }}" alt="Webqa website tracker interface">
         </div>
      </section>
     <!-- Section 1 Ends -->
@@ -27,61 +27,56 @@
     <!-- Section 2 Starts -->
      <section class="fcwt2">
         <div class="fcwt2-d1">
-            <h1>Powerful Features for Smarter Website Tracking</h1>
+            <h1 style="max-width:750px;">Your entire website, one live tracker</h1>
         </div>
         <div class="fcwt2-d2">
             <div class="fcwt2-d2-card-d">
                 <h3>
-                    Check Your Website Data Unlimited Times
+                    One table for every URL
                 </h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries. 
-                    <br>
-                    <p>
-                        Showcase glowing reviews from Setmore or Google and give a clear snapshot of what your brand is all about.
-                    </p>
+                <p>Track all key metrics for your project in a single, live, tabular view—so you can scan performance across pages without hopping between reports. Organize at scale and keep everything in one place.
+                <p>URLs are grouped by directory and cover results from 38 tests, giving you a complete snapshot at a glance.</p>    
                 </p> 
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="One table for every URL">
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="Customize the view to your workflow">
             </div>
             <div class="fcwt2-d2-card-d">
                 <h3>
-                    Hide or Shift Columns according to You
+                    Customize the view to your workflow
                 </h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries. 
+                <p>Hide columns you don’t need, focus on the tests that matter, and reorder columns like a spreadsheet—so the tracker mirrors how your team reviews pages. 
+
                 </p>
-                <p>
-                    Showcase glowing reviews from Setmore or Google and give a clear snapshot of what your brand is all about.
-                </p>
+                <p>Build stakeholder-specific views (SEO, content, engineering) to keep each team focused on the metrics they own.</p>
+                
             </div>
             <div class="fcwt2-d2-card-d">
                 <h3>
-                    Check Your Website Data Unlimited Times
+                    Re-check with recency you can trust
                 </h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries. 
-                <p>
-                    Showcase glowing reviews from Setmore or Google and give a clear snapshot of what your brand is all about.
+                <p>Refresh results for the whole project or for selected URLs. The tracker shows when each page was last checked, helping you judge freshness and validity before acting
+               
                 </p>
-                </p>
+                <p>Re-check all URLs or just a subset in a click, so template changes and hotfixes are verified immediately.</p>
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="Re-check with recency you can trust">
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="Visual status + easy exports">
             </div>
             <div class="fcwt2-d2-card-d">
                 <h3>
-                    Hide or Shift Columns according to You
+                    Visual status + easy exports
                 </h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries. 
-                <p>
-                    Showcase glowing reviews from Setmore or Google and give a clear snapshot of what your brand is all about.
+                <p>Scan pass/fail at a glance with clear status cues, then export the entire table to CSV or XLSX for deeper analysis or sharing with stakeholders. Import to Sheets/Excel in seconds
+               
                 </p>
-                </p>
+                <p>Green cells highlight passes and red cells flag failures—making it obvious where to prioritize fixes before you export.</p>
             </div>
         </div>
      </section>
@@ -90,19 +85,19 @@
     <!-- Section 3 Starts  -->
      <section class="fcwt3">
         <div class="fcwt3-d1">
-            <h1>Powerful Features for Smarter Website Tracking</h1>
-            <p>Explore organic and paid traffic metrics for any website using Site Explorer. Use the interactive graph to see how traffic has progressed both globally and locally in 171 countries.</p>
+            <h1>See Website Tracker in action</h1>
+            <p>Flip through real screenshots of the live, filterable table. Watch how pages group by directory, pass/fail colors surface priorities, and one-click re-checks keep every metric fresh.</p>
         </div>
         <div class="fcwt3-d2">
             <div class="fcwt3-d2-wrapper">
                 <div class="fcwt3-d2-slide">
-                    <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1012.svg') }}" alt="">
+                    <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1012.svg') }}" alt="detailed view of website tracker 1">
                 </div>
                 <div class="fcwt3-d2-slide">
-                    <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1012.svg') }}" alt="">
+                    <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1012.svg') }}" alt="detailed view of website tracker 2">
                 </div>
                 <div class="fcwt3-d2-slide">
-                    <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1012.svg') }}" alt="">
+                    <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1012.svg') }}" alt="detailed view of website tracker 3">
                 </div>
             </div>
         </div>
@@ -121,47 +116,47 @@
                 <div class="as6-cards">
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I retrieve my password?</h5>
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
+                            <h5 class="as6-card-question-h5">What exactly is Website Tracker, and how is it different from Reports?</h5>
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="down arrow">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Website Tracker is the bird’s-eye view of your site. It brings all tracked metrics for every URL into one large, tabular view, so you can scan performance across pages without hopping between individual reports.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">What's included in the free trial?</h5>
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
+                            <h5 class="as6-card-question-h5">What data does the tracker include, and how is it organized?</h5>
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="down arrow">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Results from 38 tests across SEO, performance, best practices, and security. URLs are grouped by directory, so you can compare sections/templates and spot regressions quickly.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I remove extra keywords/projects after switching to a subscription plan with lower limits?</h5>
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
+                            <h5 class="as6-card-question-h5">Can I customize the tracker to match how my team reviews pages?</h5>
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="down arrow">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Yes. Hide columns or entire tests, reorder columns like a spreadsheet, and tailor views for SEO, content, or engineering. Re-check all or selected URLs; last-checked dates show freshness.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I change my login and password?</h5>
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
+                            <h5 class="as6-card-question-h5">How do pass/fail indicators and recency help me prioritize fixes?</h5>
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="down arrow">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Green cells mean a metric passed; red cells flag failures—priorities pop instantly. The last-checked date helps you judge freshness after releases, then jump to the matching report to fix fast.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How to set the location where I want to track keywords?</h5>
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
+                            <h5 class="as6-card-question-h5">Can I export the tracker and work in Excel/Sheets if needed?</h5>
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="down arrow">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Yes. Export the tracker to CSV/XLSX for Excel/Sheets. Individual Webpage Audits export to PDF/CSV/XLSX and have shareable links. Bulk Tools runs aren’t saved as links but their tables can be downloaded.</p>
                         </div>
                     </div>
                 </div>
@@ -175,8 +170,8 @@
      <section class="fr4 section-margin">
         <div class="fr4-inner">
             <div class="fr4-d1">
-                <h3>Increase Your Website Performance with Premium Features</h3>
-                <p>Explore organic and paid traffic metrics for any website using Site Explorer.</p>
+                <h3>Replace Clumsy spreadsheets with Website Tracker</h3>
+                <p style="max-width:600px;">See all metrics for every page, grouped by directory. Build review-ready views, refresh results anytime, and keep teams aligned on what to fix first.</p>
                 <div>
                     <button class="fr4-d1-button" data-bs-toggle="modal" data-bs-target="#registerModal">
                         Sign Up Free
@@ -184,7 +179,7 @@
                 </div>
             </div>
             <div class="fr4-d2" id="fcwt-s6">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/image-71-(2).svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/image-71-(2).svg') }}" alt="man and woman looking at a laptop">
             </div>
         </div>
    </section>
