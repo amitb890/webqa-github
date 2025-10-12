@@ -16,11 +16,11 @@
             <div class="login_modal">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h1 class="modal-title">Register Now!</h1>
+                  <h1 class="modal-title">Free Sign up</h1>
                   <button type="button" class="btn-close login_close_btn"></button>
                 </div>
                 <div class="modal-body">
-                  <p>Get Your Free Account</p>
+                  <p>Get started - no credit card needed</p>
                   <div class="login_modal_form">
                   <form action="{{ route('register') }}" method="POST"   id="loginModal">
                         @csrf
