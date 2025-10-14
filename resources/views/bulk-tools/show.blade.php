@@ -130,7 +130,7 @@
                   
                 <div class="footer_search_item">
                   <div class="footer_search_box">
-                    <textarea class="footer_control" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl', 'https://www.setmore.com/') }}</textarea>
+                    <textarea class="footer_control" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl') }}</textarea>
                   </div>
                 </div>
 
