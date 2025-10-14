@@ -1,3 +1,12 @@
+@section('title', 'URL Slug Tester: Clean, SEO-Friendly URLs | Webqa')
+@section('meta-description', 'Check URL slugs for best practices: lowercase, hyphens, length, and invalid characters. Get clear Pass/Fail results and export findings for quick fixes.')
+@section('canonical', 'https://webqa.co/tool/url-slug')
+@section('og-title', 'Test URL Slugs for SEO Best Practices | Webqa')
+@section('og-description', 'Audit slugs in seconds—verify lowercase, hyphenation, length, and characters. See decisive Pass/Fail outcomes and export results to share and act fast.')
+@section('og-url', 'https://webqa.co/tool/url-slug')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'URL slug test')
+
 <div class="single-post-content-main bulk-tool-test">
     <div class="single-post-content">
         <h2 class="tools_des_fastheading">URL Slug</h2>

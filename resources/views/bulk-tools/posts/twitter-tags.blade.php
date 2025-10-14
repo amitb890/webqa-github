@@ -1,3 +1,12 @@
+@section('title', 'Twitter Card Tags Tester: Rich Preview Checks | Webqa')
+@section('meta-description', 'Check Twitter Card tags fast. Verify twitter:card, title, description, and image for accurate link previews. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/twitter-tags')
+@section('og-title', 'Test Twitter Card Tags for Accurate Link Previews | Webqa')
+@section('og-description', 'Audit twitter:card, twitter:title, twitter:description, and twitter:image. Find missing or invalid values and export results for quick fixes and consistent previews.')
+@section('og-url', 'https://webqa.co/tool/twitter-tags')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Twitter tags test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
       <h2 class="tools_des_fastheading">Twitter Cards</h2>

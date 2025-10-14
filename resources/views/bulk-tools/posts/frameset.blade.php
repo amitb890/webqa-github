@@ -1,3 +1,13 @@
+@section('title', 'Frameset Tester: Deprecated Frames & Accessibility Checks | Webqa')
+@section('meta-description', 'Detect use of frameset/frame elements that break modern standards, accessibility, and SEO. Get clear Pass/Fail results and export findings for quick fixes.')
+@section('canonical', 'https://webqa.co/tool/frameset')
+@section('og-title', 'Test for Deprecated Frames (frameset/frame) | Webqa')
+@section('og-description', 'Scan a page for frameset/frame usage—now obsolete and harmful to accessibility, indexing, and UX. See decisive outcomes and export results to modernize layout.')
+@section('og-url', 'https://webqa.co/tool/frameset')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Frameset test')
+
+
 <div class="single-post-content-main bulk-tool-test">
     <div class="single-post-content">
       <h2 class="tools_des_fastheading">Frameset</h2>

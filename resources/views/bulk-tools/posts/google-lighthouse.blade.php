@@ -1,3 +1,15 @@
+@section('title', 'Google Lighthouse Tester: Performance, Accessibility, Best Practices & SEO | Webqa')
+@section('meta-description', 'Run Lighthouse checks for mobile and desktop. See scores for Performance, Accessibility, Best Practices, and SEO, then export results to share and fix quickly.')
+@section('canonical', 'https://webqa.co/tool/google-lighthouse')
+@section('og-title', 'Test Google Lighthouse: Performance, Accessibility, Best Practices & SEO | Webqa')
+@section('og-description', 'Audit pages with Lighthouse for mobile and desktop—view category scores, identify issues, and export results to coordinate faster fixes.')
+@section('og-url', 'https://webqa.co/tool/google-lighthouse')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Google Lighthouse test')
+
+
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Google Page Speed Lighthouse Score</h2>

@@ -1,3 +1,12 @@
+@section('title', 'Nested Tables Tester: Layout & Accessibility Checks | Webqa')
+@section('meta-description', 'Detect nested HTML tables that hurt accessibility, responsiveness, and maintainability. Get clear Pass/Fail results and export findings for quick fixes.')
+@section('canonical', 'https://webqa.co/tool/nested-tables')
+@section('og-title', 'Test for Nested HTML Tables on a Page | Webqa')
+@section('og-description', 'Scan pages for nested table structures that complicate layout and impair accessibility. See decisive outcomes and export results to clean up markup.')
+@section('og-url', 'https://webqa.co/tool/nested-tables')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Nested tables test')
+
 <div class="single-post-content-main bulk-tool-test">
     <div class="single-post-content">
       <h2 class="tools_des_fastheading">Nested Tables</h2>

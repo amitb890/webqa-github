@@ -1,6 +1,14 @@
 @extends('layouts.master')
-@section('title', 'Free SEO Tools For Your Website | Webqa')
-@section('meta-description', 'This is tool page meta description.')
+
+@section('title', 'Explore Website Auditing Tools: Quick URL Tests | Webqa')
+@section('meta-description', 'Run focused checks in seconds—HTTP status, robots.txt, meta tags, images, and more. Paste a URL, get clear Pass/Fail results, and download CSV/XLSX.')
+@section('canonical', 'https://webqa.co/tools')
+@section('og-title', 'Try Webqa Tools for Fast, Focused Page Checks | Webqa')
+@section('og-description', 'Pick a tool, paste a URL, and see decisive results for status codes, metadata, sitemaps, images, and more. Export findings to share and act quickly.')
+@section('og-url', 'https://webqa.co/tools')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Webqa tools')
+
 @section("content")
 
     <!-- main sections starts -->

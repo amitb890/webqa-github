@@ -1,3 +1,13 @@
+@section('title', 'HTML Compression Tester: Minification & Size Checks | Webqa')
+@section('meta-description', 'Check if your HTML is compressed/minified. Verify reduced file size and unnecessary whitespace removal for faster loads. Get Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/html-compression')
+@section('og-title', 'Test HTML Compression & Minification | Webqa')
+@section('og-description', 'Confirm that HTML is minified to cut payload size and improve load times. See decisive outcomes and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/html-compression')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'HTML compression test')
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">HTML Compression</h2>

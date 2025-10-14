@@ -1,3 +1,14 @@
+@section('title', 'GZIP Compression Tester: Faster HTML Delivery | Webqa')
+@section('meta-description', 'Check if GZIP compression is enabled for your HTML page. Verify compressed responses for faster loads and smaller payloads. Get Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/gzip-compression')
+@section('og-title', 'Test GZIP Compression for Faster Pages | Webqa')
+@section('og-description', 'Confirm that your HTML is served with GZIP compression to reduce size and speed up delivery. See decisive outcomes and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/gzip-compression')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'GZIP compression test')
+
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">GZIP Compression</h2>

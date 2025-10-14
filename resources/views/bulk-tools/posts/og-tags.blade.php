@@ -1,3 +1,13 @@
+@section('title', 'Open Graph Tags Tester: Rich Preview Checks | Webqa')
+@section('meta-description', 'Check Open Graph tags fast. Verify og:title, og:description, og:image, and more for accurate link previews. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/og-tags')
+@section('og-title', 'Test Open Graph Tags for Accurate Link Previews | Webqa')
+@section('og-description', 'Audit og:title, og:description, og:image, and related OG tags. Find missing or invalid values and export results for quick fixes and consistent social previews.')
+@section('og-url', 'https://webqa.co/tool/og-tags')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Open Graph tags test')
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
       <h2 class="tools_des_fastheading">Open Graph Tags</h2>

@@ -1,3 +1,12 @@
+@section('title', 'Robots.txt Tester: Crawl Rules & Disallow Checks | Webqa')
+@section('meta-description', 'Validate robots.txt quickly. Check syntax, Disallow/Allow rules, sitemap references, and unintended blocks. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/robotstxt')
+@section('og-title', 'Test robots.txt for Crawl Directives | Webqa')
+@section('og-description', 'Audit robots.txt in seconds—verify syntax, Disallow/Allow rules, and sitemap lines, and ensure important pages aren’t blocked. Export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/robotstxt')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'robots.txt test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Robots.txt</h2>
