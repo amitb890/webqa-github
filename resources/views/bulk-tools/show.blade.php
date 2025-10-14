@@ -2901,9 +2901,8 @@
           <!-- Trial Area -->
           <div class="trial-area">
             <div class="trial-content">
-              <h2>Wondering why your content isn't
-                showing up on the SERPs?</h2>
-                <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
+              <h2>If you ain’t measuring it,<br> you aren’t improving it.</h2>
+                <a href="#" class="btn btn_primary rounded-pill" style="font-size: 22px !important;padding: 10px 30px;" data-bs-toggle="modal" data-bs-target="#registerModal">Free Signup</a>
             </div>
           </div>
         </div>
