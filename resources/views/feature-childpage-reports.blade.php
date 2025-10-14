@@ -1,7 +1,16 @@
 @extends('layouts.master')
 
-@section('title', 'Webqa - Reports')
-@section('meta-description', 'This is features page meta description.')
+@section('title', 'Share Clear Audit Findings With Reports | Webqa')\
+@section('meta-description', 'Turn audits into action with per-metric reports. Open from the dashboard, review issues line by line, and export PDF/CSV/XLSX for fast hand-offs.')
+@section('canonical', 'https://webqa.co/features/reports')
+@section('og-title', 'Share Actionable Audit Findings with Website Reports | Webqa')
+@section('og-description', 'Website Reports turns audit data into clear tables—titles, speed, canonicals, and more. Jump in from widgets and export PDF/CSV/XLSX for streamlined hand-offs.')
+@section('og-url', 'https://webqa.co/features/reports')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Website reports')
+
+
+
 
 @section("content")
 
