@@ -126,7 +126,7 @@
               <div class="tools_body_content">
 
                 <h1>{{$d["main_heading"]}}</h1>
-                <p class="col2-p">{{$d["main_para"]}}</p>
+                <p class="col2-p" style="font-size:18px;">{{$d["main_para"]}}</p>
                   
                 <div class="footer_search_item">
                   <div class="footer_search_box">
