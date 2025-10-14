@@ -1,6 +1,15 @@
 @extends('layouts.master')
+
+
 @section('title', 'Website Auditing and Testing Tool | Webqa')
-@section('meta-description', 'This is home page meta description.')
+@section('meta-description', 'Define your standards, audit any URL, get clear pass/fail results, share analyses, track site-wide metrics, and run bulk checks—fix what matters faster.')
+@section('canonical', 'https://webqa.co/')
+@section('og-title', 'Customize Website Audits and Act Faster | Webqa')
+@section('og-description', 'Set your criteria, test any page, and see decisive results. Use Website Tracker, Reports, and bulk tools to prioritize fixes and keep every page release-ready.')
+@section('og-url', 'https://webqa.co/')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Webqa')
+
 @section("content")
 
 

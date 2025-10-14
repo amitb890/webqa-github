@@ -1,7 +1,13 @@
 @extends('layouts.master')
 
-@section('title', 'Webqa - Website Tracker')
-@section('meta-description', 'This is features page meta description.')
+@section('title', 'Track Every URL in One Live Table | Webqa')
+@section('meta-description', 'Replace spreadsheets with Website Tracker. See metrics for every URL, grouped by directory. Re-check in a click, view pass/fail colors, and export CSV/XLSX.')
+@section('canonical', 'https://webqa.co/features/website-tracker')
+@section('og-title', 'Website Tracker: One Live Table for Every URL | Webqa')
+@section('og-description', 'Monitor all metrics across your site in a single, filterable view. Group by directory, refresh results anytime, and export CSV/XLSX for easy hand-offs.')
+@section('og-url', 'https://webqa.co/features/website-tracker')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Website tracker')
 
 @section("content")
     

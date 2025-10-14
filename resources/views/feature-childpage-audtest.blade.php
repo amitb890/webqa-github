@@ -1,7 +1,13 @@
 @extends('layouts.master')
 
-@section('title', 'Webqa - Webpage Audit')
-@section('meta-description', 'This is features page meta description.')
+@section('title', 'Run Precise Webpage Audits with Clear Pass/Fail | Webqa')
+@section('meta-description', 'Audit any URL against your standards. Set criteria like title length and casing, get Pass/Fail results, share analysis links, and export PDF/CSV/XLSX.')
+@section('canonical', 'https://webqa.co/features/webpage-audit')
+@section('og-title', 'Custom Webpage Audits with Shareable Results | Webqa')
+@section('og-description', 'Define acceptance criteria, test any page, and see decisive Pass/Fail outcomes. Each analysis includes a shareable URL and exports to PDF/CSV/XLSX.')
+@section('og-url', 'https://webqa.co/features/webpage-audit')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Webpage audit')
 
 @section("content")
 

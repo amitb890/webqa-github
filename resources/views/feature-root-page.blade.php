@@ -1,7 +1,13 @@
 @extends('layouts.master')
 
-@section('title', 'Features for Smarter Website Auditing | Webqa')
-@section('meta-description', 'Explore Webqa features—customizable page audits, shareable results, website tracker, per-metric reports, and bulk tools to keep every page release-ready.')
+@section('title', 'Features that Turn Audits into Action | Webqa')
+@section('meta-description', 'Explore Webqa features—Webpage Audit, Website Tracker, Reports, and Settings. Set your standards, audit any URL, share results, and export PDF/CSV/XLSX.')
+@section('canonical', 'https://webqa.co/features')
+@section('og-title', 'Webqa Features: From Audits to Action')
+@section('og-description', 'See how Webqa combines customizable audits, a live tracker, per-metric reports, and project-wide settings to turn findings into fixes—plus exports for easy hand-offs.')
+@section('og-url', 'https://webqa.co/features')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Webqa features')
 
 @section("content")
     
