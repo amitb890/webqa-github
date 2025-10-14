@@ -2917,4 +2917,61 @@
 <script src="/new-assets/js/bulk.js"></script>
 <script src="/new-assets/js/exportXlsx.js"></script>
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<!-- Custom script to rotate the Footer CTA text in individual tools pages -->
+<script >
+    document.addEventListener('DOMContentLoaded', () => {
+        const headlines = {
+            '/tool/meta-title': 'First impressions counts,<br>Optimise Meta Titles today.',
+            '/tool/meta-description': 'More clicks, fewer bounces<br>Sharpen your meta descriptions today.',
+            '/tool/robots-meta': 'Guide crawlers with confidence,<br>Review robots meta tag today.',
+            '/tool/canonical-url': 'Avoid duplicate content issues<br>Set the right canonicals.',
+            '/tool/images': 'Beauty without the bloat<br>Audit image sizes, formats, delivery.',
+            '/tool/url-slug': 'Readable URLs win clicks<br>Review your slugs today.',
+            '/tool/robotstxt': 'Protect what matters<br>Tidy up your Robots.txt rules.',
+            '/tool/headings': 'Structure that sells<br>Craft clear Headings for readers & SEO.',
+            '/tool/xml-sitemap': 'Map your site, win discovery!<br>Clean up URLs in your XML sitemap.',
+            '/tool/og-tags': 'Look good on social<br>Audit your Open Graph tags.',
+            '/tool/twitter-tags': 'Better previews, more clicks<br>Tune your Twitter tags now.',
+            '/tool/favicon': 'Brand every tab<br>Check favicon & app icons.',
+            '/tool/meta-viewport': 'Look great on every screen<br>Get your viewport tag right.',
+            '/tool/doctype': 'Render right from the start<br>Declare a proper DOCTYPE.',
+            '/tool/http-status-code': 'Healthy responses, no dead ends,<br>Check HTTP status codes & redirects.',
+            '/tool/html-sitemap': 'Help visitors find everything<br>Monitor Your HTML sitemaps.',
+            '/tool/google-page-speed-insights': 'Find Slow Pages On your Site<br>Test with PSI and Improve!.',
+            '/tool/google-lighthouse': 'Nail Performance Issue With Google Lighthouse<br>Generate Lighthouse reports.',
+            '/tool/google-core-web-vitals': 'Track your Core Web Vitals.<br>Measure LCP, CLS, INP.',
+            '/tool/mobile-friendliness': 'Look great on phones!<br>Run mobile-friendliness test for your whole website.',
+            '/tool/gzip-compression': 'Smaller payloads, faster loads<br>Check GZIP Compression for your entire website.',
+            '/tool/html-compression': 'Ship less markup<br>Check HTML Compression for your entire website.',
+            '/tool/css-compression': 'Lean stylesheets wins!<br>Check CSS Compression across your website.',
+            '/tool/js-compression': 'Speed up scripts<br>Check for JS Compression Across your website',
+            '/tool/css-caching-test': 'Cache it once, reuse often<br>Check CSS Caching for your entire website.',
+            '/tool/js-caching-test': 'Snappier interactions<br>Check for JS Caching Across URLs.',
+            '/tool/page-size': 'Trim the bloat<br>Reduce page weight for faster loads.',
+            '/tool/nested-tables': 'Clean, modern layouts<br>Remove nested tables for CSS layout.',
+            '/tool/frameset': 'Retire legacy layouts<br>Replace framesets with modern HTML.',
+            '/tool/broken-links': 'No dead ends<br>Find and clean up broken links.',
+            '/tool/safe-browsing-test': 'Keep users safe<br>Check blocklists and remediate issues.',
+            '/tool/unsafe-cross-origin-links-test': 'Open safely in new tabs!<br>Check for Unsafe cross origin links in your code',
+            '/tool/protocall-relative-resource-links-test': 'No mixed content surprises<br>Replace protocol-relative URLs with HTTPS.',
+            '/tool/content-security-policy-header-test': 'Lock down your assets<br>Set a solid Content-Security-Policy.',
+            '/tool/x-frame-options-header-test': 'Stop clickjacking<br>Block framing with X-Frame-Options.',
+            '/tool/hsts-header-test': 'HTTPS all the time<br>Enforce HSTS for your domain.',
+            '/tool/xml-sitemap': 'Map your site, win discovery!<br>Clean up URLs in your XML sitemap.',
+            '/tool/xml-sitemap': 'Map your site, win discovery!<br>Clean up URLs in your XML sitemap.',
+            '/tool/bad-content-type-test': 'Serve files correctly<br>Fix MIME types and headers.',
+            '/tool/ssl-certificate-test': 'Stay trusted in browsers<br>Validate your SSL chain & expiry.',
+            '/tool/directory-browsing-test': 'Hide what shouldn’t show<br>Disable directory listing.',
+        };
+
+        const path = location.pathname.replace(/\/+$/, '');
+        const newText = headlines[path];
+
+        const h2 = document.querySelector('.trial-content h2');
+        if (h2 && newText) {
+            h2.innerHTML = newText; // allows <br> to render
+        }
+    }); 
+</script>
+
 @endsection
