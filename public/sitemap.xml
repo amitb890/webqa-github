@@ -2,37 +2,143 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://webqa.co/</loc>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
   </url>
   <url>
     <loc>https://webqa.co/aboutus</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://webqa.co/features</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://webqa.co/features/webpage-audit</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://webqa.co/features/website-tracker</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://webqa.co/features/settings</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://webqa.co/features/reports</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/meta-title</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/meta-description</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/robots-meta</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/canonical-url</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/images</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/url-slug</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/robotstxt</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/headings</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/xml-sitemap</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/og-tags</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/twitter-tags</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/favicon</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/meta-viewport</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/doctype</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/http-status-code</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/html-sitemap</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/google-page-speed-insights</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/google-lighthouse</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/google-core-web-vitals</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/google-core-web-vitals</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/mobile-friendliness</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/gzip-compression</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/html-compression</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/css-compression</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/js-compression</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/css-caching-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/js-caching-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/page-size</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/nested-tables</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/frameset</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/broken-links</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/safe-browsing-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/unsafe-cross-origin-links-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/protocall-relative-resource-links-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/content-security-policy-header-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/x-frame-options-header-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/hsts-header-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/bad-content-type-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/ssl-certificate-test</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/tool/directory-browsing-test</loc>
   </url>
 </urlset>
