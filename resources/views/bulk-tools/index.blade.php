@@ -578,8 +578,7 @@
           <!-- Wondering Area Start -->
           <div class="trial-area blog-wondering-mt">
             <div class="trial-content">
-              <h2>Wondering why your content isn't
-                showing up on the SERPs?</h2>
+              <h2>Run Comprehensive Site Checks. Find Errors. Fix Faster.</h2>
                 <a href="#" class="btn btn_primary rounded-pill">Start Free Trial</a>
             </div>
           </div>
