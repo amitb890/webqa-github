@@ -1,8 +1,4 @@
 
-@if($slug == 'meta-title')
-@section('title', "Meta Title Test | Webqa")
-@section('meta-description', 'This is tool page meta title.')
-@endif
 
 @if($slug == 'meta-description')
 @section('title', "Meta Description Test | Webqa")
