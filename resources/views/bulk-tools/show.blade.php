@@ -2918,7 +2918,7 @@
 <script src="/new-assets/js/exportXlsx.js"></script>
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <!-- Custom script to rotate the Footer CTA text in individual tools pages -->
-<script >
+<script>
     document.addEventListener('DOMContentLoaded', () => {
         const headlines = {
             '/tool/meta-title': 'First impressions counts,<br>Optimise Meta Titles today.',
