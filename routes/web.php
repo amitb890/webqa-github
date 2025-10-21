@@ -98,17 +98,21 @@ Route::get('/test', function(){
     // print_r(getimagesize($content));
 
 });
-
+ Route::get('/test-archive', [App\Http\Controllers\PagesController::class, 'testResults'])->name('testResults');
+Route::get('/webtests', [App\Http\Controllers\PagesController::class, 'getResults'])->name('get.results');
 
 Route::middleware('auth')->group(function () {
     Route::middleware('onboarding')->group(function () {
         Route::get('website-tracker', [App\Http\Controllers\TrackerController::class, 'index'])->name('tracker');
         Route::get('website-tracker-test', [App\Http\Controllers\TrackerController::class, 'indexTest'])->name('trackerTest');
         Route::get('dashboard', [App\Http\Controllers\PagesController::class, 'dashboard'])->name('dashboard');
-        Route::get('/app-analysis', [App\Http\Controllers\PagesController::class, 'appAnalysis'])->name('app-analysis');
+        Route::get('/app-analysis/{ref_id?}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])
+    ->name('app-analysis');
         Route::resource('profile', App\Http\Controllers\ProfileController::class);
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
-        Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap'); 
+        Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap');
+        Route::get('report-settings', [App\Http\Controllers\ReportSettingsController::class, 'edit'])->name('report-settings.edit');
+        Route::put('report-settings', [App\Http\Controllers\ReportSettingsController::class, 'update'])->name('report-settings.update');
         Route::resource('reports', App\Http\Controllers\ReportsController::class);
 
         Route::resource('projects', App\Http\Controllers\ProjectsController::class);

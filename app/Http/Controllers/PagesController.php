@@ -14,6 +14,8 @@ use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
+use Yajra\DataTables\DataTables;
+use App\Models\CachedTest;
 $FastImageSize = new \FastImageSize\FastImageSize();
 
 
@@ -241,18 +243,56 @@ class PagesController extends Controller
         return view("dashboard");
     }
 
-    public function appAnalysis(Request $request){
-        if ($request->hasCookie('analysis_id')) {
-            $id = Cookie::get('analysis_id');
-            $data = TestResults::where("ref_id", $id)->get()->first();
-            if(!$data){
-              abort(404);
-            }
-            return view("user.analysis.index", compact("data"));
-        } else {
+    public function appAnalysis(Request $request, $ref_id = null)
+    {
+        // Prefer route param, then query string, then cookie
+        $id = $ref_id ?? $request->query('ref_id') ?? Cookie::get('analysis_id');
+
+        if (!$id) {
             abort(404);
         }
+
+        $data = TestResults::where("ref_id", $id)->first();
+
+        if (!$data) {
+            abort(404);
+        }
+
+        return view("user.analysis.index", compact("data"));
     }
+    public function testResults(Request $request){
+        return view('tests.index');
+    }
+    
+    public function getResults()
+        {
+            $query = CachedTest::query()
+                ->orderBy('created_at', 'desc');
+
+            if (Auth::check()) {
+                // $query->where('user_id', Auth::id());
+            }
+
+            $query = $query->get();
+            
+            return DataTables::of($query)
+                    ->addColumn('report', function($row) {
+                        $url = url('analysis/' . $row->test_key); // generates http://local.webqa_3.com/analysis/{ref_id}
+
+                        return '<div class="report-cell">
+                            <a href="'.$url.'" target="_blank" class="report-link" title="Open URL">
+                                <span class="open-check">Open</span>
+                                <svg class="report-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                        </div>';
+                    })
+                ->rawColumns(['report'])
+                ->make(true);
+        }
     
     public function urlDiscovery(){
         return view("url-discovery");

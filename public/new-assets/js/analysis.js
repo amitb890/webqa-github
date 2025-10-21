@@ -282,8 +282,8 @@ $( document ).ready(function() {
         <div class="card-body collapse show" id="multiCollapseContent${guidGenerator()}">
           <div class="card-single-content ${data.status ? "text-success-custom" : "text-danger-custom"}">
             <p>
-              <span class="badge">${data.status ? "PASS" : "FAIL"}</span>
-              <span>${data.message}</span>
+              <span class="badge twitter_badge">${data.status ? "PASS" : "FAIL"}</span>
+              <span class="twitter_content">${data.message}</span>
             </p>
           </div>
           <div class="row">
@@ -305,7 +305,7 @@ $( document ).ready(function() {
                         <th class="text-center">1</th>
                         <td><span>Twitter Title Tag</span></td>
                         <td>
-                          <p>
+                          <p class="twitter_title">
                             ${data.content}
                           </p>
                         </td>
@@ -319,7 +319,7 @@ $( document ).ready(function() {
                         <th class="text-center">2</th>
                         <td><span>Twitter Image</span></td>
                         <td>
-                          <p>${data.contentImage}</p>
+                          <p class="twitter_image">${data.contentImage}</p>
                         </td>
                         <td>
                           <div class="status-card ${data.statusImage ? "text-success-custom" : "text-danger-custom"}">${data.statusImage ? "PASS" : "FAIL"}
@@ -331,7 +331,7 @@ $( document ).ready(function() {
                         <th class="text-center">3</th>
                         <td><span>Twitter Image Alt</span></td>
                         <td>
-                          <p>
+                          <p class="twitter_image_alt">
                             ${data.contentImageAlt}
                           </p>
                         </td>
@@ -402,8 +402,8 @@ $( document ).ready(function() {
         <div class="card-body collapse show" id="multiCollapseContent${guidGenerator()}">
           <div class="card-single-content ${data.status ? "text-success-custom" : "text-danger-custom"}">
             <p>
-              <span class="badge">${data.status ? "PASS" : "FAIL"}</span>
-              <span>${data.message}</span>
+              <span class="badge og_badge">${data.status ? "PASS" : "FAIL"}</span>
+              <span class="og_content">${data.message}</span>
             </p>
           </div>
           <div class="row">
@@ -425,7 +425,7 @@ $( document ).ready(function() {
                         <th class="text-center">1</th>
                         <td><span>OG Title Tag</span></td>
                         <td>
-                          <p>
+                          <p class="og_title_tag">
                             ${data.content}
                           </p>
                         </td>
@@ -439,7 +439,7 @@ $( document ).ready(function() {
                         <th class="text-center">2</th>
                         <td><span>OG Description</span></td>
                         <td>
-                          <p>${data.contentDesc}</p>
+                          <p class="og_description">${data.contentDesc}</p>
                         </td>
                         <td>
                           <div class="status-card ${data.statusDesc ? "text-success-custom" : "text-danger-custom"}">${data.statusDesc ? "PASS" : "FAIL"}
@@ -452,7 +452,7 @@ $( document ).ready(function() {
                         <td><span>Og URL</span></td>
                         <td>
                           <p>
-                            <a target="_blank" href="${data.contentURL}">${data.contentURL}</a>
+                            <a target="_blank" href="${data.contentURL}" class="og_url">${data.contentURL}</a>
                           </p>
                         </td>
                         <td>
@@ -465,7 +465,7 @@ $( document ).ready(function() {
                         <th class="text-center">4</th>
                         <td><span>OG Image</span></td>
                         <td>
-                          <p>${data.contentImage}</p>
+                          <p class="og_image">${data.contentImage}</p>
                         </td>
                         <td>
                           <div class="status-card ${data.statusImage ? "text-success-custom" : "text-danger-custom"}">${data.statusImage ? "PASS" : "FAIL"}
@@ -1945,10 +1945,10 @@ $( document ).ready(function() {
           <div class="col-md-6">
             <div class="card-single-content badge-orange">
               <p>
-              <span class="badge">${data.status ? "PASS" : "FAIL"}</span>
+              <span class="badge status_pdf">${data.status ? "PASS" : "FAIL"}</span>
               </p>
             </div>
-            <h6 class=""><b>${data.message}</b></h6>
+            <h6 class="message_pdf"><b>${data.message}</b></h6>
             <span class="mt-2 mb-2">${data.message_secondary}</span>
 
             ${data.problems ? 
@@ -1973,7 +1973,11 @@ $( document ).ready(function() {
           <div class="col-md-6 flex-center">
             <div class="performance-mobile">
               <div class="performance-mobile-img">
-                <img src="${data.screenshotDataMobile}" alt="" class="img-fluid" />
+
+                <div class="phone-frame" 
+                    >
+                  <img src="${data.screenshotDataMobile}" class="screenshot" alt="Screenshot">
+                </div>
               </div>
             </div>
           </div>
@@ -2117,7 +2121,13 @@ $( document ).ready(function() {
                             <div class="col-md-6">
                               <div class="performance-mobile">
                                 <div class="performance-mobile-img">
-                                  <img src="${data.screenshotDataDesktop}" alt="" class="img-fluid" />
+<div class="laptop-frame">
+  <!-- dynamic screenshot -->
+                  <img src="${data.screenshotDataDesktop}" class="screenshot" alt="Screenshot">
+
+  <!-- static laptop PNG -->
+  <img src="/new-assets/assets/images/desktop_border.png" class="frame" alt="Laptop Frame">
+</div>
                                 </div>
                               </div>
                             </div>
@@ -2179,7 +2189,11 @@ $( document ).ready(function() {
                             <div class="col-md-6">
                               <div class="performance-mobile">
                                 <div class="performance-mobile-img">
-                                  <img src="${data.screenshotDataMobile}" alt="" class="img-fluid" />
+                                
+                                <div class="phone-frame" 
+                                      >
+                                    <img src="${data.screenshotDataMobile}" class="screenshot" alt="Screenshot">
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -4347,7 +4361,7 @@ $( document ).ready(function() {
                         </div>
                         <div class="download-single-item">
                           <div class="download-single-link">
-                            <a href="javascript:void()" class="download-pdf-btn">
+                            <a href="javascript:void(0)" class="download-pdf-btn">
                               <span>
                                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                                   xmlns="http://www.w3.org/2000/svg">

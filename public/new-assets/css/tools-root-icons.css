@@ -1,0 +1,56 @@
+/* Tools Root Icons Styling */
+.tools-root-item .root-icon img {
+    width: 32px;
+    height: 32px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    transition: all 0.3s ease;
+}
+
+.tools-root-item .root-icon img:hover {
+    transform: scale(1.1);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+/* SVG Icon Colors */
+.tools-root-item .root-icon svg {
+    color: #4a90e2;
+    transition: color 0.3s ease;
+}
+
+.tools-root-item:hover .root-icon svg {
+    color: #357abd;
+}
+
+/* Specific icon colors for different categories */
+.tools-root-item:nth-child(3n+1) .root-icon svg {
+    color: #4a90e2; /* Blue */
+}
+
+.tools-root-item:nth-child(3n+2) .root-icon svg {
+    color: #50c878; /* Green */
+}
+
+.tools-root-item:nth-child(3n+3) .root-icon svg {
+    color: #ff6b35; /* Orange */
+}
+
+/* Icon container styling */
+.root-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 12px;
+    margin-right: 16px;
+    transition: all 0.3s ease;
+}
+
+.tools-root-item:hover .root-icon {
+    background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+

@@ -409,3 +409,35 @@ function createTypeWriter(){
 
 })
    
+$(document).ready(function () {
+    $(".lighthouse-mobile").hide();
+    $(".vitals-mobile").hide();
+  // Core Vitals tab switch
+  $(".cw-tab-btn").click(function () {
+    $(".cw-tab-btn").removeClass("active");
+    $(this).addClass("active");
+
+    if ($(this).hasClass("cw-desktop")) {
+      $(".vitals-desktop").show();
+      $(".vitals-mobile").hide();
+    } else if ($(this).hasClass("cw-mobile")) {
+      $(".vitals-mobile").show();
+      $(".vitals-desktop").hide();
+    }
+  });
+
+  // Lighthouse tab switch
+  $(".lh-tab-btn").click(function () {
+    $(".lh-tab-btn").removeClass("active");
+    $(this).addClass("active");
+
+    if ($(this).hasClass("lh-desktop")) {
+      $(".lighthouse-desktop").show();
+      $(".lighthouse-mobile").hide();
+    } else if ($(this).hasClass("lh-mobile")) {
+      $(".lighthouse-mobile").show();
+      $(".lighthouse-desktop").hide();
+    }
+  });
+});
+

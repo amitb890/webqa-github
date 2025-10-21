@@ -3,6 +3,7 @@
 webqa - Analysis
 @endsection
 @section("content")
+
 @include("components.modal-fix")
 @include("components.modal-update-status")
 @include("components.modal-email")

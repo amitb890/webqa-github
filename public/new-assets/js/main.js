@@ -23,6 +23,7 @@ $(document).ready(function () {
       const projectId = getStringPart(document.querySelector("#activeProject").getAttribute("data-val"), "-", 1)
       const href =  `${new URL(window.location.href).origin}/settings/${projectId}/edit`;
       $("#sidebarSettingsLink").attr("href", href)
+      $(".settignSidebarLink").attr("href", href)
     }
   }
 

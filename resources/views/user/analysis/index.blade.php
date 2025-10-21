@@ -20,6 +20,7 @@ Webqa - Analysis Report
 @section("js")
 <script src="{{ asset('new-assets/js/jspdf.umd.min.js') }}"></script>
 <script src="{{ asset('new-assets/js/jspdf.plugin.autotable.min.js') }}"></script>
+<script src="{{ asset('new-assets/js/roboto-fonts.js') }}"></script>
 <script src="{{ asset('new-assets/js/analysis.js') }}"></script>
-<script src="{{ asset('new-assets/js/export-pdf.js') }}"></script>
+<script src="{{ asset('new-assets/js/export-pdf.js') }}?v=1.1"></script>
 @endsection

@@ -94,6 +94,11 @@
               >
                 Security
               </button>
+              <button
+                class="nav-link"
+              ><a href="{{ route('report-settings.edit') }}" style="color: inherit; text-decoration: none;">
+                Reports</a>
+              </button>
 
        
 
