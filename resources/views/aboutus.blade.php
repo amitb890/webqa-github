@@ -284,6 +284,95 @@
          @include('components.imran-components.as6')
         <!-- Section 6 ends -->
 
+<!-- Contact us form section starts -->
+<style>
+  /* Hide placeholder text on focus */
+  .contact-us-form input::placeholder,
+  .contact-us-form textarea::placeholder {
+    transition: color 0.15s ease;
+  }
+  .contact-us-form input:focus::placeholder,
+  .contact-us-form textarea:focus::placeholder {
+    color: transparent;
+  }
+</style>
+
+<div class="contact-us-about-page" style="margin-top:160px;margin-bottom:160px;">
+  <h1 class="as6-h" style="text-align:center;">Contact us</h1>
+  <div class="contact-us-byline" style="text-align: center;margin-top: 80px;font-size: 20px;">
+    Please use the contact form below if you have any questions or if you need any assistance.
+  </div>
+
+  <div class="contact-us-form" style="width: 550px;margin: 0 auto;padding-top: 50px;">
+    <form action="/contact" method="post">
+      <div class="name" style="margin-bottom: 15px;">
+        <label for="name" style="margin-right: 50px;">Name</label>
+        <input
+          type="text"
+          style="width:350px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;"
+          id="name"
+          name="name"
+          placeholder="Your name"
+          autocomplete="name"
+          required
+        />
+      </div>
+
+      <div class="email" style="margin-bottom: 15px;">
+        <label style="margin-right: 53px;" for="email">Email</label>
+        <input
+          type="email"
+          style="width:350px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;"
+          id="email"
+          name="email"
+          placeholder="Your email"
+          autocomplete="email"
+          required
+        />
+      </div>
+
+      <div class="subject" style="margin-bottom: 15px;">
+        <label style="margin-right: 37px;" for="subject">Subject</label>
+        <input
+          type="text"
+          style="width:350px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;"
+          id="subject"
+          name="subject"
+          placeholder="Subject"
+        />
+      </div>
+
+      <div class="message" style="margin-bottom: 15px; position: relative;">
+        <label for="message" style="margin-right: 28px; display:flex; position:absolute;">Message</label>
+        <textarea
+          style="width:350px;height:200px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;margin-left:95px;"
+          id="message"
+          name="message"
+          rows="5"
+          placeholder="Write your message..."
+          required
+        ></textarea>
+      </div>
+
+      <div class="submit_button" style="margin-left: 38%;margin-top: 50px;">
+        <button type="submit" style="background-color: var(--primary);color: var(--white);text-decoration: none;font-weight: 500;border: 1px solid var(--primary);padding: 7px;width: 125px;border-radius: 4px;">
+          Submit
+        </button>
+      </div>
+    
+    <div role="alert" class="alert webqa__alert alert-custom alert-dismissible fade show" style="margin-top:50px;text-align:center;">Your message has been sent. You will hear from us shortly
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    
+    </form>
+  </div>
+</div>
+
+
+<!-- Contact us form section ends -->
+
+
+
          @section("js")
 <script src="{{ asset('/new-assets/js/home.js') }}"></script>
 @endsection
