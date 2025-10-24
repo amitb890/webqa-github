@@ -24,6 +24,8 @@
             <li><a href="https://webqa.co/about">About Us</a></li>
             <li><a href="https://webqa.co/tools">Tools</a></li>
             <li><a href="https://webqa.co/features">Features</a></li>
+            <li><a href="https://webqa.co/articles">Articles</a></li>
+            <li><a href="https://webqa.co/test-archive">Previous Tests</a></li>
             </ul>
         </div>
         </div>

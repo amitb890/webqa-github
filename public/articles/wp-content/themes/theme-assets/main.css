@@ -7575,7 +7575,7 @@ h6 {
 }
 
 .single-post-content h2 {
-  font-weight: 500;
+  font-weight: bold;
   font-size: 32px;
   line-height: 42px;
   color: #373737;
@@ -13066,3 +13066,14 @@ max-width: 900px;
   border-left: none !important;
   box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
+
+
+.code-block{
+    background: #EEE;
+    margin-bottom: 20px;
+    font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+    padding: 20px;
+    border-radius: 6px;
+    font-size: 15px;
+  }
+

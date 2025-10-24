@@ -10,7 +10,8 @@
               </div>
              
               <h1><a style="color: #000;text-decoration: none;" href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h1>
-              <img src="https://webqa.co/raw-files/assets/images/blog/blog_2.png" style="margin-top:20px;margin-bottom:20px;">
+              
+              <div style="margin-top:20px;margin-bottom:20px;"><?php the_post_thumbnail( 'full' ); ?></div>
             </div>
             
             <div class="single-post-content single-post-content2">
