@@ -9,6 +9,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 
 ini_set('max_execution_time', 180000);
 ini_set('memory_limit', '512M');
@@ -17,19 +19,19 @@ class RunLighthouseTest implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 180000; // Increase timeout to 5 minutes
+    public $timeout = 600; // Increase timeout to 5 minutes
     public $tries = 1; // Prevent multiple retries
 
-    protected $lighthouseTest;
+    protected $testId;
+    protected $url;
 
     /**
      * Create a new job instance.
-     *
-     * @param \App\Models\LighthouseTest $lighthouseTest
      */
-    public function __construct(LighthouseTest $lighthouseTest)
+    public function __construct($testId, $url)
     {
-        $this->lighthouseTest = $lighthouseTest;
+        $this->testId = $testId;
+        $this->url = $url;
     }
 
     /**
@@ -37,81 +39,91 @@ class RunLighthouseTest implements ShouldQueue
      */
     public function handle()
     {
-        $urls = json_decode($this->lighthouseTest->urls, true);
-        $results = [];
+        try {
+            $test = LighthouseTest::findOrFail($this->testId);
 
-        foreach ($urls as $url) {
+            DB::transaction(function () use ($test) {
+                
+                $fresh = LighthouseTest::lockForUpdate()->find($this->testId);
 
-            $url = $url["url"];
-            try {
-
-                // Fetch desktop and mobile results
-                $desktopResults = $this->fetchPageSpeedResults($url, 'desktop');
-                $mobileResults = $this->fetchPageSpeedResults($url, 'mobile');
-
-                $results[$url] = [
-                    'desktop' => $desktopResults,
-                    'mobile' => $mobileResults,
+                $results = json_decode($fresh->results ?? '{}', true);
+                $results[$this->url] = [
+                    'desktop' => $this->fetchPageSpeedResults($this->url, 'desktop'),
+                    'mobile' => $this->fetchPageSpeedResults($this->url, 'mobile'),
                 ];
 
-                 // Update the database immediately for the current URL
-                 $this->lighthouseTest->update([
-                    'results' => json_encode($results),
-                ]);
+                $completed = json_decode($fresh->completed_urls ?? '[]', true);
+                $completed[] = $this->url;
+                $completed = array_unique($completed);
 
-            } catch (\Exception $e) {
-                Log::error("Failed to fetch data for URL: $url. Error: " . $e->getMessage());
-                $results[$url] = ['error' => 'Failed to fetch results'];
-
-                 // Update the database with the error
-                 $this->lighthouseTest->update([
+                $update = [
                     'results' => json_encode($results),
-                ]);
-            }
+                    'completed_urls' => json_encode($completed),
+                ];
+
+                // Mark complete if done
+                $allUrls = json_decode($fresh->urls, true);
+                if (count($completed) >= count($allUrls)) {
+                    $update['status'] = 'completed';
+                }
+
+                $fresh->update($update);
+            });
+          
+
+        } catch (\Throwable $e) {
+            Log::error("Failed PageSpeed test for {$this->url}: {$e->getMessage()}");
         }
-
-        // Update the database with results
-        $this->lighthouseTest->update([
-            'status' => 'completed',
-        ]);
     }
 
-
-    private function fetchPageSpeedResults($url, $strategy)
+    /**
+     * Fetch PageSpeed Insights data for a URL.
+     */
+    private function fetchPageSpeedResults(string $url, string $strategy = 'mobile'): array
     {
-        $apiUrl = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={$url}&strategy={$strategy}&category=performance&category=best-practices&category=accessibility&category=seo&key=AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
+        $apiKey = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
+        $apiUrl = "https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url={$url}&strategy={$strategy}&category=performance&category=best-practices&category=accessibility&category=seo&key={$apiKey}";
 
-        $response = file_get_contents($apiUrl);
-        $data = json_decode($response, true);
-
-        if (!isset($data['lighthouseResult'])) {
-            throw new \Exception("Lighthouse result is missing for URL: $url ($strategy)");
+        $response = @file_get_contents($apiUrl);
+        if (!$response) {
+            throw new \Exception("Failed to fetch PageSpeed API for {$url} ({$strategy})");
         }
 
-        $lighthouseResult = $data['lighthouseResult'];
-        $categories = $lighthouseResult['categories'];
+        $data = json_decode($response, true);
+        if (!isset($data['lighthouseResult'])) {
+            throw new \Exception("Lighthouse result missing for {$url} ({$strategy})");
+        }
+
+        $lr = $data['lighthouseResult'];
+        $categories = $lr['categories'];
 
         return [
             'performance_score' => $categories['performance']['score'] * 100 ?? null,
             'best_practices_score' => $categories['best-practices']['score'] * 100 ?? null,
             'accessibility_score' => $categories['accessibility']['score'] * 100 ?? null,
             'seo_score' => $categories['seo']['score'] * 100 ?? null,
-            'first_contentful_paint' => floatval($lighthouseResult['audits']['first-contentful-paint']['numericValue'] / 1000) ?? null,
-            'largest_contentful_paint' => floatval($lighthouseResult['audits']['largest-contentful-paint']['numericValue'] / 1000) ?? null,
-            'speed_index' => floatval($lighthouseResult['audits']['speed-index']['numericValue'] / 1000) ?? null,
-            'interactive' => floatval($lighthouseResult['audits']['interactive']['numericValue'] / 1000) ?? null,
-            'total_blocking_time' => floatval($lighthouseResult['audits']['total-blocking-time']['numericValue']) ?? null,
-            'cumulative_layout_shift' => floatval($lighthouseResult['audits']['cumulative-layout-shift']['numericValue'] / 1000) ?? null,
-            'max_potential_fid' => floatval($lighthouseResult['audits']['max-potential-fid']['numericValue']) ?? null,
+            'first_contentful_paint' => floatval($lr['audits']['first-contentful-paint']['numericValue'] / 1000) ?? null,
+            'largest_contentful_paint' => floatval($lr['audits']['largest-contentful-paint']['numericValue'] / 1000) ?? null,
+            'speed_index' => floatval($lr['audits']['speed-index']['numericValue'] / 1000) ?? null,
+            'interactive' => floatval($lr['audits']['interactive']['numericValue'] / 1000) ?? null,
+            'total_blocking_time' => floatval($lr['audits']['total-blocking-time']['numericValue']) ?? null,
+            'cumulative_layout_shift' => floatval($lr['audits']['cumulative-layout-shift']['numericValue'] / 1000) ?? null,
+            'max_potential_fid' => floatval($lr['audits']['max-potential-fid']['numericValue']) ?? null,
         ];
     }
 
-
-    public function failed(\Exception $exception){
-        $this->lighthouseTest->update([
-            'status' => 'failed',
-            'error_message' => $exception->getMessage(),
-        ]);
+    /**
+     * Handle failed job.
+     */
+    public function failed(\Throwable $exception)
+    {
+        $test = LighthouseTest::find($this->testId);
+        if ($test) {
+            $test->update([
+                'status' => 'failed',
+                'error_message' => $exception->getMessage(),
+            ]);
+        }
+        Log::error('Lighthouse job permanently failed: ' . $exception->getMessage());
     }
-
 }

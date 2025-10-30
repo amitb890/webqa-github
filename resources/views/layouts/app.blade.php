@@ -1155,6 +1155,61 @@ if(isset($_COOKIE["activeProject"])){
     <script src="{{ asset('js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+
+    <script src="{{ asset('new-assets/js/pdf-images.js') }}"></script>
+
+
+  @php
+  $defaultReportSettings = [
+      'meta_title' => 1,
+      'meta_desc' => 1,
+      'robots_meta' => 1,
+      'canonical_url' => 1,
+      'url_slug' => 1,
+      'open_graph_tags' => 1,
+      'twitter_tags' => 1,
+      'favicon' => 1,
+      'xml_sitemap' => 1,
+      'meta_viewport' => 1,
+      'frameset' => 1,
+      'doctype' => 1,
+      'http_status_code' => 1,
+      'page_size' => 1,
+      'hsts_header' => 1,
+      'content_security_policy_header' => 1,
+      'nested_tables' => 1,
+      'x_frame_options_header' => 1,
+      'ssl_certificate_enable' => 1,
+      'bad_content_type' => 1,
+      'folder_browsing_enable' => 1,
+      'css_caching_enable' => 1,
+      'js_caching_enable' => 1,
+      'mobile_friendly' => 1,
+      'is_safe_browsing' => 1,
+      'cross_origin_links' => 1,
+      'protocol_relative_resource' => 1,
+      'h1_heading_tag' => 1,
+      'robot_text_test' => 1,
+      'broken_links' => 1,
+      'images' => 1,
+      'html_compression' => 1,
+      'css_compression' => 1,
+      'js_compression' => 1,
+      'gzip_compression' => 1,
+      'google_overall' => 1,
+      'google_lighthouse' => 1,
+      'core_web_vitals' => 1,
+  ];
+  @endphp
+
+  @auth
+  <script>
+      window.reportSettings = @json(
+          \App\Models\ReportSettings::where('user_id', auth()->id())->first() ?? $defaultReportSettings
+      );
+  </script>
+  @endauth
+
     <script src="{{ asset('new-assets/js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
     <!-- Project selection session update script -->

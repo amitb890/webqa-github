@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 5, googleUrlsToCheck = 2, recheckSingleIntervalStatus = true
   var recheckMax = 50, recheckGoogle = 1, recheckSingleMax = 50
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
@@ -2333,8 +2333,9 @@ $(document).ready(function () {
 
 
     static updateGoogleCards(results){
+      console.log(results)
       let resultsTotal, total
-      total = urls.length
+      total = googleUrlsToCheck
 
       if(results){
         resultsTotal = Object.keys(results).length
@@ -2728,7 +2729,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
-                // Controls.buildGoogleElements()
+                Controls.buildGoogleElements()
             });
             
         });
@@ -2759,27 +2760,27 @@ $(document).ready(function () {
       })
 
 
-      // async function checkStatus() {
-      //     const interval = setInterval(async () => {
-      //         const response = await fetch(`/api/check-status/${projectId}`);
-      //         const { status, results } = await response.json();
-      //         Controls.updateGoogleCards(results)
+      async function checkStatus() {
+          const interval = setInterval(async () => {
+              const response = await fetch(`/api/check-status/${projectId}`);
+              const { status, results } = await response.json();
+              Controls.updateGoogleCards(results)
 
-      //         const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
+              const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
-      //                                   if (status === 'completed') {
-      //                       handleGoogleResults(results, googleTiles)
+              if (status === 'completed') {
+                handleGoogleResults(results, googleTiles)
 
-      //                         clearInterval(interval);
-      //                         Controls.finalizeGoogleElements(results)
-                              
-      //                         // Re-enable recheck button after Google tests completion
-      //                         UI.updateRecheckButtonState(false)
-      //                     }
-      //     }, 5000); // Check every 5 seconds
-      //   }
+                clearInterval(interval);
+                Controls.finalizeGoogleElements(results)
+                
+                // Re-enable recheck button after Google tests completion
+                UI.updateRecheckButtonState(false)
+            }
+          }, 5000); // Check every 5 seconds
+        }
 
-      //   checkStatus()
+        checkStatus()
     }
 
     static submitIdeaSubmit(){

@@ -177,8 +177,6 @@ Route::namespace("TestDetails")->prefix('test-details')->group(function(){
 });
 
 
-Route::post('/api/start-tests', [App\Http\Controllers\LighthouseController::class, 'startTests']);
-Route::get('/api/check-status/{testId}', [App\Http\Controllers\LighthouseController::class, 'checkStatus']);
 
 
 Route::post('/test/start-dashboard-test', [App\Http\Controllers\Test\TestController2::class, 'startTests']);

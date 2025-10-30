@@ -723,7 +723,6 @@ class TestDetailsController extends Controller
         $desktopStatus = true;
 
         foreach($elements as $element){
-            if(!$element->testerrorcaught){
                 // Skip if this element is an error object
                 if (!isset($element->desktop) || !isset($element->mobile)) {
                     continue;
@@ -754,7 +753,6 @@ class TestDetailsController extends Controller
                 if($element->mobile->performance_score < 50){
                     $mobilePoor++;
                 }
-            }
         }
 
         if ($totalElements > 0) {
@@ -840,7 +838,6 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
-            if(!$element->testerrorcaught){
                 if (!isset($element->desktop) || !isset($element->mobile)) {
                     continue;
                 }
@@ -938,7 +935,6 @@ class TestDetailsController extends Controller
                 if($element->mobile->seo_score < 50){
                     $mobilePoorSeo++;
                 }
-            }
         }
 
         if ($totalElements > 0) {
@@ -1117,7 +1113,6 @@ class TestDetailsController extends Controller
 
 
         foreach($elements as $element){
-            if(!$element->testerrorcaught){
                 if (!isset($element->desktop) || !isset($element->mobile)) {
                     continue;
                 }
@@ -1297,7 +1292,6 @@ class TestDetailsController extends Controller
                 if($element->mobile->interactive > 7){
                     $mobilePoorTTI++;
                 }
-            }
         }
 
         // Division by zero protection for averages

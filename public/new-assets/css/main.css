@@ -9185,6 +9185,11 @@ h6 {
   font-size:16px;
   overflow: hidden;
 }
+
+.bulk_test_textarea {
+  max-height: none !important;
+}
+
 .tools_body_content .footer_utils {
   right: 13px;
   transform: unset;
@@ -13355,6 +13360,141 @@ nav .nav-tabs{
   height: auto;
   border-radius: 8px;
 }
+
+
+/* Shared layout for both headers */
+.core-vitals-header,
+.lighthouse-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 15px; /* spacing below header */
+}
+
+.home-meta-title {
+  margin: 0;
+}
+
+/* Reuse your existing button styles */
+.cw-tab-btn,
+.lh-tab-btn {
+  background-color: #fff;
+  color: rgba(143, 143, 143, 1);
+  border-radius: 20px;
+  padding: 6px 16px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+.cw-tab-btn.active,
+.lh-tab-btn.active {
+  background-color: rgb(245, 245, 245);
+  color: rgba(30, 99, 184, 1);
+}
+
+.previous-test .custom-dataTable td {
+    border: 1px solid #e0e0e0 !important;
+    padding: 12px 15px !important;
+}
+
+.previous-test .custom-dataTable thead th {
+    background-color: #dee8f8;
+    color: #333;
+    font-weight: 600;
+}
+
+.previous-test .custom-dataTable tbody td {
+    color: #555;
+}
+
+.previous-test .report-icon {
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+}
+
+.previous-test #custom-search {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px 10px;
+}
+
+.previous-test .show-row {
+    margin-left: 0% !important;
+    margin-right: 10px !important;
+}
+
+.previous-test .showing-pagination {
+    margin-left: auto !important;
+}
+
+.previous-test .table-pagination {
+    margin-bottom: 20px !important;
+}
+
+.previous-test .download_result ul {
+    margin: 7px;
+}
+
+.previous-test .test_result_table {
+          border-radius: 0px !important;
+      }
+.previous-test .custom-dataTable tbody tr {
+    border-bottom: none !important;
+}
+.previous-test .custom-dataTable tbody tr td {
+    border-bottom: none !important;
+}
+.previous-test .custom-dataTable tbody tr td a {
+    text-decoration: none !important;
+}
+.previous-test .custom-dataTable thead th {
+    color: rgba(55, 55, 55, 1) !important;
+}
+.previous-test .custom-dataTable tbody tr td:nth-child(3) {
+    color: rgba(110, 110, 110, 1) !important;
+}
+
+.phone-frame { 
+  position: relative;
+  width: 300px; 
+  height: 656px; 
+  background-size: cover; 
+  background-position: center;
+  float: right;
+  background-image: url(/new-assets/assets/images/phone_border.png);
+}
+
+     
+.phone-frame .screenshot {
+       position: absolute;
+    top: 85px;
+    left: 26px;
+    width: 252px;
+    height: 515px;
+  }
+.laptop-frame {
+  position: relative;
+  width: 600px;      /* scale laptop */
+  margin: 0 auto;
+}
+
+.laptop-frame .screenshot {
+    position: absolute;
+    top: 43px;
+    left: 184px;
+    width: 344px;
+    height: 215px;
+    object-fit: cover;
+    border-radius: 6px;
+    z-index: 1;
+}
+
 
 /* Broken Links Table Styling */
 .total-broken-links{

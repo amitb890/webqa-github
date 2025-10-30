@@ -913,7 +913,7 @@ $(document).ready(function () {
                     //   break;
                     case "favicon":
                       td.innerHTML+=`
-                      <td class="text-start"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
+                      <td class="text-start"><a href="${result.content}" target="_blank">${result.content}</a></td>
                       `
                       break;
                      case "meta_viewport":

@@ -338,7 +338,6 @@ $( document ).ready(function() {
     function buildCustomizer(){
         let project = document.querySelector("#activeProject").getAttribute("data-val")
         project = getStringPart(project, "-", 1)
-
         $.ajax({
             url : `/data/get-settings/${project}`,
             type : 'GET',
@@ -347,269 +346,392 @@ $( document ).ready(function() {
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             },       
             success : function(data) {
-                var SEOLabelsFlag = false;
+                var SEOLabelsFlag = true;
                 const allLabels = getAllTestLabels("analysis");
                 const SEOLabels = allLabels.seo
                 const performanceLabels = allLabels.performance
                 const securityLabels = allLabels.security
                 const CBPLabels = allLabels.bestPractices
 
-                SEOLabels.forEach(label=>{
-                    if(data[label.dbName]){
-                        SEOLabelsFlag = true;
-                        const div = document.createElement("div")
-                        div.classList.add("form-check")
-                        div.classList.add("form-check-custom")
-                        div.innerHTML = `
-                            <input checked data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
-                            <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
-                        `
-                        document.querySelector("#accordianMetaTags .inner-element-content").appendChild(div)
-                      
-                        const li = document.createElement("li")
-                        if (label.name == 'title') {
-                            li.innerHTML = `<span class="side_content"><a href="/reports/meta-title" target="_blank">${label.displayName}</a></span>`
-                                document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        }
-                       else if (label.name == 'description') {
-                            li.innerHTML = `<span class="side_content"><a href="/reports/description" target="_blank">${label.displayName}</a></span>`
-                                document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        }
-                        else if(label.name == 'url'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/url-slug" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } else if(label.name == 'robots'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/robots-meta" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        }  else if(label.name == 'canonical'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/canonical" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } else if(label.name == 'http_status_code'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/http-status-code" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'doctype'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/doctype" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'icon'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/favicon" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        }
-                        else if(label.name == 'viewport'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/meta-viewport" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'img'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/images" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+              
 
-                        else if(label.name == 'twitter:title'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/twitter-tags" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+             SEOLabels.forEach(label => {
+    let showLi = false;
 
-                        else if(label.name == 'og:title'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/og-tags" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        
-                        else {
-                            li.innerHTML = `<span class="side_content">${label.displayName}</span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        }
-                    }
-                })
-                if(!SEOLabelsFlag) {
-                    $('#accordianMetaTags').hide();
-                    $('#metaTagsUl').hide();
-                 }
+    // Map label.name to report_settings column
+    switch(label.name) {
+        case 'title':
+            showLi = window.reportSettings.meta_title;
+            break;
+        case 'description':
+            showLi = window.reportSettings.meta_desc;
+            break;
+        case 'url':
+            showLi = window.reportSettings.url_slug;
+            break;
+        case 'robots':
+            showLi = window.reportSettings.robots_meta;
+            break;
+        case 'canonical':
+            showLi = window.reportSettings.canonical_url;
+            break;
+        case 'http_status_code':
+            showLi = window.reportSettings.http_status_code;
+            break;
+        case 'doctype':
+            showLi = window.reportSettings.doctype;
+            break;
+        case 'icon':
+            showLi = window.reportSettings.favicon;
+            break;
+        case 'viewport':
+            showLi = window.reportSettings.meta_viewport;
+            break;
+        case 'img':
+            showLi = window.reportSettings.images;
+            break;
+        case 'twitter:title':
+            showLi = window.reportSettings.twitter_tags;
+            break;
+        case 'og:title':
+            showLi = window.reportSettings.open_graph_tags;
+            break;
+        default:
+            showLi = false;
+    }
+    if(data[label.dbName]){
+        const div = document.createElement("div");
+        div.classList.add("form-check", "form-check-custom");
+        div.innerHTML = `
+            <input checked data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" 
+                   class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
+            <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
+        `;
+        document.querySelector("#accordianMetaTags .inner-element-content").appendChild(div);
+    }
+    // Checkbox append
+    if (showLi) {
 
-             
+        // li append based on label.name
+        const li = document.createElement("li");
+
+        switch(label.name) {
+            case 'title':
+                li.innerHTML = `<span class="side_content"><a href="/reports/meta-title" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'description':
+                li.innerHTML = `<span class="side_content"><a href="/reports/description" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'url':
+                li.innerHTML = `<span class="side_content"><a href="/reports/url-slug" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'robots':
+                li.innerHTML = `<span class="side_content"><a href="/reports/robots-meta" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'canonical':
+                li.innerHTML = `<span class="side_content"><a href="/reports/canonical" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'http_status_code':
+                li.innerHTML = `<span class="side_content"><a href="/reports/http-status-code" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'doctype':
+                li.innerHTML = `<span class="side_content"><a href="/reports/doctype" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'icon':
+                li.innerHTML = `<span class="side_content"><a href="/reports/favicon" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'viewport':
+                li.innerHTML = `<span class="side_content"><a href="/reports/meta-viewport" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'img':
+                li.innerHTML = `<span class="side_content"><a href="/reports/images" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'twitter:title':
+                li.innerHTML = `<span class="side_content"><a href="/reports/twitter-tags" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'og:title':
+                li.innerHTML = `<span class="side_content"><a href="/reports/og-tags" target="_blank">${label.displayName}</a></span>`;
+                break;
+            default:
+                li.innerHTML = `<span class="side_content">${label.displayName}</span>`;
+        }
+
+        document.querySelector("#settingsCollapseMetaTitles").appendChild(li);
+    }
+});
+
+// Hide SEO accordion if nothing enabled
+if (!SEOLabelsFlag) {
+    $('#accordianMetaTags').hide();
+    $('#metaTagsUl').hide();
+}
+
                  
                 var performanceLabelsFlag = false;
-                performanceLabels.forEach(label=>{
-                    if(data[label.dbName]){
-                        performanceLabelsFlag = true;
-                        let labelDisaplayName = '';
-                        if(label.displayName == 'Google Page Speed Overall Score' ||
-                           label.displayName == 'Google Page Speed Lighthouse Score' ||
-                           label.displayName == 'Google Page Speed Core Web Vitals' 
-                        ) {
-                            labelDisaplayName = label.displayName
-                            labelDisaplayName = labelDisaplayName.replace(/Google Page Speed\s?/i, "");
 
-                        } else {
-                            labelDisaplayName = label.displayName
-                        }
-                        const div = document.createElement("div")
-                        div.classList.add("form-check")
-                        div.classList.add("form-check-custom")
-                        div.innerHTML = `
-                            <input checked data-parent="performance" data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
-                            <label class="form-check-label" for="check_${label.name}">${labelDisaplayName}</label>
-                        `
-                        document.querySelector("#accordianPerformance .inner-element-content").appendChild(div)
-                        const li = document.createElement("li")
-                        
-                        li.innerHTML = `<span class="side_content">${labelDisaplayName}</span>`
-                        document.querySelector("#settingsCollapsePerformance").appendChild(li)
-                        li.innerHTML = `<span class="side_content">${label.displayName}</span>`
+performanceLabels.forEach(label => {
+    let showLi = false;
 
-                        if(label.name == 'google_overall'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-insights" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
-                        } 
-                       else if(label.name == 'google_lighthouse'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-lighthouse" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
-                        } 
-                       else if(label.name == 'core_web_vitals'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-core-web-vitals" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
-                        } 
-                        else if(label.name == 'mobile_friendly'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/mobile-friendly" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapsePerformance").appendChild(li)
-                        } 
-                    }
-                })
-                if(!performanceLabelsFlag) {
-                    $('#accordianPerformance').hide();
-                    $('#performanceUl').hide();
-                 }
+    // Map label.name to report_settings field
+    switch(label.name) {
+        case 'google_overall':
+            showLi = window.reportSettings.google_overall;
+            break;
+        case 'google_lighthouse':
+            showLi = window.reportSettings.google_lighthouse;
+            break;
+        case 'core_web_vitals':
+            showLi = window.reportSettings.core_web_vitals;
+            break;
+        case 'mobile_friendly':
+            showLi = window.reportSettings.mobile_friendly;
+            break;
+        default:
+            showLi = false;
+    }
+            let labelDisplayName = label.displayName;
+
+    if (
+            label.displayName === 'Google Page Speed Overall Score' ||
+            label.displayName === 'Google Page Speed Lighthouse Score' ||
+            label.displayName === 'Google Page Speed Core Web Vitals'
+        ) {
+            labelDisplayName = label.displayName.replace(/Google Page Speed\s?/i, "");
+        }
+        // Append checkbox
+        if(data[label.dbName]){
+                const div = document.createElement("div");
+                div.classList.add("form-check", "form-check-custom");
+                div.innerHTML = `
+                    <input checked data-parent="performance" data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" 
+                        class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
+                    <label class="form-check-label" for="check_${label.name}">${labelDisplayName}</label>
+                `;
+                document.querySelector("#accordianPerformance .inner-element-content").appendChild(div);
+                performanceLabelsFlag = true;
+            }
+    if (showLi) {
+        performanceLabelsFlag = true;
+        // Append li
+        const li = document.createElement("li");
+        switch(label.name) {
+            case 'google_overall':
+                li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-insights" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'google_lighthouse':
+                li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-lighthouse" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'core_web_vitals':
+                li.innerHTML = `<span class="side_content"><a href="/reports/google-page-speed-core-web-vitals" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'mobile_friendly':
+                li.innerHTML = `<span class="side_content"><a href="/reports/mobile-friendly" target="_blank">${label.displayName}</a></span>`;
+                break;
+            default:
+                li.innerHTML = `<span class="side_content">${labelDisplayName}</span>`;
+        }
+        document.querySelector("#settingsCollapsePerformance").appendChild(li);
+    }
+});
+
+// Hide Performance accordion if nothing enabled
+if (!performanceLabelsFlag) {
+    $('#accordianPerformance').hide();
+    $('#performanceUl').hide();
+}
+
                 
-                 var CBPLabelsFlag = false;
-                CBPLabels.forEach(label=>{
-                    if(data[label.dbName]){
-                        CBPLabelsFlag = true;
-                        const div = document.createElement("div")
-                        div.classList.add("form-check")
-                        div.classList.add("form-check-custom")
-                        div.innerHTML = `
-                            <input checked data-parent="bestPractices" data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
-                            <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
-                        `
-                        document.querySelector("#accordianCBP .inner-element-content").appendChild(div)
-                        
-                        const li = document.createElement("li")
-                        li.innerHTML = `<span class="side_content">${label.displayName}</span>`
+                var CBPLabelsFlag = false;
 
-                        if(label.name == 'gzip_compression'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/gzip-compression" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+CBPLabels.forEach(label => {
+    let showLi = false;
 
-                        else if(label.name == 'html_compression'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/html-compression" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+    // Map label.name to report_settings field
+    switch(label.name) {
+        case 'gzip_compression':
+            showLi = window.reportSettings.gzip_compression;
+            break;
+        case 'html_compression':
+            showLi = window.reportSettings.html_compression;
+            break;
+        case 'css_compression':
+            showLi = window.reportSettings.css_compression;
+            break;
+        case 'js_compression':
+            showLi = window.reportSettings.js_compression;
+            break;
+        case 'css_caching_enable':
+            showLi = window.reportSettings.css_caching_enable;
+            break;
+        case 'js_caching_enable':
+            showLi = window.reportSettings.js_caching_enable;
+            break;
+        case 'page_size':
+            showLi = window.reportSettings.page_size;
+            break;
+        case 'nested_tables':
+            showLi = window.reportSettings.nested_tables;
+            break;
+        case 'frameset':
+            showLi = window.reportSettings.frameset;
+            break;
+        default:
+            showLi = false;
+    }
+    if(data[label.dbName]){
+    // Append checkbox
+        const div = document.createElement("div");
+        div.classList.add("form-check", "form-check-custom");
+        div.innerHTML = `
+            <input checked data-parent="bestPractices" data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" 
+                   class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
+            <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
+        `;
+        document.querySelector("#accordianCBP .inner-element-content").appendChild(div);
+        CBPLabelsFlag = true;
+    }
+    if (showLi) {
+        CBPLabelsFlag = true;
 
-                        else if(label.name == 'css_compression'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/css-compression" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+        // Append li
+        const li = document.createElement("li");
+        switch(label.name) {
+            case 'gzip_compression':
+                li.innerHTML = `<span class="side_content"><a href="/reports/gzip-compression" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'html_compression':
+                li.innerHTML = `<span class="side_content"><a href="/reports/html-compression" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'css_compression':
+                li.innerHTML = `<span class="side_content"><a href="/reports/css-compression" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'js_compression':
+                li.innerHTML = `<span class="side_content"><a href="/reports/js-compression" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'css_caching_enable':
+                li.innerHTML = `<span class="side_content"><a href="/reports/css-caching" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'js_caching_enable':
+                li.innerHTML = `<span class="side_content"><a href="/reports/js-caching" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'page_size':
+                li.innerHTML = `<span class="side_content"><a href="/reports/page-size" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'nested_tables':
+                li.innerHTML = `<span class="side_content"><a href="/reports/nested-tables" target="_blank">${label.displayName}</a></span>`;
+                break;
+            case 'frameset':
+                li.innerHTML = `<span class="side_content"><a href="/reports/frameset" target="_blank">${label.displayName}</a></span>`;
+                break;
+            default:
+                li.innerHTML = `<span class="side_content">${label.displayName}</span>`;
+        }
+        document.querySelector("#settingsCollapsePractices").appendChild(li);
+    }
+});
 
-                        else if(label.name == 'js_compression'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/js-compression" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+// Hide CBP accordion if nothing enabled
+if (!CBPLabelsFlag) {
+    $('#accordianCBP').hide();
+    $('#codingUl').hide();
+}
+            var securityLabelsFlag = false;
+            securityLabels.forEach(label => {
+                let showLi = false;
 
-                        else if(label.name == 'css_caching_enable'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/css-caching" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+                // Map label.name to report_settings field
+                switch(label.name) {
+                    case 'is_safe_browsing':
+                        showLi = window.reportSettings.is_safe_browsing;
+                        break;
+                    case 'cross_origin_links':
+                        showLi = window.reportSettings.cross_origin_links;
+                        break;
+                    case 'protocol_relative_resource':
+                        showLi = window.reportSettings.protocol_relative_resource;
+                        break;
+                    case 'content_security_policy_header':
+                        showLi = window.reportSettings.content_security_policy_header;
+                        break;
+                    case 'x_frame_options_header':
+                        showLi = window.reportSettings.x_frame_options_header;
+                        break;
+                    case 'hsts_header':
+                        showLi = window.reportSettings.hsts_header;
+                        break;
+                    case 'bad_content_type':
+                        showLi = window.reportSettings.bad_content_type;
+                        break;
+                    case 'ssl_certificate_enable':
+                        showLi = window.reportSettings.ssl_certificate_enable;
+                        break;
+                    case 'folder_browsing_enable':
+                        showLi = window.reportSettings.folder_browsing_enable;
+                        break;
+                    default:
+                        showLi = false;
+                }
+            if(data[label.dbName]){
 
-                        else if(label.name == 'js_caching_enable'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/js-caching" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
+                // Append checkbox
+                    const div = document.createElement("div");
+                    div.classList.add("form-check", "form-check-custom");
+                    div.innerHTML = `
+                        <input checked data-parent="security" data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" 
+                            class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
+                        <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
+                    `;
+                    document.querySelector("#accordianSecurity .inner-element-content").appendChild(div);
+                    securityLabelsFlag = true;
+                }
 
-                        else if(label.name == 'page_size'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/page-size" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'nested_tables'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/nested-tables" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'frameset'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/frameset" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        document.querySelector("#settingsCollapsePractices").appendChild(li)
+                if (showLi) {
+                    securityLabelsFlag = true;
+
+                    
+                    // Append li
+                    const li = document.createElement("li");
+                    switch(label.name) {
+                        case 'is_safe_browsing':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/safe-browsing" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'cross_origin_links':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/unsafe-cross-origin-links" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'protocol_relative_resource':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/protocol-relative-resource" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'content_security_policy_header':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/content-security-policy-header" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'x_frame_options_header':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/x-frame-options-header" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'hsts_header':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/hsts-header" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'bad_content_type':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/bad-content-type" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'ssl_certificate_enable':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/ssl-certificate" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        case 'folder_browsing_enable':
+                            li.innerHTML = `<span class="side_content"><a href="/reports/directory-browsing" target="_blank">${label.displayName}</a></span>`;
+                            break;
+                        default:
+                            li.innerHTML = `<span class="side_content">${label.displayName}</span>`;
                     }
-                })
-                if(!CBPLabelsFlag) {
-                    $('#accordianCBP').hide();
-                    $('#codingUl').hide();
-                 }
+                    document.querySelector("#settingsCollapseSecurity").appendChild(li);
+                }
+            });
 
-                 var securityLabelsFlag = false;
-                securityLabels.forEach(label=>{
-                    if(data[label.dbName]){
-                        securityLabelsFlag = true;
-                        securityLabelsFlag = true;
-                        const div = document.createElement("div")
-                        div.classList.add("form-check")
-                        div.classList.add("form-check-custom")
-                        div.innerHTML = `
-                            <input checked data-parent="security" data-title="${label.displayName}" data-url="${label.url}" data-name="${label.name}" class="form-check-input customizer-check-input" type="checkbox" value="" id="check_${label.name}">
-                            <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
-                        `
-                        document.querySelector("#accordianSecurity .inner-element-content").appendChild(div)
-                        
-                        const li = document.createElement("li")
-                        li.innerHTML = `<span class="side_content">${label.displayName}</span>`
+            // Hide Security accordion if nothing enabled
+            if (!securityLabelsFlag) {
+                $('#accordianSecurity').hide();
+                $('#securityUl').hide();
+            }
 
-                        if(label.name == 'is_safe_browsing'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/safe-browsing" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'cross_origin_links'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/unsafe-cross-origin-links" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'protocol_relative_resource'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/protocol-relative-resource" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'content_security_policy_header'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/content-security-policy-header" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'x_frame_options_header'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/x-frame-options-header" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-                        else if(label.name == 'hsts_header'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/hsts-header" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-
-                        else if(label.name == 'bad_content_type'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/bad-content-type" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-
-                        else if(label.name == 'ssl_certificate_enable'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/ssl-certificate" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-
-                        else if(label.name == 'folder_browsing_enable'){
-                            li.innerHTML = `<span class="side_content"><a href="/reports/directory-browsing" target="_blank">${label.displayName}</a></span>`
-                            document.querySelector("#settingsCollapseMetaTitles").appendChild(li)
-                        } 
-
-                        document.querySelector("#settingsCollapseSecurity").appendChild(li)
-                    }
-                })
-                if(!securityLabelsFlag) {
-                    $('#accordianSecurity').hide();
-                    $('#securityUl').hide();
-                 }
             },
         });
     }

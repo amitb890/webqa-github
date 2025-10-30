@@ -2218,8 +2218,11 @@ class TestController extends Controller
                 ];
 
                 $imageDetail["imageSizeValue"] = $imageMaxSize ? $imgSize . " KB" : "File size check excluded.";
-          
-                array_push($problems, $imageDetail);
+                $existingSrcs = array_column($problems, 'imageSrc');
+
+                if (!in_array($imageSrc, $existingSrcs)) {
+                    array_push($problems, $imageDetail);
+                }
             }
 
             // Set message based on results

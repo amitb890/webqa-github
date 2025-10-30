@@ -10,8 +10,8 @@
           <div class="home-title">
           <h1>Test Your Website for <span class="typing-text"></span></h1>
             <p>
-              Test a webpage for SEO, Page speed,
-              Mobile Friendliness, HTML best practices and standards.
+              Test a webpage for Technical SEO, HTML Code, Pagespeed,
+              Performance, Mobile friendliness best practices and standards.
             </p>
           </div>
           <div class="home-search">
@@ -1963,13 +1963,32 @@
                       id="v-pills-google-lighthouse"
                     >
                       <div class="home-meta-content">
+
+                        <!-- Lighthouse Score Header -->
+                        <div class="lighthouse-header">
                         <h5 class="home-meta-title">Lighthouse Score</h5>
+                          <div class="btn-group" role="group" aria-label="Lighthouse Tabs">
+                            <button type="button" class="lh-tab-btn lh-desktop active" data-target="desktop">
+                                <svg width="27" height="20" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z" 
+                                        fill="rgba(30, 99, 184, 1)"></path>
+                                </svg>
+								
+                              Desktop</button>
+                            <button type="button" class="lh-tab-btn lh-mobile" data-target="mobile">
+                              								
+ <svg width="17" height="20" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z" fill="black" ></path>
+                                  </svg>		
+                              Mobile</button>
+                          </div>
+                        </div>
                         <div class="meta-content transparent">
                           <div class="accor-content">
 
                           
                           <div class="meta-content performance-content performance-content-analysis">
-                            <div class="performance-left">
+                            <div class="performance-left lighthouse-desktop">
                               <div class="accor-content">
                                 <div class="performance-title">
                                   <h4>Desktop</h4>
@@ -2292,7 +2311,7 @@
                             </div>
 
                             <!-- mobile area -->
-                            <div class="performance-right">
+                            <div class="performance-right lighthouse-mobile">
                               <div class="accor-content">
                                 <div class="performance-title">
                                   <h4>Mobile</h4>
@@ -2644,12 +2663,32 @@
                       id="v-pills-google-core"
                     >
                       <div class="home-meta-content">
+                        <div class="core-vitals-header">
                         <h5 class="home-meta-title">Core Web Vitals</h5>
+                          <div class="btn-group" role="group" aria-label="Core Web Vitals Tabs">
+                            <!-- Desktop Button -->
+                            <button type="button" class="cw-tab-btn cw-desktop active" data-target="desktop">
+                           <svg width="27" height="20" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z" 
+                                        fill="rgba(30, 99, 184, 1)"></path>
+                                </svg>
+                              Desktop
+                            </button>
+
+                            <!-- Mobile Button -->
+                            <button type="button" class="cw-tab-btn cw-mobile" data-target="mobile">
+                            <svg width="17" height="20" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z" fill="black" ></path>
+                                  </svg>
+                              Mobile
+                            </button>
+                          </div>
+                        </div>
                         <div class="meta-content transparent">
                           <div class="accor-content">
 
                           <div class="meta-content performance-content performance-content-analysis">
-                            <div class="performance-left">
+                            <div class="performance-left vitals-desktop">
                               <div class="accor-content">
                                 <div class="performance-title">
                                   <h4>Desktop</h4>
@@ -3218,7 +3257,7 @@
                             </div>
 
                             <!-- mobile area -->
-                            <div class="performance-right">
+                            <div class="performance-right vitals-mobile">
                               <div class="accor-content">
                                 <div class="performance-title">
                                   <h4>Mobile</h4>
@@ -4327,7 +4366,7 @@
                             
                           <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="robot_text_test_block_url">
-                            <label class="form-check-label" for="robot_text_test_block_url">No page on the website should be blocked in Robots.txt</label>
+                            <label class="form-check-label" for="robot_text_test_block_url">No page on the website should be blockes in Robots.txt</label>
                         </div>
                         
                           </div>
@@ -4644,7 +4683,9 @@
             <div class="home_section_title">
               <h2>What is WebQA?</h2>
               <p>
-                WebQA is more than just a website audit tool — it’s a customizable platform that helps you uncover hidden issues, improve performance, and keep your site secure. With flexible settings, actionable insights, and clear reports, WebQA adapts to your needs and makes optimizing your website simple and effective.
+                WebQA is a website quality assurance tool which let's you check
+                whether best practices and standards are maintained for a
+                website or not.
               </p>
             </div>
             <div class="what_webqa_content">
@@ -4652,21 +4693,23 @@
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
                   <p>
-                    <b>Customisable QA process</b> - Tailor every test with your own rules and benchmarks for truly relevant results.
+                    Have a fully customisable QA Process for your website -
+                    bring developers, marketers, designers and everyone else on
+                    the same page.
                   </p>
                 </div>
               </div>
               <div class="single_what_item_main">
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
-                  <p><b>Comprehensive Checks </b>- From SEO and speed to security and best practices — WebQA covers it all.</p>
+                  <p>Periodically Track Page Speed of All your website pages</p>
                 </div>
               </div>
               <div class="single_what_item_main">
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
                   <p>
-                    <b>Actionable Insights</b> - Get clear pass/fail results with recommendations you can implement right away.
+                    Perform SEO Audits customised to your acceptance criteria
                   </p>
                 </div>
               </div>
@@ -4674,13 +4717,14 @@
                 <div class="single_what_item">
                   <img src="/new-assets/assets/images/home/check.svg" alt="icon" />
                   <p>
-                    <b>Easy reporting</b> - Turn audits into shareable reports that track progress and prove value.
+                    Have an always updating Website Tracker - track every single
+                    detail of your website on a weekly basis
                   </p>
                 </div>
               </div>
             </div>
             <div class="Features_btn_area">
-              <a href="https://webqa.co/features" class="Features_btn">See All Features</a>
+              <a href="#" class="Features_btn">See All Features</a>
             </div>
           </div>
           <!--  what_webqa_area Css End -->
@@ -4703,9 +4747,10 @@
           <!-- Designed Area Start -->
           <div class="Designed_area">
             <div class="home_section_title">
-              <h2>Built for teams who want flawless websites</h2>
+              <h2>Designed for teams who conduct meetings at scale</h2>
               <p>
-                WebQA is built for anyone who cares about website performance, security, and growth. Whether you optimize for search, manage projects, build websites, or run a business, WebQA gives you the insights you need to fix issues and keep your site at its best.
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry.
               </p>
             </div>
             <div class="Designed_content">
@@ -4898,21 +4943,25 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Optimize every meta tag</h6>
+                        <h6>Improve lead response times</h6>
                         <p>
-                          Set custom rules for titles, descriptions, and keywords to maximize SEO impact.
+                          Gain a competitive advantage when you qualify, route,
+                          and book leads instantly.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Boost SERP visibility</h6>
+                        <h6>Drive more retention</h6>
                         <p>
-                          Identify speed, mobile, and technical issues that hold your rankings back.
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Show results with reports</h6>
+                        <h6>Speed up your response times</h6>
                         <p>
-                          Deliver clear, data-backed insights to prove ROI to stakeholders.
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
                         </p>
                       </div>
                     </div>
@@ -4930,21 +4979,25 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Fix issues with ease</h6>
+                        <h6>Drive more retention</h6>
                         <p>
-                          Spot problems without needing deep technical knowledge or coding skills.
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Keep your site healthy</h6>
+                        <h6>Improve lead response times</h6>
                         <p>
-                          Ensure speed, security, and usability are always up to standard.
+                          Gain a competitive advantage when you qualify, route,
+                          and book leads instantly.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Protect your growth</h6>
+                        <h6>Speed up your response times</h6>
                         <p>
-                          Avoid missed opportunities by staying on top of your website’s performance.
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
                         </p>
                       </div>
                     </div>
@@ -4962,21 +5015,25 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Catch errors early</h6>
+                        <h6>Speed up your response times</h6>
                         <p>
-                          Find broken HTML, code flaws, and best-practice gaps before launch.
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Secure your website</h6>
+                        <h6>Drive more retention</h6>
                         <p>
-                          Run checks for vulnerabilities and safeguard your users’ data.
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Save time with automation</h6>
+                        <h6>Improve lead response times</h6>
                         <p>
-                         Automated audits help you focus on building, not fixing.
+                          Gain a competitive advantage when you qualify, route,
+                          and book leads instantly.
                         </p>
                       </div>
                     </div>
@@ -4994,21 +5051,18 @@
                     </div>
                     <div class="learn_more_right">
                       <div class="learn_more_right_single">
-                        <h6>Track site health at a glance</h6>
+                        <h6>Drive more retention</h6>
                         <p>
-                          Monitor project progress with easy-to-read reports and test results.
+                          Bring all of your experts together and connect with
+                          customers at every stage of their journey to build
+                          long-lasting partnerships.
                         </p>
                       </div>
                       <div class="learn_more_right_single">
-                        <h6>Ensure delivery standards</h6>
+                        <h6>Speed up your response times</h6>
                         <p>
-                          Guarantee websites meet quality, security, and performance goals.
-                        </p>
-                      </div>
-                      <div class="learn_more_right_single">
-                        <h6>Align your team</h6>
-                        <p>
-                         Use pass/fail criteria to keep everyone on the same page.
+                          Quickly book time to solve customers’ needs and help
+                          them self-serve to support their goals.
                         </p>
                       </div>
                     </div>
@@ -5022,9 +5076,10 @@
           <!-- problems Area Start -->
           <div class="problems_area">
             <div class="home_section_title">
-              <h2>Solve Website Issues Before They Hurt Your Growth</h2>
+              <h2>What problems you can solve?</h2>
               <p>
-                WebQA helps you uncover and fix the issues holding your website back — from slow-loading pages and broken meta tags to poor security and missed best practices. With clear insights and customizable audits, you can resolve problems early, boost performance, and keep your site search-engine and user-friendly.
+                Lorem Ipsum is simply dummy text of the printing and typesetting
+                industry.
               </p>
             </div>
             <div class="problems_content">
@@ -5051,10 +5106,11 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Spot errors, broken HTML tags, and performance issues instantly.
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
                         </p>
 
-                        <a href="https://webqa.co/features/webpage-audit" class="tryFreeBtn">Learn more</a>
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
                       </div>
                     </div>
                   </div>
@@ -5079,10 +5135,11 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Monitor your site’s health and track changes over time.
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
                         </p>
 
-                        <a href="https://webqa.co/features/website-tracker" class="tryFreeBtn">Learn more</a>
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
                       </div>
                     </div>
                   </div>
@@ -5096,7 +5153,7 @@
                         aria-expanded="false"
                         aria-controls="collapseThree"
                       >
-                        Customised Audits
+                        Proactive Alerts
                       </button>
                     </h2>
                     <div
@@ -5107,10 +5164,11 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Set your own rules and audit your site your way.
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
                         </p>
 
-                        <a href="https://webqa.co/features/settings" class="tryFreeBtn">Learn more</a>
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
                       </div>
                     </div>
                   </div>
@@ -5124,7 +5182,7 @@
                         aria-expanded="false"
                         aria-controls="collapseFore"
                       >
-                        Reports
+                        Page Speed Reports
                       </button>
                     </h2>
                     <div
@@ -5135,10 +5193,11 @@
                     >
                       <div class="accordion-body">
                         <p>
-                          Get clear pass/fail results with actionable insights.
+                          Lorem Ipsum is simply dummy text of the printing and
+                          typesetting industry.
                         </p>
 
-                        <a href="https://webqa.co/features/reports" class="tryFreeBtn">Learn more</a>
+                        <a href="#" class="tryFreeBtn">Try For Free</a>
                       </div>
                     </div>
                   </div>
@@ -5193,9 +5252,16 @@
           <!-- customisable Area Start -->
           <div class="customisable_area">
             <div class="home_section_title">
-              <h2>Customize Your Website Audit, Your Way</h2>
+              <h2>Everything is customisable to your needs</h2>
               <p>
-                WebQA goes beyond generic audits. With flexible settings and customizable criteria, you decide how each test is performed. Whether it’s setting the ideal length for meta titles or defining performance thresholds, WebQA adapts to your preferences — giving you accurate, tailored results that match your goals.
+                Most of the SEO tools do not offer any customisation and come
+                with a pre-built acceptance criteria. We do not do that. We
+                understand you might have your own definitions of what is
+                acceptable and what is not acceptable. Hence, we allow you to
+                completely customise the acceptance criteria for all the checks
+                that are made on your webiste. This includes Meta tags, Images,
+                Performance, Page Speed, HTML Best practices. You can find more
+                information about each parameter below.
               </p>
             </div>
             <div class="customisable_tab_content">
@@ -5211,7 +5277,7 @@
                     aria-controls="home-meta-tags"
                     aria-selected="true"
                   >
-                    SEO
+                    Meta Tags
                   </button>
                 </li>
 
@@ -5240,7 +5306,7 @@
                     aria-controls="home-coding"
                     aria-selected="false"
                   >
-                    Best Practices
+                    Coding Practices
                   </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -5254,10 +5320,23 @@
                     aria-controls="home-html"
                     aria-selected="false"
                   >
-                    Website Security
+                    HTML Practices
                   </button>
                 </li>
-                
+                <li class="nav-item" role="presentation">
+                  <button
+                    class="nav-link"
+                    id="home-others-tab"
+                    data-bs-toggle="tab"
+                    data-bs-target="#home-others"
+                    type="button"
+                    role="tab"
+                    aria-controls="home-others"
+                    aria-selected="false"
+                  >
+                    Others
+                  </button>
+                </li>
               </ul>
               <div class="tab-content" id="myTabContent">
                 <div
@@ -5268,13 +5347,15 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>SEO</h3>
+                      <h3>Meta Tags</h3>
                       <p>
-                        Fine-tune your SEO by setting custom rules for titles, descriptions, and keywords. WebQA checks each page against your criteria to ensure your tags are optimized exactly how you want.
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
                       </div>
                     </div>
                     <div
@@ -5294,13 +5375,15 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>Performance</h3>
+                      <h3>Images</h3>
                       <p>
-                        Define speed benchmarks and loading thresholds that matter to your business. WebQA highlights bottlenecks and helps you keep your website fast and user-friendly.
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
                       </div>
                     </div>
                     <div
@@ -5322,11 +5405,13 @@
                     <div class="home_images_tab_left">
                       <h3>Performance</h3>
                       <p>
-                        Define speed benchmarks and loading thresholds that matter to your business. WebQA highlights bottlenecks and helps you keep your website fast and user-friendly.
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
                       </div>
                     </div>
                     <div
@@ -5346,13 +5431,15 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>Best practices</h3>
+                      <h3>Coding Practices</h3>
                       <p>
-                        From clean HTML to mobile readiness, WebQA ensures your site follows modern web standards. Customize your checks to meet your own quality bar.
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
                       </div>
                     </div>
                     <div
@@ -5372,13 +5459,15 @@
                 >
                   <div class="home_images_tab_content">
                     <div class="home_images_tab_left">
-                      <h3>Website security</h3>
+                      <h3>HTML Practices</h3>
                       <p>
-                        Protect your website and users by auditing for vulnerabilities. WebQA lets you enforce specific security checks to reduce risks and keep your site safe.
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
                       </p>
                       <div class="home_images_btn_area">
                         <a href="#" class="learn_more_btn">Learn More</a>
-                        <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="sign_up_free">Sign Up</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
                       </div>
                     </div>
                     <div
@@ -5390,7 +5479,34 @@
                     ></div>
                   </div>
                 </div>
-                
+                <div
+                  class="tab-pane fade"
+                  id="home-others"
+                  role="tabpanel"
+                  aria-labelledby="home-others-tab"
+                >
+                  <div class="home_images_tab_content">
+                    <div class="home_images_tab_left">
+                      <h3>Others</h3>
+                      <p>
+                        You can Customize the maximum length, minimum length,
+                        casing and many other parameters for meta tags to ensure
+                        it meets your acceptance criteria.
+                      </p>
+                      <div class="home_images_btn_area">
+                        <a href="#" class="learn_more_btn">Learn More</a>
+                        <a href="#" class="sign_up_free">Sign Up for Free</a>
+                      </div>
+                    </div>
+                    <div
+                      class="home_images_tab_right"
+                      style="
+                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                          no-repeat scroll center center / cover;
+                      "
+                    ></div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -5399,9 +5515,9 @@
           <!-- Trial Area Css -->
           <div class="trial-area">
             <div class="trial-content">
-              <h2>Think your site is flawless? Test it with WebQA for hidden issues.</h2>
-              <a data-bs-toggle="modal" data-bs-target="#registerModal" href="#" class="btn btn_primary rounded-pill"
-                >Sign up</a
+              <h2>Wondering why your content isn't showing up on the SERPs?</h2>
+              <a href="#" class="btn btn_primary rounded-pill"
+                >Start Free Trial</a
               >
             </div>
           </div>
@@ -5411,6 +5527,6 @@
 
 
     @section("js")
-<script src="{{ asset('/new-assets/js/home.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('/new-assets/js/home.js') }}"></script>
 @endsection
 @endsection

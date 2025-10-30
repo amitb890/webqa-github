@@ -21,6 +21,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+Route::post('/start-tests', [App\Http\Controllers\LighthouseController::class, 'startTests']);
+Route::get('/check-status/{testId}', [App\Http\Controllers\LighthouseController::class, 'checkStatus']);
+
 Route::get('/cached-test', [CachedTestController::class, 'show']);
 Route::post('/cached-test', [CachedTestController::class, 'store']);
 

@@ -196,17 +196,15 @@ return [
     ],
 
     'environments' => [
-        'production' => [
-            'supervisor-1' => [
-                'maxProcesses' => 10,
-                'balanceMaxShift' => 1,
-                'balanceCooldown' => 3,
-            ],
-        ],
-
         'local' => [
             'supervisor-1' => [
-                'maxProcesses' => 3,
+                'connection' => 'redis',
+                'queue' => ['default'],
+                'balance' => 'simple',
+                'maxProcesses' => 10,
+                'memory' => 512,
+                'tries' => 1,
+                'timeout' => 1800, // ⬅ 30 minutes per job
             ],
         ],
     ],

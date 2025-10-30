@@ -55,7 +55,7 @@
                     <div class="tools-root-items-main">
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/title.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'meta-title'])}}">Meta Title</a>
@@ -64,7 +64,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/graph.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'og-tags'])}}">Open Graph Tags</a>
@@ -73,7 +73,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/descrip.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/descrip.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'meta-description'])}}">Meta Description</a>
@@ -82,7 +82,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/robots.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/robots.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'robots-meta'])}}">Robots Meta</a>
@@ -91,7 +91,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/robots.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/meta_view.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'meta-viewport'])}}">Meta viewport</a>
@@ -100,16 +100,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
-                        </div>
-                        <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'canonical-url'])}}">Canonical URL</a>
-                          <p>A canonical URL is used to control issues of content duplicity. Use this test to check for Use this test to look for discrepancies and irregularities in canonical URLs.</p>
-                        </div>
-                      </div>
-                      <div class="tools-root-item">
-                        <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/doctype.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'doctype'])}}">Doctype declaration</a>
@@ -118,7 +109,17 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/twiter.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/url.svg" alt="icon">
+                        </div>
+                        <div class="root-content">
+                          <a href="{{route('tool', ['slug'=>'canonical-url'])}}">Canonical URL</a>
+                          <p>A canonical URL is used to control issues of content duplicity. Use this test to check for Use this test to look for discrepancies and irregularities in canonical URLs.</p>
+                        </div>
+                      </div>
+                      
+                      <div class="tools-root-item">
+                        <div class="root-icon">
+                           <img src="/new-assets/assets/images/tools-root/twiter.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'twitter-tags'])}}">Twitter Tags</a>
@@ -127,7 +128,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/test.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/favicon.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'favicon'])}}">Favicon Test</a>
@@ -145,7 +146,7 @@
                     <div class="tools-root-items-main">
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/images.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'images'])}}">Images</a>
@@ -163,7 +164,7 @@
                     <div class="tools-root-items-main">
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/frameset.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/frameset.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'frameset'])}}">Frameset</a>
@@ -181,7 +182,7 @@
                     <div class="tools-root-items-main">
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/gzip_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'gzip-compression'])}}">Gzip compression</a>
@@ -190,7 +191,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/css_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'css-compression'])}}">CSS Compression</a>
@@ -199,7 +200,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/descrip.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/js_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'js-compression'])}}">JS Compression</a>
@@ -208,7 +209,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/tags.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/html_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'html-compression'])}}">HTML Compression</a>
@@ -217,7 +218,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/https.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/http_status_code.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">HTTP Status Code</a>
@@ -226,7 +227,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/https.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/https.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Page Cache</a>
@@ -235,7 +236,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/css_caching.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">CSS Caching</a>
@@ -244,7 +245,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/js_caching.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">JS Caching</a>
@@ -253,7 +254,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/twiter.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/image_caching.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Image Caching</a>
@@ -262,7 +263,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/test.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/modern_image_format.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Modern Image Format</a>
@@ -272,7 +273,7 @@
 
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/nested_tables.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Nested Tables</a>
@@ -281,7 +282,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/graph.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Render Blocking Resources</a>
@@ -290,7 +291,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/descrip.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/flash.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Flash</a>
@@ -299,7 +300,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/tags.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/tags.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">CDN</a>
@@ -308,7 +309,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/https.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/https.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Page Objects</a>
@@ -317,7 +318,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/https.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/https.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">JS Execution Time</a>
@@ -326,7 +327,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/url.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">DOM Size</a>
@@ -335,7 +336,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/html_page_size.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">HTML Page Size</a>
@@ -344,7 +345,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/twiter.png" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/twiter.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="#">Console Errors</a>
@@ -371,7 +372,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/css_caching.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'css-caching-test'])}}">CSS Caching</a>
@@ -380,7 +381,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/js_caching.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'js-caching-test'])}}">JS Caching</a>
@@ -399,7 +400,7 @@
                     <div class="tools-root-items-main">
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/directory_browsing.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'safe-browsing-test'])}}">Directory Browsing</a>
@@ -408,7 +409,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/content_security.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'content-security'])}}">Content Security Policy Header</a>
@@ -417,7 +418,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/descrip.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/secure_referrer.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'content-security-policy-header-test'])}}">Secure Referrer Policy Header</a>
@@ -426,7 +427,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/tags.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/x_content_type.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="">X Content Type Options Header</a>
@@ -435,7 +436,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/https.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/x_frame_options.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'x-frame-options-header-test'])}}">X Frame Options Header</a>
@@ -444,7 +445,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/https.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/hsts_header.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'hsts-header'])}}">HSTS header</a>
@@ -462,7 +463,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/url.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/unsafe_cross.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'unsafe-cross-origin-links-test'])}}">Unsafe Cross Origin Links</a>
@@ -471,7 +472,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/twiter.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/safe_brouwsing.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'safe-browsing-test'])}}">Safe Browsing</a>
@@ -480,7 +481,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/test.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/ssl_https.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'ssl-certificate-test'])}}">SSL and HTTPs</a>
@@ -489,10 +490,28 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/test.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/robots_txt.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'robotstxt-test'])}}">Robots.txt</a>
+                          <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
+                        </div>
+                      </div>
+                      <div class="tools-root-item">
+                        <div class="root-icon">
+                          <img src="/new-assets/assets/images/tools-root/bad_content_type.svg" alt="icon">
+                        </div>
+                        <div class="root-content">
+                          <a href="{{route('tool', ['slug'=>'bad-content-type-test'])}}">Bad Content Type</a>
+                          <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
+                        </div>
+                      </div>
+                      <div class="tools-root-item">
+                        <div class="root-icon">
+                          <img src="/new-assets/assets/images/tools-root/headings.svg" alt="icon">
+                        </div>
+                        <div class="root-content">
+                          <a href="{{route('tool', ['slug'=>'headings'])}}">Headings</a>
                           <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
                         </div>
                       </div>
@@ -507,7 +526,7 @@
                     <div class="tools-root-items-main">
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/google_page speed.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'google-page-speed-insights'])}}">Google Page Speed</a>
@@ -516,7 +535,7 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/lighthouse.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'google-lighthouse'])}}">Lighthouse</a>
@@ -525,11 +544,20 @@
                       </div>
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/descrip.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/core_web_vitals.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'google-core-web-vitals'])}}">Core Web Vitals</a>
                           <p>Core Web Vitals are user experience metrics that are part of Google's Page Experience signals. It assesses interactivity with FID, visual stability with CLS, and visual load with LCP.</p>
+                        </div>
+                      </div>
+                      <div class="tools-root-item">
+                        <div class="root-icon">
+                          <img src="/new-assets/assets/images/tools-root/mobile_friendly.svg" alt="icon">
+                        </div>
+                        <div class="root-content">
+                          <a href="{{route('tool', ['slug'=>'mobile-friendliness'])}}">Mobile Friendly</a>
+                          <p>Lighthouse is an open-source, automated tool for enhancing web page quality . It includes audits for SEO, performance, and more.</p>
                         </div>
                       </div>
                     </div>

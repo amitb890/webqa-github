@@ -4,45 +4,33 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-
         <title>@yield('title', config('app.name', 'Laravel'))</title>
-        
-          <!-- OG and Twitter Tags -->
-        <!-- Open Graph (OG) Meta Tags -->
-        <meta property="og:title" content="This is the twitter title for homepage">
+        <meta name="description" content="@yield('meta-description', config('app.name', 'Laravel'))"/>
+        <link rel="canonical" href="@yield('canonical', config('app.name', 'Laravel'))"/>
+        <meta property="og:title" content="@yield('og-title', config('app.name', 'Laravel'))">
+        <meta property="og:description" content="@yield('og-description', config('app.name', 'Laravel'))">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="https://webqa.co/">
-        <meta property="og:image" content="{{ asset('new-assets/assets/images/meta-tags/open-graph-image.png') }}">
-        <meta property="og:image:alt" content="">
-        <meta property="og:description" content="This is the description title for homepage">
-
-
-        <!-- Twitter Meta Tags -->
-        <meta name="twitter:title" content="This is the twitter title for homepage">
-        <meta name="twitter:description" content="This is the twitter description for homepage">
-        <meta name="twitter:image" content="{{ asset('new-assets/assets/images/meta-tags/open-graph-image.png') }}">
-        <meta name="twitter:image:alt" content="This is twitter image alt">
+        <meta property="og:url" content="@yield('og-url', config('app.name', 'Laravel'))">
+        <meta property="og:image" content="@yield('og-image', config('app.name', 'Laravel'))">
+        <meta property="og:image:alt" content="@yield('og-image-alt', config('app.name', 'Laravel'))">
+        <meta name="twitter:title" content="@yield('og-title', config('app.name', 'Laravel'))">
+        <meta name="twitter:description" content="@yield('og-description', config('app.name', 'Laravel'))">
+        <meta name="twitter:image" content="@yield('og-image', config('app.name', 'Laravel'))">
+        <meta name="twitter:image:alt" content="@yield('og-image-alt', config('app.name', 'Laravel'))">
         <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:site" content="">
-        <meta name="twitter:creator" content="">
-        <link href="
-https://cdn.jsdelivr.net/npm/floating-ui@5.2.8/dist/style.min.css
-" rel="stylesheet">
-        
+        <link href="https://cdn.jsdelivr.net/npm/floating-ui@5.2.8/dist/style.min.css" rel="stylesheet">
         <!-- bootstrap styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.css') }}"/>
-
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap/css/bootstrap.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/bootstrap-slider/bootstrap-slider.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}"/>
         <link rel="stylesheet" href="{{ asset('new-assets/vendor/magnific-popup/magnific-popup.css') }}" />
-
         <!-- font awesome styles -->
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/fontawesome/css/all.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- custom styles -->
         <link rel="stylesheet" href="{{ asset('new-assets/assets/fonts/font-styles.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}" />
-        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/css/main.res.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
-        <link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
 
         <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}">
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('new-assets/assets/images/apple-icon-180x180.png') }}">

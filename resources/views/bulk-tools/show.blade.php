@@ -127,13 +127,13 @@
 
                 <h1>{{$d["main_heading"]}}</h1>
                 <p class="col2-p">{{$d["main_para"]}}</p>
-                  
+                
+
                 <div class="footer_search_item">
                   <div class="footer_search_box">
-                    <textarea class="footer_control" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl', 'https://www.setmore.com/') }}</textarea>
+                    <textarea class="footer_control bulk_test_textarea" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl', 'https://www.setmore.com/') }}</textarea>
                   </div>
                 </div>
-
 
 
                 <!-- Hide/Show test criteria -->

@@ -30,15 +30,18 @@ class LighthouseController extends Controller
 
         $lighthouseTest = LighthouseTest::create([
             'test_id' => $testId,
-            'user_id' => Auth::id(),
+            'user_id' => 8,
             'project_id' => $project_id,
             'urls' => json_encode($urls),
             'status' => 'in_progress'
         ]);
 
 
-        // Dispatch the job
-        RunLighthouseTest::dispatch($lighthouseTest);
+        // In your controller or main job:
+        foreach ($urls as $urlData) {
+            RunLighthouseTest::dispatch($lighthouseTest->id, $urlData['url']);
+        }
+
 
         return response()->json(['testId' => $testId]);
     }
