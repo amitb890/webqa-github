@@ -32,59 +32,6 @@
           </div>
           <!-- Wondering Area End -->
           
-<!-- blog article area start -->
-          <div class="blog-article-area">
-            <div class="blog-article-title">
-              <h2>Related Articles</h2>
-            </div>
-            <div class="blog-list-main">
-              <div class="blog-list-single">
-                <div class="blog-list-single-img">
-                  <img src="https://webqa.co/raw-files/assets/images/blog/blog_7.png" alt="blog">
-                </div>
-                <div class="post-category">
-                  <ul>
-                    <li><a href="#">Search Engine</a></li>
-                    <li><a href="#">SEO</a></li>
-                    <li><a href="#">Website Audit</a></li>
-                  </ul>
-                </div>
-                <div class="blog-list-single-heading">
-                  <h4>A 5-step plan to achieve your goals for your next project</h4>
-                </div>
-              </div>
-
-              <div class="blog-list-single">
-                <div class="blog-list-single-img">
-                  <img src="https://webqa.co/raw-files/assets/images/blog/blog_8.png" alt="blog">
-                </div>
-                <div class="post-category">
-                  <ul>
-                    <li><a href="#">Website Audit</a></li>
-                  </ul>
-                </div>
-                <div class="blog-list-single-heading">
-                  <h4>9 professional designers’ tips for overcoming creative block</h4>
-                </div>
-              </div>
-
-              <div class="blog-list-single">
-                <div class="blog-list-single-img">
-                  <img src="https://webqa.co/raw-files/assets/images/blog/blog_9.png" alt="blog">
-                </div>
-                <div class="post-category">
-                  <ul>
-                    <li><a href="#">SEO</a></li>
-                    <li><a href="#">Website Audit</a></li>
-                  </ul>
-                </div>
-                <div class="blog-list-single-heading">
-                  <h4>An article all about alliteration in brand names</h4>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- blog article area end -->
 
         </div>
       </div>

@@ -7340,10 +7340,7 @@ h6 {
 }
 
 .highlight-content a {
-  font-weight: 400;
-  font-size: 15px;
   line-height: 19px;
-  color: var(--primary);
   text-decoration: none;
 }
 
