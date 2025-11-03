@@ -1,3 +1,12 @@
+@section('title', 'HTML Sitemap Tester: Links & Structure Checks | Webqa')
+@section('meta-description', 'Validate your HTML sitemap. Verify presence, crawlable links, valid URLs, and coverage of key pages. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/html-sitemap')
+@section('og-title', 'Test HTML Sitemap for Coverage & Link Validity | Webqa')
+@section('og-description', 'Audit your HTML sitemap—confirm it exists, links are crawlable and valid, and important pages are included. Export results for quick fixes and better discoverability.')
+@section('og-url', 'https://webqa.co/tool/html-sitemap')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'HTML sitemap test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
       <h2 class="tools_des_fastheading">HTML Sitemap</h2>

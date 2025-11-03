@@ -1,2 +1,7 @@
-User-agent: *
-Disallow:
+# Allow Googlebot
+User-Agent: Googlebot
+Allow: /
+
+Disallow: /raw-files/*
+
+Sitemap: https://webqa.co/sitemap.xml

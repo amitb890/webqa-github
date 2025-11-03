@@ -4471,7 +4471,7 @@ $( document ).ready(function() {
                                   fill="#D3D5D8" />
                               </svg>
                               <div class="card-help-body">
-                                <p>Learn more</p>
+                                <p>Health Score is a quick snapshot of your page’s overall quality. More passes lead to a higher score. Aim high!</p>
                               </div>
                           </span>
                         </div>

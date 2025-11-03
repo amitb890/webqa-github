@@ -1,3 +1,13 @@
+@section('title', 'Unsafe Cross-Origin Links Tester: New-Tab Safety Checks | Webqa')
+@section('meta-description', 'Detect external links that open in a new tab without protection. Ensure rel="noopener noreferrer" is set to prevent tabnabbing. Get Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/unsafe-cross-origin-links-test')
+@section('og-title', 'Test Unsafe Cross-Origin Links & New-Tab Security | Webqa')
+@section('og-description', 'Scan for cross-origin links that open in new tabs without proper rel attributes, reduce tabnabbing risk, and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/unsafe-cross-origin-links-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Unsafe cross-origin links test')
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Unsafe Cross Origin Links</h2>

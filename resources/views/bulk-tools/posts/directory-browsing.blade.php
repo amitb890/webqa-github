@@ -1,3 +1,13 @@
+@section('title', 'Directory Browsing Tester: Disable Folder Listing | Webqa')
+@section('meta-description', 'Check if server directory listing is exposed. Ensure visitors cannot view folder contents. Get clear Pass/Fail results and export findings for quick fixes.')
+@section('canonical', 'https://webqa.co/tool/directory-browsing-test')
+@section('og-title', 'Test for Exposed Directory Browsing | Webqa')
+@section('og-description', 'Scan a page’s server path to detect open folder listings. Confirm directory browsing is disabled to protect files and privacy. Export results to act quickly.')
+@section('og-url', 'https://webqa.co/tool/directory-browsing-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Directory browsing test')
+
+
 <!-- post page blog start -->
 <div class="single-post-content-main">
   <div class="single-post-content">

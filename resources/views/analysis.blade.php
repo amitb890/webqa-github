@@ -1,6 +1,6 @@
 @extends('layouts.master')
 @section("title")
-webqa - Analysis
+Webpage Analysis Report | Webqa
 @endsection
 @section("content")
 @include("components.modal-fix")

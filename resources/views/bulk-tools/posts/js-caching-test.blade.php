@@ -1,3 +1,12 @@
+@section('title', 'JavaScript Caching Tester: Cache-Control & ETag Checks | Webqa')
+@section('meta-description', 'Check if JavaScript files use browser caching. Verify Cache-Control/ETag headers for faster repeat visits. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/js-caching-test')
+@section('og-title', 'Test JavaScript Caching for Faster Repeat Loads | Webqa')
+@section('og-description', 'Audit JavaScript caching—confirm appropriate Cache-Control and ETag headers to speed up return visits. See decisive outcomes and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/js-caching-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'JavaScript caching test')
+
 <!-- post page blog start -->
 <div class="single-post-content-main">
   <div class="single-post-content">

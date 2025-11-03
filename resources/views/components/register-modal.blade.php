@@ -3,19 +3,19 @@
     <div class="modal-dialog login_modal">
       <div class="modal-content">
         <div class="modal-header">
-          <h1 class="modal-title fs-5" id="registerModalLabel">Register Now!</h1>
+          <h1 class="modal-title fs-5" id="registerModalLabel">Free Signup</h1>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <p>Get Your Free Account</p>
+          <p>Get started - no credit card needed</p>
           <div class="login_modal_form">
             <form id="loginModal">
 
                <div>
-                   <input id="nameRegister" data-name="name" type="text" placeholder="Your Name">
+                   <input id="nameRegister" data-name="name" type="text" placeholder="Name">
                </div>
                <div>
-                   <input id="emailRegister" data-name="email" type="text" placeholder="Your Email">
+                   <input id="emailRegister" data-name="email" type="text" placeholder="Email address">
                </div>
               
                <div class="login_input_password">
@@ -41,7 +41,7 @@
 
 
 
-              <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Register">
+              <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Sign up">
               <a href="{{ url('/login/google') }}" class="loginOr_btn">
                 <img src="/new-assets/assets/images/google.png" alt="icon">
                 <span>Sign up with Google</span>
@@ -50,7 +50,7 @@
             </form>
             <div class="signUp_modal_area">
               <span>Already have an account?</span>
-              <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" type="button">Login now</a>
+              <a href="#" data-bs-toggle="modal" data-bs-target="#loginModal" type="button">Login here</a>
             </div>
           </div>
         </div>

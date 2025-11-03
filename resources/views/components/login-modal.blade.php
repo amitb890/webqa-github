@@ -7,17 +7,17 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                  <p>Fill your existing account details</p>
+                  <p>Enter your existing account details to Login</p>
                   <div class="login_modal_form">
                     <form id="loginModal">
                         <div>
-                            <input data-name="email" id="emailLogin" type="text" placeholder="Your Email">
+                            <input data-name="email" id="emailLogin" type="text" placeholder="Email">
                         </div>
                       <div class="login_input_password">
                         <label for="login_pass" class="login_input_label">
                           <span><img src="/new-assets/assets/images/eye.png" alt="icon" class="togglePassword"></span>
                         </label>
-                        <input data-name="password" class="passwordRegister" id="passwordLogin" type="password" placeholder="Your Password">
+                        <input data-name="password" class="passwordRegister" id="passwordLogin" type="password" placeholder="Password">
                       </div>
                       <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
                       <a href="{{ route('password.request') }}" class="login_forgetPass">Forgotten your password?</a>
@@ -35,7 +35,7 @@
                     </form>
                     <div class="signUp_modal_area">
                       <span>Need an account?</span>
-                      <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" type="button">Sign up</a>
+                      <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" type="button">Sign up here</a>
                     </div>
                   </div>
                 </div>

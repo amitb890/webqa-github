@@ -1,3 +1,12 @@
+@section('title', 'Meta Title Tester: Length, Casing & H1 Checks | Webqa')
+@section('meta-description', 'Validate meta titles in seconds. Set min/max length, casing rules, and “must not equal H1.” Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/meta-title')
+@section('og-title', 'Test Meta Titles with Custom Rules | Webqa')
+@section('og-description', 'Audit meta titles with your standards—length, casing, and H1 difference. See decisive Pass/Fail outcomes and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/meta-title')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Meta title test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
       <h2 class="tools_des_fastheading">Meta Title</h2>

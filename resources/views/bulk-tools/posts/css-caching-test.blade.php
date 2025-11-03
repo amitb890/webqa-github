@@ -1,3 +1,12 @@
+@section('title', 'CSS Caching Tester: Cache-Control & ETag Checks | Webqa')
+@section('meta-description', 'Check if CSS files use browser caching. Verify Cache-Control/ETag headers for faster repeat visits. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/css-caching-test')
+@section('og-title', 'Test CSS Caching for Faster Repeat Loads | Webqa')
+@section('og-description', 'Audit CSS caching—confirm appropriate Cache-Control and ETag headers to speed up return visits. See decisive outcomes and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/css-caching-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'CSS caching test')
+
 <!-- post page blog start -->
 <div class="single-post-content-main">
   <div class="single-post-content">

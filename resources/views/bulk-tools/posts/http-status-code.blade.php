@@ -1,3 +1,13 @@
+@section('title', 'HTTP Status Code Checker: 200 OK, Redirects & Errors | Webqa')
+@section('meta-description', 'Check a page’s HTTP status fast. Verify 200 OK, detect redirects (3xx), client/server errors (4xx/5xx), and loops. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/http-status-code')
+@section('og-title', 'Test HTTP Status Codes, Redirects & Errors | Webqa')
+@section('og-description', 'Audit status responses for any URL—confirm 200 OK, trace redirect chains, and spot 4xx/5xx errors. Export results to share and fix broken paths quickly.')
+@section('og-url', 'https://webqa.co/tool/http-status-code')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'HTTP status code test')
+
+
 <div class="single-post-content-main bulk-tool-test">
     <div class="single-post-content">
         <h2 class="tools_des_fastheading">XML Sitemap</h2>

@@ -1,3 +1,13 @@
+@section('title', 'Favicon Tester: Presence & Valid Icon Checks | Webqa')
+@section('meta-description', 'Check favicon setup fast. Verify presence, correct file types/sizes, and valid links for consistent browser and tab icons. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/favicon')
+@section('og-title', 'Test Favicon Presence and Validity | Webqa')
+@section('og-description', 'Audit favicon configuration—confirm icons are present, properly linked, and use supported formats/sizes for reliable display across browsers and devices.')
+@section('og-url', 'https://webqa.co/tool/favicon')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Favicon test')
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Favicon</h2>

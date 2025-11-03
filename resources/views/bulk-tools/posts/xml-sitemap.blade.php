@@ -1,3 +1,12 @@
+@section('title', 'XML Sitemap Tester: Validate Sitemap & URL Coverage | Webqa')
+@section('meta-description', 'Check XML sitemaps fast. Verify presence, syntax, index/child sitemaps, URL responses (200 OK), and lastmod. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/xml-sitemap')
+@section('og-title', 'Test XML Sitemaps for Accuracy & Coverage | Webqa')
+@section('og-description', 'Audit XML sitemaps—confirm presence and syntax, validate index/child sitemaps, check URL responses and lastmod, and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/xml-sitemap')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'XML sitemap test')
+
 <div class="single-post-content-main bulk-tool-test">
     <div class="single-post-content">
         <h2 class="tools_des_fastheading">XML Sitemap</h2>

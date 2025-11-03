@@ -1,3 +1,13 @@
+@section('title', 'Safe Browsing Tester: Malware & Phishing Checks | Webqa')
+@section('meta-description', 'Check if a site is flagged by Google Safe Browsing for malware, phishing, or deceptive content. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/safe-browsing-test')
+@section('og-title', 'Test Site Status with Google Safe Browsing | Webqa')
+@section('og-description', 'Verify whether your page is flagged by Google Safe Browsing for harmful or deceptive content, and export results to act quickly.')
+@section('og-url', 'https://webqa.co/tool/safe-browsing-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Safe Browsing test')
+
+
 <!-- post page blog start -->
 <div class="single-post-content-main">
   <div class="single-post-content">
