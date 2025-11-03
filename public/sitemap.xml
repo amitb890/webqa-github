@@ -6,6 +6,7 @@
   <url>
     <loc>https://webqa.co/aboutus</loc>
   </url>
+  <!-- Feature Pages start -->
   <url>
     <loc>https://webqa.co/features</loc>
   </url>
@@ -21,6 +22,8 @@
   <url>
     <loc>https://webqa.co/features/reports</loc>
   </url>
+  <!-- Feature Pages end -->
+  <!-- Tool Pages start -->
   <url>
     <loc>https://webqa.co/tool/meta-title</loc>
   </url>
@@ -141,4 +144,43 @@
   <url>
     <loc>https://webqa.co/tool/directory-browsing-test</loc>
   </url>
+  <!-- Tool Pages end -->
+  <!-- Article Pages start -->
+  <url>
+    <loc>https://webqa.co/articles/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/pagination-next-prev-canonical-tags/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/thin-content-thin-urls-poor-indexing/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/orphan-pages-seo-problem/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/title-tag-mistakes-low-ctr/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/url-rewrite-strategy-seo/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/faceted-navigation-filters-seo-chaos/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/noindex-nofollow-noarchive-guide/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/url-slug-mistakes-kill-seo/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/updating-title-tag-content-impact-on-rankings/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/title-rewrites-why-search-engines-rewrite-title-tag-content/</loc>
+  </url>
+  <url>
+    <loc>https://webqa.co/articles/directory-browsing-risks-server-fixes/</loc>
+  </url>
+  <!-- Article Pages end -->
 </urlset>
