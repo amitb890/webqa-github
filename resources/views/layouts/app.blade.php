@@ -413,13 +413,16 @@ if(isset($_COOKIE["activeProject"])){
             </li>
           
           </ul>
-          <ul  class="sidebar_menu__top collapse hide settingsCollapse sidebarPedding" id="metaTagsUl">
+          <ul  class="sidebar_menu__top collapse hide settingsCollapse sidebarPedding">
             <li class="sidebar_menu__item" class="sidebar_menu__item_link">
               <a type="button" href="{{route('tracker')}}" class="sidebar_menu__item_link">
                 <span class="side_content">Website Tracker</span>
               </a>
               
             </li>
+            </ul>
+            <ul  class="sidebar_menu__top collapse hide settingsCollapse sidebarPedding" id="metaTagsUl">
+
             <li class="sidebar_menu__item collapsed" data-bs-toggle="collapse"
             data-bs-target="#settingsCollapseMetaTitles" aria-expanded="false"
             aria-controls="settingsCollapseMetaTitles">

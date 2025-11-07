@@ -708,6 +708,8 @@ $( document ).ready(function() {
           dataFailed: JSON.stringify(dataFailed),
           dataPassed: JSON.stringify(dataPassed),
           projectUrl: projectUrl,
+          projectRoute: window.location.href, // ✅ send current browser URL
+
         })
       });
     }

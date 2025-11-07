@@ -17,6 +17,7 @@ class CachedTest extends Model
         'dataFailed',
         'dataPassed',
         'projectUrl',
+        'web_app'
     ];
 
     protected $casts = [

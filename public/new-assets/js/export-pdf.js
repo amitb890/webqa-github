@@ -241,6 +241,7 @@ function drawSection1(doc, title, content, length, casing, result, yPosition, sh
     const x = 10;
     const width = 190;
     const padding = 3;
+    const availableWidth = width - 2 * padding;
     const font = window.PDF_FONT_FAMILY || "Roboto";
 
     // Compute text height
@@ -271,8 +272,8 @@ function drawSection1(doc, title, content, length, casing, result, yPosition, sh
     // === 4. Inside Content Box ===
     let textY = boxY + 10;
     
-    // Check if content contains labels like "Actual URL:", "Canonical URL:", "Robots Meta Content:", "URL Slug Content:", "Robots.txt Test Content:", "XML Sitemap Test Content:", "Favicon Test Content:", "Doctype Test Content:", "Meta Viewport Test Content:", "HTTP Status Code Test Content:", "Broken Links Test Content:", "Headings Test Content:", or "Google Mobile Friendly Test Content:"
-    const hasLabels = content.includes("Actual URL:") || content.includes("Canonical URL:") || content.includes("Robots Meta Content:") || content.includes("URL Slug Content:") || content.includes("Robots.txt Test Content:") || content.includes("XML Sitemap Test Content:") || content.includes("Favicon Test Content:") || content.includes("Doctype Test Content:") || content.includes("Meta Viewport Test Content:") || content.includes("HTTP Status Code Test Content:") || content.includes("Broken Links Test Content:") || content.includes("Headings Test Content:") || content.includes("Google Mobile Friendly Test Content:");
+    // Check if content contains labels like "Actual URL:", "Canonical URL:", "URL Slug Content:", "Robots.txt Test Content:", "XML Sitemap Test Content:", "Favicon Test Content:", "Doctype Test Content:", "Meta Viewport Test Content:", "HTTP Status Code Test Content:", "Broken Links Test Content:", "Headings Test Content:", or "Google Mobile Friendly Test Content:"
+    const hasLabels = content.includes("Actual URL:") || content.includes("Canonical URL:") || content.includes("URL Slug Content:") || content.includes("Robots.txt Test Content:") || content.includes("XML Sitemap Test Content:") || content.includes("Favicon Test Content:") || content.includes("Doctype Test Content:") || content.includes("Meta Viewport Test Content:") || content.includes("HTTP Status Code Test Content:") || content.includes("Broken Links Test Content:") || content.includes("Headings Test Content:") || content.includes("Google Mobile Friendly Test Content:");
     
     if (hasLabels) {
         // Parse and render content with label styling
@@ -280,7 +281,7 @@ function drawSection1(doc, title, content, length, casing, result, yPosition, sh
         lines.forEach((line, index) => {
             if (line.trim()) {
                 // Check if line contains a label (ends with colon)
-                if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
+                if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
                     // Split label and value
                     const colonIndex = line.indexOf(':');
                     const label = line.substring(0, colonIndex + 1);
@@ -306,10 +307,50 @@ function drawSection1(doc, title, content, length, casing, result, yPosition, sh
         });
         textY += 4;
     } else {
-        // Normal content without labels
-        doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
-        doc.text(contentLines, x + padding, textY);
-        textY += contentLines.length * 5 + 4;
+        const lines = content.split('\n');
+        const hasContentLabel = lines.some(line => line.trim().startsWith('Content:'));
+
+        if (hasContentLabel) {
+            lines.forEach((line) => {
+                if (!line.trim()) return;
+
+                if (line.trim().startsWith('Content:')) {
+                    const label = 'Content:';
+                    const value = line.substring(label.length).trim();
+
+                    doc.setFont(font, "medium").setFontSize(10).setTextColor(34, 34, 34);
+                    doc.text(label, x + padding, textY);
+
+                    if (value) {
+                        const labelWidth = doc.getTextWidth(label);
+                        const maxValueWidth = availableWidth - labelWidth - 4;
+                        const valueLines = doc.splitTextToSize(value, Math.max(maxValueWidth, 10));
+
+                        doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
+                        valueLines.forEach((lineText, idx) => {
+                            if (idx === 0) {
+                                doc.text(lineText, x + padding + labelWidth + 2, textY);
+                            } else {
+                                textY += 5;
+                                doc.text(lineText, x + padding + labelWidth + 2, textY);
+                            }
+                        });
+                    }
+                } else {
+                    doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
+                    doc.text(line, x + padding, textY);
+                }
+
+                textY += 5;
+            });
+
+            textY += 4;
+        } else {
+            // Normal content without labels
+            doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
+            doc.text(contentLines, x + padding, textY);
+            textY += contentLines.length * 5 + 4;
+        }
     }
 
     // Length (only show if not empty and not a labeled section like Canonical URL)
@@ -341,7 +382,44 @@ function drawSection(doc, title, content, length, casing, result, yPosition, sho
     // === 1. Split content ===
     const contentLines = doc.splitTextToSize(content, availableTextWidth);
     const lineHeight = doc.internal.getLineHeight() / doc.internal.scaleFactor;
-    const textHeight = contentLines.length * (lineHeight + 1.5);
+    let textHeight = contentLines.length * (lineHeight + 1.5);
+
+    const rawContentLines = content.split('\n');
+    const hasContentLabel = rawContentLines.some(line => line.trim().startsWith('Content:'));
+
+    if (hasContentLabel) {
+        doc.setFont(font, "normal").setFontSize(10);
+        let estimatedLineCount = 0;
+
+        rawContentLines.forEach(line => {
+            const trimmed = line.trim();
+            if (!trimmed) return;
+
+            if (trimmed.startsWith('Content:')) {
+                estimatedLineCount += 1; // label line itself
+                const label = 'Content:';
+                const value = trimmed.substring(label.length).trim();
+
+                doc.setFont(font, "medium").setFontSize(10);
+                const labelWidth = doc.getTextWidth(label);
+                doc.setFont(font, "normal").setFontSize(10);
+
+                if (value) {
+                    const maxValueWidth = Math.max(availableTextWidth - labelWidth - 4, 10);
+                    const valueLines = doc.splitTextToSize(value, maxValueWidth);
+                    if (valueLines.length > 0) {
+                        estimatedLineCount += valueLines.length - 1;
+                    }
+                }
+            } else {
+                const wrapped = doc.splitTextToSize(trimmed, availableTextWidth);
+                estimatedLineCount += Math.max(wrapped.length, 1);
+            }
+        });
+
+        const lineSpacing = 5;
+        textHeight = estimatedLineCount * lineSpacing + 4; // add small buffer
+    }
 
     let boxHeight = 10 + textHeight + 8;
     if (showCasing) boxHeight += 7;
@@ -422,8 +500,8 @@ doc.text(resultUpper, badgeTextX, badgeTextY);
     // === 7. Content text (✅ with side padding) ===
     let textY = boxY + 8;
     
-    // Check if content contains labels like "Actual URL:", "Canonical URL:", "Robots Meta Content:", "URL Slug Content:", "Robots.txt Test Content:", "XML Sitemap Test Content:", "Favicon Test Content:", "Doctype Test Content:", "Meta Viewport Test Content:", "HTTP Status Code Test Content:", "Broken Links Test Content:", "Headings Test Content:", or "Google Mobile Friendly Test Content:"
-    const hasLabels = content.includes("Actual URL:") || content.includes("Canonical URL:") || content.includes("Robots Meta Content:") || content.includes("URL Slug Content:") || content.includes("Robots.txt Test Content:") || content.includes("XML Sitemap Test Content:") || content.includes("Favicon Test Content:") || content.includes("Doctype Test Content:") || content.includes("Meta Viewport Test Content:") || content.includes("HTTP Status Code Test Content:") || content.includes("Broken Links Test Content:") || content.includes("Headings Test Content:") || content.includes("Google Mobile Friendly Test Content:");
+    // Check if content contains labels like "Actual URL:", "Canonical URL:", "URL Slug Content:", "Robots.txt Test Content:", "XML Sitemap Test Content:", "Favicon Test Content:", "Doctype Test Content:", "Meta Viewport Test Content:", "HTTP Status Code Test Content:", "Broken Links Test Content:", "Headings Test Content:", or "Google Mobile Friendly Test Content:"
+    const hasLabels = content.includes("Actual URL:") || content.includes("Canonical URL:") || content.includes("URL Slug Content:") || content.includes("Robots.txt Test Content:") || content.includes("XML Sitemap Test Content:") || content.includes("Favicon Test Content:") || content.includes("Doctype Test Content:") || content.includes("Meta Viewport Test Content:") || content.includes("HTTP Status Code Test Content:") || content.includes("Broken Links Test Content:") || content.includes("Headings Test Content:") || content.includes("Google Mobile Friendly Test Content:");
     
     if (hasLabels) {
         // Parse and render content with label styling
@@ -431,7 +509,7 @@ doc.text(resultUpper, badgeTextX, badgeTextY);
         lines.forEach((line, index) => {
             if (line.trim()) {
                 // Check if line contains a label (ends with colon)
-                if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
+                if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
                     // Split label and value
                     const colonIndex = line.indexOf(':');
                     const label = line.substring(0, colonIndex + 1);
@@ -457,16 +535,55 @@ doc.text(resultUpper, badgeTextX, badgeTextY);
         });
         textY += 4;
     } else {
-        // Normal content without labels
-        doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
-        try {
-            doc.text(content, x + padding, textY, {
-                maxWidth: availableTextWidth,
-                align: "justify"
+        const lines = rawContentLines;
+
+        if (hasContentLabel) {
+            lines.forEach((line) => {
+                if (!line.trim()) return;
+
+                if (line.trim().startsWith('Content:')) {
+                    const label = 'Content:';
+                    const value = line.substring(label.length).trim();
+
+                    doc.setFont(font, "medium").setFontSize(10).setTextColor(34, 34, 34);
+                    doc.text(label, x + padding, textY);
+
+                    if (value) {
+                        const labelWidth = doc.getTextWidth(label);
+                        const maxValueWidth = Math.max(availableTextWidth - labelWidth - 4, 10);
+                        const valueLines = doc.splitTextToSize(value, maxValueWidth);
+
+                        doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
+                        valueLines.forEach((lineText, idx) => {
+                            if (idx === 0) {
+                                doc.text(lineText, x + padding + labelWidth + 2, textY);
+                            } else {
+                                textY += 5;
+                                doc.text(lineText, x + padding + labelWidth + 2, textY);
+                            }
+                        });
+                    }
+                } else {
+                    doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
+                    doc.text(line, x + padding, textY);
+                }
+
+                textY += 5;
             });
-            textY += textHeight + 4;
-        } catch (err) {
-            textY = drawJustifiedText(doc, content, x + padding, textY, availableTextWidth, lineHeight + 1.5);
+
+            textY += 4;
+        } else {
+            // Normal content without labels
+            doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
+            try {
+                doc.text(content, x + padding, textY, {
+                    maxWidth: availableTextWidth,
+                    align: "justify"
+                });
+                textY += textHeight + 4;
+            } catch (err) {
+                textY = drawJustifiedText(doc, content, x + padding, textY, availableTextWidth, lineHeight + 1.5);
+            }
         }
     }
 
@@ -646,7 +763,7 @@ function drawSectionNoLength_2(doc, title, content, result, yPosition) {
     
     // Calculate the maximum label width for consistent URL alignment
     let maxLabelWidth = 0;
-    const labelLines = lines.filter(line => line.trim() && line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:')));
+    const labelLines = lines.filter(line => line.trim() && line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:')));
     
     labelLines.forEach(line => {
         const colonIndex = line.indexOf(':');
@@ -663,7 +780,7 @@ function drawSectionNoLength_2(doc, title, content, result, yPosition) {
     lines.forEach((line, index) => {
         if (line.trim()) {
             // Check if line contains a label (ends with colon)
-            if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
+                if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
                 // Split label and value
                 const colonIndex = line.indexOf(':');
                 const label = line.substring(0, colonIndex + 1);
@@ -807,7 +924,7 @@ function drawSectionNoLength(doc, title, content, result, yPosition) {
     
     // Calculate the maximum label width for consistent URL alignment
     let maxLabelWidth = 0;
-    const labelLines = lines.filter(line => line.trim() && line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:')));
+    const labelLines = lines.filter(line => line.trim() && line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:')));
     
     labelLines.forEach(line => {
         const colonIndex = line.indexOf(':');
@@ -825,7 +942,7 @@ function drawSectionNoLength(doc, title, content, result, yPosition) {
     lines.forEach((line, index) => {
         if (line.trim()) {
             // Check if line contains a label (ends with colon)
-            if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
+            if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
                 // Split label and value
                 const colonIndex = line.indexOf(':');
                 const label = line.substring(0, colonIndex + 1);
@@ -1009,10 +1126,12 @@ function renderMetaTitle(doc, y) {
     const el = document.querySelector('.analysis-card[data-name="title"]');
     if (!el) return y;
 
-    const content = el.querySelector(".card-inner-content p")?.innerText || "N/A";
+    const rawContent = el.querySelector(".card-inner-content p")?.innerText || "N/A";
     const length = el.querySelector(".badge_pdf")?.innerText || "N/A";
     const casing = el.querySelector(".casing_pdf")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
+
+    const content = `Content: ${rawContent}`;
 
     return drawSection(doc, "Meta Title", content, length, casing, status, y, true);
 }
@@ -1022,11 +1141,13 @@ function renderMetaDescription(doc, y) {
     const el = document.querySelector('.analysis-card[data-name="description"]');
     if (!el) return y;
 
-    let content = el.querySelector(".card-inner-content p")?.innerText || "N/A";
+    let rawContent = el.querySelector(".card-inner-content p")?.innerText || "N/A";
     const length = el.querySelector(".badge_pdf")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
 
-    if (length === "N/A") content = "Meta description does not exist.";
+    if (length === "N/A") rawContent = "Meta description does not exist.";
+
+    const content = `Content: ${rawContent}`;
 
     return drawSection(doc, "Meta Description", content, length, "", status, y, false);
 }
@@ -1056,7 +1177,7 @@ function renderUrlSlug(doc, y) {
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
     // Add label to match Meta Description styling
-    const content = `URL Slug Content: ${urlSlugContent}`;
+    const content = urlSlugContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "URL Slug", content, status, y);
@@ -1071,7 +1192,7 @@ function renderRobotsTxtTest(doc, y) {
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
     // Add label to match Meta Description styling
-    const content = `Robots.txt Test Content: ${robotsTxtContent}`;
+    const content = robotsTxtContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "Robots.txt Test", content, status, y);
@@ -1086,7 +1207,7 @@ function renderXmlSitemapTest(doc, y) {
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
     // Add label to match Meta Description styling
-    const content = `XML Sitemap Test Content: ${xmlSitemapContent}`;
+    const content = xmlSitemapContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "XML Sitemap Test", content, status, y);
@@ -1101,7 +1222,7 @@ function renderFaviconTest(doc, y) {
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
     // Add label to match Meta Description styling
-    const content = `Favicon Test Content: ${faviconContent}`;
+    const content = faviconContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "Favicon Test", content, status, y);
@@ -1115,8 +1236,7 @@ function renderDoctypeTest(doc, y) {
     const doctypeContent = el.querySelector(".card-single-content span:nth-of-type(2)")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
-    // Add label to match Meta Description styling
-    const content = `Doctype Test Content: ${doctypeContent}`;
+    const content = doctypeContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "Doctype Test", content, status, y);
@@ -1130,8 +1250,7 @@ function renderMetaViewportTest(doc, y) {
     const viewportContent = el.querySelector(".card-single-content span:nth-of-type(2)")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
-    // Add label to match Meta Description styling
-    const content = `Meta Viewport Test Content: ${viewportContent}`;
+    const content = viewportContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "Meta Viewport Test", content, status, y);
@@ -1145,8 +1264,7 @@ function renderHttpStatusCodeTest(doc, y) {
     const httpStatusCodeContent = el.querySelector(".card-single-content span:nth-of-type(2)")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
-    // Add label to match Meta Description styling
-    const content = `HTTP Status Code Test Content: ${httpStatusCodeContent}`;
+    const content = httpStatusCodeContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "HTTP Status Code Test", content, status, y);
@@ -1175,8 +1293,7 @@ function renderHeadingsTest(doc, y) {
     const headingsContent = el.querySelector(".card-single-content span:nth-of-type(2)")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
-    // Add label to match Meta Description styling
-    const content = `Headings Test Content: ${headingsContent}`;
+    const content = headingsContent;
     
     // Use custom function with dynamic height for Headings Test only
     return drawSectionNoLengthHeadings(doc, "Headings Test", content, status, y);
@@ -1280,7 +1397,7 @@ function drawSectionNoLengthHeadings(doc, title, content, result, yPosition) {
     
     // Calculate the maximum label width for consistent URL alignment
     let maxLabelWidth = 0;
-    const labelLines = lines.filter(line => line.trim() && line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:')));
+    const labelLines = lines.filter(line => line.trim() && line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:')));
     
     labelLines.forEach(line => {
         const colonIndex = line.indexOf(':');
@@ -1298,7 +1415,7 @@ function drawSectionNoLengthHeadings(doc, title, content, result, yPosition) {
     lines.forEach((line, index) => {
         if (line.trim()) {
             // Check if line contains a label (ends with colon)
-            if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('Robots Meta Content:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
+            if (line.includes(':') && (line.includes('Actual URL:') || line.includes('Canonical URL:') || line.includes('URL Slug Content:') || line.includes('Robots.txt Test Content:') || line.includes('XML Sitemap Test Content:') || line.includes('Favicon Test Content:') || line.includes('Doctype Test Content:') || line.includes('Meta Viewport Test Content:') || line.includes('HTTP Status Code Test Content:') || line.includes('Broken Links Test Content:') || line.includes('Headings Test Content:') || line.includes('Google Mobile Friendly Test Content:'))) {
                 // Split label and value
                 const colonIndex = line.indexOf(':');
                 const label = line.substring(0, colonIndex + 1);
@@ -1403,9 +1520,8 @@ function renderRobotsMeta(doc, y) {
     const robotsContent = el.querySelector(".card-single-content span:nth-of-type(2)")?.innerText || "N/A";
     const status = el.querySelector(".status_pdf")?.innerText || "N/A";
     
-    // Add label to match Meta Description styling
-    const content = `Robots Meta Content: ${robotsContent}`;
-    
+    const content = robotsContent;
+
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "Robots Meta", content, status, y);
 }
@@ -2120,7 +2236,7 @@ function addTableToPDF(doc, y) {
             0: { halign: 'center', cellWidth: 15 }, // # column centered and narrow
             1: { halign: 'left', cellWidth: 70 }, // Image Link column (left-aligned)
             2: { halign: 'left', cellWidth: 30 }, // Alt Text column  
-            3: { halign: 'left', cellWidth: 35 }, // File Name column
+            3: { halign: 'left', cellWidth: 40 }, // File Name column
             4: { halign: 'center', cellWidth: 20 }, // File Size column
             5: { halign: 'center', cellWidth: 15 }  // Issues column (was index 6, now index 5)
         }

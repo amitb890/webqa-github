@@ -23,5 +23,11 @@ webqa - Analysis
 @endsection
 
 @section("js")
+<script src="{{ asset('new-assets/js/pdf-images.js') }}"></script>
+<script src="{{ asset('new-assets/js/jspdf.umd.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('new-assets/js/jspdf.plugin.autotable.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('new-assets/js/roboto-fonts.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="{{ asset('new-assets/js/analysis.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('new-assets/js/export-pdf.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+
 @endsection

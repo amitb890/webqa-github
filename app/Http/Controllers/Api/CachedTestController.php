@@ -5,7 +5,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CachedTest;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Route;
 class CachedTestController extends Controller
 {
     // GET /api/cached-test?test_key=...
@@ -41,33 +42,49 @@ class CachedTestController extends Controller
         }
     }
 
-    // POST /api/cached-test
-    public function store(Request $request)
-    {
-        $request->validate([
-            'test_key' => 'required|string',
-            'result' => 'required|array',
-            'test_labels' => 'nullable',
-            'resultsData' => 'nullable',
-            'dataFailed' => 'nullable',
-            'dataPassed' => 'nullable',
-            'projectUrl' => 'nullable',
-        ]);
-        $userId = Auth::check() ? Auth::id() : null;
-        $cached = CachedTest::updateOrCreate(
-            [
-                'test_key' => $request->test_key,
-                'user_id' => $userId,
-            ],
-            [
-                'result' => $request->result,
-                'test_labels' => $request->test_labels,
-                'resultsData' => $request->resultsData,
-                'dataFailed' => $request->dataFailed,
-                'dataPassed' => $request->dataPassed,
-                'projectUrl' => $request->projectUrl,
-            ]
-        );
-        return response()->json(['success' => true]);
+
+public function store(Request $request)
+{
+    $request->validate([
+        'test_key' => 'required|string',
+        'result' => 'required|array',
+        'test_labels' => 'nullable',
+        'resultsData' => 'nullable',
+        'dataFailed' => 'nullable',
+        'dataPassed' => 'nullable',
+        'projectUrl' => 'nullable|string',
+    ]);
+
+    $userId = Auth::check() ? Auth::id() : null;
+
+    // ✅ Use projectUrl from AJAX
+    $url = $request->projectRoute ?? '';
+
+    $webApp = 0;
+    if (Str::contains($url, 'app-analysis')) {
+        $webApp = 1;
+    } elseif (Str::contains($url, 'analysis')) {
+        $webApp = 0;
     }
+
+    $cached = CachedTest::updateOrCreate(
+        [
+            'test_key' => $request->test_key,
+            'user_id' => $userId,
+        ],
+        [
+            'result' => $request->result,
+            'test_labels' => $request->test_labels,
+            'resultsData' => $request->resultsData,
+            'dataFailed' => $request->dataFailed,
+            'dataPassed' => $request->dataPassed,
+            'projectUrl' => $url,
+            'web_app' => $webApp,
+        ]
+    );
+
+    return response()->json(['success' => true]);
+}
+
+
 } 

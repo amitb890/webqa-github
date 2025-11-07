@@ -346,7 +346,8 @@ $( document ).ready(function() {
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             },       
             success : function(data) {
-                var SEOLabelsFlag = true;
+                let seoLabelsFlag = false;
+                let seoReportLabelsFlag = false;
                 const allLabels = getAllTestLabels("analysis");
                 const SEOLabels = allLabels.seo
                 const performanceLabels = allLabels.performance
@@ -408,9 +409,11 @@ $( document ).ready(function() {
             <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
         `;
         document.querySelector("#accordianMetaTags .inner-element-content").appendChild(div);
+        seoLabelsFlag = true;
     }
     // Checkbox append
     if (showLi) {
+        seoReportLabelsFlag = true;
 
         // li append based on label.name
         const li = document.createElement("li");
@@ -461,34 +464,23 @@ $( document ).ready(function() {
 });
 
 // Hide SEO accordion if nothing enabled
-if (!SEOLabelsFlag) {
+if (!seoLabelsFlag) {
     $('#accordianMetaTags').hide();
+}
+if (!seoReportLabelsFlag) {
     $('#metaTagsUl').hide();
 }
+     var performanceLabelsFlag = false;
+    var performanceReportLabelsFlag = false;
+    performanceLabels.forEach(label => {
+        let showLi = false;
 
-                 
-                var performanceLabelsFlag = false;
-
-performanceLabels.forEach(label => {
-    let showLi = false;
-
-    // Map label.name to report_settings field
-    switch(label.name) {
-        case 'google_overall':
-            showLi = window.reportSettings.google_overall;
-            break;
-        case 'google_lighthouse':
-            showLi = window.reportSettings.google_lighthouse;
-            break;
-        case 'core_web_vitals':
-            showLi = window.reportSettings.core_web_vitals;
-            break;
-        case 'mobile_friendly':
-            showLi = window.reportSettings.mobile_friendly;
-            break;
-        default:
-            showLi = false;
-    }
+        showLi = (
+        window.reportSettings.google_overall ||
+        window.reportSettings.google_lighthouse ||
+        window.reportSettings.core_web_vitals ||
+        window.reportSettings.mobile_friendly
+    );
             let labelDisplayName = label.displayName;
 
     if (
@@ -512,6 +504,7 @@ performanceLabels.forEach(label => {
             }
     if (showLi) {
         performanceLabelsFlag = true;
+        performanceReportLabelsFlag = true;
         // Append li
         const li = document.createElement("li");
         switch(label.name) {
@@ -537,11 +530,14 @@ performanceLabels.forEach(label => {
 // Hide Performance accordion if nothing enabled
 if (!performanceLabelsFlag) {
     $('#accordianPerformance').hide();
-    $('#performanceUl').hide();
+}
+if(!performanceReportLabelsFlag) {
+   $('#performanceUl').hide();
 }
 
                 
-                var CBPLabelsFlag = false;
+                let cbpLabelsFlag = false;
+                let cbpReportLabelsFlag = false;
 
 CBPLabels.forEach(label => {
     let showLi = false;
@@ -588,10 +584,10 @@ CBPLabels.forEach(label => {
             <label class="form-check-label" for="check_${label.name}">${label.displayName}</label>
         `;
         document.querySelector("#accordianCBP .inner-element-content").appendChild(div);
-        CBPLabelsFlag = true;
+        cbpLabelsFlag = true;
     }
     if (showLi) {
-        CBPLabelsFlag = true;
+        cbpReportLabelsFlag = true;
 
         // Append li
         const li = document.createElement("li");
@@ -631,11 +627,14 @@ CBPLabels.forEach(label => {
 });
 
 // Hide CBP accordion if nothing enabled
-if (!CBPLabelsFlag) {
+if (!cbpLabelsFlag) {
     $('#accordianCBP').hide();
+}
+if (!cbpReportLabelsFlag) {
     $('#codingUl').hide();
 }
-            var securityLabelsFlag = false;
+            let securityLabelsFlag = false;
+            let securityReportLabelsFlag = false;
             securityLabels.forEach(label => {
                 let showLi = false;
 
@@ -686,7 +685,7 @@ if (!CBPLabelsFlag) {
                 }
 
                 if (showLi) {
-                    securityLabelsFlag = true;
+                    securityReportLabelsFlag = true;
 
                     
                     // Append li
@@ -729,6 +728,8 @@ if (!CBPLabelsFlag) {
             // Hide Security accordion if nothing enabled
             if (!securityLabelsFlag) {
                 $('#accordianSecurity').hide();
+            }
+            if (!securityReportLabelsFlag) {
                 $('#securityUl').hide();
             }
 

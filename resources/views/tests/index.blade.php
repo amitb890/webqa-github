@@ -90,7 +90,11 @@ webqa - Previous Tests
                 serverSide: true,
                 ajax: {
                     url: "{{ route('get.results') }}", // Set your route name here
-                    type: "GET"
+                    type: "GET",
+                    data: function(d) {
+                        // ✅ add the browser page URL to the request
+                        d.projectUrl = window.location.href;
+                    }
                 },
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1, width: '30px', className: 'text-center',searchable: false, orderable: false },
