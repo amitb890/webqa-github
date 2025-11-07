@@ -1,3 +1,13 @@
+@section('title', 'Images Tester: Alt Text & Image SEO Checks | Webqa')
+@section('meta-description', 'Audit image SEO in seconds. Find missing or empty alt text, oversized files, and format issues. Get clear Pass/Fail results and export findings for quick fixes.')
+@section('canonical', 'https://webqa.co/tool/images')
+@section('og-title', 'Test Images for Alt Text and SEO Issues | Webqa')
+@section('og-description', 'Scan a page for image problems—missing or weak alt attributes, large files, and format concerns. See decisive Pass/Fail outcomes and export results to share.')
+@section('og-url', 'https://webqa.co/tool/images')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Images test')
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Images in SEO</h2>

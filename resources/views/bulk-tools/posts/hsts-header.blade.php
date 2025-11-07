@@ -1,3 +1,12 @@
+@section('title', 'HSTS Header Tester: Force HTTPS for Secure Browsing | Webqa')
+@section('meta-description', 'Check if a page sends the Strict-Transport-Security (HSTS) header to enforce HTTPS and prevent downgrade attacks. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/hsts-header-test')
+@section('og-title', 'Test HSTS (Strict-Transport-Security) Headers | Webqa')
+@section('og-description', 'Audit HSTS headers to ensure browsers always use HTTPS for your site, improving security and preventing protocol downgrades. Export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/hsts-header-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'HSTS header test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">HSTS Header</h2>

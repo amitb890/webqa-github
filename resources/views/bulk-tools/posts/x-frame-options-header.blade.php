@@ -1,3 +1,13 @@
+@section('title', 'X-Frame-Options Header Tester: Clickjacking Protection | Webqa')
+@section('meta-description', 'Check if a page sends the X-Frame-Options header (DENY or SAMEORIGIN) to prevent embedding on other sites. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/x-frame-options-header-test')
+@section('og-title', 'Test X-Frame-Options Headers for Clickjacking Protection | Webqa')
+@section('og-description', 'Audit X-Frame-Options to ensure pages cannot be framed by untrusted sites. Detect missing or unsafe values and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/x-frame-options-header-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'X-Frame-Options header test')
+
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">X-Frame-Options Header</h2>

@@ -1440,7 +1440,7 @@ public function getContentType($response)
                 'slug' => 'meta-title',
                 'route' => 'tool/meta-title',
                 'main_heading' => 'Meta Title Test',
-                'main_para' => 'Test your website pages for Meta title tag content.',
+                'main_para' => 'Check meta title content at scale — length, casing, and “not same as H1” — so every page leads with a clear, click-worthy headline.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1452,7 +1452,7 @@ public function getContentType($response)
                 'slug' => 'meta-description',
                 'route' => 'tool/meta-description',
                 'main_heading' => 'Meta Description Test',
-                'main_para' => 'Test your website pages for Meta description.',
+                'main_para' => 'Scan multiple URLs for concise, informative meta description content — hit the sweet spot on length and clarity to boost relevance and optimise higher click through rates from search engine result pages.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1464,7 +1464,7 @@ public function getContentType($response)
                 'slug' => 'robots-meta',
                 'route' => 'tool/robots-meta',
                 'main_heading' => 'Robots Meta Tag Test',
-                'main_para' => 'Test your website pages for Robots meta tag.',
+                'main_para' => 'Verify index/follow directives across pages — catch accidental noindex,nofollow directives in Robots meta tag and keep important URLs discoverable.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1476,7 +1476,7 @@ public function getContentType($response)
                 'slug' => 'canonical-url',
                 'route' => 'tool/canonical-url',
                 'main_heading' => 'Canonical URL Test',
-                'main_para' => 'Test your website pages for Canonical tag.',
+                'main_para' => 'Bulk check canonicals for multiple URLs. Confirm canonical tags are present and correct, self-referencing where needed and never duplicated across variants.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1488,7 +1488,7 @@ public function getContentType($response)
                 'slug' => 'images',
                 'route' => 'tool/images',
                 'main_heading' => 'Images Test',
-                'main_para' => 'Test your website images.',
+                'main_para' => 'Bulk check images across pages on your website. Find missing or weak alternate text and oversized images —improve accessibility, relevance, and load speed in one sweep.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1500,7 +1500,7 @@ public function getContentType($response)
                 'slug' => 'url-slug',
                 'route' => 'tool/url-slug',
                 'main_heading' => 'URL Slug Test',
-                'main_para' => 'Test your website URL slugs.',
+                'main_para' => 'Bulk Check URL Slugs of your website. Ensure slugs are clean and consistent —lowercase, hyphenated, readable, and free of odd characters or bloat.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1512,7 +1512,7 @@ public function getContentType($response)
                 'slug' => 'robotstxt',
                 'route' => 'tool/robotstxt',
                 'main_heading' => 'Robots.txt Test',
-                'main_para' => 'Test your website robots.txt.',
+                'main_para' => 'Validate robots.txt rules —syntax, Disallow/Allow, and sitemap lines — so crawlers see exactly what you intend.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1525,7 +1525,7 @@ public function getContentType($response)
                 'slug' => 'headings',
                 'route' => 'tool/headings',
                 'main_heading' => 'Headings Test',
-                'main_para' => 'Test your website headings.',
+                'main_para' => 'Bulk check Heading tags content across yoru website pages. Audit heading structures — one solid H1, logical hierarchy, no duplicates — so content is scannable for users and bots.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1537,7 +1537,7 @@ public function getContentType($response)
                 'slug' => 'xml-sitemap',
                 'route' => 'tool/xml-sitemap',
                 'main_heading' => 'XML Sitemap Test',
-                'main_para' => 'Test your website XML sitemap.',
+                'main_para' => 'Check XML sitemap presence, syntax, and coverage —index child files, 200-OK URLs, and fresh lastmod for reliable discovery.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1550,7 +1550,7 @@ public function getContentType($response)
                 'slug' => 'og-tags',
                 'route' => 'tool/og-tags',
                 'main_heading' => 'Open Graph Tags Test',
-                'main_para' => 'Test your website pages for Open Graph Tags.',
+                'main_para' => 'Bulk check Open Graph tags content for multiple URLs. Verify Open Graph tags — title, description, image— so your links share with accurate, consistent previews on social media.',
                 'results_heading' => 'Open Graph Tags',
                 'results_para' => 'Results',
                 'ogDesc' => [
@@ -1577,7 +1577,7 @@ public function getContentType($response)
                 'slug' => 'twitter-tags',
                 'route' => 'tool/twitter-tags',
                 'main_heading' => 'Twitter Tags Test',
-                'main_para' => 'Test your website pages for Twitter tags.',
+                'main_para' => 'Test Twitter Card tags — card type, title, description, image — to ensure clean, compelling previews on X.com (previously Twitter).',
                 'results_heading' => 'Twitter Tags',
                 'results_para' => 'Results',
                 'twitterImage' => [
@@ -1599,7 +1599,7 @@ public function getContentType($response)
                 'slug' => 'favicon',
                 'route' => 'tool/favicon',
                 'main_heading' => 'Favicon Test',
-                'main_para' => 'Test your website pages for Favicon.',
+                'main_para' => 'Confirm favicon setup — proper files, sizes, and links — for a consistent, branded tab icon across browsers and devices.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1611,7 +1611,7 @@ public function getContentType($response)
                 'slug' => 'meta-viewport',
                 'route' => 'tool/meta-viewport',
                 'main_heading' => 'Meta Viewport Test',
-                'main_para' => 'Test your website pages for Meta viewport.',
+                'main_para' => 'Verify the viewport tag so pages fit small screens—width=device-width, sensible scaling, and no pinching required.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1624,7 +1624,7 @@ public function getContentType($response)
                 'slug' => 'doctype',
                 'route' => 'tool/doctype',
                 'main_heading' => 'Doctype Test',
-                'main_para' => 'Test your website doctype.',
+                'main_para' => 'Ensure a clean <!DOCTYPE html> at the top—avoid quirks mode and render pages with modern, standards-compliant behavior.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1637,7 +1637,7 @@ public function getContentType($response)
                 'slug' => 'http-status-code',
                 'route' => 'tool/http-status-code',
                 'main_heading' => 'HTTP Status Code Test',
-                'main_para' => 'Test your website HTTP status codes.',
+                'main_para' => 'Bulk check HTTP Status code of multiple URLs at once. Check live responses across URLs — confirm 200 OK, catch redirect chains, and surface 4xx/5xx errors before users do.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1649,7 +1649,7 @@ public function getContentType($response)
                 'slug' => 'html-sitemap',
                 'route' => 'tool/html-sitemap',
                 'main_heading' => 'HTML Sitemap Test',
-                'main_para' => 'Test your website pages if they exist in the HTML Sitemap',
+                'main_para' => 'Validate your HTML sitemap — crawlable links, valid URLs, and coverage of key pages for reliable navigation and discovery.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
             ],
@@ -1676,7 +1676,7 @@ public function getContentType($response)
                 'slug' => 'google-page-speed-insights',
                 'route' => 'tool/google-page-speed-insights',
                 'main_heading' => 'Google Page Speed - Overall Score Test',
-                'main_para' => 'Test multiple URLs for Google Page speed overall score.',
+                'main_para' => 'Bulk check Google Page Speed Insights Overall score for multiple URLs. See mobile and desktop PageSpeed scores at a glance — spot bottlenecks and prioritize the fixes that moves the needle towards higher performance.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1688,7 +1688,7 @@ public function getContentType($response)
                 'slug' => 'google-lighthouse',
                 'route' => 'tool/google-lighthouse',
                 'main_heading' => 'Lighthouse Test',
-                'main_para' => 'Test multiple URLs for Lighthouse scores.',
+                'main_para' => 'Bulk Check Google Lighthouse scores for multiple URLs. Run tests for Performance, Accessibility, Best Practices, and SEO —get category scores and a roadmap of performance improvements.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1700,7 +1700,7 @@ public function getContentType($response)
                 'slug' => 'google-core-web-vitals',
                 'route' => 'tool/google-core-web-vitals',
                 'main_heading' => 'Core Web Vitals Test',
-                'main_para' => 'Test multiple URLs for Core web vitals score.',
+                'main_para' => 'Bulk check Core web vitals score for multiple URLs. Measure LCP, CLS, and INP across pages —track real-world speed, stability, and responsiveness to elevate user experience.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1712,7 +1712,7 @@ public function getContentType($response)
                 'slug' => 'mobile-friendliness',
                 'route' => 'tool/mobile-friendliness',
                 'main_heading' => 'Mobile Friendliness',
-                'main_para' => 'Test mobile friendliness of your website.',
+                'main_para' => 'Bulk check mobile friendliness for multiple URLs. Confirm mobile readiness—viewport, layout fit, and tap-target sizing — so pages feel natural on phones and tablets.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ]
@@ -1727,7 +1727,7 @@ public function getContentType($response)
                 'slug' => 'gzip-compression',
                 'route' => 'tool/gzip-compression',
                 'main_heading' => 'Gzip Compression Test',
-                'main_para' => 'Test your website pages for Gzip compression.',
+                'main_para' => 'Bulk-check GZIP across pages - check if the HTML is served with GZIP or not. Reduce payloads, speed up pages, and export clear Pass/Fail results.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1739,7 +1739,7 @@ public function getContentType($response)
                 'slug' => 'html-compression',
                 'route' => 'tool/html-compression',
                 'main_heading' => 'HTML Compression Test',
-                'main_para' => 'Test multiple urls for HTML Compression.',
+                'main_para' => 'Bulk-check HTML compression across pages. We scan each URL, flag unminified HTML, and help you prioritize quick wins for faster rendering.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1751,7 +1751,7 @@ public function getContentType($response)
                 'slug' => 'css-compression',
                 'route' => 'tool/css-compression',
                 'main_heading' => 'CSS Compression Test',
-                'main_para' => 'Test multiple urls CSS Compression.',
+                'main_para' => 'Bulk-check CSS compression across pages. We scan each URL’s stylesheets for minification, flag issues, and help you prioritize performance wins.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1763,7 +1763,7 @@ public function getContentType($response)
                 'slug' => 'js-compression',
                 'route' => 'tool/js-compression',
                 'main_heading' => 'JS Compression Test',
-                'main_para' => 'Test multiple website urls for JS Compression.',
+                'main_para' => 'Test multiple URLs to check whether their JavaScript is minified and compressed. Spot oversized bundles, speed up pages, and export clear Pass/Fail results in a simple report.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1775,7 +1775,7 @@ public function getContentType($response)
                 'slug' => 'css-caching-test',
                 'route' => 'tool/css-caching-test',
                 'main_heading' => 'CSS Caching Test',
-                'main_para' => 'CSS Caching Test',
+                'main_para' => 'Test multiple URLs to see if their CSS files use browser caching (Cache-Control/ETag). Spot missing caching, cut repeat-visit load times, and reduce bandwidth waste across your site.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1787,7 +1787,7 @@ public function getContentType($response)
                 'slug' => 'js-caching-test',
                 'route' => 'tool/js-caching-test',
                 'main_heading' => 'JS Caching Test',
-                'main_para' => 'JS Caching Test',
+                'main_para' => 'Test multiple URLs to check whether their JavaScript files use browser caching (Cache-Control/ETag). Catch no-cache scripts, speed up return visits, and cut repeat downloads across pages.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1799,7 +1799,7 @@ public function getContentType($response)
                 'slug' => 'page-size',
                 'route' => 'tool/page-size',
                 'main_heading' => 'Page Size Test',
-                'main_para' => 'Test your website page sizes.',
+                'main_para' => 'Measure total page weight across multiple URLs, pinpoint bloated assets, and set size targets that make your site feel instantly snappier.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1811,7 +1811,7 @@ public function getContentType($response)
                 'slug' => 'nested-tables',
                 'route' => 'tool/nested-tables',
                 'main_heading' => 'Nested Tables Test',
-                'main_para' => 'Test for nested tables.',
+                'main_para' => 'Scan pages for nested tables that hurt accessibility and responsiveness—then clean up markup for modern, flexible layouts.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1824,7 +1824,7 @@ public function getContentType($response)
                 'slug' => 'frameset',
                 'route' => 'tool/frameset',
                 'main_heading' => 'Frameset Test',
-                'main_para' => 'Test for frameset usage.',
+                'main_para' => 'Find legacy <frameset> usage in seconds and chart the path to standards-compliant, crawlable, and accessible page structures.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1836,7 +1836,7 @@ public function getContentType($response)
                 'url' => '/test/broken-links',
                 'slug' => 'broken-links',
                 'route' => 'tool/broken-links',
-                'main_heading' => 'Broken Links',
+                'main_heading' => 'Broken Links Test',
                 'main_para' => 'Broken Links',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
@@ -1851,8 +1851,8 @@ public function getContentType($response)
                 'url' => '/test/safe-browsing',
                 'slug' => 'safe-browsing-test',
                 'route' => 'tool/safe-browsing-test',
-                'main_heading' => 'Safe Browsing',
-                'main_para' => 'Check if your site is marked as safe by Google.',
+                'main_heading' => 'Safe Browsing Test',
+                'main_para' => 'Check multiple URLs against Google Safe Browsing to ensure your site isn’t flagged—protect user trust before they click.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1864,8 +1864,8 @@ public function getContentType($response)
                 'url' => '/test/cross-origin-links',
                 'slug' => 'unsafe-cross-origin-links-test',
                 'route' => 'tool/unsafe-cross-origin-links-test',
-                'main_heading' => 'Unsafe Cross Origin Links',
-                'main_para' => 'Check for unsafe cross-origin links.',
+                'main_heading' => 'Unsafe Cross Origin Links Test',
+                'main_para' => 'Hunt down external links opening in new tabs without safety attributes—stop tabnabbing risks and keep users secure.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1877,8 +1877,8 @@ public function getContentType($response)
                 'url' => '/test/protocol-relative-resource',
                 'slug' => 'protocall-relative-resource-links-test',
                 'route' => 'tool/protocall-relative-resource-links-test',
-                'main_heading' => 'Protocol relative resource links',
-                'main_para' => 'Check for protocol relative resource links.',
+                'main_heading' => 'Protocol relative resource links Test',
+                'main_para' => 'Spot “//” protocol-relative resources and enforce explicit HTTPS — avoid mixed content warnings and inconsistent loads.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1890,8 +1890,8 @@ public function getContentType($response)
                 'url' => '/test/content-security-policy-header',
                 'slug' => 'content-security-policy-header-test',
                 'route' => 'tool/content-security-policy-header-test',
-                'main_heading' => 'Content Security Policy Header',
-                'main_para' => 'Check Content Security Policy header.',
+                'main_heading' => 'Content Security Policy Header Test',
+                'main_para' => 'Verify CSP headers across pages to restrict where scripts and assets load from — reduce XSS exposure with a clear, enforceable policy.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1903,8 +1903,8 @@ public function getContentType($response)
                 'url' => '/test/x-frame-options-header',
                 'slug' => 'x-frame-options-header-test',
                 'route' => 'tool/x-frame-options-header-test',
-                'main_heading' => 'X Frame Options Header',
-                'main_para' => 'Check X-Frame-Options header.',
+                'main_heading' => 'X Frame Options Header Test',
+                'main_para' => 'Confirm X-Frame-Options is set correctly to prevent clickjacking — keep your pages from being framed by untrusted sites.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1917,7 +1917,7 @@ public function getContentType($response)
                 'slug' => 'hsts-header-test',
                 'route' => 'tool/hsts-header-test',
                 'main_heading' => 'HSTS Header Test',
-                'main_para' => 'Check HSTS header.',
+                'main_para' => 'Ensure HSTS is enabled site-wide so browsers always use HTTPS—shut the door on protocol downgrades and insecure requests.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1930,7 +1930,7 @@ public function getContentType($response)
                 'slug' => 'bad-content-type-test',
                 'route' => 'tool/bad-content-type-test',
                 'main_heading' => 'Bad content Type',
-                'main_para' => 'Check for bad content types.',
+                'main_para' => 'Check MIME types for pages and assets—serve HTML, CSS, JS, and images with the right headers to prevent broken rendering.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1943,7 +1943,7 @@ public function getContentType($response)
                 'slug' => 'ssl-certificate-test',
                 'route' => 'tool/ssl-certificate-test',
                 'main_heading' => 'SSL Certificate',
-                'main_para' => 'Check SSL certificate.',
+                'main_para' => 'Validate certificate health across domains — correct hostname, valid chain, not expired—so HTTPS remains trusted end to end.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1956,7 +1956,7 @@ public function getContentType($response)
                 'slug' => 'directory-browsing-test',
                 'route' => 'tool/directory-browsing-test',
                 'main_heading' => 'Directory Browsing',
-                'main_para' => 'Check for directory browsing.',
+                'main_para' => 'Detect exposed folder listings and lock them down — hide server directories to protect files and keep curious eyes out.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true

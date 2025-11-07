@@ -1,3 +1,12 @@
+@section('title', 'Doctype Tester: HTML5 Standards Mode Check | Webqa')
+@section('meta-description', 'Verify the page doctype. Confirm a valid HTML5 DOCTYPE html at the top to ensure standards mode. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/doctype')
+@section('og-title', 'Test Doctype for HTML5 Standards Mode | Webqa')
+@section('og-description', 'Check that DOCTYPE html is present and correctly placed to avoid quirks mode. See decisive Pass/Fail outcomes and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/doctype')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Doctype test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Doctype</h2>

@@ -1,3 +1,12 @@
+@section('title', 'Protocol-Relative Resource Links Tester | Webqa')
+@section('meta-description', 'Detect protocol-relative resource links. Ensure all assets use explicit HTTPS URLs for secure, consistent loading. Get Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/protocall-relative-resource-links-test')
+@section('og-title', 'Test for Protocol-Relative Resource Links | Webqa')
+@section('og-description', 'Scan pages for protocol-relative links and enforce explicit HTTPS URLs to prevent mixed content and insecure loads. Export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/protocall-relative-resource-links-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'Protocol-relative links test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Protocol Relative Resource Links</h2>

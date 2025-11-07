@@ -9,7 +9,6 @@
         <link rel="canonical" href="@yield('canonical', config('app.name', 'Laravel'))"/>
         <meta property="og:title" content="@yield('og-title', config('app.name', 'Laravel'))">
         <meta property="og:description" content="@yield('og-description', config('app.name', 'Laravel'))">
-        <meta property="og:type" content="website">
         <meta property="og:url" content="@yield('og-url', config('app.name', 'Laravel'))">
         <meta property="og:image" content="@yield('og-image', config('app.name', 'Laravel'))">
         <meta property="og:image:alt" content="@yield('og-image-alt', config('app.name', 'Laravel'))">
@@ -49,7 +48,7 @@
     <header id="headerMain" class="header_main genarel_header_main">
       <nav class="navbar_main">
         <div class="container-fluid container-fluid-tool-page header_home_page">
-          <a href="{{ route('index') }}" class="navbar-brand">
+          <a href="{{ route('index') }}" class="navbar-brand" style="margin-left:65px;">
             <img
               src="/new-assets/assets/images/webQA_logo.png"
               alt="WebQA"
@@ -59,32 +58,35 @@
             />
           </a>
 
-          <ul class="genarel_header_items">
+          <ul class="genarel_header_items" style="gap:30px;margin-left: -704px;">
             <li><a href="{{ route('tools-landing') }}">Tools</a></li>
-            <li><a href="#">Features</a></li>
+            
             <li>
               <div class="dropdown">
                 <a
                   class="dropdown-toggle"
-                  href="#"
+                  href="https://webqa.co/features"
                   role="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <span>Pricing</span>
+                  <span>Features</span>
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="#">Action</a></li>
-                    <li><a class="dropdown-item" href="#">Another Action</a></li>
+                    <li><a class="dropdown-item" href="https://webqa.co/features/webpage-audit">Webpage audit</a></li>
+                    <li><a class="dropdown-item" href="https://webqa.co/features/website-tracker">Website tracker</a></li>
+                    <li><a class="dropdown-item" href="https://webqa.co/features/settings">Settings</a></li>
+                    <li><a class="dropdown-item" href="https://webqa.co/features/reports">Reports</a></li>
                 </ul>
               </div>
             </li>
+            <li><a href="https://webqa.co/aboutus">About us</a></li>
           </ul>
           <div class="login_area">
                 @if(!Auth::user())
                 <a type="button" class="header_login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
-                <a type="button" class="btn btn_primary rounded-pill" data-bs-toggle="modal" data-bs-target="#registerModal">Start Signup</a>
+                <a type="button" class="btn btn_primary rounded-pill" data-bs-toggle="modal" data-bs-target="#registerModal">Free Signup</a>
                 @else
                 <a href="{{route('dashboard')}}" class="btn btn_primary rounded-pill">Dashboard</a>
                 @endif

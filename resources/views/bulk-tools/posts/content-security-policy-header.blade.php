@@ -1,3 +1,12 @@
+@section('title', 'Content Security Policy (CSP) Header Tester | Webqa')
+@section('meta-description', 'Check if a page sends a Content Security Policy header and validate basic directives to reduce XSS and injection risks. Get clear Pass/Fail results and export findings.')
+@section('canonical', 'https://webqa.co/tool/content-security-policy-header-test')
+@section('og-title', 'Test Content Security Policy (CSP) Headers | Webqa')
+@section('og-description', 'Audit CSP headers to ensure scripts and other resources only load from trusted sources. Find missing or weak policies and export results for quick fixes.')
+@section('og-url', 'https://webqa.co/tool/content-security-policy-header-test')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image-alt', 'CSP header test')
+
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Content Security Policy Header</h2>

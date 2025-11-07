@@ -263,7 +263,21 @@ Route::namespace("Admin")->prefix('control')->group(function(){
 });
 
 
+Route::get('/services', function () {
+    return view('services');
+});
 
+Route::get('/services/website-improvement', function () {
+    return view('website-improvement');
+});
+
+Route::get('/services/website-audit', function () {
+    return view('website-audit');
+});
+
+Route::get('/services/page-speed-optimization', function () {
+    return view('page-speed-optimization');
+});
 
 
 Route::get('/aboutus', function () {
