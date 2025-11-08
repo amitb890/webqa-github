@@ -78,7 +78,7 @@ public function store(Request $request)
             'resultsData' => $request->resultsData,
             'dataFailed' => $request->dataFailed,
             'dataPassed' => $request->dataPassed,
-            'projectUrl' => $request->projectUrl,,
+            'projectUrl' => $request->projectUrl,
             'web_app' => $webApp,
         ]
     );
