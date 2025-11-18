@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Share Clear Audit Findings With Reports | Webqa')\
+@section('title', 'Share Clear Audit Findings With Reports | Webqa')
 @section('meta-description', 'Turn audits into action with per-metric reports. Open from the dashboard, review issues line by line, and export PDF/CSV/XLSX for fast hand-offs.')
 @section('canonical', 'https://webqa.co/features/reports')
 @section('og-title', 'Share Actionable Audit Findings with Website Reports | Webqa')

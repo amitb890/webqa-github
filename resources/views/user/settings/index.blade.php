@@ -1,6 +1,4 @@
-@extends('layouts.app')
-@section('title', 'Webqa - Settings')
-@section("content")
+@extends('layouts.app') @section('title', 'Webqa - Settings') @section("content")
 
 
 
@@ -8,17 +6,16 @@
 <!-- Setting area start  -->
 <div class="setting-area">
 
-@include("components.modal-add-sitemap", ["settings" => $settings])
-@include("components.modal-add-broken-links-excluded", ["settings" => $settings])
+    @include("components.modal-add-sitemap", ["settings" => $settings]) @include("components.modal-add-broken-links-excluded", ["settings" => $settings])
 
-  <!-- setting menu area start -->
-  <div class="setting-menu-area d-none d-sm-block">
-    <div class="menu-title">
-      <h3>Settings</h3>
-    </div>
-    <div class="accordion accordion-flush" id="accordionFlushExample">
-      <div class="accordion-item">
-        <h2 class="accordion-header" id="flush-heading1">
+    <!-- setting menu area start -->
+    <div class="setting-menu-area d-none d-sm-block">
+        <div class="menu-title">
+            <h3>Settings</h3>
+        </div>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="flush-heading1">
           <button
             class="accordion-button collapsed"
             type="button"
@@ -30,1247 +27,736 @@
             Website QA
           </button>
         </h2>
-        <div
-          id="flush-collapse1"
-          class="accordion-collapse collapse show"
-          aria-labelledby="flush-heading1"
-          data-bs-parent="#accordionFlushExample"
-        >
-          <div class="accordion-body">
-            <div
-              class="nav flex-column nav-pills me-3"
-              id="v-pills-tab"
-              role="tablist"
-              aria-orientation="vertical"
-            >
-              <button
-                class="nav-link active"
-                id="v-pills-meta-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#v-pills-meta"
-                type="button"
-                role="tab"
-                aria-controls="v-pills-meta"
-                aria-selected="true"
-              >
-                SEO
-              </button>
+                <div id="flush-collapse1" class="accordion-collapse collapse show" aria-labelledby="flush-heading1" data-bs-parent="#accordionFlushExample">
+                    <div class="accordion-body">
+                        <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                            <button class="nav-link active" id="v-pills-meta-tab" data-bs-toggle="pill" data-bs-target="#v-pills-meta" type="button" role="tab" aria-controls="v-pills-meta" aria-selected="true">
+                                SEO
+                            </button>
 
 
-              <button
-                class="nav-link"
-                id="v-pills-performance-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#v-pills-performance"
-                type="button"
-                role="tab"
-                aria-controls="v-pills-performance"
-                aria-selected="false"
-              >
-                Performance
-              </button>
+                            <button class="nav-link" id="v-pills-performance-tab" data-bs-toggle="pill" data-bs-target="#v-pills-performance" type="button" role="tab" aria-controls="v-pills-performance" aria-selected="false">
+                                Performance
+                            </button>
 
-              <button
-                class="nav-link"
-                id="v-pills-coding-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#v-pills-coding"
-                type="button"
-                role="tab"
-                aria-controls="v-pills-coding"
-                aria-selected="false"
-              >
-                Best Practices
-              </button>
+                            <button class="nav-link" id="v-pills-coding-tab" data-bs-toggle="pill" data-bs-target="#v-pills-coding" type="button" role="tab" aria-controls="v-pills-coding" aria-selected="false">
+                                Best Practices
+                            </button>
 
-              <button
-                class="nav-link"
-                id="v-pills-security-tab"
-                data-bs-toggle="pill"
-                data-bs-target="#v-pills-security"
-                type="button"
-                role="tab"
-                aria-controls="v-pills-security"
-                aria-selected="false"
-              >
-                Security
-              </button>
-              <button
-                class="nav-link"
-              ><a href="{{ route('report-settings.edit') }}" style="color: inherit; text-decoration: none;">
+                            <button class="nav-link" id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab" aria-controls="v-pills-security" aria-selected="false">
+                                Security
+                            </button>
+                            <button class="nav-link"><a href="{{ route('report-settings.edit') }}" style="color: inherit; text-decoration: none;">
                 Reports</a>
-              </button>
+                            </button>
 
 
-       
 
-            
+
+
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+            <div class="my-profile">
+                <a href="https://webqa.co/test-archive-web-app">
+                    <span style="margin:0 auto;">Previous Tests</span>
+                </a>
+            </div>
         </div>
-      </div>
-      <div class="my-profile">
-        <a href="{{ route('profile.index') }}">
-          <span>My Profile</span>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M8.9922 0C7.24482 0.00331996 5.53612 0.514712 4.07422 1.47189C2.61232 2.42906 1.46032 3.7907 0.758536 5.39096C0.0567519 6.99122 -0.164526 8.76103 0.121655 10.4848C0.407836 12.2086 1.18912 13.812 2.37036 15.0996C3.21401 16.0141 4.23793 16.7439 5.37761 17.2431C6.51728 17.7423 7.748 18 8.9922 18C10.2364 18 11.4671 17.7423 12.6068 17.2431C13.7465 16.7439 14.7704 16.0141 15.614 15.0996C16.7953 13.812 17.5766 12.2086 17.8627 10.4848C18.1489 8.76103 17.9276 6.99122 17.2259 5.39096C16.5241 3.7907 15.3721 2.42906 13.9102 1.47189C12.4483 0.514712 10.7396 0.00331996 8.9922 0ZM8.9922 16.2168C7.12589 16.2139 5.33344 15.4873 3.99203 14.1897C4.39929 13.1982 5.0921 12.3502 5.98242 11.7534C6.87273 11.1567 7.92037 10.838 8.9922 10.838C10.064 10.838 11.1117 11.1567 12.002 11.7534C12.8923 12.3502 13.5851 13.1982 13.9924 14.1897C12.651 15.4873 10.8585 16.2139 8.9922 16.2168ZM7.19034 7.20745C7.19034 6.85107 7.29601 6.5027 7.49401 6.20639C7.692 5.91007 7.97341 5.67912 8.30266 5.54275C8.6319 5.40637 8.9942 5.37068 9.34373 5.44021C9.69325 5.50973 10.0143 5.68135 10.2663 5.93334C10.5183 6.18534 10.6899 6.5064 10.7594 6.85592C10.829 7.20545 10.7933 7.56774 10.6569 7.89699C10.5205 8.22624 10.2896 8.50765 9.99326 8.70564C9.69695 8.90363 9.34857 9.00931 8.9922 9.00931C8.51432 9.00931 8.05601 8.81947 7.71809 8.48156C7.38018 8.14364 7.19034 7.68533 7.19034 7.20745ZM15.2176 12.613C14.4127 11.2362 13.1738 10.1652 11.695 9.56789C12.1537 9.04774 12.4526 8.40628 12.5558 7.72047C12.659 7.03467 12.5621 6.33365 12.2768 5.70154C11.9914 5.06943 11.5297 4.53309 10.9471 4.15687C10.3645 3.78064 9.68573 3.58052 8.9922 3.58052C8.29867 3.58052 7.61987 3.78064 7.03726 4.15687C6.45465 4.53309 5.99297 5.06943 5.70763 5.70154C5.42229 6.33365 5.3254 7.03467 5.42859 7.72047C5.53179 8.40628 5.83068 9.04774 6.28941 9.56789C4.81062 10.1652 3.57172 11.2362 2.76677 12.613C2.12525 11.5203 1.7863 10.2764 1.78475 9.00931C1.78475 7.09778 2.5441 5.26453 3.89576 3.91288C5.24742 2.56122 7.08066 1.80186 8.9922 1.80186C10.9037 1.80186 12.737 2.56122 14.0886 3.91288C15.4403 5.26453 16.1996 7.09778 16.1996 9.00931C16.1981 10.2764 15.8591 11.5203 15.2176 12.613Z"
-              fill="#222222"
-            />
-          </svg>
-        </a>
-      </div>
     </div>
-  </div>
-  <!-- setting menu area end -->
+    <!-- setting menu area end -->
 
-  <!-- setting content and tab content area start -->
-  <div class="setting-content-area">
-    <!-- setting alert start -->
-    <div class="setting-alert-area">
-      
-      <div class="setting-alert-btn ms-auto">
-        <button class="btn btn_primary rounded-pill" type="submit" id="saveSettings"> 
-          Save Settings
-        </button>
-      </div>
-    </div>
-    <!-- setting alert end -->
+    <!-- setting content and tab content area start -->
+    <div class="setting-content-area">
+        <!-- setting alert start -->
+        <div class="setting-alert-area">
 
-    <div class="tab-content" id="v-pills-tabContent">
-      <!-- meta tag tab content start -->
-      <div
-        class="tab-pane fade show active"
-        id="v-pills-meta"
-        role="tabpanel"
-        aria-labelledby="v-pills-meta-tab"
-        tabindex="0"
-      >
-        <div class="tab-content-area">
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
+            <div class="setting-alert-btn ms-auto">
+                <button class="btn btn_primary rounded-pill" type="submit" id="saveSettings">
+                    Save Settings
                 </button>
-                <span>Meta Title</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        id="switchMetaTitle"
-                        {{ $settings->meta_title ? 'checked' : '' }}
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isMetaTitle"
-                      {{ $settings->settingsSub->meta_title ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="isMetaTitle">
-                      Every page must have a meta title tag
-                    </label>
-                  </div>
-                  <div class="check-range">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="titleMaxLength"
-                        {{ $settings->settingsSub->max_title_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="titleMaxLength"
-                      >
-                        Maximum length of Title tag should be
-                        <input class="slider-input-text" type="number" id="titleMaxLengthVal" value="{{$settings->settingsSub->max_title_length_val}}" min="0" max="100"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex21"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="100"
-                        data-slider-step="1"
-                        data-slider-value="{{$settings->settingsSub->max_title_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">100</span>
-                    </div>
-                  </div>
-                  <div class="check-range">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="titleMinLength"
-                        {{ $settings->settingsSub->min_title_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="titleMinLength"
-                      >
-                        Minimum length of Title tag should be
-                        <input class="slider-input-text" type="number" value="{{$settings->settingsSub->min_title_length_val}}" min="0" max="100" id="titleMinLengthVal"> Characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range2">
-                      <span class="span-left">{{$settings->settingsSub->min_title_length_val}}</span>
-                      <input
-                        id="ex22"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="30"
-                        data-slider-step="1"
-                        data-slider-value="{{$settings->settingsSub->min_title_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">30</span>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="titleEquaH1"
-                      {{ $settings->settingsSub->is_title_equal_h1 ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="titleEquaH1">
-                      Title Tag must not be equal to H1 heading tag
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input hideInputCheck"
-                      type="checkbox"
-                      value=""
-                      id="excludedWordsCasing"
-                      {{ $settings->settingsSub->is_excluded_words ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="excludedWordsCasing">
-                      Exclude specific words from casing checks
-                      (separate each word with a comma)
-                    </label>
-                  </div>
-                  <textarea
-                  class="hideInputCheckElement"
-                    placeholder="Separate each word with a comma"
-                    id="excludedWordsCasingVal"
-                    cols="30"
-                    rows="10"
-                  >{{$settings->settingsSub->excluded_words}}</textarea>
-                  <div class="form-check form-check-black">
-                    <input
-                      class="form-check-input toggleCasingChecks"
-                      type="checkbox"
-                      id="enableTitleCasingChecks"
-                      {{ $settings->settingsSub->title_casing_camel || $settings->settingsSub->title_casing_sentence || $settings->settingsSub->title_casing_both  ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="enableTitleCasingChecks">
-                      Enable Casing Checks
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="radioTitleCasing"
-                      id="casingBoth"
-                      {{ $settings->settingsSub->title_casing_both ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="casingBoth">
-                      Title Tag must be either in Camel casing or
-                      Sentence casing
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="radioTitleCasing"
-                      id="casingCamel"
-                      {{ $settings->settingsSub->title_casing_camel ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="casingCamel">
-                      Title Tag must be in Camel casing
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="radioTitleCasing"
-                      id="casingSentence"
-                      {{ $settings->settingsSub->title_casing_sentence ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="casingSentence">
-                      Title Tag must be in Sentence casing
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsMetaTitle"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        </div>
+        <!-- setting alert end -->
 
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Meta Description</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input type="checkbox" class="checkbox" id="switchMetaDesc" {{ $settings->meta_desc ? 'checked' : '' }} />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isMetaDesc"
-                      {{ $settings->settingsSub->meta_desc ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isMetaDesc"
-                    >
-                      Every page must have a meta description tag
-                    </label>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="metaDescLengthMax"
-                        {{ $settings->settingsSub->max_desc_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="metaDescLengthMax"
-                      >
-                        Maximum length of meta descripiton should be
-                        <input class="slider-input-text" type="number" value="{{ $settings->settingsSub->max_desc_length_val}}" id="metaDescLengthMaxVal" min="0" max="220"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range3">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex23"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="220"
-                        data-slider-step="1"
-                        value="50"
-                        data-slider-value="{{ $settings->settingsSub->max_desc_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">220</span>
-                    </div>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="metaDescLengthMin"
-                        {{ $settings->settingsSub->min_desc_length ? "checked" : "" }} 
-                      />
-                      <label
-                        class="form-check-label"
-                        for="metaDescLengthMin"
-                      >
-                      Minimum length of meta descripiton should be
-                        <input class="slider-input-text" type="number" value="{{ $settings->settingsSub->min_desc_length_val}}" min="0" max="70" id="metaDescLengthMinVal"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range4">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex24"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="70"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->min_desc_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">70</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsMetaDesc"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Robots Meta Tag</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->robots_meta ? 'checked' : '' }}
-                        id="switchRobotsMeta" name="switchRobotsMeta"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="liveRobotsMeta"
-                      {{ $settings->settingsSub->live_urls_robots_meta ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="robots1">
-                      A URL must not have robots meta tag content set to (noindex,nofollow), unless added intentionally
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsRobotsMeta"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Canonical URL</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        id="switchCanonical"
-                        {{ $settings->canonical_url ? 'checked' : '' }} 
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->canonical_url ? "checked" : "" }} id="canonicalUrl"
-                    />
-                    <label class="form-check-label" for="canonical1">
-                      Every page must have a canonical URL tag
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->canonical_url_equal_url ? "checked" : "" }} id="canonicalEqualUrl"
-                    />
-                    <label class="form-check-label" for="canonical2">
-                      Canonical URL must be equal to the actual URL
-                      (self canonicalize)
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->canonical_url_ignore_slash ? "checked" : "" }} id="canonicalIgnoreSlash"
-                    />
-                    <label class="form-check-label" for="canonical3">
-                      Ignore the trailing slash in Canonical URL
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsCanonical"
-                    />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-                    <!-- single accordion item -->
+        <div class="tab-content" id="v-pills-tabContent">
+            <!-- meta tag tab content start -->
+            <div class="tab-pane fade show active" id="v-pills-meta" role="tabpanel" aria-labelledby="v-pills-meta-tab" tabindex="0">
+                <div class="tab-content-area">
+                    <!-- single accordion -->
                     <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Images</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->images ? "checked" : "" }} id="switchImages" name="switchImages"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="maximumFileSize" {{ $settings->settingsSub->image_max_size ? "checked" : "" }}
-                      />
-                      <label class="form-check-label" for="maximumFileSize">
-                        Maximum file size of an image file should be
-                        <input class="slider-input-text" type="number" id="maximumFileSizeVal" value="{{ $settings->settingsSub->image_max_size_val}}" min="0" max="1700"> KB
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range7">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex34"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="2000"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->image_max_size_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Meta Title</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" id="switchMetaTitle" {{ $settings->meta_title ? 'checked' : '' }} />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isMetaTitle" {{ $settings->settingsSub->meta_title ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isMetaTitle">
+                                            Every page must have a meta title tag
+                                        </label>
+                                    </div>
+                                    <div class="check-range">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="titleMaxLength" {{ $settings->settingsSub->max_title_length ? "checked" : "" }} />
+                                            <label class="form-check-label" for="titleMaxLength">
+                                                Maximum length of Title tag should be
+                                                <input class="slider-input-text" type="number" id="titleMaxLengthVal" value="{{$settings->settingsSub->max_title_length_val}}" min="0" max="100"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range">
+                                            <span class="span-left">0</span>
+                                            <input id="ex21" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{$settings->settingsSub->max_title_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
                                                       { "start": 7, "end": 8, "class": "category2" },
                                                       { "start": 17, "end": 19 },
                                                       { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">2000</span>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="imageNameHyphen" {{ $settings->settingsSub->image_name_only_hyphens ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="imageNameHyphen">
-                      Words in image file must be separated by hyphens
-                      only
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="imageNameUppercase" {{ $settings->settingsSub->image_name_no_uppercase ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="imageNameUppercase">
-                      Image file name can not have uppercase
-                      characters
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="imageNameSpecial" {{ $settings->settingsSub->image_name_no_special ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="imageNameSpecial">
-                      Image file name can not have special characters
-                    </label>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="imageNameLength" {{ $settings->settingsSub->image_name_max_characters ? "checked" : "" }}
-                      />
-                      <label class="form-check-label" for="imageNameLength">
-                        Maximum length of an image file name should be
-                        <input class="slider-input-text" type="number" id="imageNameLengthVal" value="{{ $settings->settingsSub->image_name_max_characters_val}}" min="0" max="200"> Characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range7">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex35"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="200"
-                        data-slider-step="1"
-                        data-slider-value="170"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">100</span>
+                                        </div>
+                                    </div>
+                                    <div class="check-range">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="titleMinLength" {{ $settings->settingsSub->min_title_length ? "checked" : "" }} />
+                                            <label class="form-check-label" for="titleMinLength">
+                                                Minimum length of Title tag should be
+                                                <input class="slider-input-text" type="number" value="{{$settings->settingsSub->min_title_length_val}}" min="0" max="100" id="titleMinLengthVal"> Characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range2">
+                                            <span class="span-left">{{$settings->settingsSub->min_title_length_val}}</span>
+                                            <input id="ex22" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="30" data-slider-step="1" data-slider-value="{{$settings->settingsSub->min_title_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
                                                       { "start": 7, "end": 8, "class": "category2" },
                                                       { "start": 17, "end": 19 },
                                                       { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">200</span>
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">30</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="titleEquaH1" {{ $settings->settingsSub->is_title_equal_h1 ? "checked" : "" }} />
+                                        <label class="form-check-label" for="titleEquaH1">
+                                            Title Tag must not be equal to H1 heading tag
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input hideInputCheck" type="checkbox" value="" id="excludedWordsCasing" {{ $settings->settingsSub->is_excluded_words ? "checked" : "" }} />
+                                        <label class="form-check-label" for="excludedWordsCasing">
+                                            Exclude specific words from casing checks (separate each word with a comma)
+                                        </label>
+                                    </div>
+                                    <textarea class="hideInputCheckElement" placeholder="Separate each word with a comma" id="excludedWordsCasingVal" cols="30" rows="10">{{$settings->settingsSub->excluded_words}}</textarea>
+                                    <div class="form-check form-check-black">
+                                        <input class="form-check-input toggleCasingChecks" type="checkbox" id="enableTitleCasingChecks" {{ $settings->settingsSub->title_casing_camel || $settings->settingsSub->title_casing_sentence || $settings->settingsSub->title_casing_both ? "checked" : "" }} />
+                                        <label class="form-check-label" for="enableTitleCasingChecks">
+                                            Enable Casing Checks
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="radioTitleCasing" id="casingBoth" {{ $settings->settingsSub->title_casing_both ? "checked" : "" }} />
+                                        <label class="form-check-label" for="casingBoth">
+                                            Title Tag must be either in Camel casing or Sentence casing
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="radioTitleCasing" id="casingCamel" {{ $settings->settingsSub->title_casing_camel ? "checked" : "" }} />
+                                        <label class="form-check-label" for="casingCamel">
+                                            Title Tag must be in Camel casing
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="radioTitleCasing" id="casingSentence" {{ $settings->settingsSub->title_casing_sentence ? "checked" : "" }} />
+                                        <label class="form-check-label" for="casingSentence">
+                                            Title Tag must be in Sentence casing
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsMetaTitle" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="imageAlt" {{ $settings->settingsSub->image_alt ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="imageAlt">
-                      An image must have an alt text
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="imageAltSpaces" {{ $settings->settingsSub->image_alt_only_spaces ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="imageAltSpaces">
-                      Words in alt text must be separated by spaces
-                      only
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsImages"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>URL Slug</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->url_slug ? 'checked' : '' }} id="switchUrlSlug"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->url_slug_lowercase ? "checked" : "" }} id="UrlLowercase"
-                    />
-                    <label class="form-check-label" for="urlslug1">
-                      Every character in the URL needs to be lowercase
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->url_no_numbers ? "checked" : "" }} id="UrlNoNumbers"
-                    />
-                    <label class="form-check-label" for="urlslug2">
-                      URLs cannot contain numbers
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->url_no_special ? "checked" : "" }} id="UrlNoSpecial"
-                    />
-                    <label class="form-check-label" for="urlslug3">
-                      URLs cannot contain special characters
-                    </label>
-                  </div>
-                  <div class="check-range">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->max_url_length ? "checked" : "" }} id="maxUrlLength"
-                      />
-                      <label class="form-check-label" for="urlslug4">
-                        Maximum length of a URL should be
-                        <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_url_length_val}}" id="maxUrlLengthVal" min="0" max="100" id="ex25-input"> Characters (excluding the
-                        domain name)
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range5">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex25"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="100"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->max_url_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">100</span>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input hideInputCheck"
-                      type="checkbox"
-                      {{ $settings->settingsSub->url_stop_words ? "checked" : "" }} id="UrlStopWords"
-                    />
-                    <label class="form-check-label" for="urlslug5">
-                      URLs must not contain specific stop words (separate each word with a comma)
-                    </label>
-                  </div>
-                  <textarea
-                  class="hideInputCheckElement"
-                    placeholder="Separate each word with a comma"
-                    id="UrlStopWordsVal"
-                    cols="30"
-                    rows="10"
-                  >{{$settings->settingsSub->url_stop_words_val}}</textarea>
-                  <div class="form-check form-check-black">
-                    <input
-                      class="form-check-input toggleCasingChecks"
-                      type="checkbox"
-                        id="enableURLChecks"
-                        {{ $settings->settingsSub->url_casing_only_hyphens ||  $settings->settingsSub->url_casing_only_underscores || $settings->settingsSub->url_casing_both? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="enableURLChecks">
-                      Enable URL Checks
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="urlCasingCheck"
-                        {{ $settings->settingsSub->url_casing_only_hyphens ? "checked" : "" }} id="UrlOnlyHyphens"
-                    />
-                    <label class="form-check-label" for="UrlOnlyHyphens">
-                      Words in URLs should be separated by hyphens only
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="urlCasingCheck"
-                      {{ $settings->settingsSub->url_casing_only_underscores ? "checked" : "" }} id="UrlOnlyUnderscores"
-                    />
-                    <label class="form-check-label" for="UrlOnlyUnderscores">
-                      Words in URLs should be separated by underscores only
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input" 
-                      type="radio"
-                      name="urlCasingCheck"
-                      {{ $settings->settingsSub->url_casing_both ? "checked" : "" }} id="UrlBoth"
-                    />
-                    <label class="form-check-label" for="UrlBoth">
-                      Words in URLs can be separated by either hyphens or underscores
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Robots.txt</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->robot_text_test ? 'checked' : '' }} id="switchRobotTxtTestHeader" name="switchRobotTxtTestHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isRobotTextTestBlockUrlEnable"
-                        {{ $settings->settingsSub->robot_text_test_block_url ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isRobotTextTestBlockUrlEnable"
-                      >
-                       No page on the website should be blockes in Robots.txt
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultRobotTextEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Headings</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->h1_heading_tag ? 'checked' : '' }} id="switchH1HeadingTag" name="switchH1HeadingTag"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isH1HeadingTagEnable"
-                        {{ $settings->settingsSub->h1_heading_tag ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isH1HeadingTagEnable"
-                      >
-                       Every page must have at least one H1 heading tag
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="h1HeadingTagLength"
-                        {{ $settings->settingsSub->h1_heading_tag_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="h1HeadingTagLength"
-                      >
-                      A page can have at most
-                        <input class="slider-input-text" type="number" id="h1HeadingTagLengthVal" value="{{$settings->settingsSub->h1_heading_tag_length_val}}" min="0" max="100"> H1 heading tag
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultH1HeadingTagEnable"
-                  />
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                   
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="h2HeadingTagLength"
-                        {{ $settings->settingsSub->h2_heading_tag_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="h2HeadingTagLength"
-                      >
-                      A page can have at most
-                        <input class="slider-input-text" type="number" id="h2HeadingTagLengthVal" value="{{$settings->settingsSub->h2_heading_tag_length_val}}" min="0" max="100"> H2 heading tag
-                      </label>
-                    </div>
-
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="h3HeadingTagLength"
-                        {{ $settings->settingsSub->h3_heading_tag_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="h3HeadingTagLength"
-                      >
-                      A page can have at most
-                        <input class="slider-input-text" type="number" id="h3HeadingTagLengthVal" value="{{$settings->settingsSub->h3_heading_tag_length_val}}" min="0" max="100"> H3 heading tag
-                      </label>
-                    </div>
-
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="h4HeadingTagLength"
-                        {{ $settings->settingsSub->h4_heading_tag_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="h4HeadingTagLength"
-                      >
-                      A page can have at most
-                        <input class="slider-input-text" type="number" id="h4HeadingTagLengthVal" value="{{$settings->settingsSub->h4_heading_tag_length_val}}" min="0" max="100"> H4 heading tag
-                      </label>
-                    </div>
-
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="h5HeadingTagLength"
-                        {{ $settings->settingsSub->h5_heading_tag_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="h5HeadingTagLength"
-                      >
-                      A page can have at most
-                        <input class="slider-input-text" type="number" id="h5HeadingTagLengthVal" value="{{$settings->settingsSub->h5_heading_tag_length_val}}" min="0" max="100"> H5 heading tag
-                      </label>
-                    </div>
-
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="h6HeadingTagLength"
-                        {{ $settings->settingsSub->h6_heading_tag_length ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="h6HeadingTagLength"
-                      >
-                      A page can have at most
-                        <input class="slider-input-text" type="number" id="h6HeadingTagLengthVal" value="{{$settings->settingsSub->h6_heading_tag_length_val}}" min="0" max="100"> H6 heading tag
-                      </label>
-                    </div>
-
-
-                </div>
-              </div>
-            </div>
-
-            
-            
-          </div>
 
 
                     <!-- single accordion -->
                     <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>XML sitemap</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->xml_sitemap ? 'checked' : '' }} id="switchXML" name="switchXML"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Meta Description</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" id="switchMetaDesc" {{ $settings->meta_desc ? 'checked' : '' }} />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isMetaDesc" {{ $settings->settingsSub->meta_desc ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isMetaDesc">
+                                            Every page must have a meta description tag
+                                        </label>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="metaDescLengthMax" {{ $settings->settingsSub->max_desc_length ? "checked" : "" }} />
+                                            <label class="form-check-label" for="metaDescLengthMax">
+                                                Maximum length of meta descripiton should be
+                                                <input class="slider-input-text" type="number" value="{{ $settings->settingsSub->max_desc_length_val}}" id="metaDescLengthMaxVal" min="0" max="220"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range3">
+                                            <span class="span-left">0</span>
+                                            <input id="ex23" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="220" data-slider-step="1" value="50" data-slider-value="{{ $settings->settingsSub->max_desc_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">220</span>
+                                        </div>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="metaDescLengthMin" {{ $settings->settingsSub->min_desc_length ? "checked" : "" }} />
+                                            <label class="form-check-label" for="metaDescLengthMin">
+                                                Minimum length of meta descripiton should be
+                                                <input class="slider-input-text" type="number" value="{{ $settings->settingsSub->min_desc_length_val}}" min="0" max="70" id="metaDescLengthMinVal"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range4">
+                                            <span class="span-left">0</span>
+                                            <input id="ex24" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="70" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->min_desc_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">70</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsMetaDesc" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->xml_sitemap ? "checked" : "" }}  id="isXmlSitemap"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isXmlSitemap"
-                    >
-                      Every page must be added to XML sitemap
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input hideInputCheck"
-                      type="checkbox"
-                      id="isXmlSitemapCustom" {{ $settings->settingsSub->xml_sitemap_custom ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isXmlSitemapCustom"
-                    >
-                    Add XML sitemap manually
-                    </label>
-                  </div>
-          
-                  <div class="form-check form-check-link">
-                    <label
-                      class="form-check-label"
-                      for="pagefavicon2"
-                    >
-                      Address of the XML Sitemap File
-                    </label>
 
-                    <?php
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Robots Meta Tag</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->robots_meta ? 'checked' : '' }} id="switchRobotsMeta" name="switchRobotsMeta" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="liveRobotsMeta" {{ $settings->settingsSub->live_urls_robots_meta ? "checked" : "" }} />
+                                        <label class="form-check-label" for="robots1">
+                                            A URL must not have robots meta tag content set to (noindex,nofollow), unless added intentionally
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsRobotsMeta" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Canonical URL</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" id="switchCanonical" {{ $settings->canonical_url ? 'checked' : '' }} />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->canonical_url ? "checked" : "" }} id="canonicalUrl" />
+                                        <label class="form-check-label" for="canonical1">
+                                            Every page must have a canonical URL tag
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->canonical_url_equal_url ? "checked" : "" }} id="canonicalEqualUrl" />
+                                        <label class="form-check-label" for="canonical2">
+                                            Canonical URL must be equal to the actual URL (self canonicalize)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->canonical_url_ignore_slash ? "checked" : "" }} id="canonicalIgnoreSlash" />
+                                        <label class="form-check-label" for="canonical3">
+                                            Ignore the trailing slash in Canonical URL
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsCanonical" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Images</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->images ? "checked" : "" }} id="switchImages" name="switchImages" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="maximumFileSize" {{ $settings->settingsSub->image_max_size ? "checked" : "" }} />
+                                            <label class="form-check-label" for="maximumFileSize">
+                                                Maximum file size of an image file should be
+                                                <input class="slider-input-text" type="number" id="maximumFileSizeVal" value="{{ $settings->settingsSub->image_max_size_val}}" min="0" max="1700"> KB
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range7">
+                                            <span class="span-left">0</span>
+                                            <input id="ex34" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="2000" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->image_max_size_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">2000</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="imageNameHyphen" {{ $settings->settingsSub->image_name_only_hyphens ? "checked" : "" }} />
+                                        <label class="form-check-label" for="imageNameHyphen">
+                                            Words in image file must be separated by hyphens only
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="imageNameUppercase" {{ $settings->settingsSub->image_name_no_uppercase ? "checked" : "" }} />
+                                        <label class="form-check-label" for="imageNameUppercase">
+                                            Image file name can not have uppercase characters
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="imageNameSpecial" {{ $settings->settingsSub->image_name_no_special ? "checked" : "" }} />
+                                        <label class="form-check-label" for="imageNameSpecial">
+                                            Image file name can not have special characters
+                                        </label>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="imageNameLength" {{ $settings->settingsSub->image_name_max_characters ? "checked" : "" }} />
+                                            <label class="form-check-label" for="imageNameLength">
+                                                Maximum length of an image file name should be
+                                                <input class="slider-input-text" type="number" id="imageNameLengthVal" value="{{ $settings->settingsSub->image_name_max_characters_val}}" min="0" max="200"> Characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range7">
+                                            <span class="span-left">0</span>
+                                            <input id="ex35" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="200" data-slider-step="1" data-slider-value="170" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">200</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="imageAlt" {{ $settings->settingsSub->image_alt ? "checked" : "" }} />
+                                        <label class="form-check-label" for="imageAlt">
+                                            An image must have an alt text
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="imageAltSpaces" {{ $settings->settingsSub->image_alt_only_spaces ? "checked" : "" }} />
+                                        <label class="form-check-label" for="imageAltSpaces">
+                                            Words in alt text must be separated by spaces only
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsImages" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>URL Slug</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->url_slug ? 'checked' : '' }} id="switchUrlSlug" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->url_slug_lowercase ? "checked" : "" }} id="UrlLowercase" />
+                                        <label class="form-check-label" for="urlslug1">
+                                            Every character in the URL needs to be lowercase
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->url_no_numbers ? "checked" : "" }} id="UrlNoNumbers" />
+                                        <label class="form-check-label" for="urlslug2">
+                                            URLs cannot contain numbers
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->url_no_special ? "checked" : "" }} id="UrlNoSpecial" />
+                                        <label class="form-check-label" for="urlslug3">
+                                            URLs cannot contain special characters
+                                        </label>
+                                    </div>
+                                    <div class="check-range">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->max_url_length ? "checked" : "" }} id="maxUrlLength" />
+                                            <label class="form-check-label" for="urlslug4">
+                                                Maximum length of a URL should be
+                                                <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_url_length_val}}" id="maxUrlLengthVal" min="0" max="100" id="ex25-input"> Characters (excluding the domain name)
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range5">
+                                            <span class="span-left">0</span>
+                                            <input id="ex25" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->max_url_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">100</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input hideInputCheck" type="checkbox" {{ $settings->settingsSub->url_stop_words ? "checked" : "" }} id="UrlStopWords" />
+                                        <label class="form-check-label" for="urlslug5">
+                                            URLs must not contain specific stop words (separate each word with a comma)
+                                        </label>
+                                    </div>
+                                    <textarea class="hideInputCheckElement" placeholder="Separate each word with a comma" id="UrlStopWordsVal" cols="30" rows="10">{{$settings->settingsSub->url_stop_words_val}}</textarea>
+                                    <div class="form-check form-check-black">
+                                        <input class="form-check-input toggleCasingChecks" type="checkbox" id="enableURLChecks" {{ $settings->settingsSub->url_casing_only_hyphens || $settings->settingsSub->url_casing_only_underscores || $settings->settingsSub->url_casing_both? "checked" : "" }} />
+                                        <label class="form-check-label" for="enableURLChecks">
+                                            Enable URL Checks
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="urlCasingCheck" {{ $settings->settingsSub->url_casing_only_hyphens ? "checked" : "" }} id="UrlOnlyHyphens" />
+                                        <label class="form-check-label" for="UrlOnlyHyphens">
+                                            Words in URLs should be separated by hyphens only
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="urlCasingCheck" {{ $settings->settingsSub->url_casing_only_underscores ? "checked" : "" }} id="UrlOnlyUnderscores" />
+                                        <label class="form-check-label" for="UrlOnlyUnderscores">
+                                            Words in URLs should be separated by underscores only
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="urlCasingCheck" {{ $settings->settingsSub->url_casing_both ? "checked" : "" }} id="UrlBoth" />
+                                        <label class="form-check-label" for="UrlBoth">
+                                            Words in URLs can be separated by either hyphens or underscores
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Robots.txt</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->robot_text_test ? 'checked' : '' }} id="switchRobotTxtTestHeader" name="switchRobotTxtTestHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isRobotTextTestBlockUrlEnable" {{ $settings->settingsSub->robot_text_test_block_url ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isRobotTextTestBlockUrlEnable">
+                                            No page on the website should be blocked in Robots.txt
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultRobotTextEnable" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Headings</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->h1_heading_tag ? 'checked' : '' }} id="switchH1HeadingTag" name="switchH1HeadingTag" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isH1HeadingTagEnable" {{ $settings->settingsSub->h1_heading_tag ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isH1HeadingTagEnable">
+                                            Every page must have at least one H1 heading tag
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="h1HeadingTagLength" {{ $settings->settingsSub->h1_heading_tag_length ? "checked" : "" }} />
+                                        <label class="form-check-label" for="h1HeadingTagLength">
+                                            A page can have at most
+                                            <input class="slider-input-text" type="number" id="h1HeadingTagLengthVal" value="{{$settings->settingsSub->h1_heading_tag_length_val}}" min="0" max="100"> H1 heading tag
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultH1HeadingTagEnable" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="h2HeadingTagLength" {{ $settings->settingsSub->h2_heading_tag_length ? "checked" : "" }} />
+                                        <label class="form-check-label" for="h2HeadingTagLength">
+                                            A page can have at most
+                                            <input class="slider-input-text" type="number" id="h2HeadingTagLengthVal" value="{{$settings->settingsSub->h2_heading_tag_length_val}}" min="0" max="100"> H2 heading tag
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="h3HeadingTagLength" {{ $settings->settingsSub->h3_heading_tag_length ? "checked" : "" }} />
+                                        <label class="form-check-label" for="h3HeadingTagLength">
+                                            A page can have at most
+                                            <input class="slider-input-text" type="number" id="h3HeadingTagLengthVal" value="{{$settings->settingsSub->h3_heading_tag_length_val}}" min="0" max="100"> H3 heading tag
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="h4HeadingTagLength" {{ $settings->settingsSub->h4_heading_tag_length ? "checked" : "" }} />
+                                        <label class="form-check-label" for="h4HeadingTagLength">
+                                            A page can have at most
+                                            <input class="slider-input-text" type="number" id="h4HeadingTagLengthVal" value="{{$settings->settingsSub->h4_heading_tag_length_val}}" min="0" max="100"> H4 heading tag
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="h5HeadingTagLength" {{ $settings->settingsSub->h5_heading_tag_length ? "checked" : "" }} />
+                                        <label class="form-check-label" for="h5HeadingTagLength">
+                                            A page can have at most
+                                            <input class="slider-input-text" type="number" id="h5HeadingTagLengthVal" value="{{$settings->settingsSub->h5_heading_tag_length_val}}" min="0" max="100"> H5 heading tag
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="" id="h6HeadingTagLength" {{ $settings->settingsSub->h6_heading_tag_length ? "checked" : "" }} />
+                                        <label class="form-check-label" for="h6HeadingTagLength">
+                                            A page can have at most
+                                            <input class="slider-input-text" type="number" id="h6HeadingTagLengthVal" value="{{$settings->settingsSub->h6_heading_tag_length_val}}" min="0" max="100"> H6 heading tag
+                                        </label>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>XML sitemap</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->xml_sitemap ? 'checked' : '' }} id="switchXML" name="switchXML" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->xml_sitemap ? "checked" : "" }} id="isXmlSitemap" />
+                                        <label class="form-check-label" for="isXmlSitemap">
+                                            Every page must be added to XML sitemap
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input hideInputCheck" type="checkbox" id="isXmlSitemapCustom" {{ $settings->settingsSub->xml_sitemap_custom ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isXmlSitemapCustom">
+                                            Add XML sitemap manually
+                                        </label>
+                                    </div>
+
+                                    <div class="form-check form-check-link">
+                                        <label class="form-check-label" for="pagefavicon2">
+                                            Address of the XML Sitemap File
+                                        </label>
+
+                                        <?php
                       $moreThanOne = false;
                       $cleaned = preg_replace('/\s+/', '', $settings->settingsSub->xml_sitemap_val);
                       $lines = explode(",", $cleaned);
@@ -1281,4504 +767,3368 @@
                     
                     ?>
 
-                    @if($moreThanOne)
-                    <textarea
-                    disabled
-                    class="add-more-sitemap-textarea"
-                    placeholder="Enter each url in a new line"
-                    id="addSitemapVal"
-                    cols="30"
-                    rows="10">{{ htmlspecialchars($formatted) }}</textarea>
-                    @else
-                    <input class="form-control hideInputCheckElement" type="text" id="xmlSitemapVal" value="{{ $settings->settingsSub->xml_sitemap_val}}">
-                    @endif
+                                            @if($moreThanOne)
+                                            <textarea disabled class="add-more-sitemap-textarea" placeholder="Enter each url in a new line" id="addSitemapVal" cols="30" rows="10">{{ htmlspecialchars($formatted) }}</textarea>
+                                            @else
+                                            <input class="form-control hideInputCheckElement" type="text" id="xmlSitemapVal" value="{{ $settings->settingsSub->xml_sitemap_val}}"> @endif
 
-                    <div class="add-more-sitemap">
-                      <p>+ Add more</p>
-                    </div>
-                  </div>
+                                            <div class="add-more-sitemap">
+                                                <p>+ Add more</p>
+                                            </div>
+                                    </div>
 
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsXML"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>HTML sitemap</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->html_sitemap ? 'checked' : '' }} id="switchHTML" name="switchHTML"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isHtmlSitemap" {{ $settings->settingsSub->html_sitemap ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isHtmlSitemap"
-                    >
-                      Every page must be added to HTML sitemap
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input hideInputCheck"
-                      type="checkbox"
-                      id="isHtmlSitemapCustom" {{ $settings->settingsSub->html_sitemap_custom ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isHtmlSitemapCustom"
-                    >
-                    Add HTML sitemap manually
-                    </label>
-                  </div>
-                  <div class="form-check form-check-link">
-                    <label
-                      class="form-check-label"
-                      for="pagefavicon2"
-                    >
-                      Address of the HTML Sitemap File
-                    </label>
-                    <input class="hideInputCheckElement" type="text" id="htmlSitemapVal" value="{{ $settings->settingsSub->html_sitemap_val}}">
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsHTML"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-     
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Open graph title tag</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->open_graph_tags ? 'checked' : '' }} id="switchOgTitle" name="switchOgTitle"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content m-bottom">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Open Graph Title</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->og_title ? "checked" : "" }} id="isOgTitle"
-                    />
-                    <label class="form-check-label" for="graphtitle1">
-                      Every page must have an Open Graph Title tag
-                    </label>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->max_og_title_length ? "checked" : "" }} id="ogTitleMax"
-                      />
-                      <label
-                        class="form-check-label"
-                        for="ogTitleMax"
-                      >
-                        Maximum length of Open graph title tag should be
-                        <input type="number" class="slider-input-text" id="ogTitleMaxVal" value="{{ $settings->settingsSub->max_og_title_length_val}}" min="0" max="100" id="ex26-input"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex26"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="100"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->max_og_title_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">100</span>
-                    </div>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->min_og_title_length ? "checked" : "" }} id="ogTitleMin"
-                      />
-                      <label
-                        class="form-check-label"
-                        for="ogTitleMin"
-                      >
-                      Minimum length of Open graph title tag should be
-                        <input type="number" class="slider-input-text" id="ogTitleMinVal" value="{{ $settings->settingsSub->min_og_title_length_val}}" min="0" max="30" id="ex27-input"> Characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range2">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex27"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="30"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->min_og_title_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">30</span>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->is_og_title_equal_title ? "checked" : "" }} id="ogTitleEqualTitle"
-                    />
-                    <label class="form-check-label" for="ogTitleEqualTitle">
-                      Content of Open graph title tag must be equal to the Content of Title Tag
-                    </label>
-                  </div>
-                  <div class="form-check form-check-black">
-                    <input
-                      class="form-check-input toggleCasingChecks"
-                      type="checkbox"
-                      id="enableTitleCasingChecks"
-                      {{ $settings->settingsSub->og_title_casing_camel || $settings->settingsSub->og_title_casing_sentence || $settings->settingsSub->og_title_casing_both  ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="graphtitle5">
-                      Enable Casing Checks
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="radioOgTitleCasing"
-                      {{ $settings->settingsSub->og_title_casing_camel ? "checked" : "" }} id="ogTitleCasingCamel"
-                    />
-                    <label class="form-check-label" for="ogTitleCasingCamel">
-                      Open graph title tag must be in camel casing.
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="radioOgTitleCasing"
-                      {{ $settings->settingsSub->og_title_casing_sentence ? "checked" : "" }} id="ogTitleCasingSentence"
-                    />
-                    <label class="form-check-label" for="ogTitleCasingSentence">
-                      Open graph title tag must be in sentence casing.
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="radioOgTitleCasing"
-                      {{ $settings->settingsSub->og_title_casing_both ? "checked" : "" }} id="ogTitleCasingBoth"
-                    />
-                    <label class="form-check-label" for="ogTitleCasingBoth">
-                      Open graph title tag can be either in camel casing or in sentence casing
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsOGTitle"
-                  />
-                </div>
-              </div>
-
-              <!-- Desc -->
-              <div class="meta-content m-bottom">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Open Graph Description</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->og_desc ? "checked" : "" }} id="isOgDesc"
-                    />
-                    <label class="form-check-label" for="isOgDesc">
-                      Every page must have an Open Graph description
-                      tag
-                    </label>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->max_og_desc_length ? "checked" : "" }} id="OgDescMax"
-                      />
-                      <label class="form-check-label" for="graphdes2">
-                        Maximum length of OG Description should be
-                        <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_og_desc_length_val}}" id="OgDescMaxVal" min="0" max="220" id="ex28-input"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range3">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex28"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="220"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->max_og_desc_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">220</span>
-                    </div>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->min_og_desc_length ? "checked" : "" }} id="OgDescMin"
-                      />
-                      <label class="form-check-label" for="OgDescMin">
-                        Minimum length of OG Description should be
-                        <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->min_og_desc_length_val}}" id="OgDescMinVal" min="0" max="70" id="ex29-input"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range4">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex29"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="70"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->min_og_desc_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">70</span>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->is_og_desc_equal_desc ? "checked" : "" }} id="ogDescEqualDesc"
-                    />
-                    <label class="form-check-label" for="ogDescEqualDesc">
-                      OG Description must be the same as Meta
-                      description
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsOGDesc"
-                  />
-                </div>
-              </div>
-
-              <!-- Image -->
-              <div class="meta-content m-bottom">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Open Graph Image</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->og_image ? "checked" : "" }} id="isOgImage"
-                    />
-                    <label class="form-check-label" for="graphimg1">
-                      Every page must have an Open Graph image
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->og_image_dimensions_min ? "checked" : "" }} id="ogImageDimensionsLeast"
-                    />
-                    <label class="form-check-label" for="ogImageDimensionsLeast">
-                      Width of OG Image should be at least
-                      <input type="text" id="ogImageDimensionsLeastWidth" value="{{ $settings->settingsSub->og_image_width_min}}"> pixels and height of OG Image
-                      should be at least <input type="text" id="ogImageDimensionsLeastHeight" value="{{ $settings->settingsSub->og_image_height_min}}"> pixels
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->og_image_dimensions_exact ? "checked" : "" }} id="ogImageDimensionsExact"
-                    />
-                    <label class="form-check-label" for="graphimg3">
-                      Width of OG Image should be exactly
-                      <input class="input_2" type="text" id="ogImageDimensionsExactWidth" value="{{ $settings->settingsSub->og_image_width_exact}}"> pixels and height of OG Image
-                      should be exactly <input type="text" id="ogImageDimensionsExactHeight" value="{{ $settings->settingsSub->og_image_height_exact}}"> pixels
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsOGImage"
-                  />
-                </div>
-              </div>
-
-              <!-- URL -->
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Open Graph URL</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->og_url ? "checked" : "" }} id="isOgUrl"
-                    />
-                    <label class="form-check-label" for="isOgUrl">
-                      Every page must have an Open Graph URL
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->is_og_url_equal_url ? "checked" : "" }} id="ogUrlEqualUrl"
-                    />
-                    <label class="form-check-label" for="ogUrlEqualUrl">
-                      Open Graph URL must be equal to the actual URL
-                    </label>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->max_og_url_length ? "checked" : "" }} id="ogUrlMax"
-                      />
-                      <label class="form-check-label" for="ogUrlMax">
-                        Maximum length of OG URL should be
-                        <input type="number" class="slider-input-text" id="ogUrlMaxVal" value="{{ $settings->settingsSub->max_og_url_length_val}}" min="0" max="100"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range4">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex30"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="100"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->max_og_url_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">100</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion -->
-
-
-
-
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Twitter Tags</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->twitter_tags ? 'checked' : '' }} id="switchTwitterTitle" name="switchTwitterTitle"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Twitter title tag</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->twitter_title ? "checked" : "" }} id="isTwitterTitle"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isTwitterTitle"
-                    >
-                      Every page must have a Twitter title tag
-                    </label>
-                  </div>
-                  <div class="check-range">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->max_twitter_title_length ? "checked" : "" }} id="twitterTitleLengthMax"
-                      />
-                      <label
-                        class="form-check-label"
-                        for="twitterTitleLengthMax"
-                      >
-                      Maximum length of Twitter title should be
-                        <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_twitter_title_length_val}}" id="twitterTitleLengthMaxVal" min="0" max="100"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex31"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="100"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->max_twitter_title_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">100</span>
-                    </div>
-                  </div>
-                  <div class="check-range">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        {{ $settings->settingsSub->min_twitter_title_length ? "checked" : "" }} id="twitterTitleLengthMin"
-                      />
-                      <label
-                        class="form-check-label"
-                        for="twitertitle3"
-                      >
-                      Minimum length of Twitter title should be <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->min_twitter_title_length_val}}" id="twitterTitleLengthMinVal" min="0" max="30"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range2">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex32"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="30"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->min_twitter_title_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">30</span>
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->is_twitter_title_equal_title ? "checked" : "" }} id="twitterTitleEqualTitle"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="twitterTitleEqualTitle"
-                    >
-                    Twitter title must be equal to Title Tag
-                    </label>
-                  </div>
-                  <div class="form-check form-check-black">
-                    <input
-                      class="form-check-input toggleCasingChecks"
-                      type="checkbox"
-                      id="enableTwitterTitleCasingChecks"
-                      checked
-                    />
-                    <label
-                      class="form-check-label"
-                      for="enableTwitterTitleCasingChecks"
-                    >
-                      Enable Casing Checks
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="twitterTitleCasing"
-                      {{ $settings->settingsSub->twitter_title_casing_camel ? "checked" : "" }} id="twitterTitleCasingCamel"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="twitterTitleCasingCamel"
-                    >
-                    Twitter title must be in camel casing
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="twitterTitleCasing"
-                      {{ $settings->settingsSub->twitter_title_casing_sentence ? "checked" : "" }} id="twitterTitleCasingSentence"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="twitterTitleCasingSentence"
-                    >
-                    Twitter title must be in sentence casing
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input casing-check-input"
-                      type="radio"
-                      name="twitterTitleCasing"
-                      {{ $settings->settingsSub->twitter_title_casing_both ? "checked" : "" }} id="twitterTitleCasingBoth"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="twitertitle8"
-                    >
-                    Twitter title can be either in camel casing or sentence casing
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsTwitterTitle"
-                  />
-                </div>
-              </div>
-
-              <!-- Twitter Image -->
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Twitter image tag</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->twitter_image ? "checked" : "" }} id="isTwitterImage"
-                    />
-                    <label class="form-check-label" for="isTwitterImage">
-                      Every page must have a Twitter image tag
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->twitter_image_dimensions_min ? "checked" : "" }} id="twitterImageDimensionsMin"
-                    />
-                    <label class="form-check-label" for="twitterImageDimensionsMin">
-                      Width of Twitter image tag should be at least
-                      <input type="text" id="twitterImageWidthMin" value="{{ $settings->settingsSub->twitter_image_width_min}}"> pixels and height of Twitter image tag should be at least
-                       <input type="text" id="twitterImageHeightMin" value="{{ $settings->settingsSub->twitter_image_height_min}}"> pixels
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->twitter_image_dimensions_exact ? "checked" : "" }} id="twitterImageDimensionsExact"
-                    />
-                    <label class="form-check-label" for="twitterImageDimensionsExact">
-                      Width of Twitter image tag should be exactly
-                      <input class="input_2" type="text" value="{{ $settings->settingsSub->twitter_image_width_exact}}" id="twitterImageWidthExact"> pixels and height of Twitter image tag should be exactly <input type="text" value="{{ $settings->settingsSub->twitter_image_width_exact}}" id="twitterImageHeightExact"> pixels
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsTwitterImage"
-                  />
-                </div>
-              </div>
-
-              <!-- Twitter Image Alt -->
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="meta-title">
-                    <h3>Twitter Image Alt</h3>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->twitter_image_alt ? "checked" : "" }} id="isTwitterImageAlt"
-                    />
-                    <label class="form-check-label" for="isTwitterImageAlt">
-                      Every page must have a Twitter image alt Tag
-                    </label>
-                  </div>
-                  <div class="check-range check-range2">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value="{{ $settings->settingsSub->max_twitter_image_alt_length}}" id="twitterImageAltMax"
-                      />
-                      <label
-                        class="form-check-label"
-                        for="twitterImageAltMax"
-                      >
-                      Maximum length of Twitter image alt should
-                        <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_twitter_image_alt_length_val}}" id="twitterImageAltMaxVal" min="0" max="500"> characters
-                      </label>
-                    </div>
-                    <div class="slider-range slider-range6">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex33"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="500"
-                        data-slider-step="1"
-                        data-slider-value="{{ $settings->settingsSub->max_twitter_image_alt_length_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                      { "start": 7, "end": 8, "class": "category2" },
-                                                      { "start": 17, "end": 19 },
-                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">500</span>
-                    </div>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion -->
-
-
-
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Favicon</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->favicon ? 'checked' : '' }} id="switchFavicon" name="switchFavicon"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->favicon ? "checked" : "" }} id="isFavicon"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="pagefavicon1"
-                    >
-                      Every page must have a Favicon
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->favicon_dimensions_min ? "checked" : "" }} id="faviconDimensionsMin"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="faviconDimensionsMin"
-                    >
-                      Width of Favicon should be at least
-                      <input type="text" value="{{ $settings->settingsSub->favicon_width_min}}" id="faviconWidthMin"> pixels and height of favicon
-                      should be at least <input type="text" value="{{ $settings->settingsSub->favicon_height_min}}" id="faviconHeightMin"> pixels
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      {{ $settings->settingsSub->favicon_dimensions_exact ? "checked" : "" }} id="faviconDimensionsExact"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="faviconDimensionsExact"
-                    >
-                      Width of Favicon should be exactly
-                      <input type="text" value="{{ $settings->settingsSub->favicon_width_exact}}" id="faviconWidthExact"> pixels and height of favicon
-                      should be exactly <input type="text" value="{{ $settings->settingsSub->favicon_height_exact}}" id="faviconHeightExact"> pixels
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsFavicon"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-            <!-- single accordion -->
-            <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Meta Viewport</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->meta_viewport ? 'checked' : '' }} id="switchViewport" name="switchViewport"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isMetaViewport" {{ $settings->settingsSub->meta_viewport ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isMetaViewport"
-                    >
-                    Every page must have a Meta viewport tag
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsViewport"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-    
-
-            <!-- single accordion -->
-            <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Doctype</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->doctype ? 'checked' : '' }} id="switchDoctype" name="switchDoctype"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isDoctype" {{ $settings->settingsSub->doctype ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isDoctype"
-                    >
-                      Every page must have HTML Doctype declaration
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsDoctype"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-
-            <!-- single accordion -->
-            <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>HTTP Status Code</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->http_status_code ? 'checked' : '' }} id="switchHttpStatusCode" name="switchHttpStatusCode"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-
-                
-                @include("components.http-status-code-settings")
-             
-
-
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsDoctype"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-
-        
-        </div>
-      </div>
-      <!-- meta tag tab content end -->
-
-
-
-      <!-- performance tab content start -->
-      <div
-        class="tab-pane fade"
-        id="v-pills-performance"
-        role="tabpanel"
-        aria-labelledby="v-pills-performance-tab"
-        tabindex="0"
-      >
-        <!-- performance notice start -->
-        <div class="performance-notice">
-          <p>
-            We use Google Page speed insights API to collect scores
-            for Lighthouse and core web vitals. The PageSpeed Insights
-            API returns real-world data from the Chrome User
-            Experience Report and lab data from Lighthouse.
-            <a href="#">Learn more</a>
-          </p>
-        </div>
-        <!-- performance notice end -->
-
-        <div class="tab-content-area performance-content-area">
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Overall Score</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->google_overall ? "checked" : "" }} id="switchGoogleOverall" name="switchGoogleOverall"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content performance-content">
-                <div class="performance-left">
-                  <div class="accor-content">
-                    <div class="performance-title">
-                      <h4>Desktop</h4>
-                      <svg
-                        width="27"
-                        height="24"
-                        viewBox="0 0 27 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
-                          fill="#222222"
-                        />
-                      </svg>
-                    </div>
-                    <div class="overall-item">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleInsightsDesktop" {{ $settings->settingsSub->google_insights_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="checkbox"
-                          >
-                            Overall Score
-                          </label>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsXML" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
+                    </div>
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>HTML sitemap</span>
                             </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->html_sitemap ? 'checked' : '' }} id="switchHTML" name="switchHTML" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
                         </div>
-                      </div>
-                      <div class="slider-range score-range1">
-                        <span class="span-left">0</span>
-                        <input
-                          id="score1"
-                          type="text"
-                          data-slider-id="slider22"
-                          class="slider-input"
-                          data-slider-min="0"
-                          data-slider-max="100"
-                          data-slider-step="1"
-                          data-slider-value="{{ $settings->settingsSub->google_insights_desktop_val}}"
-                          data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isHtmlSitemap" {{ $settings->settingsSub->html_sitemap ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isHtmlSitemap">
+                                            Every page must be added to HTML sitemap
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input hideInputCheck" type="checkbox" id="isHtmlSitemapCustom" {{ $settings->settingsSub->html_sitemap_custom ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isHtmlSitemapCustom">
+                                            Add HTML sitemap manually
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-link">
+                                        <label class="form-check-label" for="pagefavicon2">
+                                            Address of the HTML Sitemap File
+                                        </label>
+                                        <input class="hideInputCheckElement" type="text" id="htmlSitemapVal" value="{{ $settings->settingsSub->html_sitemap_val}}">
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsHTML" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Open graph Tags</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->open_graph_tags ? 'checked' : '' }} id="switchOgTitle" name="switchOgTitle" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content m-bottom">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Open Graph Title</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->og_title ? "checked" : "" }} id="isOgTitle" />
+                                        <label class="form-check-label" for="graphtitle1">
+                                            Every page must have an Open Graph Title tag
+                                        </label>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->max_og_title_length ? "checked" : "" }} id="ogTitleMax" />
+                                            <label class="form-check-label" for="ogTitleMax">
+                                                Maximum length of Open graph title tag should be
+                                                <input type="number" class="slider-input-text" id="ogTitleMaxVal" value="{{ $settings->settingsSub->max_og_title_length_val}}" min="0" max="100" id="ex26-input"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range">
+                                            <span class="span-left">0</span>
+                                            <input id="ex26" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->max_og_title_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">100</span>
+                                        </div>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->min_og_title_length ? "checked" : "" }} id="ogTitleMin" />
+                                            <label class="form-check-label" for="ogTitleMin">
+                                                Minimum length of Open graph title tag should be
+                                                <input type="number" class="slider-input-text" id="ogTitleMinVal" value="{{ $settings->settingsSub->min_og_title_length_val}}" min="0" max="30" id="ex27-input"> Characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range2">
+                                            <span class="span-left">0</span>
+                                            <input id="ex27" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="30" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->min_og_title_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">30</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->is_og_title_equal_title ? "checked" : "" }} id="ogTitleEqualTitle" />
+                                        <label class="form-check-label" for="ogTitleEqualTitle">
+                                            Content of Open graph title tag must be equal to the Content of Title Tag
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-black">
+                                        <input class="form-check-input toggleCasingChecks" type="checkbox" id="enableTitleCasingChecks" {{ $settings->settingsSub->og_title_casing_camel || $settings->settingsSub->og_title_casing_sentence || $settings->settingsSub->og_title_casing_both ? "checked" : "" }} />
+                                        <label class="form-check-label" for="graphtitle5">
+                                            Enable Casing Checks
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="radioOgTitleCasing" {{ $settings->settingsSub->og_title_casing_camel ? "checked" : "" }} id="ogTitleCasingCamel" />
+                                        <label class="form-check-label" for="ogTitleCasingCamel">
+                                            Open graph title tag must be in camel casing.
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="radioOgTitleCasing" {{ $settings->settingsSub->og_title_casing_sentence ? "checked" : "" }} id="ogTitleCasingSentence" />
+                                        <label class="form-check-label" for="ogTitleCasingSentence">
+                                            Open graph title tag must be in sentence casing.
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="radioOgTitleCasing" {{ $settings->settingsSub->og_title_casing_both ? "checked" : "" }} id="ogTitleCasingBoth" />
+                                        <label class="form-check-label" for="ogTitleCasingBoth">
+                                            Open graph title tag can be either in camel casing or in sentence casing
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsOGTitle" />
+                                </div>
+                            </div>
+
+                            <!-- Desc -->
+                            <div class="meta-content m-bottom">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Open Graph Description</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->og_desc ? "checked" : "" }} id="isOgDesc" />
+                                        <label class="form-check-label" for="isOgDesc">
+                                            Every page must have an Open Graph description tag
+                                        </label>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->max_og_desc_length ? "checked" : "" }} id="OgDescMax" />
+                                            <label class="form-check-label" for="graphdes2">
+                                                Maximum length of OG Description should be
+                                                <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_og_desc_length_val}}" id="OgDescMaxVal" min="0" max="220" id="ex28-input"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range3">
+                                            <span class="span-left">0</span>
+                                            <input id="ex28" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="220" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->max_og_desc_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">220</span>
+                                        </div>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->min_og_desc_length ? "checked" : "" }} id="OgDescMin" />
+                                            <label class="form-check-label" for="OgDescMin">
+                                                Minimum length of OG Description should be
+                                                <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->min_og_desc_length_val}}" id="OgDescMinVal" min="0" max="70" id="ex29-input"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range4">
+                                            <span class="span-left">0</span>
+                                            <input id="ex29" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="70" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->min_og_desc_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">70</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->is_og_desc_equal_desc ? "checked" : "" }} id="ogDescEqualDesc" />
+                                        <label class="form-check-label" for="ogDescEqualDesc">
+                                            OG Description must be the same as Meta description
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsOGDesc" />
+                                </div>
+                            </div>
+
+                            <!-- Image -->
+                            <div class="meta-content m-bottom">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Open Graph Image</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->og_image ? "checked" : "" }} id="isOgImage" />
+                                        <label class="form-check-label" for="graphimg1">
+                                            Every page must have an Open Graph image
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->og_image_dimensions_min ? "checked" : "" }} id="ogImageDimensionsLeast" />
+                                        <label class="form-check-label" for="ogImageDimensionsLeast">
+                                            Width of OG Image should be at least
+                                            <input type="text" id="ogImageDimensionsLeastWidth" value="{{ $settings->settingsSub->og_image_width_min}}"> pixels and height of OG Image should be at least
+                                            <input type="text" id="ogImageDimensionsLeastHeight" value="{{ $settings->settingsSub->og_image_height_min}}"> pixels
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->og_image_dimensions_exact ? "checked" : "" }} id="ogImageDimensionsExact" />
+                                        <label class="form-check-label" for="graphimg3">
+                                            Width of OG Image should be exactly
+                                            <input class="input_2" type="text" id="ogImageDimensionsExactWidth" value="{{ $settings->settingsSub->og_image_width_exact}}"> pixels and height of OG Image should be exactly
+                                            <input type="text" id="ogImageDimensionsExactHeight" value="{{ $settings->settingsSub->og_image_height_exact}}"> pixels
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsOGImage" />
+                                </div>
+                            </div>
+
+                            <!-- URL -->
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Open Graph URL</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->og_url ? "checked" : "" }} id="isOgUrl" />
+                                        <label class="form-check-label" for="isOgUrl">
+                                            Every page must have an Open Graph URL
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->is_og_url_equal_url ? "checked" : "" }} id="ogUrlEqualUrl" />
+                                        <label class="form-check-label" for="ogUrlEqualUrl">
+                                            Open Graph URL must be equal to the actual URL
+                                        </label>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->max_og_url_length ? "checked" : "" }} id="ogUrlMax" />
+                                            <label class="form-check-label" for="ogUrlMax">
+                                                Maximum length of OG URL should be
+                                                <input type="number" class="slider-input-text" id="ogUrlMaxVal" value="{{ $settings->settingsSub->max_og_url_length_val}}" min="0" max="100"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range4">
+                                            <span class="span-left">0</span>
+                                            <input id="ex30" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->max_og_url_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">100</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion -->
+
+
+
+
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Twitter Tags</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->twitter_tags ? 'checked' : '' }} id="switchTwitterTitle" name="switchTwitterTitle" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Twitter title tag</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->twitter_title ? "checked" : "" }} id="isTwitterTitle" />
+                                        <label class="form-check-label" for="isTwitterTitle">
+                                            Every page must have a Twitter title tag
+                                        </label>
+                                    </div>
+                                    <div class="check-range">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->max_twitter_title_length ? "checked" : "" }} id="twitterTitleLengthMax" />
+                                            <label class="form-check-label" for="twitterTitleLengthMax">
+                                                Maximum length of Twitter title should be
+                                                <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_twitter_title_length_val}}" id="twitterTitleLengthMaxVal" min="0" max="100"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range">
+                                            <span class="span-left">0</span>
+                                            <input id="ex31" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->max_twitter_title_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">100</span>
+                                        </div>
+                                    </div>
+                                    <div class="check-range">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->min_twitter_title_length ? "checked" : "" }} id="twitterTitleLengthMin" />
+                                            <label class="form-check-label" for="twitertitle3">
+                                                Minimum length of Twitter title should be
+                                                <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->min_twitter_title_length_val}}" id="twitterTitleLengthMinVal" min="0" max="30"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range2">
+                                            <span class="span-left">0</span>
+                                            <input id="ex32" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="30" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->min_twitter_title_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">30</span>
+                                        </div>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->is_twitter_title_equal_title ? "checked" : "" }} id="twitterTitleEqualTitle" />
+                                        <label class="form-check-label" for="twitterTitleEqualTitle">
+                                            Twitter title must be equal to Title Tag
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-check-black">
+                                        <input class="form-check-input toggleCasingChecks" type="checkbox" id="enableTwitterTitleCasingChecks" checked />
+                                        <label class="form-check-label" for="enableTwitterTitleCasingChecks">
+                                            Enable Casing Checks
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="twitterTitleCasing" {{ $settings->settingsSub->twitter_title_casing_camel ? "checked" : "" }} id="twitterTitleCasingCamel" />
+                                        <label class="form-check-label" for="twitterTitleCasingCamel">
+                                            Twitter title must be in camel casing
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="twitterTitleCasing" {{ $settings->settingsSub->twitter_title_casing_sentence ? "checked" : "" }} id="twitterTitleCasingSentence" />
+                                        <label class="form-check-label" for="twitterTitleCasingSentence">
+                                            Twitter title must be in sentence casing
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="twitterTitleCasing" {{ $settings->settingsSub->twitter_title_casing_both ? "checked" : "" }} id="twitterTitleCasingBoth" />
+                                        <label class="form-check-label" for="twitertitle8">
+                                            Twitter title can be either in camel casing or sentence casing
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsTwitterTitle" />
+                                </div>
+                            </div>
+
+                            <!-- Twitter Image -->
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Twitter image tag</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->twitter_image ? "checked" : "" }} id="isTwitterImage" />
+                                        <label class="form-check-label" for="isTwitterImage">
+                                            Every page must have a Twitter image tag
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->twitter_image_dimensions_min ? "checked" : "" }} id="twitterImageDimensionsMin" />
+                                        <label class="form-check-label" for="twitterImageDimensionsMin">
+                                            Width of Twitter image tag should be at least
+                                            <input type="text" id="twitterImageWidthMin" value="{{ $settings->settingsSub->twitter_image_width_min}}"> pixels and height of Twitter image tag should be at least
+                                            <input type="text" id="twitterImageHeightMin" value="{{ $settings->settingsSub->twitter_image_height_min}}"> pixels
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->twitter_image_dimensions_exact ? "checked" : "" }} id="twitterImageDimensionsExact" />
+                                        <label class="form-check-label" for="twitterImageDimensionsExact">
+                                            Width of Twitter image tag should be exactly
+                                            <input class="input_2" type="text" value="{{ $settings->settingsSub->twitter_image_width_exact}}" id="twitterImageWidthExact"> pixels and height of Twitter image tag should be exactly
+                                            <input type="text" value="{{ $settings->settingsSub->twitter_image_width_exact}}" id="twitterImageHeightExact"> pixels
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsTwitterImage" />
+                                </div>
+                            </div>
+
+                            <!-- Twitter Image Alt -->
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="meta-title">
+                                        <h3>Twitter Image Alt</h3>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->twitter_image_alt ? "checked" : "" }} id="isTwitterImageAlt" />
+                                        <label class="form-check-label" for="isTwitterImageAlt">
+                                            Every page must have a Twitter image alt Tag
+                                        </label>
+                                    </div>
+                                    <div class="check-range check-range2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="{{ $settings->settingsSub->max_twitter_image_alt_length}}" id="twitterImageAltMax" />
+                                            <label class="form-check-label" for="twitterImageAltMax">
+                                                Maximum length of Twitter image alt should
+                                                <input type="number" class="slider-input-text" value="{{ $settings->settingsSub->max_twitter_image_alt_length_val}}" id="twitterImageAltMaxVal" min="0" max="500"> characters
+                                            </label>
+                                        </div>
+                                        <div class="slider-range slider-range6">
+                                            <span class="span-left">0</span>
+                                            <input id="ex33" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->max_twitter_image_alt_length_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                      { "start": 7, "end": 8, "class": "category2" },
+                                                      { "start": 17, "end": 19 },
+                                                      { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">500</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion -->
+
+
+
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Favicon</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->favicon ? 'checked' : '' }} id="switchFavicon" name="switchFavicon" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->favicon ? "checked" : "" }} id="isFavicon" />
+                                        <label class="form-check-label" for="pagefavicon1">
+                                            Every page must have a Favicon
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->favicon_dimensions_min ? "checked" : "" }} id="faviconDimensionsMin" />
+                                        <label class="form-check-label" for="faviconDimensionsMin">
+                                            Width of Favicon should be at least
+                                            <input type="text" value="{{ $settings->settingsSub->favicon_width_min}}" id="faviconWidthMin"> pixels and height of favicon should be at least
+                                            <input type="text" value="{{ $settings->settingsSub->favicon_height_min}}" id="faviconHeightMin"> pixels
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" {{ $settings->settingsSub->favicon_dimensions_exact ? "checked" : "" }} id="faviconDimensionsExact" />
+                                        <label class="form-check-label" for="faviconDimensionsExact">
+                                            Width of Favicon should be exactly
+                                            <input type="text" value="{{ $settings->settingsSub->favicon_width_exact}}" id="faviconWidthExact"> pixels and height of favicon should be exactly
+                                            <input type="text" value="{{ $settings->settingsSub->favicon_height_exact}}" id="faviconHeightExact"> pixels
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsFavicon" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Meta Viewport</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->meta_viewport ? 'checked' : '' }} id="switchViewport" name="switchViewport" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p><b>No Customisations are available for this test.</b></p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isMetaViewport" {{ $settings->settingsSub->meta_viewport ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isMetaViewport">
+                                            Every page must have a Meta viewport tag
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsViewport" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Doctype</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->doctype ? 'checked' : '' }} id="switchDoctype" name="switchDoctype" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p><b>No Customisations are available for this test.</b></p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isDoctype" {{ $settings->settingsSub->doctype ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isDoctype">
+                                            Every page must have HTML Doctype declaration
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsDoctype" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>HTTP Status Code</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->http_status_code ? 'checked' : '' }} id="switchHttpStatusCode" name="switchHttpStatusCode" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+
+
+                                    @include("components.http-status-code-settings")
+
+
+
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsDoctype" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+            </div>
+            <!-- meta tag tab content end -->
+
+
+
+            <!-- performance tab content start -->
+            <div class="tab-pane fade" id="v-pills-performance" role="tabpanel" aria-labelledby="v-pills-performance-tab" tabindex="0">
+                <!-- performance notice start -->
+                <div class="performance-notice">
+                    <p>
+                        We use Google Page speed insights API to collect scores for Lighthouse and core web vitals. The PageSpeed Insights API returns real-world data from the Chrome User Experience Report and lab data from Lighthouse.
+                        <a href="#">Learn more</a>
+                    </p>
+                </div>
+                <!-- performance notice end -->
+
+                <div class="tab-content-area performance-content-area">
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Overall Score</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->google_overall ? "checked" : "" }} id="switchGoogleOverall" name="switchGoogleOverall" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content performance-content">
+                                <div class="performance-left">
+                                    <div class="accor-content">
+                                        <div class="performance-title">
+                                            <h4>Desktop</h4>
+                                            <svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
+                                                fill="#222222" />
+                                            </svg>
+                                        </div>
+                                        <div class="overall-item">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleInsightsDesktop" {{ $settings->settingsSub->google_insights_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="checkbox">
+                                                        Overall Score
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects the page’s loading speed for users on desktop; higher scores denote better performance.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="slider-range score-range1">
+                                                <span class="span-left">0</span>
+                                                <input id="score1" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_insights_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
                                                         { "start": 7, "end": 8, "class": "category2" },
                                                         { "start": 17, "end": 19 },
                                                         { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                        { "start": -3, "end": 19 }]'
-                        />
-                        <span class="span-right">100</span>
-                      </div>
-                      <div class="range-value">
-                        <p>Greater than</p>
-                        <input class="slider-input-text" type="number" id="googleInsightsDesktopVal" value="{{ $settings->settingsSub->google_insights_desktop_val}}" min="0" max="100">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <!-- Mobile area -->
-                <div class="performance-right">
-                  <div class="accor-content">
-                    <div class="performance-title">
-                      <h4>Mobile</h4>
-                      <svg
-                        width="17"
-                        height="29"
-                        viewBox="0 0 17 29"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z"
-                          fill="black"
-                        />
-                      </svg>
-                    </div>
-                    <div class="overall-item">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleInsightsMobile" {{ $settings->settingsSub->google_insights_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="overalscore2"
-                          >
-                            Overall Score
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="slider-range score-range1">
-                        <span class="span-left">0</span>
-                        <input
-                          id="score2"
-                          type="text"
-                          data-slider-id="slider22"
-                          class="slider-input"
-                          data-slider-min="0"
-                          data-slider-max="100"
-                          data-slider-step="1"
-                          data-slider-value="{{ $settings->settingsSub->google_insights_mobile_val}}"
-                          data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                        { "start": -3, "end": 19 }]' />
+                                                <span class="span-right">100</span>
+                                            </div>
+                                            <div class="range-value">
+                                                <p>Greater than</p>
+                                                <input class="slider-input-text" type="number" id="googleInsightsDesktopVal" value="{{ $settings->settingsSub->google_insights_desktop_val}}" min="0" max="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Mobile area -->
+                                <div class="performance-right">
+                                    <div class="accor-content">
+                                        <div class="performance-title">
+                                            <h4>Mobile</h4>
+                                            <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z"
+                                                fill="black" />
+                                            </svg>
+                                        </div>
+                                        <div class="overall-item">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleInsightsMobile" {{ $settings->settingsSub->google_insights_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="overalscore2">
+                                                        Overall Score
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects the page’s loading speed for users on mobile networks and devices; higher scores denote better performance.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="slider-range score-range1">
+                                                <span class="span-left">0</span>
+                                                <input id="score2" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_insights_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
                                                         { "start": 7, "end": 8, "class": "category2" },
                                                         { "start": 17, "end": 19 },
                                                         { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                        { "start": -3, "end": 19 }]'
-                        />
-                        <span class="span-right">100</span>
-                      </div>
-                      <div class="range-value">
-                        <p>Greater than</p>
-                        <input class="slider-input-text" type="number" id="googleInsightsMobileVal" value="{{ $settings->settingsSub->google_insights_mobile_val}}" min="0" max="100">
-                      </div>
+                                                        { "start": -3, "end": 19 }]' />
+                                                <span class="span-right">100</span>
+                                            </div>
+                                            <div class="range-value">
+                                                <p>Greater than</p>
+                                                <input class="slider-input-text" type="number" id="googleInsightsMobileVal" value="{{ $settings->settingsSub->google_insights_mobile_val}}" min="0" max="100">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- performance button -->
+                            <div class="accor-content-button performance-button">
+                                <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsGoogleInsights" />
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-              <!-- performance button -->
-              <div class="accor-content-button performance-button">
-                <input
-                  class="reset-default btn btn_primary rounded-pill"
-                  type="submit"
-                  value="Reset"
-                  id="defaultSettingsGoogleInsights"
-                />
-              </div>
-            </div>
-          </div>
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Lighthouse Score</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->google_lighthouse ? "checked" : "" }} id="switchGoogleLighthouse" name="switchGoogleLighthouse"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content performance-content">
-                <div class="performance-left">
-                  <div class="accor-content">
-                    <div class="performance-title">
-                      <h4>Desktop</h4>
-                      <svg
-                        width="27"
-                        height="24"
-                        viewBox="0 0 27 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
-                          fill="#222222"
-                        />
-                      </svg>
-                    </div>
-                    <!-- single item 1 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googlePerformanceDesktop" {{ $settings->settingsSub->google_performance_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googlePerformanceDesktop"
-                          >
-                            Performance Score
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Lighthouse Score</span>
                             </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->google_lighthouse ? "checked" : "" }} id="switchGoogleLighthouse" name="switchGoogleLighthouse" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
                         </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score3"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_performance_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">100</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googlePerformanceDesktopVal" value="{{ $settings->settingsSub->google_performance_desktop_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 2 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleAccessibilityDesktop" {{ $settings->settingsSub->google_accessibility_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleAccessibilityDesktop"
-                          >
-                            Accessibility
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">90</span>
-                          <input
-                            id="score4"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_accessibility_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">120</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googleAccessibilityDesktopVal" value="{{ $settings->settingsSub->google_accessibility_desktop_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 3 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleBestPracticesDesktop" {{ $settings->settingsSub->google_best_practices_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleBestPracticesDesktop"
-                          >
-                            Best Practices
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">90</span>
-                          <input
-                            id="score5"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_best_practices_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">120</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googleBestPracticesDesktopVal" value="{{ $settings->settingsSub->google_best_practices_desktop_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 4 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleSeoDesktop" {{ $settings->settingsSub->google_seo_desktop ? "checked" : "" }}
-                          />
-                          <label class="form-check-label" for="googleSeoDesktop">
-                            SEO
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">90</span>
-                          <input
-                            id="score6"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_seo_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">120</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googleSeoDesktopVal" value="{{ $settings->settingsSub->google_seo_desktop_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item -->
-                  </div>
-                </div>
+                        <div class="accor-body">
+                            <div class="meta-content performance-content">
+                                <div class="performance-left">
+                                    <div class="accor-content">
+                                        <div class="performance-title">
+                                            <h4>Desktop</h4>
+                                            <svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
+                                                fill="#222222" />
+                                            </svg>
+                                        </div>
+                                        <!-- single item 1 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googlePerformanceDesktop" {{ $settings->settingsSub->google_performance_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googlePerformanceDesktop">
+                                                        Performance Score
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
 
-                <!-- mobile area -->
-                <div class="performance-right">
-                  <div class="accor-content">
-                    <div class="performance-title">
-                      <h4>Mobile</h4>
-                      <svg
-                        width="17"
-                        height="29"
-                        viewBox="0 0 17 29"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z"
-                          fill="black"
-                        ></path>
-                      </svg>
-                    </div>
-                    <!-- single item 1 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googlePerformanceMobile" {{ $settings->settingsSub->google_performance_mobile ? "checked" : "" }}
-                          />
-                          <label class="form-check-label" for="googlePerformanceMobile">
-                            Performance Score
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score7"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_performance_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">100</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googlePerformanceMobileVal" value="{{ $settings->settingsSub->google_performance_mobile_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 2 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleAccessibilityMobile" {{ $settings->settingsSub->google_accessibility_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleAccessibilityMobile"
-                          >
-                            Accessibility
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">90</span>
-                          <input
-                            id="score8"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_accessibility_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">120</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googleAccessibilityMobileVal" value="{{ $settings->settingsSub->google_accessibility_mobile_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 3 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleBestPracticesMobile" {{ $settings->settingsSub->google_best_practices_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleBestPracticesMobile"
-                          >
-                            Best Practices
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">90</span>
-                          <input
-                            id="score9"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_best_practices_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">120</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googleBestPracticesMobileVal" value="{{ $settings->settingsSub->google_best_practices_mobile_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 4 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleSeoMobile" {{ $settings->settingsSub->google_seo_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleSeoMobile"
-                          >
-                            SEO
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range1">
-                          <span class="span-left">90</span>
-                          <input
-                            id="score10"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="100"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_seo_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">120</span>
-                        </div>
-                        <div class="range-value">
-                          <p>Greater than</p>
-                          <input class="slider-input-text" type="number" id="googleSeoMobileVal" value="{{ $settings->settingsSub->google_seo_mobile_val}}" min="0" max="100">
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item -->
-                  </div>
-                </div>
-              </div>
-              <!-- performance button -->
-              <div class="accor-content-button performance-button">
-                <input
-                  class="reset-default btn btn_primary rounded-pill"
-                  type="submit"
-                  value="Reset"
-                  id="defaultSettingsGoogleLighthouse"
-                />
-              </div>
-            </div>
-          </div>
+                                                        <p>
 
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Core Web Vitals</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->core_web_vitals ? "checked" : "" }} id="switchCoreWebVitals" name="switchCoreWebVitals"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content performance-content">
-                <div class="performance-left">
-                  <div class="accor-content">
-                    <div class="performance-title">
-                      <h4>Desktop</h4>
-                      <svg
-                        width="27"
-                        height="24"
-                        viewBox="0 0 27 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
-                          fill="#222222"
-                        />
-                      </svg>
-                    </div>
-                    <!-- single item 1 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleLCPDesktop" {{ $settings->settingsSub->google_lcp_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleLCPDesktop"
-                          >
-                            Largest Contentful Paint
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range2">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score11"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="5"
-                            data-slider-step="0.5"
-                            data-slider-value="{{ $settings->settingsSub->google_lcp_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">5</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleLCPDesktopVal" value="{{ $settings->settingsSub->google_lcp_desktop_val}}" min="0" max="5">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 2 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleFCPDesktop" {{ $settings->settingsSub->google_fcp_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="firstcp"
-                          >
-                            First CP Score
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range2">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score12"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="5"
-                            data-slider-step="0.5"
-                            data-slider-value="{{ $settings->settingsSub->google_fcp_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">5</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleFCPDesktopVal" value="{{ $settings->settingsSub->google_fcp_desktop_val}}" min="0" max="5">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 3 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleCLSDesktop" {{ $settings->settingsSub->google_cls_mobile ? "checked" : "" }}
-                          />
-                          <label class="form-check-label" for="cls1">
-                            Cumulative Layout Shift
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range3">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score13"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="0.5"
-                            data-slider-step="0.1"
-                            data-slider-value="{{ $settings->settingsSub->google_cls_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">0.5</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleCLSDesktopVal" value="{{ $settings->settingsSub->google_cls_desktop_val}}" min="0" max="0.5">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 4 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleFIDDesktop" {{ $settings->settingsSub->google_fid_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleFIDDesktop"
-                          >
-                            First Input Delay
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range4">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score14"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="500"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_fid_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">500</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleFIDDesktopVal" value="{{ $settings->settingsSub->google_fid_desktop_val}}" min="0" max="500">
-                            <span>ms</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 5 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleTBTDesktop" {{ $settings->settingsSub->google_tbt_desktop ? "checked" : "" }}
-                          />
-                          <label class="form-check-label" for="tbt1">
-                            Total Blocking TIme
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range4">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score15"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="500"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_tbt_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">500</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleTBTDesktopVal" value="{{ $settings->settingsSub->google_tbt_desktop_val}}" min="0" max="500">
-                            <span>ms</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 6 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleTTIDesktop" {{ $settings->settingsSub->google_tti_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleTTIDesktop"
-                          >
-                            Time to Interactive
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range5">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score16"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="8"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_tti_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">8</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleTTIDesktopVal" value="{{ $settings->settingsSub->google_tti_desktop_val}}" min="0" max="8">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 7 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleSIDesktop" {{ $settings->settingsSub->google_speed_index_desktop ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleSIDesktop"
-                          >
-                            Speed Index
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range5">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score17"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="8"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_speed_index_desktop_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">8</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleSIDesktopVal" value="{{ $settings->settingsSub->google_speed_index_desktop_val}}" min="0" max="8">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item -->
-                  </div>
-                </div>
+                                                            A 0–100 rating that reflects page speed and responsiveness for desktop users; higher scores denote better performance.
 
-                <!-- mobile area -->
-                <div class="performance-right">
-                  <div class="accor-content">
-                    <div class="performance-title">
-                      <h4>Mobile</h4>
-                      <svg
-                        width="17"
-                        height="29"
-                        viewBox="0 0 17 29"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z"
-                          fill="black"
-                        ></path>
-                      </svg>
-                    </div>
-                    <!-- single item 1 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleLCPMobile" {{ $settings->settingsSub->google_lcp_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="lcprint"
-                          >
-                            Largest Contentful Paint
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range2">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score18"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="5"
-                            data-slider-step="0.5"
-                            data-slider-value="{{ $settings->settingsSub->google_lcp_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">5</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleLCPMobileVal" value="{{ $settings->settingsSub->google_lcp_mobile_val}}" min="0" max="5">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 2 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleFCPMobile" {{ $settings->settingsSub->google_fcp_mobile ? "checked" : "" }}
-                          />
-                          <label class="form-check-label" for="googleFCPMobile">
-                            First CP Score
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range2">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score19"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="5"
-                            data-slider-step="0.5"
-                            data-slider-value="{{ $settings->settingsSub->google_fcp_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">5</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleFCPMobileVal" value="{{ $settings->settingsSub->google_fcp_mobile_val}}" min="0" max="5">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 3 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleCLSMobile" {{ $settings->settingsSub->google_cls_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleCLSMobile"
-                          >
-                            Cumulative Layout Shift
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range3">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score20"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="0.5"
-                            data-slider-step="0.1"
-                            data-slider-value="{{ $settings->settingsSub->google_cls_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">0.5</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleCLSMobileVal" value="{{ $settings->settingsSub->google_cls_mobile_val}}" min="0" max="0.5">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 4 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleFIDMobile" {{ $settings->settingsSub->google_fid_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleFIDMobile"
-                          >
-                            First Input Delay
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range4">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score21"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="500"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_fid_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">500</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleFIDMobileVal" value="{{ $settings->settingsSub->google_fid_mobile_val}}" min="0" max="500">
-                            <span>ms</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 5 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleTBTMobile" {{ $settings->settingsSub->google_tbt_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleTBTMobile"
-                          >
-                            Total Blocking TIme
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range4">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score22"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="500"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_tbt_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">500</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleTBTMobileVal" value="{{ $settings->settingsSub->google_tbt_mobile_val}}" min="0" max="500">
-                            <span>ms</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 6 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleTTIMobile" {{ $settings->settingsSub->google_tti_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleTTIMobile"
-                          >
-                            Time to Interactive
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range5">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score23"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="8"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_tti_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">8</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleTTIMobileVal" value="{{ $settings->settingsSub->google_tti_mobile_val}}" min="0" max="8">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item 7 -->
-                    <div class="overall-item overall-item2">
-                      <div class="tooltips-flex">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            id="googleSIMobile" {{ $settings->settingsSub->google_speed_index_mobile ? "checked" : "" }}
-                          />
-                          <label
-                            class="form-check-label"
-                            for="googleSIMobile"
-                          >
-                            Speed Index
-                          </label>
-                        </div>
-                        <div class="overall-tooltips">
-                          <div class="tooltips-contents">
-                            <p>
-                              Lorem Ipsum is simply dummy text of the
-                              printing and typesetting industry.
-                            </p>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Poor</p>
-                              <h6>0-49</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Average</p>
-                              <h6>50-89</h6>
-                            </div>
-                            <div class="color-flex">
-                              <p><span></span>&nbsp; Good</p>
-                              <h6>90-100</h6>
-                            </div>
-                          </div>
-                          <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                          >
-                            <path
-                              d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
-                              fill="#D3D5D8"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <div class="score-range-flex">
-                        <div class="slider-range score-range5">
-                          <span class="span-left">0</span>
-                          <input
-                            id="score24"
-                            type="text"
-                            data-slider-id="slider22"
-                            class="slider-input"
-                            data-slider-min="0"
-                            data-slider-max="8"
-                            data-slider-step="1"
-                            data-slider-value="{{ $settings->settingsSub->google_speed_index_mobile_val}}"
-                            data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
-                                                          { "start": 7, "end": 8, "class": "category2" },
-                                                          { "start": 17, "end": 19 },
-                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                          { "start": -3, "end": 19 }]'
-                          />
-                          <span class="span-right">8</span>
-                        </div>
-                        <div class="range-value range-value2">
-                          <p>less than</p>
-                          <div class="range-sec">
-                            <input class="slider-input-text" type="number" id="googleSIMobileVal" value="{{ $settings->settingsSub->google_speed_index_mobile_val}}" min="0" max="8">
-                            <span>sec</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <!-- single item -->
-                  </div>
-                </div>
-              </div>
-              <!-- performance button -->
-              <div class="accor-content-button performance-button">
-                <input
-                  class="reset-default btn btn_primary rounded-pill"
-                  type="submit"
-                  value="Reset"
-                  id="defaultSettingsCoreWebVitals"
-                />
-              </div>
-            </div>
-          </div>
-          <!-- single accordion end -->
+                                                        </p>
 
-                 <!-- single accordion -->
-                 <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Mobile friendly</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->mobile_friendly ? 'checked' : '' }} id="switchMobileFriendly" name="switchMobileFriendly"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isMobileFriendly"
-                        {{ $settings->settingsSub->mobile_friendly ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isMobileFriendly"
-                      >
-                      Page should be mobile friendly
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultIsMobileFriendly"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+                                                        <div class="color-flex">
 
-          
-        </div>
-      </div>
-      <!-- performance tab content start -->
+                                                            <p><span></span>&nbsp; Poor</p>
 
-      <!-- on page tab content start -->
-      <div
-        class="tab-pane fade"
-        id="v-pills-security"
-        role="tabpanel"
-        aria-labelledby="v-pills-security-tab"
-        tabindex="0"
-      >
-        <div class="tab-content-area">
-            
+                                                            <h6>0-49</h6>
 
-            <!-- single accordion -->
-            <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Safe Browsing</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->is_safe_browsing ? 'checked' : '' }} id="switchIsSafeBrowsingHeader" name="switchIsSafeBrowsingHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isSafeBrowsingEnable"
-                        {{ $settings->settingsSub->is_safe_browsing ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isSafeBrowsingEnable"
-                      >
-                       Safe Browsing
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultisSafeBrowsingEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-           <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Unsafe Cross Origin Links</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->cross_origin_links ? 'checked' : '' }} id="switchCrossOriginLinksHeader" name="switchCrossOriginLinksHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isCrossOriginLinksEnable"
-                        {{ $settings->settingsSub->cross_origin_links ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isCrossOriginLinksEnable"
-                      >
-                      Unsafe Cross Origin Links
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultCrossOriginLinksEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          
-           <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Protocol Relative Resource Links</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->protocol_relative_resource ? 'checked' : '' }} id="switchProtocolRelativeResourceHeader" name="switchProtocolRelativeResourceHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isProtocolRelativeResourceEnable"
-                        {{ $settings->settingsSub->protocol_relative_resource ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isProtocolRelativeResourceEnable"
-                      >
-                      protocol Relative Resource Links
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultProtocolRelativeResourceEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+                                                        </div>
 
-        
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score3" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_performance_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">100</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googlePerformanceDesktopVal" value="{{ $settings->settingsSub->google_performance_desktop_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 2 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleAccessibilityDesktop" {{ $settings->settingsSub->google_accessibility_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleAccessibilityDesktop">
+                                                        Accessibility
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects how usable the page is for people with disabilities on desktop; higher scores denote better accessibility.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">90</span>
+                                                    <input id="score4" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_accessibility_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">120</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googleAccessibilityDesktopVal" value="{{ $settings->settingsSub->google_accessibility_desktop_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 3 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleBestPracticesDesktop" {{ $settings->settingsSub->google_best_practices_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleBestPracticesDesktop">
+                                                        Best Practices
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects adherence to modern web development and security practices on desktop; higher scores denote better compliance.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">90</span>
+                                                    <input id="score5" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_best_practices_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">120</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googleBestPracticesDesktopVal" value="{{ $settings->settingsSub->google_best_practices_desktop_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 4 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleSeoDesktop" {{ $settings->settingsSub->google_seo_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleSeoDesktop">
+                                                        SEO
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0-100 rating that denotes how optimised your webpage is for search engine bots. A higher scores denotes stronger optimisation.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">90</span>
+                                                    <input id="score6" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_seo_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">120</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googleSeoDesktopVal" value="{{ $settings->settingsSub->google_seo_desktop_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item -->
+                                    </div>
+                                </div>
+
+                                <!-- mobile area -->
+                                <div class="performance-right">
+                                    <div class="accor-content">
+                                        <div class="performance-title">
+                                            <h4>Mobile</h4>
+                                            <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z"
+                                                fill="black"></path>
+                                            </svg>
+                                        </div>
+                                        <!-- single item 1 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googlePerformanceMobile" {{ $settings->settingsSub->google_performance_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googlePerformanceMobile">
+                                                        Performance Score
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects page speed and responsiveness on mobile devices and networks; higher scores denote better performance.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score7" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_performance_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">100</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googlePerformanceMobileVal" value="{{ $settings->settingsSub->google_performance_mobile_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 2 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleAccessibilityMobile" {{ $settings->settingsSub->google_accessibility_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleAccessibilityMobile">
+                                                        Accessibility
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects page speed and responsiveness on mobile devices and networks; higher scores denote better performance.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">90</span>
+                                                    <input id="score8" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_accessibility_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">120</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googleAccessibilityMobileVal" value="{{ $settings->settingsSub->google_accessibility_mobile_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 3 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleBestPracticesMobile" {{ $settings->settingsSub->google_best_practices_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleBestPracticesMobile">
+                                                        Best Practices
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
 
 
-           <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Content Security Policy Header</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->content_security_policy_header ? 'checked' : '' }} id="switchContentSecurityPolicyHeader" name="switchContentSecurityPolicyHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="IsContentSecurityPolicyHeader"
-                        {{ $settings->settingsSub->content_security_policy_header ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="IsContentSecurityPolicyHeader"
-                      >
-                      Content Security Policy Header must be enabled.
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsContentSecurityPolicyHeader"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-           <!-- single accordion -->
-
-           
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>X Frame Options Header</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->x_frame_options_header ? 'checked' : '' }} id="switchXFrameOptionsHeader" name="switchXFrameOptionsHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="IsXFrameOptionsHeader"
-                        {{ $settings->settingsSub->x_frame_options_header ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="IsXFrameOptionsHeader"
-                      >
-                      X Frame Options Header must be enabled.
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsXframeOptionsHeader"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion end -->
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>HSTS Header</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->hsts_header ? 'checked' : '' }} id="switchHSTS" name="switchHSTS"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isHSTS" {{ $settings->settingsSub->hsts_header ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isHSTS"
-                    >
-                      Every page must have HSTS enabled
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsHSTS"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-           <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>SSL Certificate</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->ssl_certificate_enable ? 'checked' : '' }} id="switchSSLCertificateEnableHeader" name="switchSSLCertificateEnableHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isSSLCertificateEnableType"
-                        {{ $settings->settingsSub->ssl_certificate_enable ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isSSLCertificateEnableType"
-                      >
-                      SSL Certificate
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsIsSSLCertificate"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Bad Content Type</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->bad_content_type ? 'checked' : '' }} id="switchBadContentTypeHeader" name="switchBadContentTypeHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isBadContentType"
-                        {{ $settings->settingsSub->bad_content_type ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isBadContentType"
-                      >
-                      Bad Content Type.
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsIsBadContentType"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Directory Browsing</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->folder_browsing_enable ? 'checked' : '' }} id="switchFolderBrowsingEnableHeader" name="switchFolderBrowsingEnableHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isFolderBrowsingEnable"
-                        {{ $settings->settingsSub->folder_browsing_enable ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isFolderBrowsingEnable"
-                      >
-                      Directory Browsing
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultisFolderBrowsingEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
 
 
-        </div>
-      </div>
-      <!-- on page tab content end -->
+                                                    <div class="tooltips-contents">
 
-      <!-- coding practices tab content start -->
-      <div
-        class="tab-pane fade"
-        id="v-pills-coding"
-        role="tabpanel"
-        aria-labelledby="v-pills-coding-tab"
-        tabindex="0"
-      >
-        <div class="tab-content-area">
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>HTML Code Compression</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->html_compression ? "checked" : "" }} id="switchHTMLCompression" name="switchHTMLCompression"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="htmlCompression" {{ $settings->settingsSub->is_html_compression ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="htmlCompression">
-                      HTML Code has to be compressed and minified
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsHTMLCompression"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>CSS Code Compression</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->css_compression ? "checked" : "" }} id="switchCSSCompression" name="switchCSSCompression"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="cssCompression" {{ $settings->settingsSub->is_css_compression ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="cssCompression">
-                      CSS Code has to be compressed and minified
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsCSSCompression"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>JS Code Compression</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->js_compression ? "checked" : "" }} id="switchJSCompression" name="switchJSCompression"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="jsCompression" {{ $settings->settingsSub->is_js_compression ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="jsCompression">
-                      All external JavaScript code must be compressed
-                      and minified
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsJSCompression"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion item -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>GZIP Compression</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->gzip_compression ? "checked" : "" }} id="switchGZIPCompression" name="switchGZIPCompression"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="gzipCompression" {{ $settings->settingsSub->is_gzip_compression ? "checked" : "" }}
-                    />
-                    <label class="form-check-label" for="gzipCompression">
-                      All external JavaScript code must be compressed
-                      and minified
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsGZIPCompression"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion end -->
+                                                        <p>
 
-          <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Nested Tables</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->nested_tables ? 'checked' : '' }} id="switchNestedTables" name="switchNestedTables"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="noNestedTables"
-                        {{ $settings->settingsSub->no_nested_tables ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="noNestedTables"
-                      >
-                        The HTML Page should not have any nested tables.
-                      </label>
-                    </div>
-                  </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsNestedTables"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion end -->
+                                                            A 0–100 rating that reflects adherence to modern web development and security practices on mobile; higher scores denote better compliance.
 
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>HTML Page Size</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->page_size ? 'checked' : '' }} id="switchPageSize" name="switchPageSize"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">90</span>
+                                                    <input id="score9" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_best_practices_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">120</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googleBestPracticesMobileVal" value="{{ $settings->settingsSub->google_best_practices_mobile_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 4 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleSeoMobile" {{ $settings->settingsSub->google_seo_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleSeoMobile">
+                                                        SEO
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A 0–100 rating that reflects how well the page follows basic search optimization guidelines on mobile; higher scores denote better discoverability.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range1">
+                                                    <span class="span-left">90</span>
+                                                    <input id="score10" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_seo_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">120</span>
+                                                </div>
+                                                <div class="range-value">
+                                                    <p>Greater than</p>
+                                                    <input class="slider-input-text" type="number" id="googleSeoMobileVal" value="{{ $settings->settingsSub->google_seo_mobile_val}}" min="0" max="100">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- performance button -->
+                            <div class="accor-content-button performance-button">
+                                <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsGoogleLighthouse" />
+                            </div>
+                        </div>
                     </div>
-                  </div>
+
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Core Web Vitals</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->core_web_vitals ? "checked" : "" }} id="switchCoreWebVitals" name="switchCoreWebVitals" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content performance-content">
+                                <div class="performance-left">
+                                    <div class="accor-content">
+                                        <div class="performance-title">
+                                            <h4>Desktop</h4>
+                                            <svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.84603 0.81879C1.49767 1.04256 0.430452 2.01224 0.0919265 3.32044C0.0115984 3.63028 0.000122927 4.45651 0.000122927 10.2631C0.000122927 17.5156 -0.0170902 17.1426 0.355862 17.9115C0.631272 18.4795 1.28537 19.1106 1.89931 19.3975C2.16324 19.5238 2.5362 19.65 2.7198 19.6844C2.94357 19.7246 4.34932 19.7475 6.75342 19.7475H10.4428L9.98376 20.6656L9.52474 21.5836H8.15916C6.8567 21.5836 6.78785 21.5893 6.57555 21.7156C5.95014 22.0656 5.96735 22.9836 6.60424 23.3049C6.81654 23.4197 6.97146 23.4197 13.1395 23.4197C19.3076 23.4197 19.4625 23.4197 19.6748 23.3049C20.3231 22.9779 20.3231 22.0254 19.6748 21.6984C19.474 21.5951 19.3362 21.5836 18.1026 21.5836H16.7543L16.2953 20.6656L15.8362 19.7475H19.5485C23.6395 19.7475 23.6969 19.7418 24.4199 19.3975C24.9592 19.1393 25.6707 18.4336 25.9232 17.9115C26.2961 17.1426 26.2789 17.5098 26.2789 10.2803C26.2789 2.98765 26.2961 3.34339 25.8945 2.5688C25.6133 2.03519 24.9994 1.40978 24.4945 1.16305C23.6625 0.755676 24.6092 0.790102 13.3116 0.778627C7.71162 0.77289 3.00095 0.790102 2.84603 0.81879ZM23.3354 2.67781C23.7256 2.79257 24.0584 3.05076 24.2535 3.37782L24.4141 3.65322L24.4313 10.1828L24.4428 16.7123L24.3223 16.9992C24.2477 17.1656 24.0928 17.3779 23.9436 17.5098C23.4502 17.9459 24.3166 17.9115 13.1395 17.9115C2.00833 17.9115 2.8403 17.9402 2.35259 17.527C2.21488 17.4065 2.04849 17.1828 1.9739 17.0279L1.83619 16.7352V10.2459V3.75077L1.99685 3.45241C2.1862 3.08519 2.47308 2.83847 2.88046 2.70076C3.17308 2.60322 3.64358 2.59748 13.1166 2.59175C21.7518 2.59175 23.083 2.60322 23.3354 2.67781Z"
+                                                fill="#222222" />
+                                            </svg>
+                                        </div>
+                                        <!-- single item 1 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleLCPDesktop" {{ $settings->settingsSub->google_lcp_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleLCPDesktop">
+                                                        Largest Contentful Paint
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in seconds) for the largest content element to render for desktop users; lower values indicate faster loading.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 4 seconds</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>2.5 - 4 (seconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 2.5 (seconds)</h6>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range2">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score11" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="5" data-slider-step="0.5" data-slider-value="{{ $settings->settingsSub->google_lcp_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">5</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleLCPDesktopVal" value="{{ $settings->settingsSub->google_lcp_desktop_val}}" min="0" max="5">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 2 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleFCPDesktop" {{ $settings->settingsSub->google_fcp_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="firstcp">
+                                                        First Contentful Paint
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+
+
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in seconds) until the first text or image appears for desktop users; lower values indicate faster loading.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 3 seconds</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>1.8 - 3 (seconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 1.8 (seconds)</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range2">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score12" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="5" data-slider-step="0.5" data-slider-value="{{ $settings->settingsSub->google_fcp_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">5</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleFCPDesktopVal" value="{{ $settings->settingsSub->google_fcp_desktop_val}}" min="0" max="5">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 3 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleCLSDesktop" {{ $settings->settingsSub->google_cls_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="cls1">
+                                                        Cumulative Layout Shift
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A unitless score that measures unexpected layout movement on desktop; lower values indicate better stability.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 0.25</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>0.1 - 0.25</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 0.1</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range3">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score13" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="0.5" data-slider-step="0.1" data-slider-value="{{ $settings->settingsSub->google_cls_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">0.5</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleCLSDesktopVal" value="{{ $settings->settingsSub->google_cls_desktop_val}}" min="0" max="0.5">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 4 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleFIDDesktop" {{ $settings->settingsSub->google_fid_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleFIDDesktop">
+                                                        First Input Delay
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in milliseconds) from a user’s first interaction to the browser’s response on desktop; lower values indicate better responsiveness.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range4">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score14" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_fid_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">500</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleFIDDesktopVal" value="{{ $settings->settingsSub->google_fid_desktop_val}}" min="0" max="500">
+                                                        <span>ms</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 5 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleTBTDesktop" {{ $settings->settingsSub->google_tbt_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="tbt1">
+                                                        Total Blocking TIme
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The total time (in milliseconds) when the main thread was blocked long enough to delay input on desktop; lower values indicate better responsiveness.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range4">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score15" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_tbt_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">500</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleTBTDesktopVal" value="{{ $settings->settingsSub->google_tbt_desktop_val}}" min="0" max="500">
+                                                        <span>ms</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 6 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleTTIDesktop" {{ $settings->settingsSub->google_tti_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleTTIDesktop">
+                                                        Time to Interactive
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in seconds) until the page is fully interactive for desktop users; lower values indicate better responsiveness.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range5">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score16" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="8" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_tti_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">8</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleTTIDesktopVal" value="{{ $settings->settingsSub->google_tti_desktop_val}}" min="0" max="8">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 7 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleSIDesktop" {{ $settings->settingsSub->google_speed_index_desktop ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleSIDesktop">
+                                                        Speed Index
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in seconds) showing how quickly content becomes visually complete on desktop; lower values indicate faster rendering.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range5">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score17" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="8" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_speed_index_desktop_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">8</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleSIDesktopVal" value="{{ $settings->settingsSub->google_speed_index_desktop_val}}" min="0" max="8">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item -->
+                                    </div>
+                                </div>
+
+                                <!-- mobile area -->
+                                <div class="performance-right">
+                                    <div class="accor-content">
+                                        <div class="performance-title">
+                                            <h4>Mobile</h4>
+                                            <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M2.02332 0.0441456C1.31131 0.215246 0.748334 0.822384 0.604829 1.57854C0.527557 1.98698 0.527557 26.2393 0.604829 26.6478C0.726256 27.2714 1.12917 27.8013 1.69767 28.0662L2.01228 28.2153H8.77357H15.5349L15.8495 28.0662C16.418 27.8013 16.8209 27.2714 16.9423 26.6478C17.0196 26.2393 17.0196 1.98698 16.9423 1.57854C16.8209 0.954849 16.418 0.424984 15.8495 0.160053L15.5349 0.0110283L8.88396 -1.14441e-05C5.1142 -1.14441e-05 2.14475 0.0165482 2.02332 0.0441456ZM10.9813 1.47367C11.0255 1.55095 11.0255 1.61718 10.9813 1.69445C10.9261 1.79932 10.8654 1.80484 8.77357 1.80484C6.68171 1.80484 6.621 1.79932 6.5658 1.69445C6.52165 1.61718 6.52165 1.55095 6.5658 1.47367C6.621 1.3688 6.68171 1.36329 8.77357 1.36329C10.8654 1.36329 10.9261 1.3688 10.9813 1.47367ZM15.6729 13.8648V24.7104H8.77357H1.8743V13.8648V3.01911H8.77357H15.6729V13.8648ZM9.08818 25.4335C9.27584 25.5052 9.52973 25.7371 9.6346 25.9358C9.81122 26.2724 9.69532 26.7857 9.38623 27.0452C8.75702 27.575 7.83527 27.139 7.83527 26.3111C7.83527 25.6819 8.50864 25.2127 9.08818 25.4335Z"
+                                                fill="black"></path>
+                                            </svg>
+                                        </div>
+                                        <!-- single item 1 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleLCPMobile" {{ $settings->settingsSub->google_lcp_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="lcprint">
+                                                        Largest Contentful Paint
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in seconds) for the largest content element to render on mobile devices and networks; lower values indicate faster loading.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range2">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score18" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="5" data-slider-step="0.5" data-slider-value="{{ $settings->settingsSub->google_lcp_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">5</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleLCPMobileVal" value="{{ $settings->settingsSub->google_lcp_mobile_val}}" min="0" max="5">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 2 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleFCPMobile" {{ $settings->settingsSub->google_fcp_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleFCPMobile">
+                                                        First Contentful Paint
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            The time (in seconds) until the first text or image appears on mobile devices and networks; lower values indicate faster loading.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range2">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score19" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="5" data-slider-step="0.5" data-slider-value="{{ $settings->settingsSub->google_fcp_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">5</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleFCPMobileVal" value="{{ $settings->settingsSub->google_fcp_mobile_val}}" min="0" max="5">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 3 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleCLSMobile" {{ $settings->settingsSub->google_cls_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleCLSMobile">
+                                                        Cumulative Layout Shift
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents">
+
+                                                        <p>
+
+                                                            A unitless score that measures unexpected layout movement on mobile devices; lower values indicate better stability.
+
+                                                        </p>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>0-49</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>50-89</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>90-100</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range3">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score20" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="0.5" data-slider-step="0.1" data-slider-value="{{ $settings->settingsSub->google_cls_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">0.5</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleCLSMobileVal" value="{{ $settings->settingsSub->google_cls_mobile_val}}" min="0" max="0.5">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 4 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleFIDMobile" {{ $settings->settingsSub->google_fid_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleFIDMobile">
+                                                        First Input Delay
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents" style="width:300px;">
+
+                                                        <p>
+
+                                                            The time (in milliseconds) from a user’s first interaction to the browser’s response on mobile; lower values indicate better responsiveness.
+
+                                                        </p>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 300 (milliseconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>100 - 300 (milliseconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 100 (milliseconds)</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range4">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score21" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_fid_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">500</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleFIDMobileVal" value="{{ $settings->settingsSub->google_fid_mobile_val}}" min="0" max="500">
+                                                        <span>ms</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 5 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleTBTMobile" {{ $settings->settingsSub->google_tbt_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleTBTMobile">
+                                                        Total Blocking TIme
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents" style="width:300px;">
+
+                                                        <p>
+
+                                                            The total time (in milliseconds) when the main thread was blocked long enough to delay input on mobile; lower values indicate better responsiveness.
+
+                                                        </p>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 600 (milliseconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>200 - 600 (milliseconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 200 (milliseconds)</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range4">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score22" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="500" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_tbt_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">500</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleTBTMobileVal" value="{{ $settings->settingsSub->google_tbt_mobile_val}}" min="0" max="500">
+                                                        <span>ms</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 6 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleTTIMobile" {{ $settings->settingsSub->google_tti_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleTTIMobile">
+                                                        Time to Interactive
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents" style="width:300px;">
+
+                                                        <p>
+
+                                                            The time (in seconds) until the page is fully interactive on mobile devices; lower values indicate better responsiveness.
+
+                                                        </p>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 7.3 (seconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>3.9 - 7.3 (seconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 3.8 (seconds)</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range5">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score23" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="8" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_tti_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">8</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleTTIMobileVal" value="{{ $settings->settingsSub->google_tti_mobile_val}}" min="0" max="8">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item 7 -->
+                                        <div class="overall-item overall-item2">
+                                            <div class="tooltips-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="checkbox" id="googleSIMobile" {{ $settings->settingsSub->google_speed_index_mobile ? "checked" : "" }} />
+                                                    <label class="form-check-label" for="googleSIMobile">
+                                                        Speed Index
+                                                    </label>
+                                                </div>
+                                                <div class="overall-tooltips">
+                                                    <div class="tooltips-contents" style="width:300px;">
+
+                                                        <p>
+
+                                                            The time (in seconds) showing how quickly content becomes visually complete on mobile; lower values indicate faster rendering.
+
+                                                        </p>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Poor</p>
+
+                                                            <h6>more than 5.8 (seconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Average</p>
+
+                                                            <h6>3.4 - 5.8 (seconds)</h6>
+
+                                                        </div>
+
+                                                        <div class="color-flex" style="max-width:230px;">
+
+                                                            <p><span></span>&nbsp; Good</p>
+
+                                                            <h6>0 - 3.4 (seconds)</h6>
+
+                                                        </div>
+
+                                                    </div>
+                                                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M7.432 10.632C7.3976 10.67 7.36554 10.7101 7.336 10.752C7.30572 10.7966 7.28151 10.845 7.264 10.896C7.24094 10.9413 7.22476 10.9899 7.216 11.04C7.21208 11.0933 7.21208 11.1467 7.216 11.2C7.2133 11.3049 7.23522 11.4091 7.28 11.504C7.31593 11.6033 7.37325 11.6934 7.44791 11.7681C7.52256 11.8427 7.61273 11.9001 7.712 11.936C7.80776 11.9783 7.91131 12.0002 8.016 12.0002C8.1207 12.0002 8.22424 11.9783 8.32 11.936C8.41928 11.9001 8.50944 11.8427 8.58409 11.7681C8.65875 11.6934 8.71607 11.6033 8.752 11.504C8.78753 11.4067 8.80383 11.3035 8.8 11.2C8.80061 11.0947 8.78043 10.9903 8.74062 10.8929C8.70081 10.7954 8.64215 10.7067 8.568 10.632C8.49363 10.557 8.40515 10.4975 8.30766 10.4569C8.21018 10.4163 8.10561 10.3954 8 10.3954C7.89439 10.3954 7.78983 10.4163 7.69234 10.4569C7.59485 10.4975 7.50637 10.557 7.432 10.632ZM8 0C6.41775 0 4.87103 0.469192 3.55544 1.34824C2.23985 2.22729 1.21447 3.47672 0.608967 4.93853C0.00346627 6.40034 -0.15496 8.00887 0.153721 9.56072C0.462403 11.1126 1.22433 12.538 2.34315 13.6569C3.46197 14.7757 4.88743 15.5376 6.43928 15.8463C7.99113 16.155 9.59966 15.9965 11.0615 15.391C12.5233 14.7855 13.7727 13.7602 14.6518 12.4446C15.5308 11.129 16 9.58225 16 8C16 6.94942 15.7931 5.90914 15.391 4.93853C14.989 3.96793 14.3997 3.08601 13.6569 2.34315C12.914 1.60028 12.0321 1.011 11.0615 0.608964C10.0909 0.206926 9.05058 0 8 0ZM8 14.4C6.7342 14.4 5.49683 14.0246 4.44435 13.3214C3.39188 12.6182 2.57157 11.6186 2.08717 10.4492C1.60277 9.27972 1.47603 7.9929 1.72298 6.75142C1.96992 5.50994 2.57946 4.36957 3.47452 3.47452C4.36958 2.57946 5.50995 1.96992 6.75142 1.72297C7.9929 1.47603 9.27973 1.60277 10.4492 2.08717C11.6186 2.57157 12.6182 3.39187 13.3214 4.44435C14.0246 5.49682 14.4 6.7342 14.4 8C14.4 9.69738 13.7257 11.3252 12.5255 12.5255C11.3253 13.7257 9.69739 14.4 8 14.4ZM8 4C7.57845 3.99973 7.16427 4.1105 6.79913 4.32115C6.43399 4.53181 6.13078 4.83493 5.92 5.2C5.86212 5.29105 5.82325 5.39287 5.80574 5.49934C5.78823 5.6058 5.79244 5.71471 5.8181 5.81951C5.84377 5.9243 5.89038 6.02283 5.95511 6.10915C6.01984 6.19547 6.10137 6.2678 6.19478 6.32179C6.28819 6.37579 6.39156 6.41033 6.49867 6.42334C6.60578 6.43635 6.71441 6.42756 6.81803 6.3975C6.92165 6.36744 7.01812 6.31673 7.10164 6.24841C7.18516 6.1801 7.25399 6.0956 7.304 6C7.37449 5.87791 7.47598 5.77662 7.5982 5.70638C7.72042 5.63614 7.85903 5.59944 8 5.6C8.21217 5.6 8.41566 5.68428 8.56569 5.83431C8.71572 5.98434 8.8 6.18783 8.8 6.4C8.8 6.61217 8.71572 6.81565 8.56569 6.96568C8.41566 7.11571 8.21217 7.2 8 7.2C7.78783 7.2 7.58435 7.28428 7.43432 7.43431C7.28429 7.58434 7.2 7.78782 7.2 8V8.8C7.2 9.01217 7.28429 9.21565 7.43432 9.36568C7.58435 9.51571 7.78783 9.6 8 9.6C8.21217 9.6 8.41566 9.51571 8.56569 9.36568C8.71572 9.21565 8.8 9.01217 8.8 8.8V8.656C9.3291 8.46401 9.77389 8.09218 10.0566 7.60549C10.3393 7.11881 10.442 6.54823 10.3467 5.99351C10.2514 5.43879 9.96416 4.93521 9.5352 4.57081C9.10623 4.20641 8.56283 4.00437 8 4Z"
+                                                        fill="#D3D5D8" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                            <div class="score-range-flex">
+                                                <div class="slider-range score-range5">
+                                                    <span class="span-left">0</span>
+                                                    <input id="score24" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="8" data-slider-step="1" data-slider-value="{{ $settings->settingsSub->google_speed_index_mobile_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                                                          { "start": 7, "end": 8, "class": "category2" },
+                                                          { "start": 17, "end": 19 },
+                                                          { "start": 17, "end": 24 }, //not visible -  out of slider range
+                                                          { "start": -3, "end": 19 }]' />
+                                                    <span class="span-right">8</span>
+                                                </div>
+                                                <div class="range-value range-value2">
+                                                    <p>less than</p>
+                                                    <div class="range-sec">
+                                                        <input class="slider-input-text" type="number" id="googleSIMobileVal" value="{{ $settings->settingsSub->google_speed_index_mobile_val}}" min="0" max="8">
+                                                        <span>sec</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- single item -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- performance button -->
+                            <div class="accor-content-button performance-button" style="text-align:right;">
+                                <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsCoreWebVitals" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion end -->
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Mobile friendliness</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->mobile_friendly ? 'checked' : '' }} id="switchMobileFriendly" name="switchMobileFriendly" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p><b>No Customisations are available for this test.</b></p>
+
+                                    <p>This test checks for mobile friendliness of your webpages using Google's Mobile-Friendly Test API. You can read more on Google's mobile friendly test API <a target="_blank" href="https://developers.google.com/search/blog/2017/01/introducing-mobile-friendly-test-api">documentation here</a>.</p>
+
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isMobileFriendly" {{ $settings->settingsSub->mobile_friendly ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isMobileFriendly">
+                                            Page should be mobile friendly
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultIsMobileFriendly" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
-              </div>
             </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  
-                <div class="check-range">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        value=""
-                        id="pageSize"
-                        {{ $settings->settingsSub->page_size ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="pageSize"
-                      >
-                        Maximum size of the HTML page should be
-                        <input class="slider-input-text" type="number" id="pageSizeVal" value="{{$settings->settingsSub->page_size_val}}" min="0" max="100"> KB
-                      </label>
+            <!-- performance tab content start -->
+
+            <!-- on page tab content start -->
+            <div class="tab-pane fade" id="v-pills-security" role="tabpanel" aria-labelledby="v-pills-security-tab" tabindex="0">
+                <div class="tab-content-area">
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Safe Browsing</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->is_safe_browsing ? 'checked' : '' }} id="switchIsSafeBrowsingHeader" name="switchIsSafeBrowsingHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isSafeBrowsingEnable" {{ $settings->settingsSub->is_safe_browsing ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isSafeBrowsingEnable">
+                                            Safe Browsing
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultisSafeBrowsingEnable" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="slider-range">
-                      <span class="span-left">0</span>
-                      <input
-                        id="ex21"
-                        type="text"
-                        data-slider-id="slider22"
-                        class="slider-input"
-                        data-slider-min="0"
-                        data-slider-max="150"
-                        data-slider-step="1"
-                        data-slider-value="{{$settings->settingsSub->page_size_val}}"
-                        data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Unsafe Cross Origin Links</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->cross_origin_links ? 'checked' : '' }} id="switchCrossOriginLinksHeader" name="switchCrossOriginLinksHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isCrossOriginLinksEnable" {{ $settings->settingsSub->cross_origin_links ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isCrossOriginLinksEnable">
+                                            Unsafe Cross Origin Links
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultCrossOriginLinksEnable" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Protocol Relative Resource Links</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->protocol_relative_resource ? 'checked' : '' }} id="switchProtocolRelativeResourceHeader" name="switchProtocolRelativeResourceHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isProtocolRelativeResourceEnable" {{ $settings->settingsSub->protocol_relative_resource ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isProtocolRelativeResourceEnable">
+                                            protocol Relative Resource Links
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultProtocolRelativeResourceEnable" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Content Security Policy Header</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->content_security_policy_header ? 'checked' : '' }} id="switchContentSecurityPolicyHeader" name="switchContentSecurityPolicyHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="IsContentSecurityPolicyHeader" {{ $settings->settingsSub->content_security_policy_header ? "checked" : "" }} />
+                                        <label class="form-check-label" for="IsContentSecurityPolicyHeader">
+                                            Content Security Policy Header must be enabled.
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsContentSecurityPolicyHeader" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion -->
+
+
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>X Frame Options Header</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->x_frame_options_header ? 'checked' : '' }} id="switchXFrameOptionsHeader" name="switchXFrameOptionsHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="IsXFrameOptionsHeader" {{ $settings->settingsSub->x_frame_options_header ? "checked" : "" }} />
+                                        <label class="form-check-label" for="IsXFrameOptionsHeader">
+                                            X Frame Options Header must be enabled.
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsXframeOptionsHeader" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion end -->
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>HSTS Header</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->hsts_header ? 'checked' : '' }} id="switchHSTS" name="switchHSTS" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isHSTS" {{ $settings->settingsSub->hsts_header ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isHSTS">
+                                            Every page must have HSTS enabled
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsHSTS" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>SSL Certificate</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->ssl_certificate_enable ? 'checked' : '' }} id="switchSSLCertificateEnableHeader" name="switchSSLCertificateEnableHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isSSLCertificateEnableType" {{ $settings->settingsSub->ssl_certificate_enable ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isSSLCertificateEnableType">
+                                            SSL Certificate
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsIsSSLCertificate" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Bad Content Type</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->bad_content_type ? 'checked' : '' }} id="switchBadContentTypeHeader" name="switchBadContentTypeHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isBadContentType" {{ $settings->settingsSub->bad_content_type ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isBadContentType">
+                                            Bad Content Type.
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsIsBadContentType" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Directory Browsing</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->folder_browsing_enable ? 'checked' : '' }} id="switchFolderBrowsingEnableHeader" name="switchFolderBrowsingEnableHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isFolderBrowsingEnable" {{ $settings->settingsSub->folder_browsing_enable ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isFolderBrowsingEnable">
+                                            Directory Browsing
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultisFolderBrowsingEnable" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <!-- on page tab content end -->
+
+            <!-- coding practices tab content start -->
+            <div class="tab-pane fade" id="v-pills-coding" role="tabpanel" aria-labelledby="v-pills-coding-tab" tabindex="0">
+                <div class="tab-content-area">
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>HTML Compression</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->html_compression ? "checked" : "" }} id="switchHTMLCompression" name="switchHTMLCompression" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="htmlCompression" {{ $settings->settingsSub->is_html_compression ? "checked" : "" }} />
+                                        <label class="form-check-label" for="htmlCompression">
+                                            HTML Code has to be compressed and minified
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsHTMLCompression" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>CSS Compression</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->css_compression ? "checked" : "" }} id="switchCSSCompression" name="switchCSSCompression" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="cssCompression" {{ $settings->settingsSub->is_css_compression ? "checked" : "" }} />
+                                        <label class="form-check-label" for="cssCompression">
+                                            CSS Code has to be compressed and minified
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsCSSCompression" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>JS Compression</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->js_compression ? "checked" : "" }} id="switchJSCompression" name="switchJSCompression" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="jsCompression" {{ $settings->settingsSub->is_js_compression ? "checked" : "" }} />
+                                        <label class="form-check-label" for="jsCompression">
+                                            All external JavaScript code must be compressed and minified
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsJSCompression" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion item -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>GZIP Compression</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->gzip_compression ? "checked" : "" }} id="switchGZIPCompression" name="switchGZIPCompression" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="gzipCompression" {{ $settings->settingsSub->is_gzip_compression ? "checked" : "" }} />
+                                        <label class="form-check-label" for="gzipCompression">
+                                            All external JavaScript code must be compressed and minified
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsGZIPCompression" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion end -->
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Nested Tables</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->nested_tables ? 'checked' : '' }} id="switchNestedTables" name="switchNestedTables" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="noNestedTables" {{ $settings->settingsSub->no_nested_tables ? "checked" : "" }} />
+                                        <label class="form-check-label" for="noNestedTables">
+                                            The HTML Page should not have any nested tables.
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsNestedTables" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- single accordion end -->
+
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>HTML Page Size</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->page_size ? 'checked' : '' }} id="switchPageSize" name="switchPageSize" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+
+                                    <div class="check-range">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" id="pageSize" {{ $settings->settingsSub->page_size ? "checked" : "" }} />
+                                            <label class="form-check-label" for="pageSize">
+                                                Maximum size of the HTML page should be
+                                                <input class="slider-input-text" type="number" id="pageSizeVal" value="{{$settings->settingsSub->page_size_val}}" min="0" max="100"> KB
+                                            </label>
+                                        </div>
+                                        <div class="slider-range">
+                                            <span class="span-left">0</span>
+                                            <input id="ex21" type="text" data-slider-id="slider22" class="slider-input" data-slider-min="0" data-slider-max="150" data-slider-step="1" data-slider-value="{{$settings->settingsSub->page_size_val}}" data-slider-rangeHighlights='[{ "start": 2, "end": 5, "class": "category1" },
                                                       { "start": 7, "end": 8, "class": "category2" },
                                                       { "start": 17, "end": 19 },
                                                       { "start": 17, "end": 24 }, //not visible -  out of slider range
-                                                      { "start": -3, "end": 19 }]'
-                      />
-                      <span class="span-right">150</span>
+                                                      { "start": -3, "end": 19 }]' />
+                                            <span class="span-right">150</span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsPageSize" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsPageSize"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion end -->
+                    <!-- single accordion end -->
 
 
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Frameset</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->frameset ? 'checked' : '' }} id="switchFrameset" name="switchFrameset"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Frameset</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->frameset ? 'checked' : '' }} id="switchFrameset" name="switchFrameset" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isFrameset" {{ $settings->settingsSub->no_frameset ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isFrameset">
+                                            Webpage should not be using any frameset tag
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsFrameset" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                  <div class="form-check">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="isFrameset" {{ $settings->settingsSub->no_frameset ? "checked" : "" }}
-                    />
-                    <label
-                      class="form-check-label"
-                      for="isFrameset"
-                    >
-                      Webpage should not be using any frameset tag
-                    </label>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultSettingsFrameset"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- single accordion end -->
+                    <!-- single accordion end -->
 
 
 
-           <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>Broken Links</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->broken_links ? 'checked' : '' }} id="switchBrokenLinksHeader" name="switchBrokenLinksHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isBrokenLinksEnable"
-                        {{ $settings->settingsSub->broken_links ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isBrokenLinksEnable"
-                      >
-                      Check for all broken links(links that do not have 200 status code)
-                      </label>
-                    </div>
-                    <div class="form-check">
-                      <input
-                        class="form-check-input hideInputCheck"
-                        type="checkbox"
-                        id="brokenLinksExcludeUrls"
-                        {{ $settings->settingsSub->broken_links_exclude_urls ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="brokenLinksExcludeUrls"
-                      >
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Broken Links</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->broken_links ? 'checked' : '' }} id="switchBrokenLinksHeader" name="switchBrokenLinksHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isBrokenLinksEnable" {{ $settings->settingsSub->broken_links ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isBrokenLinksEnable">
+                                            Check for all broken links(links that do not have 200 status code)
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input hideInputCheck" type="checkbox" id="brokenLinksExcludeUrls" {{ $settings->settingsSub->broken_links_exclude_urls ? "checked" : "" }} />
+                                        <label class="form-check-label" for="brokenLinksExcludeUrls">
                                             Exclude specific URLs from broken links check
-                    </label>
-                  </div>
-                  <div class="hideInputCheckElement">
-                    <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                                        </label>
+                                    </div>
+                                    <div class="hideInputCheckElement">
+                                        <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
                       Ignore List
                     </a>
-                    <div class="mt-2" id="brokenLinksExcludedPreview"></div>
-                  </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultBrokenLinksEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div> 
+                                        <div class="mt-2" id="brokenLinksExcludedPreview"></div>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultBrokenLinksEnable" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-           <!-- single accordion -->
-           <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>CSS caching</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->css_caching_enable ? 'checked' : '' }} id="switchCssCachingEnableHeader" name="switchCssCachingEnableHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>CSS caching</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->css_caching_enable ? 'checked' : '' }} id="switchCssCachingEnableHeader" name="switchCssCachingEnableHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isCssCachingEnable" {{ $settings->settingsSub->css_caching_enable ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isCssCachingEnable">
+                                            CSS caching
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultisCssCachingEnable" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isCssCachingEnable"
-                        {{ $settings->settingsSub->css_caching_enable ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isCssCachingEnable"
-                      >
-                      CSS caching
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultisCssCachingEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <!-- single accordion -->
-          <div class="accor-single-item">
-            <div class="accor-head">
-              <div class="accor-title-btn">
-                <button>
-                  <img
-                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
-                    alt="btn"
-                  />
-                </button>
-                <span>JS caching</span>
-              </div>
-              <div class="accor-head-switch">
-                <div class="toggle-button-cover">
-                  <div class="button-cover">
-                    <div class="button r" id="button-9">
-                      <input
-                        type="checkbox"
-                        class="checkbox"
-                        {{ $settings->js_caching_enable ? 'checked' : '' }} id="switchJsCachingEnableHeader" name="switchJsCachingEnableHeader"
-                      />
-                      <div class="knobs">
-                        <span></span>
-                      </div>
-                      <div class="layer"></div>
+                    <!-- single accordion -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>JS caching</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->js_caching_enable ? 'checked' : '' }} id="switchJsCachingEnableHeader" name="switchJsCachingEnableHeader" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content"><p>No Customisations are available for this test.</p>
+                                    <div class="form-check" style="display:none;">
+                                        <input class="form-check-input" type="checkbox" id="isJsCachingEnable" {{ $settings->settingsSub->js_caching_enable ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isJsCachingEnable">
+                                            JS caching
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button" style="display:none;">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultisJSCachingEnable" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="accor-body">
-              <div class="meta-content">
-                <div class="accor-content">
-                    <div class="form-check">
-                      <input
-                        class="form-check-input"
-                        type="checkbox"
-                        id="isJsCachingEnable"
-                        {{ $settings->settingsSub->js_caching_enable ? "checked" : "" }}
-                      />
-                      <label
-                        class="form-check-label"
-                        for="isJsCachingEnable"
-                      >
-                      JS caching
-                      </label>
-                    </div>
-                </div>
-                <div class="accor-content-button">
-                  <input
-                    class="reset-default btn btn_primary rounded-pill"
-                    type="submit"
-                    value="Reset"
-                    id="defaultisJSCachingEnable"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
 
-          
+
+                </div>
+            </div>
+            <!-- coding practices tab content end -->
         </div>
-      </div>
-      <!-- coding practices tab content end -->
-    </div>
 
-    <!-- default button start -->
-    <div class="reset-bottom-btn">
-      <input
-        class="reset-default btn btn_primary rounded-pill"
-        type="submit"
-        value="Reset"
-        id="defaultSettings"
-      />
+        <!-- default button start -->
+        <div class="reset-bottom-btn">
+            <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettings" />
+        </div>
+        <!-- default button end -->
     </div>
-    <!-- default button end -->
-  </div>
 </div>
 <!-- setting content and tab content area end -->
 
 
 
 
-@endsection
-
-@section("js")
+@endsection @section("js")
 <script>
     var addSitemapModal = new bootstrap.Modal(document.getElementById('addSitemapModal'), {
       keyboard: false
@@ -6717,7 +5067,7 @@
                 "data": obj,
                 "_method": 'PUT',
                 "_token": $('meta[name="csrf-token"]').attr('content'),
-			},       
+      },       
             success : function(data) {
                 let alertData = data
                 if(data.status === 0){

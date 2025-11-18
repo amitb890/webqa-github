@@ -1224,6 +1224,129 @@
 
 /* imran responsive design Starts */
 
+/* imran responsive design Starts */
+@media (min-width: 1500px) {
+      .fr4-d1 h3 {
+        max-width: 800px;
+        font-size: 35px;
+      }
+      .fr4-d1 p {
+          width: 100%;
+          max-width: 600px;
+          color: #fff;
+          font-size: 20px;
+          font-family: 'Poppins', sans-serif !important;
+          font-weight: 100 !important;
+      }
+      .fcwt2-d2-card-d:nth-child(1){
+          margin-left: 0px !important;
+          margin-right: 0px !important;
+      }
+      .fcwt2-d2-card-d:nth-child(4){
+          margin-left: 0px !important;
+      }
+      .fcwt2-d2-card-d:nth-child(5) {
+          margin-right: 0px !important;
+      }
+      .fcwt2-d2-card:nth-child(2) {
+        margin-left: 0;
+        margin-left: auto;
+        margin-right: 40px;
+      }
+      .fcwt2-d2-card:nth-child(6) {
+        margin-left: 0;
+        margin-left: auto;
+        margin-right: 40px;
+      }
+      .fcwt2-d2-card:nth-child(3) img {
+          margin-left: 40px;
+      }
+}
+@media (min-width: 1350px) {
+  .fcwt2-d2-card-d:nth-child(1) {
+      margin-left: 0px;
+      margin-right: 60px;
+  }
+
+
+  .fcwt2-d2-card-d:nth-child(4) {
+      margin-left: 30px;
+      align-items: flex-start;
+  }
+
+
+  .fcwt2-d2-card-d:nth-child(5) {
+    align-items: flex-end;
+      margin-left: 0px;
+      margin-right: 60px;
+  }
+
+
+  #fcat3-d2-card-6 {
+      padding-top: 50px;
+  }
+
+
+  #fcat3-d2-card-d-8 {
+      padding-top: 50px;
+  }
+
+  .fcwt2-d2-card-d:nth-child(8) {
+    align-items: flex-start;
+      margin-left:20px;
+  }
+  #fcat2-d2 #fcat3-d2-card{
+    position: relative !important;
+  }
+  #fcat2-d2 #fcat3-d2-card img{
+    position: absolute !important;
+    right: 0 !important;
+    top:0 !important;
+  }
+  #fcat2-d2 #fcat3-d2-card-7{
+    position: relative !important;
+  }
+  #fcat2-d2 #fcat3-d2-card-7 img{
+    position: absolute !important;
+    right: 0 !important;
+    top:0 !important;
+  }
+}
+@media (min-width: 1300px) {
+  .fcwt2-d2-card-d h3,
+  .fcwt2-d2-card-d p{
+    max-width: 100%;
+    text-align: center;
+  }
+  #fcat2-d2 #fcat3-d2-card-2{
+    position: relative;
+  }
+  #fcat2-d2 #fcat3-d2-card-2 img{
+    position: absolute;
+    left: 0;
+    top:0;
+  }
+  #fcat2-d2 #fcat3-d2-card-6{
+    position: relative;
+  }
+  #fcat2-d2 #fcat3-d2-card-6 img{
+    position: absolute;
+    left: 0;
+    top:30px;
+  }
+  /* .fcwt2-d2-card{
+    position: relative;
+  }
+  .fcwt2-d2-card img{
+    position: absolute;
+    left: 0;
+    top:0;
+  } */
+  .fcwt2-d2-card-d{
+    align-items: flex-end;
+  }
+}
+
 @media (max-width: 1300px) {
   .as1-center-h1{
     font-size: 50px;
@@ -1283,6 +1406,21 @@
   }
 }
 
+@media (max-width: 1280px) {
+          .fr4-d1 {
+            padding-top: 15px;
+            padding-bottom: 15px;
+            padding-left: 30px;
+        }
+            .fr4-d1 h3 {
+            width: 100%;
+            max-width: 600px;
+            font-size: 24px;
+        }
+}
+
+
+
 @media (max-width:1200px){
   .as1{
     margin-top: 70px;
@@ -1326,7 +1464,12 @@
   .fcwt3-d1 p{
     margin-left: 10px;
   }
-
+.fr4-d1 p {
+            max-width: 400px;
+    }
+  .as4-card{
+    min-height: 284px;
+  }
 }
 
 @media (max-width:1150px){
@@ -1382,6 +1525,10 @@
     overflow: hidden;
     margin-left: 30px;
   }
+  
+   .setting-content-area{
+    margin-left:10px;
+  }
 
 }
 @media (max-width:1100px){
@@ -1392,7 +1539,10 @@
     overflow: hidden;
     margin-left: 30px;
   }
-
+@media (max-width:1050px){
+  .fr4-d1 {
+    gap: 5px;
+}
 }
 @media (max-width:1000px){
   .as1-left-img2,
@@ -1476,6 +1626,15 @@
   } */
   .fcs5-card-question{
     gap: 20px;
+  }
+  .fr4-d1 h3 {
+      font-size: 22px;
+  }
+  .fr4-d1 p {
+    font-size: 14px;
+  }
+  .as4-card{
+    min-height: 353px;
   }
 }
 @media(max-width:950px){
@@ -1840,6 +1999,14 @@
   }
   .as3-top-p{
     text-align: center !important;
+  }
+  .as4-cards{
+    display: flex;
+    flex-direction: column;
+  }
+  .as4-card{
+    min-height: 150px !important;
+    max-height: 260px !important;
   }
 }
 @media (max-width:750px){

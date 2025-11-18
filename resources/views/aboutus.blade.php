@@ -192,7 +192,7 @@
                         <div class="as4-card">
                         <div class="as4-card-imgs">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="robotstxt checker icon 1">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/vector-(1).svg') }}" alt="robotstxt checker icon 2">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="robotstxt checker icon 2">
                         </div>
                         <h4>Robots.txt Tester</h4>
                         <p>Validate crawl directives and catch disallow rules or syntax issues before they block important pages from indexing. Great for migrations and template changes.</p>

@@ -44,11 +44,12 @@
   <body class="body_padding">
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRZQHZTZ"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- header main starts -->
+   <!-- header main starts -->
     <header id="headerMain" class="header_main genarel_header_main">
       <nav class="navbar_main">
         <div class="container-fluid container-fluid-tool-page header_home_page">
-          <a href="{{ route('index') }}" class="navbar-brand" style="margin-left:65px;">
+          <div class="container-fluid-inner">
+            <a href="{{ route('index') }}" class="navbar-brand">
             <img
               src="/new-assets/assets/images/webQA_logo.png"
               alt="WebQA"
@@ -56,37 +57,147 @@
               height="16"
               class="img-fluid"
             />
-          </a>
+            </a>
 
-          <ul class="genarel_header_items" style="gap:30px;margin-left: -704px;">
-            <li><a href="{{ route('tools-landing') }}">Tools</a></li>
-            
-            <li>
-              <div class="dropdown">
-                <a
-                  class="dropdown-toggle"
-                  href="https://webqa.co/features"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <span>Features</span>
-                </a>
+            <ul class="genarel_header_items">
+              <li>
+                <div class="dropdown dropdown2">
+                  <a
+                    class="dropdown-toggle"
+                    href="https://webqa.co/features"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <span>Features</span>
+                    <i  class="fa-solid fa-angle-down dropdown2-arrow"></i>
+                  </a>
 
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="https://webqa.co/features/webpage-audit">Webpage audit</a></li>
-                    <li><a class="dropdown-item" href="https://webqa.co/features/website-tracker">Website tracker</a></li>
-                    <li><a class="dropdown-item" href="https://webqa.co/features/settings">Settings</a></li>
-                    <li><a class="dropdown-item" href="https://webqa.co/features/reports">Reports</a></li>
-                </ul>
-              </div>
-            </li>
-            <li><a href="https://webqa.co/aboutus">About us</a></li>
-          </ul>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      
+                      <div class="dropdown-menu2">
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ url('/features/website-tracker') }}">Website Tracker</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ url('/features/settings') }}">Settings</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ url('/features/reports') }}">Reports</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ url('/features/webpage-audit') }}">Webpage Audit</a>
+                          </div>
+                          
+                        </li>
+                        <div class="no-grid">
+                            <button onclick="window.location='{{ url('/features') }}'">
+                            Features
+                          </button>
+                        </div>
+                      </div>
+                     
+                  </ul>
+                </div>
+              </li>
+              <li>
+                <div class="dropdown dropdown2">
+                  <a
+                    class="dropdown-toggle"
+                    href="https://webqa.co/tools"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <span>Tools</span>
+                    <i  class="fa-solid fa-angle-down dropdown2-arrow"></i>
+                  </a>
+
+                  <ul class="dropdown-menu dropdown-menu-end">
+                      
+                      <div class="dropdown-menu2">
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ route('tool', 'meta-title') }}">
+                              <img src="{{ asset('new-assets/assets/images/new-header-images/meta-tags.svg') }}" alt="">
+                            </a>
+                            <a href="{{ route('tool', 'meta-title') }}">Meta title</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ route('tool', 'broken-links') }}">
+                              <img src="{{ asset('new-assets/assets/images/new-header-images/security.svg') }}" alt="">
+                            </a>
+                            <a href="{{ route('tool', 'broken-links') }}">Security</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ route('tool', 'images') }}">
+                              <img src="{{ asset('new-assets/assets/images/new-header-images/images.svg') }}" alt="">
+                            </a>
+                            <a href="{{ route('tool', 'images') }}">Images</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ route('tool', 'google-page-speed-insights') }}">
+                              <img src="{{ asset('new-assets/assets/images/new-header-images/performances.svg') }}" alt="">
+                            </a>
+                            <a href="{{ route('tool', 'google-page-speed-insights') }}">Page Speed</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ route('tool', 'http-status-code') }}">
+                              <img src="{{ asset('new-assets/assets/images/new-header-images/on-page-elements.svg') }}" alt="">
+                            </a>
+                            <a href="{{ route('tool', 'http-status-code') }}">HTTP Status Code</a>
+                          </div>
+                          
+                        </li>
+                        <li class="dropdown-menu2-item">
+                          <div class="dm2i-div">
+                            <a href="{{ route('tool', 'google-core-web-vitals') }}">
+                              <img src="{{ asset('new-assets/assets/images/new-header-images/html-best-practices.svg') }}" alt="">
+                            </a>
+                            <a href="{{ route('tool', 'google-core-web-vitals') }}">Core web vitals</a>
+                          </div>
+                          
+                        </li>
+                        <div class="no-grid">
+                            <button onclick="window.location='{{ route('tools-landing') }}'">
+                            All Tools
+                          </button>
+                        </div>
+                      </div>
+                  </ul>
+                </div>
+              </li>
+              <li class="nav-item-Faq"><a href="https://webqa.co/test-archive/" >Previous Tests</a></li>
+              <li class="nav-item-Faq"><a href="https://webqa.co/articles/" >Articles</a></li>
+              <li class="nav-item-Faq"><a href="https://webqa.co/about" >About Us</a></li>
+            </ul>
+          </div>
           <div class="login_area">
                 @if(!Auth::user())
                 <a type="button" class="header_login" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
-                <a type="button" class="btn btn_primary rounded-pill" data-bs-toggle="modal" data-bs-target="#registerModal">Free Signup</a>
+                <a type="button" class="btn btn_primary rounded-pill btn_primary2" data-bs-toggle="modal" data-bs-target="#registerModal">Free Signup</a>
                 @else
                 <a href="{{route('dashboard')}}" class="btn btn_primary rounded-pill">Dashboard</a>
                 @endif

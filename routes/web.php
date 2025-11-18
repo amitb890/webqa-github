@@ -94,7 +94,7 @@ Route::get('/test', function(){
 
     https://www.vmware.com/in.html
 
-    \Artisan::call('migrate:refresh');
+    \Artisan::call('migrate:fresh');
     // $url = "https://www.setmore.com/free-plan";
     // $content = substr($url, strrpos($url, '/') + 1);;
     // echo $content;
@@ -108,9 +108,15 @@ Route::get('/test', function(){
 Route::get('/test-archive', [App\Http\Controllers\PagesController::class, 'testResults'])->name('testResults');
 Route::get('/webtests', [App\Http\Controllers\PagesController::class, 'getResults'])->name('get.results');
 
+
+Route::prefix('api')->group(function () {
+    Route::get('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'show']);
+    Route::post('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'store']);
+});
 Route::middleware('auth')->group(function () {
     Route::middleware('onboarding')->group(function () {
-        Route::get('website-tracker', [App\Http\Controllers\TrackerController::class, 'index'])->name('tracker');
+      Route::get('/test-archive-web-app', [App\Http\Controllers\PagesController::class, 'testResults'])->name('testResults');
+       Route::get('website-tracker', [App\Http\Controllers\TrackerController::class, 'index'])->name('tracker');
         Route::get('website-tracker-test', [App\Http\Controllers\TrackerController::class, 'indexTest'])->name('trackerTest');
         Route::get('dashboard', [App\Http\Controllers\PagesController::class, 'dashboard'])->name('dashboard');
         Route::get('/app-analysis/{ref_id?}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])
@@ -279,7 +285,7 @@ Route::get('/services/page-speed-optimization', function () {
 });
 
 
-Route::get('/aboutus', function () {
+Route::get('/about', function () {
     return view('aboutus');
 });
 Route::get('/features', function () {

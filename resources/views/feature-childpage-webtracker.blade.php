@@ -6,7 +6,7 @@
 @section('og-title', 'Website Tracker: One Live Table for Every URL | Webqa')
 @section('og-description', 'Monitor all metrics across your site in a single, filterable view. Group by directory, refresh results anytime, and export CSV/XLSX for easy hand-offs.')
 @section('og-url', 'https://webqa.co/features/website-tracker')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/features-website-tracker.png')
 @section('og-image-alt', 'Website tracker')
 
 @section("content")
