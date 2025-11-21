@@ -13,7 +13,7 @@ class AddCompletedUrlsToLighthouseTestsTable extends Migration
      */
     public function up()
     {
-        Schema::table('lighthouse_results', function (Blueprint $table) {
+        Schema::table('lighthouse_tests', function (Blueprint $table) {
             $table->json('completed_urls')->nullable();
         });
         

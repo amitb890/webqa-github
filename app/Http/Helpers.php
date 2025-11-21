@@ -686,51 +686,83 @@ class Helpers{
         return $this->checkResourceCaching($url, $html, 'script[src]', 'src');
     }
 
-    public function checkResourceCaching($url, $html, $selector, $attribute) {
+    public function checkResourceCaching($url, $html, $selector, $attribute)
+    {
         $crawler = new Crawler($html);
     
         $resourceUrls = [];
         $urlCache = [];
     
-        // Extract URLs based on selector and attribute
+        // Extract URLs
         $crawler->filter($selector)->each(function ($node) use (&$resourceUrls, $url, $attribute) {
             $resourceUrl = $node->attr($attribute);
+    
+            if (!$resourceUrl) return;
+    
+            // Convert relative → absolute
             if (strpos($resourceUrl, 'http') !== 0) {
                 $resourceUrl = rtrim($url, '/') . '/' . ltrim($resourceUrl, '/');
             }
+    
             $resourceUrls[] = $resourceUrl;
         });
     
-        // Remove duplicate URLs
-        $resourceUrls = array_unique($resourceUrls);
-        $reindexedUrls = array_values($resourceUrls);
-        // Perform parallel HTTP requests to check caching
-        $responses = Http::pool(fn ($pool) => array_map(fn ($resourceUrl) => $pool->head($resourceUrl), $resourceUrls));
+        // Remove duplicates
+        $resourceUrls = array_values(array_unique($resourceUrls));
     
-        foreach ($reindexedUrls as $index => $resourceUrl) {
+        // ✅ Send parallel HEAD requests with exception protection
+        $responses = Http::pool(function ($pool) use ($resourceUrls) {
+            return array_map(function ($resourceUrl) use ($pool) {
+                return $pool->withOptions([
+                    'verify' => false,
+                    'timeout' => 8,
+                    'allow_redirects' => true,
+                ])->head($resourceUrl);
+            }, $resourceUrls);
+        });
+    
+        // ✅ Process responses safely
+        foreach ($resourceUrls as $index => $resourceUrl) {
+    
             $response = $responses[$index];
     
-            if ($response->ok()) {
-                $cacheControlHeader = $response->header('Cache-Control');
-                $expiresHeader = $response->header('Expires');
+            // ✅ FIX 1 — if request failed, it returns an Exception object
+            if ($response instanceof \Exception) {
+                continue; // treat as non-cached
+            }
     
-                if ($cacheControlHeader || $expiresHeader) {
-                    $expiresTimestamp = strtotime($expiresHeader);
-                    $currentTimestamp = time();
+            // ✅ FIX 2 — ensure it was a valid response
+            if (!$response->ok()) {
+                continue;
+            }
+    
+            // ✅ Extract caching headers
+            $cacheControl = $response->header('Cache-Control');
+            $expires      = $response->header('Expires');
+    
+            if ($cacheControl || $expires) {
+    
+                $expiresTimestamp  = $expires ? strtotime($expires) : null;
+                $currentTimestamp  = time();
+    
+                $minutesRemaining = 0;
+    
+                if ($expiresTimestamp) {
                     $minutesRemaining = max(0, round(($expiresTimestamp - $currentTimestamp) / 60));
+                }
     
-                    if ($minutesRemaining != 0) {
-                        $urlCache[] = [
-                            'url' => $resourceUrl,
-                            'cacheExpiryTime' => $minutesRemaining,
-                        ];
-                    }
+                if ($minutesRemaining > 0) {
+                    $urlCache[] = [
+                        'url'             => $resourceUrl,
+                        'cacheExpiryTime' => $minutesRemaining,
+                    ];
                 }
             }
         }
     
         return $urlCache;
     }
+    
 
     
    

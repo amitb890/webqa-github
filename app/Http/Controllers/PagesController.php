@@ -8,6 +8,7 @@ use App\Models\Projects;
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
 use App\Models\TestResults;
+use Illuminate\Support\Str;
 use Helper;
 use AllLabels;
 use Goutte\Client;
@@ -264,35 +265,49 @@ class PagesController extends Controller
         return view('tests.index');
     }
     
-    public function getResults()
-        {
-            $query = CachedTest::query()
-                ->orderBy('created_at', 'desc');
+    public function getResults(Request $request)
+{
+    $projectUrl = $request->input('projectUrl'); // from DataTables ajax
+    $query = CachedTest::query()->orderBy('created_at', 'desc');
 
+    // ✅ Filter based on projectUrl content
+    if ($projectUrl) {
+        if (Str::contains($projectUrl, 'test-archive-web-app')) {
+            // Only include records where web_app = 1
+            $query->where('web_app', 1);
+
+            // Also restrict to logged-in user if authenticated
             if (Auth::check()) {
-                // $query->where('user_id', Auth::id());
+                $query->where('user_id', Auth::id());
             }
 
-            $query = $query->get();
-            
-            return DataTables::of($query)
-                    ->addColumn('report', function($row) {
-                        $url = url('analysis/' . $row->test_key); // generates http://local.webqa_3.com/analysis/{ref_id}
-
-                        return '<div class="report-cell">
-                            <a href="'.$url.'" target="_blank" class="report-link" title="Open URL">
-                                <span class="open-check">Open</span>
-                                <svg class="report-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                    <polyline points="15 3 21 3 21 9"></polyline>
-                                    <line x1="10" y1="14" x2="21" y2="3"></line>
-                                </svg>
-                            </a>
-                        </div>';
-                    })
-                ->rawColumns(['report'])
-                ->make(true);
+        } elseif (Str::contains($projectUrl, 'test-archive')) {
+            // Only include web_app = 0 (normal analysis)
+            $query->where('web_app', 0);
         }
+    }
+
+    // Retrieve filtered data
+    $results = $query->get();
+
+    return DataTables::of($results)
+        ->addColumn('report', function ($row) {
+            $url = url('analysis/' . $row->test_key);
+
+            return '<div class="report-cell">
+                <a href="' . $url . '" target="_blank" class="report-link" title="Open URL">
+                    <span class="open-check">Open</span>
+                    <svg class="report-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                    </svg>
+                </a>
+            </div>';
+        })
+        ->rawColumns(['report'])
+        ->make(true);
+}
     
     public function urlDiscovery(){
         return view("url-discovery");

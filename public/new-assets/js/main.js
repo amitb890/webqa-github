@@ -152,6 +152,267 @@ function displayAlertSwithProject(classVal, data){
   });
 
 
+  // Hover color effects for sidebar items
+$(".msbt-items, .msbl-items").hover(
+  function () {
+    $(this).find("a img").css(
+      "filter",
+      "brightness(0) saturate(100%) invert(43%) sepia(72%) saturate(1415%) hue-rotate(199deg) brightness(96%) contrast(94%)"
+    );
+    $(this).find("a p").css("color", "#417cec");
+  },
+  function () {
+    $(this).find("a img").css("filter", "");
+    $(this).find("a p").css("color", "");
+  }
+);
+
+// Restore pinned state
+const savedPinnedState = localStorage.getItem("sidebarPinned") === "true";
+$("#sidebar-pin").data("pinned", savedPinnedState);
+
+if (savedPinnedState) {
+  $("#sidebar-pin img")
+    .attr("src", "/new-assets/assets/images/new-sidebar/sidebar-pin-filled.svg")
+    .css("display", "block");
+
+  $(".main-sidebar-menu").css({ width: "200px" });
+  $(".hidden-left").css({ opacity: 1, visibility: "visible" });
+
+  localStorage.setItem("subSidebarOpen", "false");
+  $(".inner_content").css({ paddingLeft: "150px" }); // ✅ replaced margin-left
+}
+
+$("#sidebar-pin").data("sub-open", false);
+
+// Hover behavior for top & lower sidebar sections
+setTimeout(function () {
+  $(".main-sidebar-top, .main-sidebar-lower").hover(
+    function () {
+      if (!$("#sidebar-pin").data("pinned")) {
+        $(".main-sidebar-menu").stop(true, true).animate({ width: "200px" }, 200);
+        $(".main-sidebar-menu").addClass("expanded");
+        $("#sidebar-pin img").stop(true, true).fadeIn(200);
+        $(".hidden-left").stop(true, true).css({ opacity: 1, visibility: "visible" });
+      }
+    },
+    function (e) {
+      if (
+        !$("#sidebar-pin").data("pinned") &&
+        !$(e.relatedTarget).closest(".main-sidebar-menu, #sidebar-pin, .sub-sidebar").length
+      ) {
+        $(".main-sidebar-menu").stop(true, true).animate({ width: "50px" }, 200);
+        $(".main-sidebar-menu").removeClass("expanded");
+        $("#sidebar-pin img").stop(true, true).fadeOut(200);
+        $(".hidden-left").stop(true, true).css({ opacity: 0, visibility: "hidden" });
+
+        const $sub = $(".sub-sidebar");
+        if ($sub.hasClass("open")) {
+          $sub.removeClass("open");
+          setTimeout(() => $sub.css("display", "none"), 300);
+        }
+      }
+    }
+  );
+  initSubSidebarBehavior();
+}, 300);
+
+// Sub-sidebar logic
+function initSubSidebarBehavior() {
+  $("#reportsItem").off("click").on("click", function (e) {
+    e.stopPropagation();
+    $(".main-sidebar-menu, .sub-sidebar").off("mouseenter mouseleave");
+
+    const $sub = $(".sub-sidebar");
+    const isOpen = $sub.hasClass("open");
+
+    if (!isOpen) {
+      $sub.css("display", "block");
+      requestAnimationFrame(() => $sub.addClass("open"));
+
+      localStorage.setItem("subSidebarOpen", "true");
+
+      if ($("#sidebar-pin").data("pinned")) {
+        $(".inner_content").stop(true, true).animate({ paddingLeft: "335px" }, 200); // ✅
+      }
+
+      if (!$("#sidebar-pin").data("pinned")) {
+        $(".main-sidebar-menu").stop(true, true).animate({ width: "200px" }, 200);
+        $(".hidden-left").css({ opacity: 1, visibility: "visible" });
+      }
+
+      let sidebarHovered = true;
+      let subSidebarHovered = true;
+
+      $(".main-sidebar-menu").hover(
+        () => { sidebarHovered = true; },
+        () => { sidebarHovered = false; checkSidebarState(); }
+      );
+
+      $(".sub-sidebar").hover(
+        () => { subSidebarHovered = true; },
+        () => { subSidebarHovered = false; checkSidebarState(); }
+      );
+
+      function checkSidebarState() {
+        setTimeout(() => {
+          const $pin = $("#sidebar-pin");
+          if (!sidebarHovered && !subSidebarHovered && !$pin.data("pinned")) {
+            $sub.removeClass("open");
+            setTimeout(() => $sub.css("display", "none"), 300);
+
+            $(".main-sidebar-menu").stop(true, true).animate({ width: "50px" }, 200);
+            $(".main-sidebar-menu").removeClass("expanded");
+            $pin.find("img").stop(true, true).fadeOut(200);
+            $(".hidden-left").stop(true, true).css({ opacity: 0, visibility: "hidden" });
+          }
+        }, 150);
+      }
+    } else {
+      $sub.removeClass("open");
+      setTimeout(() => $sub.css("display", "none"), 300);
+
+      localStorage.setItem("subSidebarOpen", "false");
+
+      if ($("#sidebar-pin").data("pinned")) {
+        $(".inner_content").stop(true, true).animate({ paddingLeft: "150px" }, 200); // ✅
+      }
+    }
+  });
+}
+
+// Sidebar pin click behavior
+$("#sidebar-pin").click(function () {
+  const pinned = !$(this).data("pinned");
+  $(this).data("pinned", pinned);
+
+  localStorage.setItem("sidebarPinned", pinned);
+
+  if (pinned) {
+    $("#sidebar-pin img")
+      .attr("src", "/new-assets/assets/images/new-sidebar/sidebar-pin-filled.svg")
+      .stop(true, true)
+      .fadeIn(200)
+      .css("display", "block");
+
+    $(".main-sidebar-menu").stop(true, true).animate({ width: "200px" }, 200);
+    $(".hidden-left").stop(true, true).css({ opacity: 1, visibility: "visible" });
+
+    if ($(".sub-sidebar").hasClass("open")) {
+      $(".inner_content").stop(true, true).animate({ paddingLeft: "335px" }, 200); // ✅
+    } else {
+      $(".inner_content").stop(true, true).animate({ paddingLeft: "150px" }, 200); // ✅
+    }
+
+    $(".sub-sidebar").css({
+      position: "absolute",
+      left: "200px",
+      display: $(".sub-sidebar").hasClass("open") ? "block" : "none",
+    });
+
+  } else {
+    $("#sidebar-pin img")
+      .attr("src", "/new-assets/assets/images/new-sidebar/Layer_1.svg")
+      .stop(true, true)
+      .fadeOut(200);
+
+    $(".main-sidebar-top, .main-sidebar-lower").off("mouseenter mouseleave");
+    $(".main-sidebar-menu").stop(true, true).animate({ width: "50px" }, 200);
+    $(".hidden-left").stop(true, true).css({ opacity: 0, visibility: "hidden" });
+
+    $(".sub-sidebar").removeClass("open");
+    setTimeout(() => $(".sub-sidebar").css("display", "none"), 300);
+
+    $(".inner_content").stop(true, true).animate({ paddingLeft: "0px" }, 200); // ✅
+
+    setTimeout(function () {
+      $(".main-sidebar-top, .main-sidebar-lower").hover(
+        function () {
+          if (!$("#sidebar-pin").data("pinned")) {
+            $(".main-sidebar-menu").stop(true, true).animate({ width: "200px" }, 200);
+            $("#sidebar-pin img").stop(true, true).fadeIn(200);
+            $(".hidden-left").stop(true, true).css({ opacity: 1, visibility: "visible" });
+          }
+        },
+        function (e) {
+          if (
+            !$("#sidebar-pin").data("pinned") &&
+            !$(e.relatedTarget).closest(".main-sidebar-top, .main-sidebar-lower, #sidebar-pin, .sub-sidebar").length
+          ) {
+            $(".main-sidebar-menu").stop(true, true).animate({ width: "50px" }, 200);
+            $("#sidebar-pin img").stop(true, true).fadeOut(200);
+            $(".hidden-left").stop(true, true).css({ opacity: 0, visibility: "hidden" });
+            $(".sub-sidebar").removeClass("open");
+            setTimeout(() => $(".sub-sidebar").css("display", "none"), 300);
+          }
+        }
+      );
+    }, 300);
+  }
+});
+
+$(document).ready(function () {
+  $(".ssbl-item-top").click(function () {
+    const clickedItem = $(this);
+    const list = clickedItem.next("ul");
+    const subSidebarLower = $(".sub-sidebar-lower");
+
+    $(".ssbl-item-top").not(clickedItem).removeClass("active");
+    $(".ssbl-item-top").not(clickedItem).next("ul").slideUp(300);
+
+    clickedItem.toggleClass("active");
+    list.slideToggle(300);
+
+    const anyVisible = $(".sub-sidebar-lower ul:visible").length > 0;
+    subSidebarLower.toggleClass("open-scroll", anyVisible);
+  });
+});
+
+
+
+// So the features and tools dropdown in the header gets naviagted to their respective web pages
+
+
+// Remove Bootstrap's built-in click behavior for these specific dropdowns
+document.querySelectorAll('.dropdown-toggle').forEach(link => {
+  link.addEventListener('click', function (e) {
+    // Go straight to the href link
+    window.location.href = this.getAttribute('href');
+  });
+
+  // Hover → open dropdown
+  const parent = link.parentElement;
+
+  parent.addEventListener('mouseenter', () => {
+    const dropdown = bootstrap.Dropdown.getOrCreateInstance(link);
+    dropdown.show();
+  });
+
+  parent.addEventListener('mouseleave', () => {
+    const dropdown = bootstrap.Dropdown.getOrCreateInstance(link);
+    dropdown.hide();
+  });
+});
+
+
+
+
+document.querySelectorAll('.dropdown-toggle').forEach(link => {
+  link.addEventListener('click', function (e) {
+    const target = e.target.closest('a');
+    const dropdownMenu = target.nextElementSibling;
+
+    if (dropdownMenu && !dropdownMenu.classList.contains('show')) {
+      // First click → open dropdown
+      e.preventDefault();
+    } else {
+      // Second click → navigate to href
+      window.location.href = target.getAttribute('href');
+    }
+  });
+});
+
+
   // Element JS
   $(".customize_test").click(function () {
     modalCustomizer.toggle()

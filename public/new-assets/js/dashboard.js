@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 5, googleUrlsToCheck = 2, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   var recheckMax = 50, recheckGoogle = 1, recheckSingleMax = 50
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
@@ -2273,6 +2273,7 @@ $(document).ready(function () {
                       const interval = setInterval(async () => {
                           const response = await fetch(`/api/check-status-dashboard/${projectId}`);
                           const { status, results } = await response.json();
+
                           Controls.updateDashboardLoader(results)
             
 
@@ -2303,20 +2304,33 @@ $(document).ready(function () {
       
     }
 
-    static updateDashboardLoader(results){
-      let resultsTotal, total
-      total = urls.length
+  static updateDashboardLoader(results) {
+    if (!results) results = {};
 
-      if(results){
-        resultsTotal = Object.keys(results).length
-      }else{
-        resultsTotal = 0
-      }
+    const total = urls.length; // total URLs we are testing
+    let completedCount = 0;
 
-      const progress = getReportProgress(resultsTotal, total, false)
-      Controls.updateProgress(results, progress)
-    }
+    // Count completed URL jobs
+    Object.keys(results).forEach(url => {
+        const urlData = results[url];
+
+        // Check if URL-level job is completed or failed
+        // Here we assume the structure has 'status' inside each URL data
+        if (urlData && urlData.status === 'completed' || urlData.status === 'failed') {
+            completedCount++;
+        }
+        // If URL data is just object of labels, consider it done
+        else if (urlData && Object.keys(urlData).length > 0) {
+            completedCount++;
+        }
+    });
+
+    const progress = getReportProgress(completedCount, total, false);
+
+    Controls.updateProgress(results, progress, completedCount, total);
+  }
     
+
 
     static finalizeGoogleElements(results){
       const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
@@ -2333,7 +2347,6 @@ $(document).ready(function () {
 
 
     static updateGoogleCards(results){
-      console.log(results)
       let resultsTotal, total
       total = googleUrlsToCheck
 
@@ -2711,7 +2724,7 @@ $(document).ready(function () {
     static buildDashboard(){
         DB.getTestData(projectId)
         .done(function(data) {
-            const testDetails = Controls.updateTestDataForm(JSON.parse(data.test_details.results))
+            const testDetails = data.results
             const project = data.project
             $(".dashboard_top_items_main").html("")
             UI.buildWidgetSidebar()
@@ -2729,6 +2742,7 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
+                console.log("Dashboard finished")
                 Controls.buildGoogleElements()
             });
             
@@ -3174,30 +3188,25 @@ $(document).ready(function () {
       UI.updateRecheckButtonState(false)
     }
 
-    static updateProgress(results, progress){
+    static updateProgress(results, progress, completedCount, total){
         if(results){
           UI.updateProgressBar(progress)
-          const index = Object.keys(results).length
+
+          
+
+          document.querySelectorAll(".preparing_list").forEach(li=>{
+            li.querySelector(".taly-done").textContent = completedCount
 
 
-        
-
-          for (const [key, value] of Object.entries(results)) {
-            if(!urlUpdatedList.includes(key)){
-              if(value){
-                for (const [key1, value1] of Object.entries(results[key])) {
-                  UI.updateIndividualProgress(key1, index)
-                }
-                urlUpdatedList.push(key)
-              }else{
-                allLabels.forEach((label, i)=>{
-                  UI.updateIndividualProgress(label.db_name, index)
-                })
-                urlUpdatedList.push(key)
-              }
+            // update image
+            if(total === completedCount){
+              const svg = `<svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>`
+              li.querySelector("img").remove()
+              const html = svg + li.querySelector("p").innerHTML
+              li.querySelector("p").innerHTML = html
             }
-  
-          }
+          })
+
         }
     }
 
@@ -3245,13 +3254,15 @@ $(document).ready(function () {
       $.ajax({
         url : `/test/start-dashboard-test`,
         type : 'POST',
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         data: {
             "urls": urlsUpdated,
             "project_id": projectId,
             "test_type": type,
             "recheck_label": recheck_label,
             "_method": 'POST',
-            "_token": $('meta[name="csrf-token"]').attr('content'),
         },       
         success : function(data) {
         },

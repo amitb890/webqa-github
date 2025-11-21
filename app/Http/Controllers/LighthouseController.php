@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\RunLighthouseTest;
 use App\Models\LighthouseTest;
+use App\Models\LighthouseResult;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Controllers\ProjectsController;
@@ -28,35 +29,64 @@ class LighthouseController extends Controller
 
         $testId = Str::uuid();
 
-        $lighthouseTest = LighthouseTest::create([
+
+
+        $test = LighthouseTest::create([
             'test_id' => $testId,
+            'project_id' => $request->project_id,
             'user_id' => 8,
-            'project_id' => $project_id,
-            'urls' => json_encode($urls),
-            'status' => 'in_progress'
+            'urls' => json_encode($request->urls),
+            'status' => 'in_progress',
+        ]);
+    
+        dispatch(new RunLighthouseTest($test->id))->onQueue('lighthouse');
+    
+        return response()->json([
+            'message' => 'Test started successfully',
+            'test_id' => $test->id,
         ]);
 
 
-        // In your controller or main job:
-        foreach ($urls as $urlData) {
-            RunLighthouseTest::dispatch($lighthouseTest->id, $urlData['url']);
-        }
 
 
-        return response()->json(['testId' => $testId]);
+
     }
 
     public function checkStatus($projectId)
     {
+
+
         $lighthouseTest = LighthouseTest::where('project_id', $projectId)->first();
 
         if (!$lighthouseTest) {
             return response()->json(['error' => 'Test ID not found.'], 404);
         }
 
+        // Get URL-level results
+        $details = LighthouseResult::where('test_id', $lighthouseTest->id)->get();
+
+
+        
+        $completedCount = 0;
+
+        foreach ($details as $detail) {
+            if (in_array($detail->status, ['completed', 'failed'])) {
+                $completedCount++;
+            }
+        }
+    
+        // Determine main dashboard test status
+        $status = 'in_progress';
+        if ($details->count() > 0 && $completedCount === $details->count()) {
+            $status = 'completed';
+        }
+    
+        // Optionally update the main DashboardTests status in DB
+        $lighthouseTest->update(['status' => $status]);
+    
         return response()->json([
-            'status' => $lighthouseTest->status,
-            'results' => json_decode($lighthouseTest->results)
+            'status' => $status,
+            'results' => $details
         ]);
     }
 }

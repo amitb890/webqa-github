@@ -196,11 +196,21 @@ return [
     ],
 
     'environments' => [
+        'supervisors' => [
+            'default' => [
+                'connection' => 'redis',
+                'queue' => ['default', 'lighthouse'],
+                'balance' => 'auto',
+                'processes' => 10,
+                'tries' => 3,
+                'timeout' => 1800, // 30 minutes
+            ],
+        ],
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default'],
-                'balance' => 'simple',
+                'queue' => ['default', 'lighthouse'],
+                'balance' => 'auto',
                 'maxProcesses' => 10,
                 'memory' => 512,
                 'tries' => 1,

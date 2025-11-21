@@ -4141,7 +4141,7 @@
 
     // Initialize broken links excluded preview on page load
     $(document).ready(function() {
-      const excludedUrls = settings.settingsSub.broken_links_excluded_urls;
+      const excludedUrls = settings.settings_sub.broken_links_excluded_urls;
       if (excludedUrls) {
         const urlsArray = excludedUrls.split(',').map(url => url.trim()).filter(url => url);
         updateBrokenLinksExcludedPreview(urlsArray);

@@ -705,741 +705,479 @@ class TestDetailsController extends Controller
         echo json_encode($object);
     }
 
-    public function googleInsights(Request $request){
+    public function googleInsights(Request $request)
+    {
         $helpers = new Helper();
-
-        $elements = json_decode($request->input("data"));
-        $totalElements = 0;
-        $desktopOverallAvg = 0;
+    
+        $rows = json_decode($request->input("data"), true);
+        if (!is_array($rows)) {
+            return response()->json(['error' => 'Invalid payload']);
+        }
+    
+        // Counters
+        $desktopCount = 0;
+        $desktopSum = 0;
         $desktopGood = 0;
         $desktopAvg = 0;
         $desktopPoor = 0;
-
-        $mobileOverallAvg = 0;
+    
+        $mobileCount = 0;
+        $mobileSum = 0;
         $mobileGood = 0;
         $mobileAvg = 0;
         $mobilePoor = 0;
-
-        $desktopStatus = true;
-
-        foreach($elements as $element){
-                // Skip if this element is an error object
-                if (!isset($element->desktop) || !isset($element->mobile)) {
-                    continue;
-                }
-                $totalElements++;
-                $desktopOverallAvg+=$element->desktop->performance_score;
-                $mobileOverallAvg+=$element->mobile->performance_score;
-
-                // desktop
-                if($element->desktop->performance_score >= 90){
-                    $desktopGood++;
-                }
-                if($element->desktop->performance_score >= 50 &&  $element->desktop->performance_score < 90){
-                    $desktopAvg++;
-                }
-                if($element->desktop->performance_score < 50){
-                    $desktopPoor++;
-                }
-
-
-                // mobile
-                if($element->mobile->performance_score >= 90){
-                    $mobileGood++;
-                }
-                if($element->mobile->performance_score >= 50 &&  $element->mobile->performance_score < 90){
-                    $mobileAvg++;
-                }
-                if($element->mobile->performance_score < 50){
-                    $mobilePoor++;
-                }
+    
+        foreach ($rows as $row) {
+    
+            // Skip anything not completed
+            if (($row['status'] ?? '') !== 'completed') {
+                continue;
+            }
+    
+            // Must have strategy + data
+            if (!isset($row['strategy']) || !isset($row['data'])) {
+                continue;
+            }
+    
+            // Decode data field
+            $data = json_decode($row['data'], true);
+            if (!is_array($data)) {
+                continue;
+            }
+    
+            $score = floatval($data['performance_score'] ?? 0);
+            $strategy = $row['strategy'];
+    
+            // Desktop
+            if ($strategy === 'desktop') {
+                $desktopCount++;
+                $desktopSum += $score;
+    
+                if ($score >= 90) $desktopGood++;
+                elseif ($score >= 50) $desktopAvg++;
+                else $desktopPoor++;
+            }
+    
+            // Mobile
+            if ($strategy === 'mobile') {
+                $mobileCount++;
+                $mobileSum += $score;
+    
+                if ($score >= 90) $mobileGood++;
+                elseif ($score >= 50) $mobileAvg++;
+                else $mobilePoor++;
+            }
         }
-
-        if ($totalElements > 0) {
-            $desktopOverallAvg = intVal($desktopOverallAvg/$totalElements);
-            $mobileOverallAvg = intVal($mobileOverallAvg/$totalElements);
-        } else {
-            $desktopOverallAvg = 0;
-            $mobileOverallAvg = 0;
-        }
-
-        $colorDesktop = $helpers->getGoogleInsightsColorByScore($desktopOverallAvg);
-        $colorMobile = $helpers->getGoogleInsightsColorByScore($mobileOverallAvg);
-
-
+    
+        // Safely compute averages
+        $desktopAvgScore = $desktopCount > 0 ? intval($desktopSum / $desktopCount) : 0;
+        $mobileAvgScore  = $mobileCount > 0 ? intval($mobileSum / $mobileCount) : 0;
+    
+        // Build response
         $object = new \stdClass();
-        $object->totalUrls = $totalElements;
-        $object->desktopOverallAvg = $desktopOverallAvg;
+        $object->totalUrls = max($desktopCount, $mobileCount); // number of URLs tested
+    
+        $object->desktopOverallAvg = $desktopAvgScore;
         $object->desktopGood = $desktopGood;
         $object->desktopAvg = $desktopAvg;
         $object->desktopPoor = $desktopPoor;
-
-        $object->mobileOverallAvg = $mobileOverallAvg;
+    
+        $object->mobileOverallAvg = $mobileAvgScore;
         $object->mobileGood = $mobileGood;
         $object->mobileAvg = $mobileAvg;
         $object->mobilePoor = $mobilePoor;
-
-        $object->colorDesktop = $colorDesktop;
-        $object->colorMobile = $colorMobile;
-
-        echo json_encode($object); 
-    }
-
-    public function googleLighthouse(Request $request){
-        $helpers = new Helper();
-
-        $elements = json_decode($request->input("data"));
-        $totalElements = 0;
-
-        $desktopAccAvg = 0;
-        $desktopPerAvg = 0;
-        $desktopSeoAvg = 0;
-        $desktopBPAvg = 0;
-
-        $desktopGoodPer = 0;
-        $desktopAvgPer = 0;
-        $desktopPoorPer = 0;
-
-        $desktopGoodAcc = 0;
-        $desktopAvgAcc = 0;
-        $desktopPoorAcc = 0;
-
-        $desktopGoodBP = 0;
-        $desktopAvgBP = 0;
-        $desktopPoorBP = 0;
-
-        $desktopGoodSeo = 0;
-        $desktopAvgSeo = 0;
-        $desktopPoorSeo = 0;
-
-
     
-        // mobile
-        $mobileAccAvg = 0;
-        $mobilePerAvg = 0;
-        $mobileSeoAvg = 0;
-        $mobileBPAvg = 0;
-
-        $mobileGoodPer = 0;
-        $mobileAvgPer = 0;
-        $mobilePoorPer = 0;
-
-        $mobileGoodAcc = 0;
-        $mobileAvgAcc = 0;
-        $mobilePoorAcc = 0;
-
-        $mobileGoodBP = 0;
-        $mobileAvgBP = 0;
-        $mobilePoorBP = 0;
-
-        $mobileGoodSeo = 0;
-        $mobileAvgSeo = 0;
-        $mobilePoorSeo = 0;
-
-
-        foreach($elements as $element){
-                if (!isset($element->desktop) || !isset($element->mobile)) {
-                    continue;
-                }
-                $totalElements++;
-                $desktopAccAvg+=$element->desktop->accessibility_score;
-                $desktopPerAvg+=$element->desktop->performance_score;
-                $desktopBPAvg+=$element->desktop->best_practices_score;
-                $desktopSeoAvg+=$element->desktop->seo_score;
-
-                $mobileAccAvg+=$element->mobile->accessibility_score;
-                $mobilePerAvg+=$element->mobile->performance_score;
-                $mobileBPAvg+=$element->mobile->best_practices_score;
-                $mobileSeoAvg+=$element->mobile->seo_score;
-
-                // desktop
-                if($element->desktop->performance_score >= 90){ // performance
-                    $desktopGoodPer++;
-                }
-                if($element->desktop->performance_score >= 50 &&  $element->desktop->performance_score < 90){
-                    $desktopAvgPer++;
-                }
-                if($element->desktop->performance_score < 50){
-                    $desktopPoorPer++;
-                }
-
-                if($element->desktop->accessibility_score >= 90){ // accessibility
-                    $desktopGoodAcc++;
-                }
-                if($element->desktop->accessibility_score >= 50 &&  $element->desktop->accessibility_score < 90){
-                    $desktopAvgAcc++;
-                }
-                if($element->desktop->accessibility_score < 50){
-                    $desktopPoorAcc++;
-                }
-
-                if($element->desktop->best_practices_score >= 90){ // best practices
-                    $desktopGoodBP++;
-                }
-                if($element->desktop->best_practices_score >= 50 &&  $element->desktop->best_practices_score < 90){
-                    $desktopAvgBP++;
-                }
-                if($element->desktop->best_practices_score < 50){
-                    $desktopPoorBP++;
-                }
-
-                if($element->desktop->seo_score >= 90){ // seo
-                    $desktopGoodSeo++;
-                }
-                if($element->desktop->seo_score >= 50 &&  $element->desktop->seo_score < 90){
-                    $desktopAvgSeo++;
-                }
-                if($element->desktop->seo_score < 50){
-                    $desktopPoorSeo++;
-                }
-
-
-
-                // mobile
-                if($element->mobile->performance_score >= 90){ // performance
-                    $mobileGoodPer++;
-                }
-                if($element->mobile->performance_score >= 50 &&  $element->mobile->performance_score < 90){
-                    $mobileAvgPer++;
-                }
-                if($element->mobile->performance_score < 50){
-                    $mobilePoorPer++;
-                }
-
-                if($element->mobile->accessibility_score >= 90){ // accessibility
-                    $mobileGoodAcc++;
-                }
-                if($element->mobile->accessibility_score >= 50 &&  $element->mobile->accessibility_score < 90){
-                    $mobileAvgAcc++;
-                }
-                if($element->mobile->accessibility_score < 50){
-                    $mobilePoorAcc++;
-                }
-
-                if($element->desktop->best_practices_score >= 90){ // best practices
-                    $mobileGoodBP++;
-                }
-                if($element->desktop->best_practices_score >= 50 &&  $element->desktop->best_practices_score < 90){
-                    $mobileAvgBP++;
-                }
-                if($element->desktop->best_practices_score < 50){
-                    $mobilePoorBP++;
-                }
-
-                if($element->mobile->seo_score >= 90){ // seo
-                    $mobileGoodSeo++;
-                }
-                if($element->mobile->seo_score >= 50 &&  $element->mobile->seo_score < 90){
-                    $mobileAvgSeo++;
-                }
-                if($element->mobile->seo_score < 50){
-                    $mobilePoorSeo++;
-                }
-        }
-
-        if ($totalElements > 0) {
-            $desktopAccAvg = $desktopAccAvg/$totalElements;
-            $desktopPerAvg = $desktopPerAvg/$totalElements;
-            $desktopBPAvg = $desktopBPAvg/$totalElements;
-            $desktopSeoAvg = $desktopSeoAvg/$totalElements;
-            $mobileAccAvg = $mobileAccAvg/$totalElements;
-            $mobilePerAvg = $mobilePerAvg/$totalElements;
-            $mobileBPAvg = $mobileBPAvg/$totalElements;
-            $mobileSeoAvg = $mobileSeoAvg/$totalElements;
-        } else {
-            $desktopAccAvg = $desktopPerAvg = $desktopBPAvg = $desktopSeoAvg = 0;
-            $mobileAccAvg = $mobilePerAvg = $mobileBPAvg = $mobileSeoAvg = 0;
-        }
-
-        
-        // color
-        $colorPerDesktop = $helpers->getGoogleInsightsColorByScore($desktopPerAvg);
-        $colorPerMobile = $helpers->getGoogleInsightsColorByScore($mobilePerAvg);
-
-        $colorAccDesktop = $helpers->getGoogleInsightsColorByScore($desktopAccAvg);
-        $colorAccMobile = $helpers->getGoogleInsightsColorByScore($mobileAccAvg);
-
-        $colorBPDesktop = $helpers->getGoogleInsightsColorByScore($desktopBPAvg);
-        $colorBPMobile = $helpers->getGoogleInsightsColorByScore($mobileBPAvg);
-
-        $colorSeoDesktop = $helpers->getGoogleInsightsColorByScore($desktopSeoAvg);
-        $colorSeoMobile = $helpers->getGoogleInsightsColorByScore($mobileSeoAvg);
-
-        $object = new \stdClass();
-        $object->totalUrls = $totalElements;
-        $object->desktopAccAvg = $desktopAccAvg;
-        $object->desktopPerAvg = $desktopPerAvg;
-        $object->desktopSeoAvg = $desktopSeoAvg;
-        $object->desktopBPAvg = $desktopBPAvg;
-
-        $object->desktopGoodPer = $desktopGoodPer;
-        $object->desktopAvgPer = $desktopAvgPer;
-        $object->desktopPoorPer = $desktopPoorPer;
-
-        $object->desktopGoodAcc = $desktopGoodAcc;
-        $object->desktopAvgAcc = $desktopAvgAcc;
-        $object->desktopPoorAcc = $desktopPoorAcc;
-
-        $object->desktopGoodBP = $desktopGoodBP;
-        $object->desktopAvgBP = $desktopAvgBP;
-        $object->desktopPoorBP = $desktopPoorBP;
-
-        $object->desktopGoodSeo = $desktopGoodSeo;
-        $object->desktopAvgSeo = $desktopAvgSeo;
-        $object->desktopPoorSeo = $desktopPoorSeo;
-
-
-
-        // mobile
-        $object->mobileAccAvg = $mobileAccAvg;
-        $object->mobilePerAvg = $mobilePerAvg;
-        $object->mobileSeoAvg = $mobileSeoAvg;
-        $object->mobileBPAvg = $mobileBPAvg;
-
-        $object->mobileGoodPer = $mobileGoodPer;
-        $object->mobileAvgPer = $mobileAvgPer;
-        $object->mobilePoorPer = $mobilePoorPer;
-
-        $object->mobileGoodAcc = $mobileGoodAcc;
-        $object->mobileAvgAcc = $mobileAvgAcc;
-        $object->mobilePoorAcc = $mobilePoorAcc;
-
-        $object->mobileGoodBP = $mobileGoodBP;
-        $object->mobileAvgBP = $mobileAvgBP;
-        $object->mobilePoorBP = $mobilePoorBP;
-
-        $object->mobileGoodSeo = $mobileGoodSeo;
-        $object->mobileAvgSeo = $mobileAvgSeo;
-        $object->mobilePoorSeo = $mobilePoorSeo;
-
-        // color
-        $object->colorPerDesktop = $colorPerDesktop;
-        $object->colorPerMobile = $colorPerMobile;
-
-        $object->colorAccDesktop = $colorAccDesktop;
-        $object->colorAccMobile = $colorAccMobile;
-
-        $object->colorBPDesktop = $colorBPDesktop;
-        $object->colorBPMobile = $colorBPMobile;
-
-        $object->colorSeoDesktop = $colorSeoDesktop;
-        $object->colorSeoMobile = $colorSeoMobile;
-
-
-
-
+        $object->colorDesktop = $helpers->getGoogleInsightsColorByScore($desktopAvgScore);
+        $object->colorMobile = $helpers->getGoogleInsightsColorByScore($mobileAvgScore);
+    
         echo json_encode($object); 
     }
-
-    public function googleCoreWebVitals(Request $request){
-        $helpers = new Helper();
-
-        $elements = json_decode($request->input("data"));
-        $totalElements = 0;
-
-        $desktopLCPAvg = 0;
-        $desktopFCPAvg = 0;
-        $desktopCLSAvg = 0;
-        $desktopFIDAvg = 0;
-        $desktopTTIAvg = 0;
-        $desktopSIAvg = 0;
-        $desktopTBTAvg = 0;
-
-        $desktopGoodLCP = 0;
-        $desktopAvgLCP = 0;
-        $desktopPoorLCP = 0;
-
-        $desktopGoodFCP = 0;
-        $desktopAvgFCP = 0;
-        $desktopPoorFCP = 0;
-
-        $desktopGoodCLS = 0;
-        $desktopAvgCLS = 0;
-        $desktopPoorCLS = 0;
-
-        $desktopGoodFID = 0;
-        $desktopAvgFID = 0;
-        $desktopPoorFID = 0;
-
-        $desktopGoodTTI = 0;
-        $desktopAvgTTI = 0;
-        $desktopPoorTTI = 0;
-
-        $desktopGoodSI = 0;
-        $desktopAvgSI = 0;
-        $desktopPoorSI = 0;
-
-        $desktopGoodTBT = 0;
-        $desktopAvgTBT = 0;
-        $desktopPoorTBT = 0;
-
-
-        // MOBILE
-        $mobileLCPAvg = 0;
-        $mobileFCPAvg = 0;
-        $mobileCLSAvg = 0;
-        $mobileFIDAvg = 0;
-        $mobileTTIAvg = 0;
-        $mobileSIAvg = 0;
-        $mobileTBTAvg = 0;
-
-        $mobileGoodLCP = 0;
-        $mobileAvgLCP = 0;
-        $mobilePoorLCP = 0;
-
-        $mobileGoodFCP = 0;
-        $mobileAvgFCP = 0;
-        $mobilePoorFCP = 0;
-
-        $mobileGoodCLS = 0;
-        $mobileAvgCLS = 0;
-        $mobilePoorCLS = 0;
-
-        $mobileGoodFID = 0;
-        $mobileAvgFID = 0;
-        $mobilePoorFID = 0;
-
-        $mobileGoodTTI = 0;
-        $mobileAvgTTI = 0;
-        $mobilePoorTTI = 0;
-
-        $mobileGoodSI = 0;
-        $mobileAvgSI = 0;
-        $mobilePoorSI = 0;
-
-        $mobileGoodTBT = 0;
-        $mobileAvgTBT = 0;
-        $mobilePoorTBT = 0;
-
-
-        foreach($elements as $element){
-                if (!isset($element->desktop) || !isset($element->mobile)) {
-                    continue;
-                }
-                $totalElements++;
-
-                // DESKTOP AVG SCORES
-                $desktopLCPAvg+=$element->desktop->largest_contentful_paint;
-                $desktopFCPAvg+=$element->desktop->first_contentful_paint;
-                $desktopCLSAvg+=$element->desktop->cumulative_layout_shift;
-                $desktopFIDAvg+=$element->desktop->max_potential_fid;
-                $desktopTTIAvg+=$element->desktop->interactive;
-                $desktopSIAvg+=$element->desktop->speed_index;
-                $desktopTBTAvg+=$element->desktop->total_blocking_time;
-
-                // MOBILE AVG SCORES
-                $mobileLCPAvg+=$element->mobile->largest_contentful_paint;
-                $mobileFCPAvg+=$element->mobile->first_contentful_paint;
-                $mobileCLSAvg+=$element->mobile->cumulative_layout_shift;
-                $mobileFIDAvg+=$element->mobile->max_potential_fid;
-                $mobileTTIAvg+=$element->mobile->interactive;
-                $mobileSIAvg+=$element->mobile->speed_index;
-                $mobileTBTAvg+=$element->mobile->total_blocking_time;
-
-                // desktop
-                if($element->desktop->largest_contentful_paint <= 3){ // LCP
-                    $desktopGoodLCP++;
-                }
-                if($element->desktop->largest_contentful_paint > 3 &&  $element->desktop->largest_contentful_paint < 4.5){
-                    $desktopAvgLCP++;
-                }
-                if($element->desktop->largest_contentful_paint >= 4.5){
-                    $desktopPoorLCP++;
-                }
-
-
-                if($element->desktop->first_contentful_paint <= 3){ // FCP
-                    $desktopGoodFCP++;
-                }
-                if($element->desktop->first_contentful_paint > 3 &&  $element->desktop->first_contentful_paint <= 4.5){
-                    $desktopAvgFCP++;
-                }
-                if($element->desktop->first_contentful_paint > 4.5){
-                    $desktopPoorFCP++;
-                }
-
-
-                if($element->desktop->cumulative_layout_shift <= 0.1){ // CLS
-                    $desktopGoodCLS++;
-                }
-                if($element->desktop->cumulative_layout_shift > 0.1 &&  $element->desktop->cumulative_layout_shift <= 0.25){
-                    $desktopAvgCLS++;
-                }
-                if($element->desktop->cumulative_layout_shift >= 0.25){
-                    $desktopPoorCLS++;
-                }
-
-
-                if($element->desktop->max_potential_fid <= 100){ // FID
-                    $desktopGoodFID++;
-                }
-                if($element->desktop->max_potential_fid > 100 &&  $element->desktop->max_potential_fid <= 330){
-                    $desktopAvgFID++;
-                }
-                if($element->desktop->max_potential_fid > 330){
-                    $desktopPoorFID++;
-                }
-
-
-                if($element->desktop->total_blocking_time <= 100){ // TBT
-                    $desktopGoodTBT++;
-                }
-                if($element->desktop->total_blocking_time > 100 &&  $element->desktop->total_blocking_time <= 330){
-                    $desktopAvgTBT++;
-                }
-                if($element->desktop->total_blocking_time > 330){
-                    $desktopPoorTBT++;
-                }
-
-
-                if($element->desktop->speed_index <= 2){ // SI
-                    $desktopGoodSI++;
-                }
-                if($element->desktop->speed_index > 2 &&  $element->desktop->speed_index <= 7){
-                    $desktopAvgSI++;
-                }
-                if($element->desktop->speed_index > 7){
-                    $desktopPoorSI++;
-                }
-
-
-                if($element->desktop->interactive <= 2){ // TTI
-                    $desktopGoodTTI++;
-                }
-                if($element->desktop->interactive > 2 &&  $element->desktop->interactive <= 7){
-                    $desktopAvgTTI++;
-                }
-                if($element->desktop->interactive > 7){
-                    $desktopPoorTTI++;
-                }
-
-
-
-
-                // mobile
-                if($element->mobile->largest_contentful_paint <= 3){ // LCP
-                    $mobileGoodLCP++;
-                }
-                if($element->mobile->largest_contentful_paint > 3 &&  $element->mobile->largest_contentful_paint < 4.5){
-                    $mobileAvgLCP++;
-                }
-                if($element->mobile->largest_contentful_paint >= 4.5){
-                    $mobilePoorLCP++;
-                }
-
-
-                if($element->mobile->first_contentful_paint <= 3){ // FCP
-                    $mobileGoodFCP++;
-                }
-                if($element->mobile->first_contentful_paint > 3 &&  $element->mobile->first_contentful_paint <= 4.5){
-                    $mobileAvgFCP++;
-                }
-                if($element->mobile->first_contentful_paint > 4.5){
-                    $mobilePoorFCP++;
-                }
-
-
-                if($element->mobile->cumulative_layout_shift <= 0.1){ // CLS
-                    $mobileGoodCLS++;
-                }
-                if($element->mobile->cumulative_layout_shift > 0.1 &&  $element->mobile->cumulative_layout_shift <= 0.25){
-                    $mobileAvgCLS++;
-                }
-                if($element->mobile->cumulative_layout_shift >= 0.25){
-                    $mobilePoorCLS++;
-                }
-
-
-                if($element->mobile->max_potential_fid <= 100){ // FID
-                    $mobileGoodFID++;
-                }
-                if($element->mobile->max_potential_fid > 100 &&  $element->mobile->max_potential_fid <= 330){
-                    $mobileAvgFID++;
-                }
-                if($element->mobile->max_potential_fid > 330){
-                    $mobilePoorFID++;
-                }
-
-
-                if($element->mobile->total_blocking_time <= 100){ // TBT
-                    $mobileGoodTBT++;
-                }
-                if($element->mobile->total_blocking_time > 100 &&  $element->mobile->total_blocking_time <= 330){
-                    $mobileAvgTBT++;
-                }
-                if($element->mobile->total_blocking_time > 330){
-                    $mobilePoorTBT++;
-                }
-
-
-                if($element->mobile->speed_index <= 2){ // SI
-                    $mobileGoodSI++;
-                }
-                if($element->mobile->speed_index > 2 &&  $element->mobile->speed_index <= 7){
-                    $mobileAvgSI++;
-                }
-                if($element->mobile->speed_index > 7){
-                    $mobilePoorSI++;
-                }
-
-
-                if($element->mobile->interactive <= 2){ // TTI
-                    $mobileGoodTTI++;
-                }
-                if($element->mobile->interactive > 2 &&  $element->mobile->interactive <= 7){
-                    $mobileAvgTTI++;
-                }
-                if($element->mobile->interactive > 7){
-                    $mobilePoorTTI++;
-                }
-        }
-
-        // Division by zero protection for averages
-        if ($totalElements > 0) {
-            $desktopLCPAvg = $desktopLCPAvg/$totalElements;
-            $desktopFCPAvg = $desktopFCPAvg/$totalElements;
-            $desktopCLSAvg = $desktopCLSAvg/$totalElements;
-            $desktopFIDAvg = $desktopFIDAvg/$totalElements;
-            $desktopTTIAvg = $desktopTTIAvg/$totalElements;
-            $desktopSIAvg = $desktopSIAvg/$totalElements;
-            $desktopTBTAvg = $desktopTBTAvg/$totalElements;
-
-            $mobileLCPAvg = $mobileLCPAvg/$totalElements;
-            $mobileFCPAvg = $mobileFCPAvg/$totalElements;
-            $mobileCLSAvg = $mobileCLSAvg/$totalElements;
-            $mobileFIDAvg = $mobileFIDAvg/$totalElements;
-            $mobileTTIAvg = $mobileTTIAvg/$totalElements;
-            $mobileSIAvg = $mobileSIAvg/$totalElements;
-            $mobileTBTAvg = $mobileTBTAvg/$totalElements;
-        } else {
-            $desktopLCPAvg = $desktopFCPAvg = $desktopCLSAvg = $desktopFIDAvg = $desktopTTIAvg = $desktopSIAvg = $desktopTBTAvg = 0;
-            $mobileLCPAvg = $mobileFCPAvg = $mobileCLSAvg = $mobileFIDAvg = $mobileTTIAvg = $mobileSIAvg = $mobileTBTAvg = 0;
-        }
-
-        // color
-        $colorLCPDesktop = $helpers->getGoogleCWVColorByScore($desktopLCPAvg, "LCPMobile");
-        $colorLCPMobile = $helpers->getGoogleCWVColorByScore($mobileLCPAvg, "LCPMobile");
-
-        $colorFCPDesktop = $helpers->getGoogleCWVColorByScore($desktopFCPAvg, "FCPDesktop");
-        $colorFCPMobile = $helpers->getGoogleCWVColorByScore($mobileFCPAvg, "FCPMobile");
-
-        $colorCLSDesktop = $helpers->getGoogleCWVColorByScore($desktopCLSAvg, "CLSDesktop");
-        $colorCLSMobile = $helpers->getGoogleCWVColorByScore($mobileCLSAvg, "CLSMobile");
-
-        $colorFIDDesktop = $helpers->getGoogleCWVColorByScore($desktopFIDAvg, "FIDDesktop");
-        $colorFIDMobile = $helpers->getGoogleCWVColorByScore($mobileFIDAvg, "FIDMobile");
-
-        $colorTTIDesktop = $helpers->getGoogleCWVColorByScore($desktopTTIAvg, "TTIDesktop");
-        $colorTTIMobile = $helpers->getGoogleCWVColorByScore($mobileTTIAvg, "TTIMobile");
-
-        $colorSIDesktop = $helpers->getGoogleCWVColorByScore($desktopSIAvg, "SIDesktop");
-        $colorSIMobile = $helpers->getGoogleCWVColorByScore($mobileSIAvg, "SIMobile");
-
-        $colorTBTDesktop = $helpers->getGoogleCWVColorByScore($desktopTBTAvg, "TBTDesktop");
-        $colorTBTMobile = $helpers->getGoogleCWVColorByScore($mobileTBTAvg, "TBTMobile");
-
-        $object = new \stdClass();
-        $object->totalUrls = $totalElements;
-        $object->desktopLCPAvg = $desktopLCPAvg;
-        $object->desktopFCPAvg = $desktopFCPAvg;
-        $object->desktopCLSAvg = $desktopCLSAvg;
-        $object->desktopFIDAvg = $desktopFIDAvg;
-        $object->desktopTTIAvg = $desktopTTIAvg;
-        $object->desktopSIAvg = $desktopSIAvg;
-        $object->desktopTBTAvg = $desktopTBTAvg;
-
-        $object->desktopGoodLCP = $desktopGoodLCP;
-        $object->desktopAvgLCP = $desktopAvgLCP;
-        $object->desktopPoorLCP = $desktopPoorLCP;
-
-        $object->desktopGoodFCP = $desktopGoodFCP;
-        $object->desktopAvgFCP = $desktopAvgFCP;
-        $object->desktopPoorFCP = $desktopPoorFCP;
-
-        $object->desktopGoodTTI = $desktopGoodTTI;
-        $object->desktopAvgTTI = $desktopAvgTTI;
-        $object->desktopPoorTTI = $desktopPoorTTI;
-
-        $object->desktopGoodTBT = $desktopGoodTBT;
-        $object->desktopAvgTBT = $desktopAvgTBT;
-        $object->desktopPoorTBT = $desktopPoorTBT;
-
-        $object->desktopGoodCLS = $desktopGoodCLS;
-        $object->desktopAvgCLS = $desktopAvgCLS;
-        $object->desktopPoorCLS = $desktopPoorCLS;
-
-        $object->desktopGoodFID = $desktopGoodFID;
-        $object->desktopAvgFID = $desktopAvgFID;
-        $object->desktopPoorFID = $desktopPoorFID;
-
-        $object->desktopGoodSI = $desktopGoodSI;
-        $object->desktopAvgSI = $desktopAvgSI;
-        $object->desktopPoorSI = $desktopPoorSI;
-
-
-        // mobile
-        $object->mobileLCPAvg = $mobileLCPAvg;
-        $object->mobileFCPAvg = $mobileFCPAvg;
-        $object->mobileCLSAvg = $mobileCLSAvg;
-        $object->mobileFIDAvg = $mobileFIDAvg;
-        $object->mobileTTIAvg = $mobileTTIAvg;
-        $object->mobileSIAvg = $mobileSIAvg;
-        $object->mobileTBTAvg = $mobileTBTAvg;
-
-        $object->mobileGoodLCP = $mobileGoodLCP;
-        $object->mobileAvgLCP = $mobileAvgLCP;
-        $object->mobilePoorLCP = $mobilePoorLCP;
-
-        $object->mobileGoodFCP = $mobileGoodFCP;
-        $object->mobileAvgFCP = $mobileAvgFCP;
-        $object->mobilePoorFCP = $mobilePoorFCP;
-
-        $object->mobileGoodTTI = $mobileGoodTTI;
-        $object->mobileAvgTTI = $mobileAvgTTI;
-        $object->mobilePoorTTI = $mobilePoorTTI;
-
-        $object->mobileGoodTBT = $mobileGoodTBT;
-        $object->mobileAvgTBT = $mobileAvgTBT;
-        $object->mobilePoorTBT = $mobilePoorTBT;
-
-        $object->mobileGoodCLS = $mobileGoodCLS;
-        $object->mobileAvgCLS = $mobileAvgCLS;
-        $object->mobilePoorCLS = $mobilePoorCLS;
-
-        $object->mobileGoodFID = $mobileGoodFID;
-        $object->mobileAvgFID = $mobileAvgFID;
-        $object->mobilePoorFID = $mobilePoorFID;
-
-        $object->mobileGoodSI = $mobileGoodSI;
-        $object->mobileAvgSI = $mobileAvgSI;
-        $object->mobilePoorSI = $mobilePoorSI;   
-        
-        // COLOR
-        $object->colorLCPDesktop = $colorLCPDesktop;        
-        $object->colorLCPMobile = $colorLCPMobile;   
-
-        $object->colorFCPDesktop = $colorFCPDesktop;        
-        $object->colorFCPMobile = $colorFCPMobile;   
-
-        $object->colorTTIDesktop = $colorTTIDesktop;        
-        $object->colorTTIMobile = $colorTTIMobile;   
-
-        $object->colorFIDDesktop = $colorFIDDesktop;        
-        $object->colorFIDMobile = $colorFIDMobile;   
-
-        $object->colorCLSDesktop = $colorCLSDesktop;        
-        $object->colorCLSMobile = $colorCLSMobile;   
-
-        $object->colorSIDesktop = $colorSIDesktop;        
-        $object->colorSIMobile = $colorSIMobile;   
-
-        $object->colorTBTDesktop = $colorTBTDesktop;        
-        $object->colorTBTMobile = $colorTBTMobile;   
-
-
-
-        echo json_encode($object); 
+    
+    public function googleLighthouse(Request $request)
+{
+    $helpers = new Helper();
+
+    $rows = json_decode($request->input("data"), true);
+    if (!is_array($rows)) {
+        return response()->json(['error' => 'Invalid payload']);
     }
+
+    // Desktop totals
+    $desktopCount = 0;
+    $desktopAccSum = 0;
+    $desktopPerSum = 0;
+    $desktopSeoSum = 0;
+    $desktopBPSum = 0;
+
+    $desktopGoodPer = $desktopAvgPer = $desktopPoorPer = 0;
+    $desktopGoodAcc = $desktopAvgAcc = $desktopPoorAcc = 0;
+    $desktopGoodBP  = $desktopAvgBP  = $desktopPoorBP  = 0;
+    $desktopGoodSeo = $desktopAvgSeo = $desktopPoorSeo = 0;
+
+    // Mobile totals
+    $mobileCount = 0;
+    $mobileAccSum = 0;
+    $mobilePerSum = 0;
+    $mobileSeoSum = 0;
+    $mobileBPSum = 0;
+
+    $mobileGoodPer = $mobileAvgPer = $mobilePoorPer = 0;
+    $mobileGoodAcc = $mobileAvgAcc = $mobilePoorAcc = 0;
+    $mobileGoodBP  = $mobileAvgBP  = $mobilePoorBP  = 0;
+    $mobileGoodSeo = $mobileAvgSeo = $mobilePoorSeo = 0;
+
+
+    // Loop through all lighthouse_result rows
+    foreach ($rows as $row) {
+
+        // Skip rows not completed
+        if (($row['status'] ?? '') !== 'completed') {
+            continue;
+        }
+
+        // Must have strategy + data
+        if (!isset($row['strategy']) || !isset($row['data'])) {
+            continue;
+        }
+
+        // Parse internal JSON data field
+        $data = json_decode($row['data'], true);
+        if (!is_array($data)) {
+            continue;
+        }
+
+        $acc = floatval($data['accessibility_score'] ?? 0);
+        $per = floatval($data['performance_score'] ?? 0);
+        $bp  = floatval($data['best_practices_score'] ?? 0);
+        $seo = floatval($data['seo_score'] ?? 0);
+
+        $strategy = $row['strategy'];
+
+
+        /** --------------------------
+         * DESKTOP
+         * -------------------------*/
+        if ($strategy === 'desktop') {
+
+            $desktopCount++;
+
+            $desktopAccSum += $acc;
+            $desktopPerSum += $per;
+            $desktopBPSum  += $bp;
+            $desktopSeoSum += $seo;
+
+            // Performance bucket
+            if ($per >= 90)      $desktopGoodPer++;
+            elseif ($per >= 50) $desktopAvgPer++;
+            else                $desktopPoorPer++;
+
+            // Accessibility
+            if ($acc >= 90)      $desktopGoodAcc++;
+            elseif ($acc >= 50)  $desktopAvgAcc++;
+            else                 $desktopPoorAcc++;
+
+            // Best Practices
+            if ($bp >= 90)       $desktopGoodBP++;
+            elseif ($bp >= 50)   $desktopAvgBP++;
+            else                 $desktopPoorBP++;
+
+            // SEO
+            if ($seo >= 90)      $desktopGoodSeo++;
+            elseif ($seo >= 50)  $desktopAvgSeo++;
+            else                 $desktopPoorSeo++;
+        }
+
+
+        /** --------------------------
+         * MOBILE
+         * -------------------------*/
+        if ($strategy === 'mobile') {
+
+            $mobileCount++;
+
+            $mobileAccSum += $acc;
+            $mobilePerSum += $per;
+            $mobileBPSum  += $bp;
+            $mobileSeoSum += $seo;
+
+            // Performance bucket
+            if ($per >= 90)      $mobileGoodPer++;
+            elseif ($per >= 50)  $mobileAvgPer++;
+            else                 $mobilePoorPer++;
+
+            // Accessibility
+            if ($acc >= 90)      $mobileGoodAcc++;
+            elseif ($acc >= 50)  $mobileAvgAcc++;
+            else                 $mobilePoorAcc++;
+
+            // Best Practices
+            if ($bp >= 90)       $mobileGoodBP++;
+            elseif ($bp >= 50)   $mobileAvgBP++;
+            else                 $mobilePoorBP++;
+
+            // SEO
+            if ($seo >= 90)      $mobileGoodSeo++;
+            elseif ($seo >= 50)  $mobileAvgSeo++;
+            else                 $mobilePoorSeo++;
+        }
+    }
+
+
+    /** --------------------------
+     * Averages
+     * -------------------------*/
+    $desktopAccAvg = $desktopCount ? $desktopAccSum / $desktopCount : 0;
+    $desktopPerAvg = $desktopCount ? $desktopPerSum / $desktopCount : 0;
+    $desktopBPAvg  = $desktopCount ? $desktopBPSum  / $desktopCount : 0;
+    $desktopSeoAvg = $desktopCount ? $desktopSeoSum / $desktopCount : 0;
+
+    $mobileAccAvg = $mobileCount ? $mobileAccSum / $mobileCount : 0;
+    $mobilePerAvg = $mobileCount ? $mobilePerSum / $mobileCount : 0;
+    $mobileBPAvg  = $mobileCount ? $mobileBPSum  / $mobileCount : 0;
+    $mobileSeoAvg = $mobileCount ? $mobileSeoSum / $mobileCount : 0;
+
+
+    /** --------------------------
+     * Colors
+     * -------------------------*/
+    $colorPerDesktop = $helpers->getGoogleInsightsColorByScore($desktopPerAvg);
+    $colorPerMobile  = $helpers->getGoogleInsightsColorByScore($mobilePerAvg);
+
+    $colorAccDesktop = $helpers->getGoogleInsightsColorByScore($desktopAccAvg);
+    $colorAccMobile  = $helpers->getGoogleInsightsColorByScore($mobileAccAvg);
+
+    $colorBPDesktop  = $helpers->getGoogleInsightsColorByScore($desktopBPAvg);
+    $colorBPMobile   = $helpers->getGoogleInsightsColorByScore($mobileBPAvg);
+
+    $colorSeoDesktop = $helpers->getGoogleInsightsColorByScore($desktopSeoAvg);
+    $colorSeoMobile  = $helpers->getGoogleInsightsColorByScore($mobileSeoAvg);
+
+
+    /** --------------------------
+     * Build Response
+     * -------------------------*/
+    $object = new \stdClass();
+
+    $object->totalUrls = max($desktopCount, $mobileCount);
+
+    // Desktop
+    $object->desktopAccAvg = $desktopAccAvg;
+    $object->desktopPerAvg = $desktopPerAvg;
+    $object->desktopSeoAvg = $desktopSeoAvg;
+    $object->desktopBPAvg  = $desktopBPAvg;
+
+    $object->desktopGoodPer = $desktopGoodPer;
+    $object->desktopAvgPer  = $desktopAvgPer;
+    $object->desktopPoorPer = $desktopPoorPer;
+
+    $object->desktopGoodAcc = $desktopGoodAcc;
+    $object->desktopAvgAcc  = $desktopAvgAcc;
+    $object->desktopPoorAcc = $desktopPoorAcc;
+
+    $object->desktopGoodBP  = $desktopGoodBP;
+    $object->desktopAvgBP   = $desktopAvgBP;
+    $object->desktopPoorBP  = $desktopPoorBP;
+
+    $object->desktopGoodSeo = $desktopGoodSeo;
+    $object->desktopAvgSeo  = $desktopAvgSeo;
+    $object->desktopPoorSeo = $desktopPoorSeo;
+
+
+    // Mobile
+    $object->mobileAccAvg = $mobileAccAvg;
+    $object->mobilePerAvg = $mobilePerAvg;
+    $object->mobileSeoAvg = $mobileSeoAvg;
+    $object->mobileBPAvg  = $mobileBPAvg;
+
+    $object->mobileGoodPer = $mobileGoodPer;
+    $object->mobileAvgPer  = $mobileAvgPer;
+    $object->mobilePoorPer = $mobilePoorPer;
+
+    $object->mobileGoodAcc = $mobileGoodAcc;
+    $object->mobileAvgAcc  = $mobileAvgAcc;
+    $object->mobilePoorAcc = $mobilePoorAcc;
+
+    $object->mobileGoodBP  = $mobileGoodBP;
+    $object->mobileAvgBP   = $mobileAvgBP;
+    $object->mobilePoorBP  = $mobilePoorBP;
+
+    $object->mobileGoodSeo = $mobileGoodSeo;
+    $object->mobileAvgSeo  = $mobileAvgSeo;
+    $object->mobilePoorSeo = $mobilePoorSeo;
+
+
+    // Colors
+    $object->colorPerDesktop = $colorPerDesktop;
+    $object->colorPerMobile  = $colorPerMobile;
+
+    $object->colorAccDesktop = $colorAccDesktop;
+    $object->colorAccMobile  = $colorAccMobile;
+
+    $object->colorBPDesktop  = $colorBPDesktop;
+    $object->colorBPMobile   = $colorBPMobile;
+
+    $object->colorSeoDesktop = $colorSeoDesktop;
+    $object->colorSeoMobile  = $colorSeoMobile;
+
+
+    echo json_encode($object); 
+}
+
+
+public function googleCoreWebVitals(Request $request)
+{
+    $helpers = new Helper();
+
+    $rows = json_decode($request->input("data"));
+
+    // Counters
+    $desktopCount = 0;
+    $mobileCount = 0;
+
+    // AVG values
+    $desktop = $mobile = [
+        "LCP" => 0, "FCP" => 0, "CLS" => 0, "FID" => 0, "TTI" => 0, "SI" => 0, "TBT" => 0,
+    ];
+
+    // Buckets
+    $bucketNames = ["Good", "Avg", "Poor"];
+    foreach (["desktop", "mobile"] as $type) {
+        foreach (["LCP", "FCP", "CLS", "FID", "TTI", "SI", "TBT"] as $metric) {
+            foreach ($bucketNames as $bucket) {
+                ${$type . $bucket . $metric} = 0;
+            }
+        }
+    }
+
+    // -------------------------
+    // PROCESS EACH RECORD
+    // -------------------------
+    foreach ($rows as $record) {
+
+        if (!isset($record->status) || $record->status !== "completed") {
+            continue;
+        }
+
+        $data = json_decode($record->data ?? "{}");
+        if (!isset($data->largest_contentful_paint)) {
+            continue;
+        }
+
+        $isDesktop = ($record->strategy === "desktop");
+        $type = $isDesktop ? "desktop" : "mobile";
+
+        if ($isDesktop) $desktopCount++;
+        else $mobileCount++;
+
+        // Extract metrics
+        $LCP = $data->largest_contentful_paint;
+        $FCP = $data->first_contentful_paint;
+        $CLS = $data->cumulative_layout_shift;
+        $FID = $data->max_potential_fid;
+        $TTI = $data->interactive;
+        $SI  = $data->speed_index;
+        $TBT = $data->total_blocking_time;
+
+        // Sum for averages
+        ${$type}["LCP"] += $LCP;
+        ${$type}["FCP"] += $FCP;
+        ${$type}["CLS"] += $CLS;
+        ${$type}["FID"] += $FID;
+        ${$type}["TTI"] += $TTI;
+        ${$type}["SI"]  += $SI;
+        ${$type}["TBT"] += $TBT;
+
+        // -------------------------
+        // BUCKET LOGIC
+        // -------------------------
+
+        // LCP
+        if ($LCP <= 3) ${$type . "GoodLCP"}++;
+        elseif ($LCP < 4.5) ${$type . "AvgLCP"}++;
+        else ${$type . "PoorLCP"}++;
+
+        // FCP
+        if ($FCP <= 3) ${$type . "GoodFCP"}++;
+        elseif ($FCP <= 4.5) ${$type . "AvgFCP"}++;
+        else ${$type . "PoorFCP"}++;
+
+        // CLS
+        if ($CLS <= 0.1) ${$type . "GoodCLS"}++;
+        elseif ($CLS <= 0.25) ${$type . "AvgCLS"}++;
+        else ${$type . "PoorCLS"}++;
+
+        // FID
+        if ($FID <= 100) ${$type . "GoodFID"}++;
+        elseif ($FID <= 330) ${$type . "AvgFID"}++;
+        else ${$type . "PoorFID"}++;
+
+        // TBT
+        if ($TBT <= 100) ${$type . "GoodTBT"}++;
+        elseif ($TBT <= 330) ${$type . "AvgTBT"}++;
+        else ${$type . "PoorTBT"}++;
+
+        // SI
+        if ($SI <= 2) ${$type . "GoodSI"}++;
+        elseif ($SI <= 7) ${$type . "AvgSI"}++;
+        else ${$type . "PoorSI"}++;
+
+        // TTI
+        if ($TTI <= 2) ${$type . "GoodTTI"}++;
+        elseif ($TTI <= 7) ${$type . "AvgTTI"}++;
+        else ${$type . "PoorTTI"}++;
+    }
+
+    // -------------------------
+    // FINAL AVERAGES
+    // -------------------------
+    foreach (["desktop" => $desktopCount, "mobile" => $mobileCount] as $type => $count) {
+        foreach (${$type} as $key => $value) {
+            ${$type . $key . "Avg"} = $count > 0 ? $value / $count : 0;
+        }
+    }
+
+    // -------------------------
+    // COLORS
+    // -------------------------
+    $colors = [];
+    foreach (["desktop", "mobile"] as $type) {
+        foreach ([
+            "LCP" => "LCP$type",
+            "FCP" => "FCP$type",
+            "CLS" => "CLS$type",
+            "FID" => "FID$type",
+            "TTI" => "TTI$type",
+            "SI"  => "SI$type",
+            "TBT" => "TBT$type",
+        ] as $metric => $key) {
+            $colors[$key] = $helpers->getGoogleCWVColorByScore(${$type . $metric . "Avg"}, $key);
+        }
+    }
+
+    // -------------------------
+    // BUILD RESPONSE OBJECT
+    // -------------------------
+    $obj = new \stdClass();
+    $obj->totalUrls = max($desktopCount, $mobileCount);
+
+    foreach (["desktop", "mobile"] as $type) {
+        foreach (["LCP","FCP","CLS","FID","TTI","SI","TBT"] as $m) {
+            $obj->{$type . $m . "Avg"} = ${$type . $m . "Avg"};
+
+            foreach ($bucketNames as $bucket) {
+                $obj->{$type . $bucket . $m} = ${$type . $bucket . $m};
+            }
+        }
+    }
+
+    // Colors
+    foreach ($colors as $key => $value) {
+        $obj->{"color".$key} = $value;
+    }
+
+    echo json_encode($obj);
+}
+
 
     public function codingBestPractices(Request $request){
         $elements = json_decode($request->input("data"));

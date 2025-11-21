@@ -18,6 +18,7 @@ use App\Models\ProjectTestDetails;
 use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Auth;
+use App\Models\DashboardTestsDetails;
 
 ini_set('max_execution_time', 180000);
 ini_set('memory_limit', '512M');
@@ -29,14 +30,15 @@ class RunTest implements ShouldQueue
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 180000; // Increase timeout to 5 minutes
-    public $tries = 1; // Prevent multiple retries
-    public $maxExceptions = 3; // Allow up to 3 exceptions before marking as failed
+    public $timeout = 900; // 15 minutes
+    public $tries = 1;      // Retry 3 times
+    // public $backoff = 10;   // Wait 10 seconds between retries
 
-    protected $dashboardTest;
-    protected $recheck_label;
+    protected $resultId;
+    protected $projectId;
     protected $type;
-    protected $newUrls;
+    protected $dashboardTestId;
+
 
     /**
      * Safely get image dimensions with timeout protection
@@ -111,1048 +113,351 @@ class RunTest implements ShouldQueue
      *
      * @param \App\Models\DashboardTests $dashboardTest
      */
-    public function __construct(DashboardTests $dashboardTest, String $recheck_label, String $type, Array $urls)
+    public function __construct($resultId, $projectId, $type, $dashboardTestId)
     {
-        $this->dashboardTest = $dashboardTest;
-        $this->recheck_label = $recheck_label;
+        $this->resultId = $resultId;
+        $this->projectId = $projectId;
         $this->type = $type;
-        $this->newUrls = $urls;
+        $this->dashboardTestId = $dashboardTestId;
     }
 
     /**
      * Execute the job.
      */
 
-
-    public function handle(){
-        $helpers = new Helper();
-        $projectsController = new ProjectsController();
-        $allResults = [];
-        $recheckDataArray = [];
-        $isCompleted = false;
-
-
-        $projectId = $this->dashboardTest->project_id;
-        $userId = $this->dashboardTest->user_id;
-
-        $urlList = json_decode($this->dashboardTest->urls);
-
-        $DB_MSG = "";
-        if($this->type === "recheck"){
-            $DB_MSG = "Your dashboard has been rechecked for <b>" .  count($urlList) . " Urls</b>.";
-        }else if($this->type === "single_recheck"){
-            $DB_MSG = "Your dashboard has been rechecked for <b>" .  $this->recheck_label . "</b>.";
-        }
-        else{
-            $DB_MSG = "Your dashboard has been prepared for <b>" .  count($urlList) . " Urls</b> only. To check the whole project, please <a id='recheckHyperlink' href='javascript:void()'>re-check</a> once.";
-        }
-
-        $labels = json_decode(json_encode($projectsController->getLabels($projectId)))->original->all_labels;
-
-        if($this->type === "single_recheck"){
-            $labels = $helpers->getSingleLabel($labels, $this->recheck_label);
-            $results = json_decode($this->dashboardTest->results);
-            foreach ($results as $key => $value) {
-                foreach ($value as $key1 => $value1) {
-                    $allResults[$key][$key1] = $value1;                    
-                }
-            }
-            $urlList = $this->newUrls;
-        }
-
-        $settings = projectSettings::where("projects_id", $projectId)->with("settingsSub")->get()->first();
-
-
-        for($i = 0; $i < count($urlList); $i++){
-            $results = [];
-            if($this->type === "single_recheck"){
-                $url = $urlList[$i]["url"];
-            }else{
-                $url = $urlList[$i]->url;
-            }
-
-            // Set timeout for each URL (2 minutes = 120 seconds)
-            $urlTimeout = 120;
-            $startTime = time();
-            $urlTimedOut = false;
+     public function handle()
+     {
+         $result = DashboardTestsDetails::findOrFail($this->resultId);
+     
+         $helpers = new Helper();
+         $projectsController = new ProjectsController();
+         $allResults = [];
+     
+         $projectId = $this->projectId;
+         $typeOfTest = $this->type;
+         $url = $result->url;
+     
+         $labels = json_decode(
+             json_encode($projectsController->getLabels($projectId))
+         )->original->all_labels;
+     
+         $settings = projectSettings::where("projects_id", $projectId)
+             ->with("settingsSub")
+             ->first();
+     
+         // --------------------------------------------
+         // ✅ FETCH HTML SAFELY (WITH SSL FALLBACK)
+         // --------------------------------------------
+     
+         $html = null;
+         $statusCode = null;
+         $contentType = null;
+         $internalResponse = null;
+         $finalRes = [];
+     
+         try {
+     
+            $goutteClient = new Client(
+                HttpClient::create([
+                    'timeout' => 120,
+                    'verify_host' => false,     // replaces CURLOPT_SSL_VERIFYHOST
+                    'verify_peer' => false,     // replaces CURLOPT_SSL_VERIFYPEER
             
-            try {
-                // Set execution time limit for this URL
-                set_time_limit($urlTimeout);
-                
-                // Create a timeout mechanism using pcntl_alarm if available
-                if (function_exists('pcntl_alarm')) {
-                    pcntl_alarm($urlTimeout);
-                }
-                
-                // Process the URL with timeout protection
-                $goutteClient = new Client(HttpClient::create(['timeout' => $urlTimeout]));
-                $options = [
-                    'headers' => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)']
-                ];
-                
-                // Check if we've exceeded the timeout
-                if (time() - $startTime >= $urlTimeout) {
-                    $urlTimedOut = true;
-                    throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                }
-                
-                $crawler = $goutteClient->request('GET', $url, [], [], $options);
-                
-                // Clear the alarm if it was set
-                if (function_exists('pcntl_alarm')) {
-                    pcntl_alarm(0);
-                }
-                
-                // Check if we've exceeded the timeout after the request
-                if (time() - $startTime >= $urlTimeout) {
-                    $urlTimedOut = true;
-                    throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                }
-                
-                if ($crawler->count() > 0) {
-                    $html = $crawler->html();
-                    $statusCode = $goutteClient->getResponse()->getStatusCode();
-
-                    $internalResponse = $goutteClient->getInternalResponse();
-                    $contentType = $goutteClient->getResponse()->getHeader('Content-Type');
-
-                    // Check timeout again before processing meta data
-                    if (time() - $startTime >= $urlTimeout) {
-                        $urlTimedOut = true;
-                        throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                    }
-
-                    $meta = $crawler->filter("table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,link[rel='stylesheet'],script")->each(function($node) {
-                        $name = $node->attr('name');
-                        $content = $node->attr('content');
-
-                        if($name === null){
-                            $name = $node->getNode(0)->tagName;
-                        }
-                        if($name === "meta"){
-                            $name = $node->attr('property');
-                        }
-                        if($content === null){
-                            $content = $node->getNode(0)->textContent;
-                        }
-
-                        if($name === "link"){
-                            $name = $node->extract(array('rel'))[0];
-                            $content = $node->extract(array('href'))[0];
-                        }
-
-                        if($name === "a"){
-                            $content = $node->extract(array('href'))[0];
-                        }
-
-                        if($name === "img"){
-                            $content = [
-                                'src' => $node->attr('src') != "" ? $node->attr('src') : $node->attr('data-src'),
-                                'alt' => $node->attr('alt')
-                            ];
-                        }
-
-                        if($name === "script"){
-                            $content = $node->extract(array('src'))[0];
-                        }
-
-                        if($name === "table"){
-                            $content = $node->html();
-                        }
-
-                        return [
-                            'name' => $name,
-                            'content' => $content,
-                        ];
-                    });
-
-                    // Check timeout again before processing test results
-                    if (time() - $startTime >= $urlTimeout) {
-                        $urlTimedOut = true;
-                        throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                    }
-
-                    $finalRes = $helpers->getTest($meta);
-                    $finalRes["html"] = $html;
-                    $finalRes["html_status_code"] = $statusCode;
-                    $finalRes["internal_response"] = $internalResponse;
-                    $finalRes["content_type"] = $contentType;
-                    $finalRes["settings"] = json_encode($settings);
-
-                    // Process all labels for this URL
-                    for($j = 0; $j < count($labels); $j++){
-
-                        // Check timeout before processing each label
-                        if (time() - $startTime >= $urlTimeout) {
-                            $urlTimedOut = true;
-                            throw new \Exception("URL timeout after {$urlTimeout} seconds");
-                        }
-
-                        if($this->type == "single_recheck"){
-                            $labels[$j]->initialTestingState = true;
-                        }
-
-
-                        if($labels[$j]->initialTestingState){
-                            
-                            $label = $labels[$j];
-                            $test_title = $label->db_name;
-
-                            $testData;
-                            switch($label->db_name){
-                                case "meta_title":
-                                    $testData = $this->title($finalRes, $label, $url);
-                                    break;
-                                case "meta_desc":
-                                    $testData = $this->description($finalRes, $label, $url);
-                                    break;
-                                case "robots_meta":
-                                    $testData = $this->robots($finalRes, $label, $url);
-                                    break;
-                                case "canonical_url":
-                                    $testData = $this->canonical($finalRes, $label, $url);
-                                    break;
-                                case "url_slug":
-                                    $testData = $this->urlSlug($finalRes, $label, $url);
-                                    break;
-                                case "images":
-                                    $testData = $this->images($finalRes, $label, $url);
-                                    break;
-                                case "xml_sitemap":
-                                    $testData = $this->xmlSitemap($finalRes, $label, $url);
-                                    break;
-                                case "html_sitemap":
-                                    $testData = $this->htmlSitemap($finalRes, $label, $url);
-                                    break;
-                                case "open_graph_tags":
-                                    $testData = $this->ogTags($finalRes, $label, $url);
-                                    break;
-                                case "twitter_tags":
-                                    $testData = $this->twitterTags($finalRes, $label, $url);
-                                    break;
-                                case "favicon":
-                                    $testData = $this->favicon($finalRes, $label, $url);
-                                    break;
-                                case "meta_viewport":
-                                    $testData = $this->metaViewport($finalRes, $label, $url);
-                                    break;
-                                case "doctype":
-                                    $testData = $this->doctype($finalRes, $label, $url);
-                                    break;
-                                case "google_overall":
-                                    
-                                    $object = new \stdClass();
-                                    $object->learnMoreURL = "https://setmore.com/";
-                                    $object->tagName = "Google Lighthouse";
-                                    $object->label = $label;
-                                    $object->tested_url = $url;
-                                    $object->tested_at = time();
-                                    $testData = json_encode($object);
-                                    break;
-                                case "google_lighthouse":
-                                    $object = new \stdClass();
-                                    $object->learnMoreURL = "https://setmore.com/";
-                                    $object->tagName = "Google Lighthouse";
-                                    $object->label = $label;
-                                    $object->tested_url = $url;
-                                    $object->tested_at = time();
-                                    $testData = json_encode($object);
-                                    break;
-                                case "core_web_vitals":
-                                    $object = new \stdClass();
-                                    $object->learnMoreURL = "https://setmore.com/";
-                                    $object->tagName = "Google Lighthouse";
-                                    $object->label = $label;
-                                    $object->tested_url = $url;
-                                    $object->tested_at = time();
-                                    $testData = json_encode($object);
-                                    break;
-                                case "mobile_friendly":
-                                    $testData = $this->mobileFriendly($finalRes, $label, $url);
-                                    break;
-                                case "content_security_policy_header":
-                                    $testData = $this->contentSecurity($finalRes, $label, $url);
-                                    break;
-                                case "hsts_header":
-                                    $testData = $this->hstsHeader($finalRes, $label, $url);
-                                    break;
-                                case "bad_content_type":
-                                    $testData = $this->badContentType($finalRes, $label, $url);
-                                    break;
-                                case "x_frame_options_header":
-                                    $testData = $this->XFrameOptions($finalRes, $label, $url);
-                                    break;
-                                case "is_safe_browsing":
-                                    $testData = $this->safeBrowsing($finalRes, $label, $url);
-                                    break;
-                                case "cross_origin_links":
-                                    $testData = $this->crossOriginLinks($finalRes, $label, $url);
-                                    break;
-                                case "protocol_relative_resource":
-                                    $testData = $this->protocolRelativeResource($finalRes, $label, $url);
-                                    break;
-                                case "ssl_certificate_enable":
-                                    $testData = $this->checkSSLCertificate($finalRes, $label, $url);
-                                    break;
-                                case "folder_browsing_enable":
-                                    $testData = $this->directoryBrowsingEnable($finalRes, $label, $url);
-                                    break;
-                                case "html_compression":
-                                    $testData = $this->htmlCompression($finalRes, $label, $url);
-                                    break;
-                                case "css_compression":
-                                    $testData = $this->cssCompression($finalRes, $label, $url);
-                                    break;
-                                case "js_compression":
-                                    $testData = $this->jsCompression($finalRes, $label, $url);
-                                    break;
-                                case "gzip_compression":
-                                    $testData = $this->gzipCompression($finalRes, $label, $url);
-                                    break;
-                                case "css_caching_enable":
-                                    $testData = $this->cssCachingEnable($finalRes, $label, $url);
-                                    break;
-                                case "js_caching_enable":
-                                    $testData = $this->jsCachingEnable($finalRes, $label, $url);
-                                    break;
-                                case "nested_tables":
-                                    $testData = $this->nestedTables($finalRes, $label, $url);
-                                    break;
-                                case "frameset":
-                                    $testData = $this->frameset($finalRes, $label, $url);
-                                    break;
-                                case "page_size":
-                                    $testData = $this->pageSize($finalRes, $label, $url);
-                                    break;
-                                case "http_status_code":
-                                    $testData = $this->httpStatusCode($finalRes, $label, $url);
-                                    break;
-                                case "broken_links":
-                                    $testData = $this->brokenLinks($finalRes, $label, $url);
-                                    break;
-                            }
+                    // CURLOPT_SSLVERSION => TLS v1.2 equivalent:
+                    'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
+                ])
+            );
             
-                            $allResults[$url][$label->db_name] = $testData;                    
+            $crawler = $goutteClient->request('GET', $url, [], [], [
+                'headers' => [
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+                    'Accept' => 'text/html,*/*'
+                ]
+            ]);
+     
+             $html = $crawler->html();
+             $statusCode = $goutteClient->getResponse()->getStatusCode();
+             $contentType = $goutteClient->getResponse()->getHeader('Content-Type');
+             $internalResponse = $goutteClient->getInternalResponse();
+     
+             // Extract HTML components
+            $meta = $crawler->filter("table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,link[rel='stylesheet'],script")->each(function($node) {
+                $name = $node->attr('name');
+                $content = $node->attr('content');
 
-                        }
-                    }
-
-                    $this->dashboardTest->update([
-                        'results' => json_encode($allResults),
-                    ]);
-
-                } else { 
-                    $allResults[$url] = "";
-                    $this->dashboardTest->update([
-                        'results' => json_encode($allResults),
-                    ]);
-                    Log::warning("Non-200 response for URL: $url");
+                if($name === null){
+                    $name = $node->getNode(0)->tagName;
                 }
-                
-            } catch (\Exception $e) {
-                // Handle timeout or other errors
-                if ($urlTimedOut) {
-                    Log::warning("URL timed out after {$urlTimeout} seconds: $url - Error: " . $e->getMessage());
-                    
-                    // When timeout occurs, run the catch method for all tests
-                    $allResults[$url] = [];
-                    
-                    // Process all labels with timeout error handling
-                    for($j = 0; $j < count($labels); $j++){
-                        $label = $labels[$j];
-                        $test_title = $label->db_name;
+                if($name === "meta"){
+                    $name = $node->attr('property');
+                }
+                if($content === null){
+                    $content = $node->getNode(0)->textContent;
+                }
 
-                        $testData;
-                        switch($label->db_name){
-                            case "meta_title":
-                                // Create timeout error object similar to title() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Meta Title";
-                                $object->content = "";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Title test timed out";
-                                $object->description = "A meta title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
-                                $object->showContent = false;
-                                $object->snippetContent = "";
-                                $object->showSnippet = false;
-                                $object->tagStatus = false;
-                                $object->casingStatus = false;
-                                $object->lengthClass = "result_fail";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Title Tag";
-                                $object->titleCasingCamel = 0;
-                                $object->titleCasingBoth = 0;
-                                $object->titleCasingSentence = 0;
-                                $object->excludedWordsVal = "";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "meta_desc":
-                                // Create timeout error object similar to description() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Meta Description";
-                                $object->content = "";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Description test timed out";
-                                $object->description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
-                                $object->showContent = false;
-                                $object->snippetContent = "";
-                                $object->showSnippet = false;
-                                $object->tagStatus = false;
-                                $object->casingStatus = false;
-                                $object->lengthClass = "result_fail";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Meta Description";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "robots_meta":
-                                // Create timeout error object similar to robots() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Robots Meta";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Robots test timed out";
-                                $object->description = "Robots meta tag test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Robots Meta";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "canonical_url":
-                                // Create timeout error object similar to canonical() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Canonical URL";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Canonical URL test timed out";
-                                $object->description = "Canonical URL test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Canonical URL";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "url_slug":
-                                // Create timeout error object similar to urlSlug() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "URL Slug";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "URL Slug test timed out";
-                                $object->description = "URL Slug test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "URL Slug";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "images":
-                                // Create timeout error object similar to images() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Images";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Images test timed out";
-                                $object->description = "Images test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Images";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "xml_sitemap":
-                                // Create timeout error object similar to xmlSitemap() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "XML Sitemap";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "XML Sitemap test timed out";
-                                $object->description = "XML Sitemap test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "XML Sitemap";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "html_sitemap":
-                                // Create timeout error object similar to htmlSitemap() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "HTML Sitemap";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "HTML Sitemap test timed out";
-                                $object->description = "HTML Sitemap test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "HTML Sitemap";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "open_graph_tags":
-                                // Create timeout error object similar to ogTags() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Open Graph Tags";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Open Graph Tags test timed out";
-                                $object->description = "Open Graph Tags test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Open Graph Tags";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "twitter_tags":
-                                // Create timeout error object similar to twitterTags() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Twitter Tags";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Twitter Tags test timed out";
-                                $object->description = "Twitter Tags test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Twitter Tags";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "favicon":
-                                // Create timeout error object similar to favicon() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Favicon";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Favicon test timed out";
-                                $object->description = "Favicon test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Favicon";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "meta_viewport":
-                                // Create timeout error object similar to metaViewport() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Meta Viewport";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Meta Viewport test timed out";
-                                $object->description = "Meta Viewport test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Meta Viewport";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "doctype":
-                                // Create timeout error object similar to doctype() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Doctype";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Doctype test timed out";
-                                $object->description = "Doctype test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Doctype";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "google_overall":
-                                $object = new \stdClass();
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Google Lighthouse";
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->status = false;
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Google Overall test timed out";
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "google_lighthouse":
-                                $object = new \stdClass();
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Google Lighthouse";
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->status = false;
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Google Lighthouse test timed out";
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "core_web_vitals":
-                                $object = new \stdClass();
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Google Lighthouse";
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->status = false;
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Core Web Vitals test timed out";
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "mobile_friendly":
-                                // Create timeout error object similar to mobileFriendly() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Mobile Friendly";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Mobile Friendly test timed out";
-                                $object->description = "Mobile Friendly test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Mobile Friendly";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "content_security_policy_header":
-                                // Create timeout error object similar to contentSecurity() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Content Security Policy Header";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Content Security Policy Header test timed out";
-                                $object->description = "Content Security Policy Header test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Content Security Policy Header";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "hsts_header":
-                                // Create timeout error object similar to hstsHeader() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "HSTS Header";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "HSTS Header test timed out";
-                                $object->description = "HSTS Header test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "HSTS Header";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "bad_content_type":
-                                // Create timeout error object similar to badContentType() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Bad Content Type";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Bad Content Type test timed out";
-                                $object->description = "Bad Content Type test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Bad Content Type";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "x_frame_options_header":
-                                // Create timeout error object similar to XFrameOptions() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "X-Frame-Options Header";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "X-Frame-Options Header test timed out";
-                                $object->description = "X-Frame-Options Header test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "X-Frame-Options Header";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "is_safe_browsing":
-                                // Create timeout error object similar to safeBrowsing() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Safe Browsing";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Safe Browsing test timed out";
-                                $object->description = "Safe Browsing test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Safe Browsing";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "cross_origin_links":
-                                // Create timeout error object similar to crossOriginLinks() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Cross Origin Links";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Cross Origin Links test timed out";
-                                $object->description = "Cross Origin Links test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Cross Origin Links";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "protocol_relative_resource":
-                                // Create timeout error object similar to protocolRelativeResource() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Protocol Relative Resource";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Protocol Relative Resource test timed out";
-                                $object->description = "Protocol Relative Resource test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Protocol Relative Resource";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "ssl_certificate_enable":
-                                // Create timeout error object similar to checkSSLCertificate() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "SSL Certificate";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "SSL Certificate test timed out";
-                                $object->description = "SSL Certificate test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "SSL Certificate";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "folder_browsing_enable":
-                                // Create timeout error object similar to directoryBrowsingEnable() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Folder Browsing";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Folder Browsing test timed out";
-                                $object->description = "Folder Browsing test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Folder Browsing";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "html_compression":
-                                // Create timeout error object similar to htmlCompression() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "HTML Compression";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "HTML Compression test timed out";
-                                $object->description = "HTML Compression test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "HTML Compression";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "css_compression":
-                                // Create timeout error object similar to cssCompression() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "CSS Compression";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "CSS Compression test timed out";
-                                $object->description = "CSS Compression test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "CSS Compression";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "js_compression":
-                                // Create timeout error object similar to jsCompression() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "JavaScript Compression";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "JavaScript Compression test timed out";
-                                $object->description = "JavaScript Compression test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "JavaScript Compression";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "gzip_compression":
-                                // Create timeout error object similar to gzipCompression() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Gzip Compression";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Gzip Compression test timed out";
-                                $object->description = "Gzip Compression test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Gzip Compression";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "css_caching_enable":
-                                // Create timeout error object similar to cssCachingEnable() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "CSS Caching";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "CSS Caching test timed out";
-                                $object->description = "CSS Caching test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "CSS Caching";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "js_caching_enable":
-                                // Create timeout error object similar to jsCachingEnable() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "JavaScript Caching";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "JavaScript Caching test timed out";
-                                $object->description = "JavaScript Caching test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "JavaScript Caching";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "nested_tables":
-                                // Create timeout error object similar to nestedTables() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Nested Tables";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Nested Tables test timed out";
-                                $object->description = "Nested Tables test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Nested Tables";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "frameset":
-                                // Create timeout error object similar to frameset() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Frameset";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Frameset test timed out";
-                                $object->description = "Frameset test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Frameset";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "page_size":
-                                // Create timeout error object similar to pageSize() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Page Size";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Page Size test timed out";
-                                $object->description = "Page Size test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Page Size";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "http_status_code":
-                                // Create timeout error object similar to httpStatusCode() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "HTTP Status Code";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "HTTP Status Code test timed out";
-                                $object->description = "HTTP Status Code test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "HTTP Status Code";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                            case "broken_links":
-                                // Create timeout error object similar to brokenLinks() catch method
-                                $object = new \stdClass();
-                                $object->status = false;
-                                $object->title = "Broken Links";
-                                $object->problems = ["Test failed due to timeout after {$urlTimeout} seconds"];
-                                $object->message = "Broken Links test timed out";
-                                $object->description = "Broken Links test failed due to timeout";
-                                $object->learnMoreURL = "https://setmore.com/";
-                                $object->tagName = "Broken Links";
-                                $object->settings = isset($settings) ? $settings->settingsSub : null;
-                                $object->content = '';
-                                $object->status_url = false;
-                                $object->totalBrokenLinks = 0;
-                                $object->label = $label;
-                                $object->tested_url = $url;
-                                $object->tested_at = time();
-                                $object->testerrorcaught = true;
-                                $testData = json_encode($object);
-                                break;
-                        }
-                        
-                        $allResults[$url][$label->db_name] = $testData;
-                    }
-                    
-                    $this->dashboardTest->update([
-                        'results' => json_encode($allResults),
-                    ]);
-                    
-                } else {
-                    // Handle other errors
-                    Log::error("Error processing URL: $url - Error: " . $e->getMessage());
-                    
-                    $allResults[$url] = [
-                        'processing_error' => "Error processing URL",
-                        'error_message' => $e->getMessage(),
-                        'tested_at' => time()
+                if($name === "link"){
+                    $name = $node->extract(array('rel'))[0];
+                    $content = $node->extract(array('href'))[0];
+                }
+
+                if($name === "a"){
+                    $content = $node->extract(array('href'))[0];
+                }
+
+                if($name === "img"){
+                    $content = [
+                        'src' => $node->attr('src') != "" ? $node->attr('src') : $node->attr('data-src'),
+                        'alt' => $node->attr('alt')
                     ];
-                    
-                    $this->dashboardTest->update([
-                        'results' => json_encode($allResults),
-                    ]);
                 }
+
+                if($name === "script"){
+                    $content = $node->extract(array('src'))[0];
+                }
+
+                if($name === "table"){
+                    $content = $node->html();
+                }
+
+                return [
+                    'name' => $name,
+                    'content' => $content,
+                ];
+            });
+
+
+            // Attach HTML data even if null
+            $finalRes = $helpers->getTest($meta);
+            $finalRes["html"] = $html;
+            $finalRes["html_status_code"] = $statusCode;
+            $finalRes["internal_response"] = $internalResponse;
+            $finalRes["content_type"] = $contentType;
+            $finalRes["settings"] = json_encode($settings);
+        
+        
+            // --------------------------------------------
+            // ✅ RUN ALL TEST LABELS
+            // --------------------------------------------
+            foreach ($labels as $label) {
+        
+                if (!$label->initialTestingState) continue;
+        
+                try {
+                    switch($label->db_name){
+                        case "meta_title":
+                            $testData = $this->title($finalRes, $label, $url);
+                            break;
+                        case "meta_desc":
+                            $testData = $this->description($finalRes, $label, $url);
+                            break;
+                        case "robots_meta":
+                            $testData = $this->robots($finalRes, $label, $url);
+                            break;
+                        case "canonical_url":
+                            $testData = $this->canonical($finalRes, $label, $url);
+                            break;
+                        case "url_slug":
+                            $testData = $this->urlSlug($finalRes, $label, $url);
+                            break;
+                        case "images":
+                            $testData = $this->images($finalRes, $label, $url);
+                            break;
+                        case "xml_sitemap":
+                            $testData = $this->xmlSitemap($finalRes, $label, $url);
+                            break;
+                        case "html_sitemap":
+                            $testData = $this->htmlSitemap($finalRes, $label, $url);
+                            break;
+                        case "open_graph_tags":
+                            $testData = $this->ogTags($finalRes, $label, $url);
+                            break;
+                        case "twitter_tags":
+                            $testData = $this->twitterTags($finalRes, $label, $url);
+                            break;
+                        case "favicon":
+                            $testData = $this->favicon($finalRes, $label, $url);
+                            break;
+                        case "meta_viewport":
+                            $testData = $this->metaViewport($finalRes, $label, $url);
+                            break;
+                        case "doctype":
+                            $testData = $this->doctype($finalRes, $label, $url);
+                            break;
+                        case "google_overall":
+                            
+                            $object = new \stdClass();
+                            $object->learnMoreURL = "https://setmore.com/";
+                            $object->tagName = "Google Lighthouse";
+                            $object->label = $label;
+                            $object->tested_url = $url;
+                            $object->tested_at = time();
+                            $testData = json_encode($object);
+                            break;
+                        case "google_lighthouse":
+                            $object = new \stdClass();
+                            $object->learnMoreURL = "https://setmore.com/";
+                            $object->tagName = "Google Lighthouse";
+                            $object->label = $label;
+                            $object->tested_url = $url;
+                            $object->tested_at = time();
+                            $testData = json_encode($object);
+                            break;
+                        case "core_web_vitals":
+                            $object = new \stdClass();
+                            $object->learnMoreURL = "https://setmore.com/";
+                            $object->tagName = "Google Lighthouse";
+                            $object->label = $label;
+                            $object->tested_url = $url;
+                            $object->tested_at = time();
+                            $testData = json_encode($object);
+                            break;
+                        case "mobile_friendly":
+                            $testData = $this->mobileFriendly($finalRes, $label, $url);
+                            break;
+                        case "content_security_policy_header":
+                            $testData = $this->contentSecurity($finalRes, $label, $url);
+                            break;
+                        case "hsts_header":
+                            $testData = $this->hstsHeader($finalRes, $label, $url);
+                            break;
+                        case "bad_content_type":
+                            $testData = $this->badContentType($finalRes, $label, $url);
+                            break;
+                        case "x_frame_options_header":
+                            $testData = $this->XFrameOptions($finalRes, $label, $url);
+                            break;
+                        case "is_safe_browsing":
+                            $testData = $this->safeBrowsing($finalRes, $label, $url);
+                            break;
+                        case "cross_origin_links":
+                            $testData = $this->crossOriginLinks($finalRes, $label, $url);
+                            break;
+                        case "protocol_relative_resource":
+                            $testData = $this->protocolRelativeResource($finalRes, $label, $url);
+                            break;
+                        case "ssl_certificate_enable":
+                            $testData = $this->checkSSLCertificate($finalRes, $label, $url);
+                            break;
+                        case "folder_browsing_enable":
+                            $testData = $this->directoryBrowsingEnable($finalRes, $label, $url);
+                            break;
+                        case "html_compression":
+                            $testData = $this->htmlCompression($finalRes, $label, $url);
+                            break;
+                        case "css_compression":
+                            $testData = $this->cssCompression($finalRes, $label, $url);
+                            break;
+                        case "js_compression":
+                            $testData = $this->jsCompression($finalRes, $label, $url);
+                            break;
+                        case "gzip_compression":
+                            $testData = $this->gzipCompression($finalRes, $label, $url);
+                            break;
+                        case "css_caching_enable":
+                            $testData = $this->cssCachingEnable($finalRes, $label, $url);
+                            break;
+                        case "js_caching_enable":
+                            $testData = $this->jsCachingEnable($finalRes, $label, $url);
+                            break;
+                        case "nested_tables":
+                            $testData = $this->nestedTables($finalRes, $label, $url);
+                            break;
+                        case "frameset":
+                            $testData = $this->frameset($finalRes, $label, $url);
+                            break;
+                        case "page_size":
+                            $testData = $this->pageSize($finalRes, $label, $url);
+                            break;
+                        case "http_status_code":
+                            $testData = $this->httpStatusCode($finalRes, $label, $url);
+                            break;
+                        case "broken_links":
+                            $testData = $this->brokenLinks($finalRes, $label, $url);
+                            break;
+                    }
+        
+                } catch (\Throwable $th) {
+        
+                    Log::error("Label '{$label->db_name}' failed on $url: " . $th->getMessage());
+                    $testData = null; // gracefully continue
+        
+                }
+        
+                $allResults[$label->db_name] = $testData;
             }
-            
-            // Reset execution time limit for next URL
-            set_time_limit(180000);
-        }
-
-
-        // status completed Db
-        $this->dashboardTest->update([
-            'status' => 'completed',
-        ]);
-
-
         
-        // create success alert
-        if($this->type != "single_recheck"){
-            $alert = new Alerts();
-            $alert->user_id = $userId;
-            $alert->project_id = $projectId;
-            $alert->message = $DB_MSG;
-            $alert->page = "dashboard";
-            $alert->status = 1;
-            $alert->save();
-        }
         
-    }
+            // --------------------------------------------
+            // ✅ SAVE RESULTS FOR THIS URL
+            // --------------------------------------------
+        
+            $result->update([
+                'data' => json_encode($allResults),
+                'status' => 'completed',
+            ]);
+     
+     
+         } catch (\Exception $e) {
+             Log::error("Error fetching HTML for $url - " . $e->getMessage());
+             
 
+             $result->update([
+                'data' => null,
+                'status' => 'failed',
+                'error_message' => $e->getMessage()
+            ]);
+         }
+     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     
+     
+         // --------------------------------------------
+         // ✅ UPDATE PARENT DASHBOARD TEST STATUS
+         // --------------------------------------------
+     
+         $total = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)->count();
+         $done  = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
+             ->whereIn('status', ['completed', 'failed'])
+             ->count();
+     
+         if ($total > 0 && $total === $done) {
+     
+             DashboardTests::where('id', $this->dashboardTestId)
+                 ->update(['status' => 'completed']);
+         }
+     }
+     
+
+
+   
 
     public function httpStatusCode($data, $label, $testedUrl){
         try {
@@ -5168,8 +4473,6 @@ class RunTest implements ShouldQueue
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "HSTS Header";
             $object->settings = $settings->settings_sub;
-            $object->content = $content;
-            $object->hstsHeaderData = $hstsHeaderData;
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
@@ -5186,8 +4489,6 @@ class RunTest implements ShouldQueue
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "HSTS Header";
             $object->settings = null;
-            $object->content = '';
-            $object->hstsHeaderData = [];
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
@@ -5233,8 +4534,6 @@ class RunTest implements ShouldQueue
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "X-Frame-Options Header";
             $object->settings = $settings->settings_sub;
-            $object->content = $content;
-            $object->xFrameOptionsData = $xFrameOptionsData;
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
@@ -5251,8 +4550,6 @@ class RunTest implements ShouldQueue
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "X-Frame-Options Header";
             $object->settings = null;
-            $object->content = '';
-            $object->xFrameOptionsData = [];
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
@@ -5299,8 +4596,6 @@ class RunTest implements ShouldQueue
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "Content Security Policy";
             $object->settings = $settings->settings_sub;
-            $object->content = $content;
-            $object->contentSecurityData = $contentSecurityData;
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
@@ -5317,8 +4612,6 @@ class RunTest implements ShouldQueue
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "Content Security Policy";
             $object->settings = null;
-            $object->content = '';
-            $object->contentSecurityData = [];
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
@@ -5363,7 +4656,6 @@ class RunTest implements ShouldQueue
             $object->tagName = "Frameset";
             $object->settings = $settings->settings_sub;
             $object->content = $content;
-            $object->framesetData = $framesetData;
             $object->label = $label;
             $object->tested_url = $testedUrl;
             $object->tested_at = time();

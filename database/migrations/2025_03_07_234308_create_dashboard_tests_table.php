@@ -18,9 +18,8 @@ class CreateDashboardTestsTable extends Migration
             $table->integer("user_id");
             $table->integer("project_id");
             $table->string('test_id')->unique();
-            $table->text('urls');
+            $table->longText('urls');
             $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
-            $table->json('results')->nullable(); // Store the performance scores as JSON
             $table->timestamps();
         });
     }

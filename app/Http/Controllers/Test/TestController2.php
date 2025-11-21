@@ -15,6 +15,8 @@ use App\Models\Projects;
 use App\Models\TestResults;
 use App\Models\Alerts;
 use App\Models\DashboardTests;
+use App\Models\DashboardTestsDetails;
+
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
 use App\Models\ProjectTestDetails;
@@ -37,17 +39,18 @@ class TestController2 extends Controller
         $project_id = $request->input('project_id');
         $recheck_label = $request->input('recheck_label');
         $type = $request->input('test_type');
-
+    
         if (empty($urls) || !is_array($urls)) {
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
-
-        // updating dashboard testing status
-        if($type != "single_recheck"){ // only delete if not single recheck
+    
+        // Updating dashboard testing status
+        if ($type != "single_recheck") {
+            // Only delete old data if not a single recheck
             $projectsController->removeDashboardData($project_id);
             Alerts::where("project_id", $project_id)->delete();
         } else {
-            // Only remove the specific label from results for all URLs
+            // Single recheck: remove the specific label from results for all URLs
             $dashboardTest = DashboardTests::where("project_id", $project_id)->latest()->first();
             if ($dashboardTest && $recheck_label) {
                 $results = json_decode($dashboardTest->results, true);
@@ -69,19 +72,19 @@ class TestController2 extends Controller
                 }
             }
         }
-
-
+    
+        // Update project testing status
         $projectsController->updateTestingStatus($project_id);
-
-
+    
+        // Create or fetch DashboardTest
         $testId = Str::uuid();
-
-        if($type === "single_recheck"){
-            $dashboardTest = DashboardTests::where("project_id", $project_id)->get()->first();
+        $dashboardTest = null;
+        if ($type === "single_recheck") {
+            $dashboardTest = DashboardTests::where("project_id", $project_id)->latest()->first();
             $dashboardTest->update([
                 'status' => 'in_progress',
             ]);
-        }else{
+        } else {
             $dashboardTest = DashboardTests::create([
                 'test_id' => $testId,
                 'user_id' => Auth::id(),
@@ -89,17 +92,25 @@ class TestController2 extends Controller
                 'urls' => json_encode($urls),
                 'status' => 'in_progress'
             ]);
-    
         }
-
-  
-
-        // Dispatch the job
-        RunTest::dispatch($dashboardTest, $recheck_label, $type, $urls);
-
+    
+        // --- Dispatch a separate job for each URL ---
+        foreach ($urls as $url) {
+            // You can dispatch one job per URL, or per strategy (desktop/mobile) if needed
+            $result = DashboardTestsDetails::create([
+                'dashboard_test_id' => $dashboardTest->id,
+                'url' => $url['url'],
+                'data' => json_encode([]), // or loop through strategies if needed
+                'status' => 'pending',
+                'error_message' => null,
+            ]);
+    
+            dispatch(new RunTest($result->id, $project_id, $type, $dashboardTest->id));
+        }
+    
         return response()->json(['testId' => $testId]);
     }
-
+    
 
     public function updateSingleTest(Request $request)
     {
@@ -117,22 +128,43 @@ class TestController2 extends Controller
         foreach ($results as $key => $value) {
             foreach ($value as $key1 => $value1) {
                 $value1 = json_decode($value1);
-                print_r($value1->status);
             }
         }
     }
 
     public function checkStatus($projectId)
     {
-        $test = DashboardTests::where('project_id', $projectId)->first();
-
-        if (!$test) {
+        $dashboardTest = DashboardTests::where('project_id', $projectId)->first();
+    
+        if (!$dashboardTest) {
             return response()->json(['error' => 'Test ID not found.'], 404);
         }
-
+    
+        // Get URL-level results
+        $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id)->get();
+    
+        $allResults = [];
+        $completedCount = 0;
+    
+        foreach ($details as $detail) {
+            $allResults[$detail->url] = json_decode($detail->data, true) ?? [];
+            if (in_array($detail->status, ['completed', 'failed'])) {
+                $completedCount++;
+            }
+        }
+    
+        // Determine main dashboard test status
+        $status = 'in_progress';
+        if ($details->count() > 0 && $completedCount === $details->count()) {
+            $status = 'completed';
+        }
+    
+        // Optionally update the main DashboardTests status in DB
+        $dashboardTest->update(['status' => $status]);
+    
         return response()->json([
-            'status' => $test->status,
-            'results' => json_decode($test->results)
+            'status' => $status,
+            'results' => $allResults
         ]);
     }
 

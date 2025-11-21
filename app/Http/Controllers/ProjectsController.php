@@ -13,6 +13,7 @@ use App\Models\TestLabel;
 use App\Models\ProjectTestDetails;
 use App\Models\DashboardTests;
 use App\Models\SettingsSub;
+use App\Models\DashboardTestsDetails;
 use App\Rules\CustomURL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Storage;
@@ -202,12 +203,106 @@ class ProjectsController extends Controller
     }
 
 
-    public function getTestData($id){
-        $project = Projects::find($id);
-        $details = DashboardTests::where("project_id", $id)->get()->first();
-        $lighthouseTest = LighthouseTest::where('project_id', $id)->first();
-        return response()->json(['status' => 1, 'msg' => 'Success.', 'test_details' => $details, 'project' => $project, 'lighthouse' => $lighthouseTest]);
+    public function getTestData($projectId)
+    {
+        $project = Projects::find($projectId);
+    
+        // Get the dashboard test
+        $dashboardTest = DashboardTests::where("project_id", $projectId)->first();
+    
+        if (!$dashboardTest) {
+            return response()->json(['error' => 'Test not found'], 404);
+        }
+    
+        // Get all URL-level details
+        $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id)->get();
+    
+        // ✅ Prepare JS structure
+        $obj = [
+            'meta_title' => [],
+            'meta_desc' => [],
+            'robots_meta' => [],
+            'canonical_url' => [],
+            'url_slug' => [],
+            'meta_viewport' => [],
+            'doctype' => [],
+            'favicon' => [],
+            'page_size' => [],
+            'xml_sitemap' => [],
+            'html_sitemap' => [],
+            'images' => [],
+            'open_graph_tags' => [],
+            'twitter_tags' => [],
+            'http_status_code' => [],
+            'broken_links' => [],
+    
+            'security_labels' => [
+                'is_safe_browsing' => [],
+                'cross_origin_links' => [],
+                'protocol_relative_resource' => [],
+                'content_security_policy_header' => [],
+                'x_frame_options_header' => [],
+                'hsts_header' => [],
+                'bad_content_type' => [],
+                'ssl_certificate_enable' => [],
+                'folder_browsing_enable' => [],
+            ],
+    
+            'cbp_labels' => [
+                'html_compression' => [],
+                'css_compression' => [],
+                'js_compression' => [],
+                'gzip_compression' => [],
+                'nested_tables' => [],
+                'frameset' => [],
+                'page_size' => [],
+                'css_caching_enable' => [],
+                'js_caching_enable' => [],
+            ],
+    
+            'google_overall' => [],
+            'google_lighthouse' => [],
+            'core_web_vitals' => [],
+            'mobile_friendly' => [],
+        ];
+    
+        // ✅ Combine all URL results into the same structure
+        foreach ($details as $detail) {
+            if (!$detail->data) continue;
+    
+            $decoded = json_decode($detail->data, true);
+    
+            foreach ($decoded as $testKey => $value) {
+    
+                // SECURITY LABELS
+                if (isset($obj['security_labels'][$testKey])) {
+                    $obj['security_labels'][$testKey][] = json_decode($value, true);
+                    continue;
+                }
+    
+                // CBP LABELS
+                if (isset($obj['cbp_labels'][$testKey])) {
+                    $obj['cbp_labels'][$testKey][] = json_decode($value, true);
+                    continue;
+                }
+    
+                // NORMAL LABELS
+                if (isset($obj[$testKey])) {
+                    $obj[$testKey][] = json_decode($value, true);
+                    continue;
+                }
+            }
+        }
+    
+        return response()->json([
+            'status' => 1,
+            'msg' => "Success.",
+            'project' => $project,
+            'dashboard_status' => $dashboardTest->status,
+            'results' => $obj
+        ]);
     }
+    
 
     public function getTestDataSingle($id, $label){
         $project = Projects::find($id);

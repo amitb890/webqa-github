@@ -109,6 +109,9 @@ Route::get('/test-archive', [App\Http\Controllers\PagesController::class, 'testR
 Route::get('/webtests', [App\Http\Controllers\PagesController::class, 'getResults'])->name('get.results');
 
 
+
+
+
 Route::prefix('api')->group(function () {
     Route::get('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'show']);
     Route::post('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'store']);

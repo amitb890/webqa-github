@@ -1,0 +1,1 @@
+- change php.ini limit max_vars
