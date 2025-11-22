@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 100, recheckSingleIntervalStatus = true
   var recheckMax = 50, recheckGoogle = 1, recheckSingleMax = 50
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
@@ -100,7 +100,7 @@ $(document).ready(function () {
           },
           body: JSON.stringify({ 
             "_token": $('meta[name="csrf-token"]').attr('content'),
-            "urls":urls.slice(0, urlsGoogle), 
+            "urls":originalUrls.slice(0, urlsGoogle), 
             "project_id": projectId
           })
       });
@@ -2356,6 +2356,9 @@ $(document).ready(function () {
         resultsTotal = 0
       }
 
+      total = total * 2
+
+
       if(document.querySelectorAll(".page_speed_content").length > 0){
         const progress = Controls.getGoogleCurrentProgress(results)
         $("#card_google_overall .dashboard-page-speed-progress, #card_google_lighthouse .dashboard-page-speed-progress, #card_core_web_vitals .dashboard-page-speed-progress").css({width: progress + "%"})
@@ -2378,13 +2381,15 @@ $(document).ready(function () {
 
     static getGoogleCurrentProgress(results){
       let resultsTotal, total
-      total = urls.length
+      total = googleUrlsToCheck
+      total = total * 2
 
       if(results){
         resultsTotal = Object.keys(results).length
       }else{
         resultsTotal = 0
       }
+
       return getReportProgress(resultsTotal, total, false)
     }
     static buildGoogleElements(refreshState = false){

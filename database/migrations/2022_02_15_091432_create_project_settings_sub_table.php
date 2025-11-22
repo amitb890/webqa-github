@@ -26,7 +26,7 @@ class CreateProjectSettingsSubTable extends Migration
             $table->boolean("title_casing_camel")->default(0)->nullable();
             $table->boolean("title_casing_sentence")->default(0)->nullable();
             $table->boolean("is_excluded_words")->default(0)->nullable();
-            $table->text("excluded_words")->nullable()->default("");
+            $table->text("excluded_words")->nullable();
             $table->boolean("image_max_size")->default(1)->nullable();
             $table->bigInteger("image_max_size_val")->default(150)->nullable();
             $table->boolean("image_name_only_hyphens")->default(1)->nullable();

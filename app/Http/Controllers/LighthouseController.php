@@ -63,8 +63,12 @@ class LighthouseController extends Controller
         }
 
         // Get URL-level results
-        $details = LighthouseResult::where('test_id', $lighthouseTest->id)->get();
+        $detailsTotal = LighthouseResult::where('test_id', $lighthouseTest->id)
+        ->get();
 
+        $details = LighthouseResult::where('test_id', $lighthouseTest->id)
+        ->whereIn('status', ['completed', 'failed'])
+        ->get();
 
         
         $completedCount = 0;
@@ -77,7 +81,7 @@ class LighthouseController extends Controller
     
         // Determine main dashboard test status
         $status = 'in_progress';
-        if ($details->count() > 0 && $completedCount === $details->count()) {
+        if ($details->count() > 0 && $completedCount === $detailsTotal->count()) {
             $status = 'completed';
         }
     
