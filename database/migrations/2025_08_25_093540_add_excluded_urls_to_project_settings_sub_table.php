@@ -15,7 +15,7 @@ class AddExcludedUrlsToProjectSettingsSubTable extends Migration
     {
         Schema::table('project_settings_sub', function (Blueprint $table) {
             $table->boolean("broken_links_exclude_urls")->default(0)->nullable();
-            $table->text("broken_links_excluded_urls")->nullable()->default("");
+            $table->text("broken_links_excluded_urls")->nullable();
         });
     }
 
