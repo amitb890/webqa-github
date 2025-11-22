@@ -55,7 +55,7 @@ class CreateProjectSettingsSubTable extends Migration
             $table->boolean("url_casing_only_underscores")->default(0)->nullable();
             $table->boolean("url_casing_both")->default(0)->nullable();
             $table->boolean("url_stop_words")->default(0)->nullable();
-            $table->text("url_stop_words_val")->nullable()
+            $table->text("url_stop_words_val")->nullable();
             $table->boolean("og_title")->default(1)->nullable();
             $table->boolean("max_og_title_length")->default(1)->nullable();
             $table->bigInteger("max_og_title_length_val")->default(95)->nullable();
