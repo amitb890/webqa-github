@@ -262,7 +262,7 @@ class PagesController extends Controller
         return view("user.analysis.index", compact("data"));
     }
     public function testResults(Request $request){
-        return view('tests.index');
+        return view('tests.index')->with("headerPadding", "public-test-archives");
     }
     
     public function getResults(Request $request)

@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'fcpwa'])
 
 @section('title', 'Run Precise Webpage Audits with Clear Pass/Fail | Webqa')
 @section('meta-description', 'Audit any URL against your standards. Set criteria like title length and casing, get Pass/Fail results, share analysis links, and export PDF/CSV/XLSX.')

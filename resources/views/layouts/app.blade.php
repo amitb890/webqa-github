@@ -445,7 +445,7 @@ if(isset($_COOKIE["activeProject"])){
           </div>
           <div class="sub-sidebar-lower" id="v-pills-tab" role="tablist" aria-orientation="vertical">
             <div class="ssbl-item">
-              <div class="ssbl-item-top nav-link active" id="v-pills-meta-tab"
+              <div class="ssbl-item-top nav-link" id="v-pills-meta-tab"
                 {{-- data-bs-toggle="pill"
                 data-bs-target="#v-pills-meta"
                 type="button"
@@ -738,7 +738,9 @@ if(isset($_COOKIE["activeProject"])){
   @endphp
 
   @auth
-  <script>
+ <script>
+    let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
+let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
       window.reportSettings = @json(
           \App\Models\ReportSettings::where('user_id', auth()->id())->first() ?? $defaultReportSettings
       );

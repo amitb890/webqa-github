@@ -11,7 +11,7 @@ class BulkToolsController extends Controller
 {
 
     public function index(){
-        return view("bulk-tools.index");
+        return view("bulk-tools.index")->with("headerPadding", "tools_landing_page");
     }
 
 
@@ -21,7 +21,11 @@ class BulkToolsController extends Controller
 
         foreach($data["data"] as $d){
             if($slug === $d["slug"]){
-                return view("bulk-tools.show", compact("data", "d", "slug"));
+                // return view("bulk-tools.show", compact("data", "d", "slug"));
+                return view("bulk-tools.show", array_merge(
+                    compact("data", "d", "slug"),
+                    ["headerPadding" => "tool_pages"]
+                ));
             }
         }
 

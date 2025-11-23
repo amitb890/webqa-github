@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'fcps'])
 
 @section('title', 'Define Project-Wide Audit Rules in Settings | Webqa')
 @section('meta-description', 'Set acceptance criteria for each test—title length, casing, “must not equal H1,” and more. Apply rules across audits and tools for consistent Pass/Fail results.')

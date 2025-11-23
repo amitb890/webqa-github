@@ -140,16 +140,18 @@ function displayAlertSwithProject(classVal, data){
   }
 
 
-  // Sidebar Js
-  $(".collaps_sidebar").click(function () {
-    $(".side_content").slideToggle(function () {
-      $(".collaps_sidebar").toggleClass("rotate");
-      if ($(window).width() > 991) {
-        $(".footer-area").toggleClass("small");
-      }
-    });
-    $('.settingsCollapse').collapse('hide');
+// Sidebar Js
+$(".collaps_sidebar").click(function () {
+  $(".side_content").slideToggle(function () {
+    $(".collaps_sidebar").toggleClass("rotate");
+
+    if ($(window).width() > 991) {
+      $(".footer-area").toggleClass("small");
+      $("body").toggleClass("sidebar-expanded");
+    }
   });
+  $(".settingsCollapse").collapse("hide");
+});
 
 
   // Hover color effects for sidebar items
@@ -357,11 +359,21 @@ $(document).ready(function () {
     const list = clickedItem.next("ul");
     const subSidebarLower = $(".sub-sidebar-lower");
 
-    $(".ssbl-item-top").not(clickedItem).removeClass("active");
-    $(".ssbl-item-top").not(clickedItem).next("ul").slideUp(300);
+    // Reset others
+    $(".ssbl-item-top").not(clickedItem).each(function () {
+      $(this).removeClass("active");
+      $(this).children("img").attr("src", plusIcon);
+      $(this).next("ul").slideUp(300);
+    });
 
     clickedItem.toggleClass("active");
     list.slideToggle(300);
+    
+    // Icon swap
+    const icon = clickedItem.children("img");
+    icon.attr("src", clickedItem.hasClass("active") ? minusIcon : plusIcon);
+
+    // Scroll state
 
     const anyVisible = $(".sub-sidebar-lower ul:visible").length > 0;
     subSidebarLower.toggleClass("open-scroll", anyVisible);

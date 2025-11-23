@@ -47,7 +47,7 @@
    <!-- header main starts -->
     <header id="headerMain" class="header_main genarel_header_main">
       <nav class="navbar_main">
-        <div class="container-fluid container-fluid-tool-page header_home_page">
+        <div class="container-fluid container-fluid-tool-page header_home_page {{ $headerPadding ?? '' }}">
           <div class="container-fluid-inner">
             <a href="{{ route('index') }}" class="navbar-brand">
             <img

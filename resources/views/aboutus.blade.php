@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'aup'])
 
 @section('title', 'About us | Webqa')
 @section('meta-description', 'Webqa simplifies website audits with your standards—custom checks, pass/fail clarity, shareable analysis, and a website tracker for faster fixes.')

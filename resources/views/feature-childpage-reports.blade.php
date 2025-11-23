@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'fcpr'])
 
 @section('title', 'Share Clear Audit Findings With Reports | Webqa')
 @section('meta-description', 'Turn audits into action with per-metric reports. Open from the dashboard, review issues line by line, and export PDF/CSV/XLSX for fast hand-offs.')
