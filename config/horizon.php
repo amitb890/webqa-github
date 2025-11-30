@@ -199,7 +199,7 @@ return [
         'supervisors' => [
             'default' => [
                 'connection' => 'redis',
-                'queue' => ['default', 'lighthouse'],
+'queue' => ['default', 'lighthouse', 'dashboard_1', 'dashboard_2', 'dashboard_3', 'dashboard_4', 'dashboard_5'],
                 'balance' => 'auto',
                 'processes' => 10,
                 'tries' => 3,
@@ -209,7 +209,7 @@ return [
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
-                'queue' => ['default', 'lighthouse'],
+'queue' => ['default', 'lighthouse', 'dashboard_1', 'dashboard_2', 'dashboard_3', 'dashboard_4', 'dashboard_5'],
                 'balance' => 'auto',
                 'maxProcesses' => 10,
                 'memory' => 512,

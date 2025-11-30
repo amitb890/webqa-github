@@ -3359,7 +3359,7 @@ h6 {
   top: 40px;
 }
 
-/* .dropdown-menu li button {
+.dashboard-page .dropdown-menu li button {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -3370,15 +3370,18 @@ h6 {
   color: var(--dark);
 }
 
-.dropdown-menu li button:hover {
+.dashboard-page .dropdown-menu li button:hover {
   background: var(--bg-lime);
 }
 
-.dropdown-menu li button img {
+.dashboard-page .dropdown-menu li button img {
   height: 15px;
   width: 15px;
-} */
+}
 
+.dashboard-page .dropdown-menu{
+  width: unset;
+}
 
 .delete-url-yes-modal {
   padding: 6px 39px;
@@ -10960,6 +10963,10 @@ table.bulk-table td:last-child {
   align-items: center;
   justify-content: flex-end;
   gap: 22px;
+  /* padding: 10px 0px 25px 0px; */
+}
+
+.dashboard-page .dashboard_recheck_area{
   padding: 10px 0px 25px 0px;
 }
 

@@ -38,6 +38,8 @@ class RunTest implements ShouldQueue
     protected $projectId;
     protected $type;
     protected $dashboardTestId;
+    protected $recheck_label;
+    
 
 
     /**
@@ -113,12 +115,13 @@ class RunTest implements ShouldQueue
      *
      * @param \App\Models\DashboardTests $dashboardTest
      */
-    public function __construct($resultId, $projectId, $type, $dashboardTestId)
+    public function __construct($resultId, $projectId, $type, $dashboardTestId, $recheck_label)
     {
         $this->resultId = $resultId;
         $this->projectId = $projectId;
         $this->type = $type;
         $this->dashboardTestId = $dashboardTestId;
+        $this->recheck_label = $recheck_label;
     }
 
     /**
@@ -140,7 +143,16 @@ class RunTest implements ShouldQueue
          $labels = json_decode(
              json_encode($projectsController->getLabels($projectId))
          )->original->all_labels;
-     
+
+         if ($typeOfTest === "single_recheck") { // if single recheck we only use 1 label
+            $labels = collect($labels)
+                ->where('db_name', $this->recheck_label)
+                ->values()
+                ->toArray();
+        }
+
+
+
          $settings = projectSettings::where("projects_id", $projectId)
              ->with("settingsSub")
              ->first();
@@ -240,6 +252,10 @@ class RunTest implements ShouldQueue
             // --------------------------------------------
             foreach ($labels as $label) {
         
+                if($typeOfTest == "single_recheck"){
+                    $label->initialTestingState = true;
+                }
+
                 if (!$label->initialTestingState) continue;
         
                 try {
@@ -386,13 +402,31 @@ class RunTest implements ShouldQueue
                 $allResults[$label->db_name] = $testData;
             }
         
+
+
+            // Load saved JSON (old results)
+            $existingData = json_decode($result->data, true) ?? [];
+
+            if ($typeOfTest === "single_recheck") {
+
+                // Update ONLY the one label inside the JSON
+                $existingData[$this->recheck_label] = $allResults[$this->recheck_label] ?? null;
+
+                // Save old + updated label
+                $finalData = $existingData;
+
+            } else {
+
+                // For full tests, save all results normally
+                $finalData = $allResults;
+            }
         
             // --------------------------------------------
             // ✅ SAVE RESULTS FOR THIS URL
             // --------------------------------------------
         
             $result->update([
-                'data' => json_encode($allResults),
+                'data' => json_encode($finalData),
                 'status' => 'completed',
             ]);
      
@@ -430,14 +464,6 @@ class RunTest implements ShouldQueue
 
 
 
-
-
-
-
-
-
-
-     
      
          // --------------------------------------------
          // ✅ UPDATE PARENT DASHBOARD TEST STATUS

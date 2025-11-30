@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 100, recheckSingleIntervalStatus = true
-  var recheckMax = 50, recheckGoogle = 1, recheckSingleMax = 50
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var recheckMax = 5, recheckGoogle = 2, recheckSingleMax = 10
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
@@ -321,21 +321,27 @@ $(document).ready(function () {
     static showWaitingMessage(){
       // Remove any existing waiting message first
       this.removeWaitingMessage();
+      let msg = "Please wait while we finish the current queue of tests before starting the recheck."
+      displayAlert(".analysis-content-body-message", {
+        status: 1,
+        msg: msg,
+        notHide: true
+      })
       
-      const div = document.createElement("div")
-      div.id = "waiting-message"
-      div.classList.add("main-tricker-progress")
-      div.innerHTML = `
-              <div class="gif-loader">
-                <img src="/new-assets/assets/images/preloader1.gif" alt="icon">
-              </div>
-              <div class="single-tricker-progress">
-                <div class="rechecking-page">
-                  <span class="primary-span">Waiting for current tests to complete...</span>
-                  <span class="dark-span">Please wait while we finish the current queue of tests before starting the recheck.</span>
-                </div>
-              </div>`
-      document.querySelector(".dashboard_recheck_area").prepend(div)
+      // const div = document.createElement("div")
+      // div.id = "waiting-message"
+      // div.classList.add("main-tricker-progress")
+      // div.innerHTML = `
+      //         <div class="gif-loader">
+      //           <img src="/new-assets/assets/images/preloader1.gif" alt="icon">
+      //         </div>
+      //         <div class="single-tricker-progress">
+      //           <div class="rechecking-page">
+      //             <span class="primary-span">Waiting for current tests to complete...</span>
+      //             <span class="dark-span">Please wait while we finish the current queue of tests before starting the recheck.</span>
+      //           </div>
+      //         </div>`
+      // document.querySelector(".dashboard_recheck_area").prepend(div)
     }
 
     static removeWaitingMessage(){
@@ -488,6 +494,7 @@ $(document).ready(function () {
 
 
     static buildLoaderCards(data){
+      console.log(data)
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
             if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
@@ -539,6 +546,9 @@ $(document).ready(function () {
     static getSingleLoaderCardElement(label, data){
         let element
         const settings = data.settings
+        // Get the label object to access reportsUrl
+        const labelObj = Controls.getActiveLabel(label)
+        const reportsUrl = labelObj && labelObj.reportsUrl ? labelObj.reportsUrl : "#"
       
         switch(label){
             case "page_size":
@@ -558,7 +568,7 @@ $(document).ready(function () {
                   </div>
                 </div>
                 <div class="inner_dashboard_footer">
-                  <a href="#">View Report</a>
+                  <a href="${reportsUrl}">View Report</a>
                 </div>`
                 break;
             case "meta_title":
@@ -580,7 +590,7 @@ $(document).ready(function () {
                     <p>No casing<span>${data.casingUndefined}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
-                    <a href="#">View Report</a>
+                    <a href="${reportsUrl}">View Report</a>
                 </div>`
                 break;
             case "meta_desc":
@@ -595,7 +605,7 @@ $(document).ready(function () {
                     <p>Short meta description content (<30 characters)<span class="${data.lengthBelow > 0 ? 'danger' : 'success'}">${data.lengthBelow}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
-                    <a href="#">View Report</a>
+                    <a href="${reportsUrl}">View Report</a>
                 </div>`
                 break;
             case "robots_meta":
@@ -609,7 +619,7 @@ $(document).ready(function () {
                   <p>URL's with Noindex<span>${data.withNoIndex}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
-                  <a href="#">View Report</a>
+                  <a href="${reportsUrl}">View Report</a>
                 </div>`
                 break;
             case "canonical_url":
@@ -624,7 +634,7 @@ $(document).ready(function () {
                   </p>
                 </div>
                 <div class="inner_dashboard_footer">
-                  <a href="#">View Report</a>
+                  <a href="${reportsUrl}">View Report</a>
                 </div>`
                 break;
             case "open_graph_tags":
@@ -789,7 +799,7 @@ $(document).ready(function () {
               </div>
 
               <div class="inner_dashboard_footer">
-                <a href="#">View Report</a>
+                <a href="${reportsUrl}">View Report</a>
               </div>`
                 break;
             case "twitter_tags":
@@ -912,7 +922,7 @@ $(document).ready(function () {
               </div>
 
               <div class="inner_dashboard_footer">
-                <a href="#">View Report</a>
+                <a href="${reportsUrl}">View Report</a>
               </div>`
                 break;
             case "http_status_code":
@@ -944,7 +954,7 @@ $(document).ready(function () {
                     </div>
 
                     <div class="inner_dashboard_footer">
-                      <a href="#">View Report</a>
+                      <a href="${reportsUrl}">View Report</a>
                     </div>`
               break;
               case "broken_links":
@@ -959,7 +969,7 @@ $(document).ready(function () {
                     <p>External broken links <span class="">${data.totalBrokenExternal}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
-                    <a href="#">View Report</a>
+                    <a href="${reportsUrl}">View Report</a>
                 </div>`
                 break;
             case "security_labels":
@@ -1024,7 +1034,7 @@ $(document).ready(function () {
                 </div>
               </div>
               <div class="inner_dashboard_footer">
-                <a href="#">View Report</a>
+                <a href="${reportsUrl}">View Report</a>
               </div>`;
                 break;
             case "mobile_friendly":
@@ -1163,7 +1173,7 @@ $(document).ready(function () {
               </div>
             </div>
             <div class="inner_dashboard_footer">
-              <a href="#">View Report</a>
+              <a href="${reportsUrl}">View Report</a>
             </div>
               `
             break;
@@ -1403,7 +1413,7 @@ $(document).ready(function () {
               </div>
             </div>
             <div class="inner_dashboard_footer">
-              <a href="#">View Report</a>
+              <a href="${reportsUrl}">View Report</a>
             </div>
               `
             break;
@@ -1741,7 +1751,7 @@ $(document).ready(function () {
               </div>
             </div>
             <div class="inner_dashboard_footer">
-              <a href="#">View Report</a>
+              <a href="${reportsUrl}">View Report</a>
             </div>
               `
             break;
@@ -1890,7 +1900,7 @@ $(document).ready(function () {
                           </div>
 
                           <div class="inner_dashboard_footer">
-                            <a href="#">View Report</a>
+                            <a href="${reportsUrl}">View Report</a>
                           </div>
                           ` 
                           
@@ -1910,7 +1920,7 @@ $(document).ready(function () {
                           </div>
 
                            <div class="inner_dashboard_footer">
-                            <a href="#">View Report</a>
+                            <a href="${reportsUrl}">View Report</a>
                             </div>
                           `
                         
@@ -1962,7 +1972,7 @@ $(document).ready(function () {
                       </div>
 
                       <div class="inner_dashboard_footer">
-                        <a href="#">View Report</a>
+                        <a href="${reportsUrl}">View Report</a>
                       </div>
                       ` 
                       
@@ -1982,14 +1992,14 @@ $(document).ready(function () {
                       </div>
 
                        <div class="inner_dashboard_footer">
-                        <a href="#">View Report</a>
+                        <a href="${reportsUrl}">View Report</a>
                         </div>
                       `
                     
                       : "" }
 
                     <div class="inner_dashboard_footer">
-                      <a href="#">View Report</a>
+                      <a href="${reportsUrl}">View Report</a>
                     </div>
             `
       
@@ -2011,7 +2021,7 @@ $(document).ready(function () {
                   </div>
                 </div>
                 <div class="inner_dashboard_footer">
-                  <a href="#">View Report</a>
+                  <a href="${reportsUrl}">View Report</a>
                 </div>
                 `
                 break;
@@ -2206,21 +2216,15 @@ $(document).ready(function () {
     }
 
     static updateSingleTileProgress(target, results, dbName, totalUrls) {
-      let processed = 0;
-      if (results && typeof results === 'object') {
-        for (const url in results) {
-          if (results[url] && results[url][dbName]) {
-            processed++;
-          }
-        }
-      }
-      let progress = totalUrls > 0 ? Math.round((processed / totalUrls) * 100) : 0;
+      const progressDetails = Controls.calcProgressDashboard(results)
+
+
       // Update the progress bar in the target tile
       const progressBar = target.querySelector('.dashboard-page-speed-progress');
       const progressText = target.querySelector('.page_speed_content span');
       if (progressBar && progressText) {
-        progressBar.style.width = progress + "%";
-        progressText.innerHTML = progress + "%";
+        progressBar.style.width = progressDetails.progress + "%";
+        progressText.innerHTML = progressDetails.progress + "%";
       }
     }
   }
@@ -2258,37 +2262,94 @@ $(document).ready(function () {
               // CHECKING IF DASHBOARD WAS BUILT
               DB.getDashboardShowStatus(projectId)
               .done(function(data) {
-                  if(data.dashboardStatus){
+                console.log(data)
+                  if(data.dashboardStatus === 1){
 
                     Controls.buildDashboard()
 
-                  }else{
+                    
+
+                  }else if(data.dashboardStatus === 2){
+
+                    Controls.buildDashboard(data.dashboardStatus)
+
+                    async function checkStatusDashboard() {
+                      let controller;
+                  
+                      while (true) {
+                  
+                          // Cancel any previous unfinished request
+                          if (controller) controller.abort();
+                          controller = new AbortController();
+                  
+                          try {
+                              const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+                                  signal: controller.signal
+                              });
+                  
+                              const { status, results } = await response.json();
+                              Controls.updateProgressRecheck(results);
+                  
+                              if (status === 'completed') {
+                  
+                                  Controls.endTest();
+                  
+                                  setTimeout(() => {
+                                      recheckAllowed = true;
+                                      UI.updateRecheckButtonState(false); // re-enable button
+                                  }, 100);
+                  
+                                  break; // stop loop
+                              }
+                          } catch (e) {
+                              // ignore abort errors
+                              if (e.name !== "AbortError") console.error(e);
+                          }
+                  
+                          // wait 1 second before next request
+                          await new Promise(res => setTimeout(res, 1000));
+                      }
+                    }
+                  
+                    checkStatusDashboard();
+
+                  }else if(data.dashboardStatus === 3){
+                    Controls.buildDashboard(data.dashboardStatus)
+
+                  }else{ 
                     removeLoader()
                     Controls.buildDashboardLoader()
                     if(data.details_progress != "in_progress"){
-                    Controls.startTest(urls, "default")
+                      Controls.startTest(urls, "default")
                     } 
 
+                    
+                    let controller;
                     async function checkStatusDashboard() {
-                      const interval = setInterval(async () => {
-                          const response = await fetch(`/api/check-status-dashboard/${projectId}`);
-                          const { status, results } = await response.json();
+                        while (true) {
 
-                          Controls.updateDashboardLoader(results)
-            
+                            // Cancel previous request if still running
+                            if (controller) controller.abort();
+                            controller = new AbortController();
 
-            
-                          if (status === 'completed') {
-                              clearInterval(interval);
+                            const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+                                signal: controller.signal
+                            });
 
-                              Controls.endTest()
+                            const { status, results } = await response.json();
 
-                              window.setTimeout(function(){
-                                recheckAllowed = true
-                              }, 100)
-                          }
-                      }, 1000); // Check every 5 seconds
+                            Controls.updateDashboardLoader(results);
+
+                            if (status === 'completed') {
+                                Controls.endTest();
+                                setTimeout(() => (recheckAllowed = true), 100);
+                                break;
+                            }
+
+                            await new Promise(res => setTimeout(res, 1000));
+                        }
                     }
+
             
                     checkStatusDashboard()
                     
@@ -2304,31 +2365,14 @@ $(document).ready(function () {
       
     }
 
-  static updateDashboardLoader(results) {
-    if (!results) results = {};
 
-    const total = urls.length; // total URLs we are testing
-    let completedCount = 0;
+    static updateDashboardLoader(results) {
+  
+      const progressDetails = Controls.calcProgressDashboard(results)
 
-    // Count completed URL jobs
-    Object.keys(results).forEach(url => {
-        const urlData = results[url];
-
-        // Check if URL-level job is completed or failed
-        // Here we assume the structure has 'status' inside each URL data
-        if (urlData && urlData.status === 'completed' || urlData.status === 'failed') {
-            completedCount++;
-        }
-        // If URL data is just object of labels, consider it done
-        else if (urlData && Object.keys(urlData).length > 0) {
-            completedCount++;
-        }
-    });
-
-    const progress = getReportProgress(completedCount, total, false);
-
-    Controls.updateProgress(results, progress, completedCount, total);
+      Controls.updateProgress(results, progressDetails.progress, progressDetails.completedCount, progressDetails.total);
   }
+  
     
 
 
@@ -2446,7 +2490,7 @@ $(document).ready(function () {
         const googleData = await googleResponse.json();
         
         // If any test is still running, return true
-        if (dashboardData.status === 'running' || googleData.status === 'running') {
+        if (dashboardData.status === 'pending' || dashboardData.status === 'in_progress' || googleData.status === 'pending' || googleData.status === 'in_progress') {
           return true;
         }
         
@@ -2491,10 +2535,7 @@ $(document).ready(function () {
           // Wait for all tests to complete
           await Controls.waitForTestsToComplete();
           
-          // Remove waiting message
-          UI.removeWaitingMessage();
-        }
-        
+        }else{
         // Now proceed with recheck
         recheckAllowed = false
         
@@ -2553,39 +2594,65 @@ $(document).ready(function () {
                 core_web_vitals: [],
                 mobile_friendly: [],
               }
-              // UI.recheckStartedAlert()
+              UI.recheckStartedAlert()
               Controls.startTest(urls, "recheck")
 
+
+
               async function checkStatusDashboard() {
-                const interval = setInterval(async () => {
-                    const response = await fetch(`/api/check-status-dashboard/${projectId}`);
-                    const { status, results } = await response.json();
-                    Controls.updateProgressRecheck(results)
-      
-      
-                    if (status === 'completed') {
-                        clearInterval(interval);
-
-                        Controls.endTest()
-                        
-
-                        window.setTimeout(function(){
-                          recheckAllowed = true
-                          // Re-enable recheck button after recheck completion
-                          UI.updateRecheckButtonState(false)
-                        }, 100)
+                let controller;
+            
+                while (true) {
+            
+                    // Cancel any previous unfinished request
+                    if (controller) controller.abort();
+                    controller = new AbortController();
+            
+                    try {
+                        const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+                            signal: controller.signal
+                        });
+            
+                        const { status, results } = await response.json();
+                        Controls.updateProgressRecheck(results);
+            
+                        if (status === 'completed') {
+            
+                            Controls.endTest();
+            
+                            setTimeout(() => {
+                                recheckAllowed = true;
+                                UI.updateRecheckButtonState(false); // re-enable button
+                            }, 100);
+            
+                            break; // stop loop
+                        }
+                    } catch (e) {
+                        // ignore abort errors
+                        if (e.name !== "AbortError") console.error(e);
                     }
-                }, 1000); // Check every 1 second
+            
+                    // wait 1 second before next request
+                    await new Promise(res => setTimeout(res, 1000));
+                }
               }
-      
-            checkStatusDashboard()
+            
+              checkStatusDashboard();
+            
+
+
+
+
         })
+        }
+      
       }
     }
 
   
         
     static getShowDashboardStatus(element){
+      console.log(element)
       for (const [key, value] of Object.entries(element)) {
         const el = element[key]
         if(el.length > 0){
@@ -2726,7 +2793,7 @@ $(document).ready(function () {
 
     
 
-    static buildDashboard(){
+    static buildDashboard(dashboardStatus){
         DB.getTestData(projectId)
         .done(function(data) {
             const testDetails = data.results
@@ -2747,6 +2814,18 @@ $(document).ready(function () {
                 Controls.buildCards(testDetails)
     
                 Controls.activeEvents()
+
+                if(dashboardStatus === 2){ // if recheck state build recheck loader
+                  urls = originalUrls.slice(0, recheckMax)
+                  urlsToCheck = recheckMax
+                  UI.buildRecheckLoader()
+                }else if(dashboardStatus === 3){ // if recheck single state build recheck loader
+                  
+                }
+
+
+
+
                 console.log("Dashboard finished")
                 Controls.buildGoogleElements()
             });
@@ -2777,6 +2856,7 @@ $(document).ready(function () {
         DB.updateAlertStatus()
         e.preventDefault()
       })
+      
 
 
       async function checkStatus() {
@@ -2847,28 +2927,44 @@ $(document).ready(function () {
       return state
     }
 
+    static async refreshSingleTile(e){
+      const testsRunning = await Controls.checkIfTestsAreRunning();
+        
+      if (testsRunning) {
+        // Show message that we need to wait for tests to complete
+        UI.showWaitingMessage();
+        
+        // Wait for all tests to complete
+        await Controls.waitForTestsToComplete();
+        
+      }else{
+        refreshTileDisabled = true
+        recheckSingleIntervalStatus = true
+        const target = e.target.closest(".single_dashboard_card_main")
+        const elementDbName = target.getAttribute("data-label")
+        if(ignore_tests.includes(elementDbName)){
+          Controls.refreshTileGoogle(elementDbName, target)
+        }else{
+          Controls.refreshTile(elementDbName, target)
+        } 
+      }
+    }
+
+
+
     static activeSidebarEvents(){
       $(".remove-tile").on("click", (e)=>{
-        if(!removeTileDisabled){
-          removeTileDisabled = true
-          const target = e.target.closest(".single_dashboard_card_main")
-          const elementDbName = target.getAttribute("data-label")
-          Controls.removeTile(elementDbName, target)
-        }
+        console.log("Remove Tile Disabled")
+        // if(!removeTileDisabled){
+        //   removeTileDisabled = true
+        //   const target = e.target.closest(".single_dashboard_card_main")
+        //   const elementDbName = target.getAttribute("data-label")
+        //   Controls.removeTile(elementDbName, target)
+        // }
       })
 
       $(".refresh-tile").on("click", (e)=>{
-        if(!refreshTileDisabled){
-          refreshTileDisabled = true
-          recheckSingleIntervalStatus = true
-          const target = e.target.closest(".single_dashboard_card_main")
-          const elementDbName = target.getAttribute("data-label")
-          if(ignore_tests.includes(elementDbName)){
-            Controls.refreshTileGoogle(elementDbName, target)
-          }else{
-            Controls.refreshTile(elementDbName, target)
-          }
-        }
+          Controls.refreshSingleTile(e)
       })
 
       $(".add-tile").on("click", (e)=>{
@@ -3031,44 +3127,75 @@ $(document).ready(function () {
         mobile_friendly: [],
       }
       UI.buildRefreshTileLoader(dbName, target, name)
-      originalUrls = originalUrls.slice(0, recheckSingleMax) // remove
-      Controls.startTest(originalUrls, "single_recheck", dbName)
+      urls = originalUrls.slice(0, recheckSingleMax)
+      Controls.startTest(urls, "single_recheck", dbName)
 
+    
       async function checkStatusDashboard() {
-        const interval = setInterval(async () => {
-            const response = await fetch(`/api/check-status-dashboard/${projectId}`);
-            const { status, results } = await response.json();
-          
-            UI.updateSingleTileProgress(target, results, dbName, originalUrls.length);
-
-            if (status === 'completed') {
-                if(recheckSingleIntervalStatus){
-                  obj = Controls.updateTestDataForm(results)
-                  Controls.manageSingleCard(obj[dbName], dbName, obj[dbName][0].label, false, false)
-
-
-                  // Re-enable recheck button after single recheck completion
-                  UI.updateRecheckButtonState(false)
-
-
-                  displayAlert(".analysis-content-body-message", {
-                    status: 1,
-                    msg: "Recheck for the selected tile has been completed successfully.",
-                    notHide: true
-                  })
-                  $('.analysis-content-body-message').show()
-
-                  // disable
-                  refreshTileDisabled = false
-                  clearInterval(interval);
-                  recheckSingleIntervalStatus = false
+        let controller;
+    
+        while (true) {
+            // Cancel any previous ongoing request
+            if (controller) controller.abort();
+            controller = new AbortController();
+    
+            try {
+                const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+                    signal: controller.signal
+                });
+    
+                const { status, results } = await response.json();
+    
+                // Update UI for single tile progress
+                UI.updateSingleTileProgress(target, results, dbName, urls.length);
+    
+                // When completed
+                if (status === 'completed') {
+    
+                    if (recheckSingleIntervalStatus) {
+    
+                        let obj = Controls.updateTestDataForm(results);
+                        Controls.manageSingleCard(
+                            obj[dbName],
+                            dbName,
+                            obj[dbName][0].label,
+                            false,
+                            false
+                        );
+    
+                        // Re-enable recheck button after completion
+                        UI.updateRecheckButtonState(false);
+    
+                        displayAlert(".analysis-content-body-message", {
+                            status: 1,
+                            msg: "Recheck for the selected tile has been completed successfully.",
+                            notHide: true
+                        });
+    
+                        $('.analysis-content-body-message').show();
+    
+                        // Enable refresh again
+                        refreshTileDisabled = false;
+    
+                        // Reset status flag
+                        recheckSingleIntervalStatus = false;
+    
+                        break; // stop the loop completely
+                    }
                 }
-
+    
+            } catch (e) {
+                // Ignore fetch abort errors
+                if (e.name !== "AbortError") console.error(e);
             }
-        }, 1000); // Check every 5 seconds
+    
+            // Wait 1 second before next check
+            await new Promise(res => setTimeout(res, 1000));
+        }
       }
-
-      checkStatusDashboard()
+    
+      checkStatusDashboard();
+    
     }
 
     static removeTile(dbName, target){
@@ -3215,20 +3342,50 @@ $(document).ready(function () {
         }
     }
 
-
-    static updateProgressRecheck(results){
-      let resultsTotal, total
-      total = urls.length
-
-      if(results){
-        resultsTotal = Object.keys(results).length
-      }else{
-        resultsTotal = 0
+    static calcProgressDashboard(results){
+      if (!results) results = {};
+  
+      const total = urls.length;
+      let completedCount = 0;
+  
+      Object.keys(results).forEach(url => {
+          const urlData = results[url];
+  
+          if (!urlData) return;
+  
+          // Case 1: explicit completed/failed
+          if (urlData.status === "completed" || urlData.status === "failed") {
+              completedCount++;
+              return;
+          }
+  
+          // Case 2: Final test data exists (labels present)
+          const hasFinalResults = (
+              urlData.meta_title ||
+              urlData.meta_desc ||
+              urlData.robots_meta ||
+              urlData.canonical_url
+          );
+  
+          if (hasFinalResults) {
+              completedCount++;
+          }
+      });
+  
+      const progress = getReportProgress(completedCount, total, false);
+      
+      return {
+        completedCount: completedCount,
+        total: total,
+        progress: progress,
       }
 
-      const progress = getReportProgress(resultsTotal, total, false)
+    }
 
-      UI.updateRecheckProgressBar(resultsTotal, progress)
+    static updateProgressRecheck(results){
+      
+      const progressDetails = Controls.calcProgressDashboard(results)
+      UI.updateRecheckProgressBar(progressDetails.completedCount, progressDetails.progress)
     }
 
     static getCurrentTest(label){

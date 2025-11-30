@@ -23,6 +23,11 @@
               <div class="main-menu-right">
                 <div class="table-menu-right">
 
+                  <div class="dashboard_recheck_area">
+        
+                  </div>
+
+
                   <div class="menu-right-option tricker_download_option">
                     <a
                       class="dropdown-toggle"
@@ -68,7 +73,7 @@
 
                     <ul class="dropdown-menu dropdown-menu-end">
                       <li>
-                        <a class="dropdown-item" href="#">Recheck all</a>
+                        <a class="dropdown-item" id="recheckAllTracker">Recheck all</a>
                       </li>
                       <li>
                         <a class="dropdown-item" href="#"

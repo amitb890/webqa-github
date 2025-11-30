@@ -19,7 +19,7 @@ class CreateDashboardTestsTable extends Migration
             $table->integer("project_id");
             $table->string('test_id')->unique();
             $table->longText('urls');
-            $table->enum('status', ['pending', 'in_progress', 'completed'])->default('pending');
+            $table->enum('status', ['pending', 'recheck', 'recheck-single', 'in_progress', 'completed'])->default('pending');
             $table->timestamps();
         });
     }

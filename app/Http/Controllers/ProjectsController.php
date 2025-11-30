@@ -322,18 +322,45 @@ class ProjectsController extends Controller
 
     
 
-    public function getShowDashboardStatus($id){
+    public function getShowDashboardStatus($id)
+    {
         $project = Projects::find($id);
-        $details = DashboardTests::where("project_id", $id)->get()->first();
-        $detailsStatus = "";
-        if($details){
-            $detailsStatus = $details->status;
-        }else{
-            $detailsStatus = "pending";
+    
+        // Latest dashboard test
+        $details = DashboardTests::where("project_id", $id)
+            ->latest()
+            ->first();
+    
+        // Default
+        $detailsStatus = $details->status ?? "pending";
+    
+        // -----------------------------------------
+        // 1 = full test completed
+        // 2 = recheck running/in progress
+        // 0 = still processing OR not done
+        // -----------------------------------------
+        $dashboardStatus = 0;
+    
+        if ($detailsStatus === "completed" && $project->dashboard_show_status) {
+            $dashboardStatus = 1; // normal test completed
         }
-        $status = $project->dashboard_show_status && $detailsStatus === "completed";
-        return response()->json(['status' => 1, 'msg' => 'Success.', 'dashboardStatus' => $status, 'details_progress' => $detailsStatus]);
+    
+        if ($detailsStatus === "recheck") {
+            $dashboardStatus = 2; // new recheck status
+        }
+
+        if ($detailsStatus === "recheck-single") {
+            $dashboardStatus = 3; // new recheck single status
+        }
+    
+        return response()->json([
+            'status' => 1,
+            'msg' => 'Success.',
+            'dashboardStatus' => $dashboardStatus,
+            'details_progress' => $detailsStatus
+        ]);
     }
+    
 
 
     public function getGoogleStatus($id){

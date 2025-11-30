@@ -1,8 +1,9 @@
 $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
+  var recheckMax = 5, urls, urlsToCheck = 1
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
-  let firstRow, secondRow
+  let firstRow, secondRow, allUrls, recheckAllowed = true, projectId
   let obj = {
     meta_title: [],
     meta_desc: [],
@@ -81,6 +82,22 @@ $(document).ready(function () {
           });
       }
 
+
+      static getUrlsList(projectId){
+        return $.ajax({
+            url : `/get-urls/${projectId}`,
+            type : 'get',
+            aysnc: false,
+            data: {
+                "_token": $('meta[name="csrf-token"]').attr('content'),
+            },       
+            success: function(data) {
+              
+            },error: function(data){
+            }
+          });
+      }
+
       static returnData(projectId){
           return $.ajax({
               url : `/get-test-data/${projectId}`,
@@ -103,6 +120,70 @@ $(document).ready(function () {
       static deleteURL(){
         activeOptionsElement.remove()
       }
+
+
+      static updateRecheckButtonState(isDisabled) {
+        const recheckBtn = document.querySelector("#recheckBtn")
+        const recheckHyperlink = document.querySelector("#recheckHyperlink")
+        
+        if (recheckBtn) {
+          recheckBtn.disabled = isDisabled
+          if (isDisabled) {
+            recheckBtn.style.opacity = "0.6"
+            recheckBtn.style.cursor = "not-allowed"
+            recheckBtn.title = "Please wait for current tests to complete before rechecking"
+          } else {
+            recheckBtn.style.opacity = "1"
+            recheckBtn.style.cursor = "pointer"
+            recheckBtn.title = "Recheck dashboard"
+          }
+        }
+        
+        if (recheckHyperlink) {
+          if (isDisabled) {
+            recheckHyperlink.style.opacity = "0.6"
+            recheckHyperlink.style.cursor = "not-allowed"
+            recheckHyperlink.title = "Please wait for current tests to complete before rechecking"
+          } else {
+            recheckHyperlink.style.opacity = "1"
+            recheckHyperlink.style.cursor = "pointer"
+            recheckHyperlink.title = "Recheck dashboard"
+          }
+        }
+      }
+
+      static showWaitingMessage(){
+        // Remove any existing waiting message first
+        this.removeWaitingMessage();
+        let msg = "Please wait while we finish the current queue of tests before starting the recheck."
+        displayAlert(".analysis-content-body-message", {
+          status: 1,
+          msg: msg,
+          notHide: true
+        })
+      }
+
+      static buildRecheckLoader(){
+        const div = document.createElement("div")
+        div.classList.add("main-tricker-progress")
+        div.innerHTML = `
+                <div class="gif-loader">
+                  <img src="/new-assets/assets/images/preloader1.gif" alt="icon">
+                </div>
+                <div class="single-tricker-progress">
+                  <div class="rechecking-page">
+                    <span class="primary-span">Recheking pages... <span id="urlRecheckedProgressText">0%</span></span>
+                    <span class="dark-span" id="urlRechecked">0</span>
+                    <span>/${urls.length}</span>
+                  </div>
+                  <div class="progress">
+                    <div id="urlRecheckedProgressBar" class="progress-bar tricker-progress" role="progressbar" aria-label="Success example" style="width: 0%;" aria-valuenow="70" title="" aria-valuemin="0" aria-valuemax="100"> </div>
+                  </div>
+                </div>`
+        document.querySelector(".dashboard_recheck_area").prepend(div)
+      }
+
+      
       static updateCloneTable(){
         const elements = $("#reportTableClone tbody tr td:first-child .form-check-label")  
         const elements2 = $("#reportTableClone .tracker-column-dropdown span")  
@@ -304,6 +385,7 @@ $(document).ready(function () {
           if(title === "performance"){
             UI.buildPerformanceTableHeader(type)
           }else{
+            console.log(data)
             projectSettings = data[0].settings;
             const displayName = data[0].label.display_name
             const td = document.createElement("td")
@@ -963,9 +1045,12 @@ $(document).ready(function () {
                       break;
 
                   case "google_overall":
-                    if(result){
-                      const desktopScore = getRoundedNumber(result.desktop.performance_score);
-                      const mobileScore = getRoundedNumber(result.mobile.performance_score);
+                    if(result.desktop && result.mobile){
+                      const desktopData = JSON.parse(result.desktop.data)
+                      const mobileData = JSON.parse(result.mobile.data)
+
+                      const desktopScore = getRoundedNumber(desktopData.performance_score);
+                      const mobileScore = getRoundedNumber(mobileData.performance_score);
 
                       const desktopColor = getGoogleInsightsColorByScore(desktopScore);
                       const mobileColor = getGoogleInsightsColorByScore(mobileScore);
@@ -983,7 +1068,10 @@ $(document).ready(function () {
               
                     break;
                   case "google_lighthouse":
-                    if(result){
+                    if(result.desktop && result.mobile){
+                      const desktopData = JSON.parse(result.desktop.data)
+                      const mobileData = JSON.parse(result.mobile.data)
+
                       const addMetric = (val) => {
                         const score = getRoundedNumber(val);
                         const color = getGoogleInsightsColorByScore(score);
@@ -992,14 +1080,14 @@ $(document).ready(function () {
                       };
 
                       td.innerHTML +=
-                      addMetric(result.desktop.performance_score) +
-                      addMetric(result.mobile.performance_score) +
-                      addMetric(result.desktop.accessibility_score) +
-                      addMetric(result.mobile.accessibility_score) +
-                      addMetric(result.desktop.best_practices_score) +
-                      addMetric(result.mobile.best_practices_score) +
-                      addMetric(result.desktop.seo_score) +
-                      addMetric(result.mobile.seo_score);
+                      addMetric(desktopData.performance_score) +
+                      addMetric(mobileData.performance_score) +
+                      addMetric(desktopData.accessibility_score) +
+                      addMetric(mobileData.accessibility_score) +
+                      addMetric(desktopData.best_practices_score) +
+                      addMetric(mobileData.best_practices_score) +
+                      addMetric(desktopData.seo_score) +
+                      addMetric(mobileData.seo_score);
                     }else{
                       td.innerHTML+=`
                       <td></td>
@@ -1014,7 +1102,10 @@ $(document).ready(function () {
                     }
                     break;
                   case "core_web_vitals":
-                    if(result){
+                    if(result.desktop && result.mobile){
+                      const desktopData = JSON.parse(result.desktop.data)
+                      const mobileData = JSON.parse(result.mobile.data)
+
                       const addMetric = (val, type) => {
                         const score = getRoundedNumber(val);
                         const color = getGoogleCWVColorByScore(score, type);
@@ -1023,20 +1114,20 @@ $(document).ready(function () {
                       };
                     
                       td.innerHTML +=
-                        addMetric(result.desktop.largest_contentful_paint, "lcp") +
-                        addMetric(result.mobile.largest_contentful_paint, "lcp") +
-                        addMetric(result.desktop.max_potential_fid, "fid") +
-                        addMetric(result.mobile.max_potential_fid, "fid") +
-                        addMetric(result.desktop.cumulative_layout_shift, "cls") +
-                        addMetric(result.mobile.cumulative_layout_shift, "cls") +
-                        addMetric(result.desktop.first_contentful_paint, "fcp") +
-                        addMetric(result.mobile.first_contentful_paint, "fcp") +
-                        addMetric(result.desktop.interactive, "interactive") +
-                        addMetric(result.mobile.interactive, "interactive") +
-                        addMetric(result.desktop.speed_index, "speed_index") +
-                        addMetric(result.mobile.speed_index, "speed_index") +
-                        addMetric(result.desktop.total_blocking_time, "tbt") +
-                        addMetric(result.mobile.total_blocking_time, "tbt");
+                        addMetric(desktopData.largest_contentful_paint, "lcp") +
+                        addMetric(mobileData.largest_contentful_paint, "lcp") +
+                        addMetric(desktopData.max_potential_fid, "fid") +
+                        addMetric(mobileData.max_potential_fid, "fid") +
+                        addMetric(desktopData.cumulative_layout_shift, "cls") +
+                        addMetric(mobileData.cumulative_layout_shift, "cls") +
+                        addMetric(desktopData.first_contentful_paint, "fcp") +
+                        addMetric(mobileData.first_contentful_paint, "fcp") +
+                        addMetric(desktopData.interactive, "interactive") +
+                        addMetric(mobileData.interactive, "interactive") +
+                        addMetric(desktopData.speed_index, "speed_index") +
+                        addMetric(mobileData.speed_index, "speed_index") +
+                        addMetric(desktopData.total_blocking_time, "tbt") +
+                        addMetric(mobileData.total_blocking_time, "tbt");
                     }else{
                       td.innerHTML+=`
                       <td></td>
@@ -1210,6 +1301,27 @@ $(document).ready(function () {
 
         const exporter = new TableCSVExporter(table[0], this.CSV_NAME);
         exporter.downloadCSV();
+    }
+
+    static getGoogleDataByUrl(url){
+        const result = {
+          desktop: null,
+          mobile: null
+        };
+
+      testDetailsLighthouse.forEach(item => {
+          if (item.url === url) {
+              if (item.strategy === "desktop") {
+                  result.desktop = item;
+              }
+              if (item.strategy === "mobile") {
+                  result.mobile = item;
+              }
+          }
+      });
+
+      console.log(result)
+      return result;
     }
 
       static deleteURL(){
@@ -2267,7 +2379,7 @@ $(document).ready(function () {
 
              urlsList.push(url)
              const options = UI.initTableBody(el.id)
-             UI.buildTableBody(el.id, "google_overall", testDetailsLighthouse[url], options, url, settings, "performance", data.url_slug)
+             UI.buildTableBody(el.id, "google_overall", Controls.getGoogleDataByUrl(url), options, url, settings, "performance", data.url_slug)
            })
          })
        }
@@ -2286,7 +2398,7 @@ $(document).ready(function () {
 
             urlsList.push(url)
             const options = UI.initTableBody(el.id)
-            UI.buildTableBody(el.id, "google_lighthouse", testDetailsLighthouse[url], options, url, settings, "performance", data.url_slug)
+            UI.buildTableBody(el.id, "google_lighthouse", Controls.getGoogleDataByUrl(url), options, url, settings, "performance", data.url_slug)
           })
         })
       }
@@ -2305,7 +2417,7 @@ $(document).ready(function () {
 
           urlsList.push(url)
           const options = UI.initTableBody(el.id)
-          UI.buildTableBody(el.id, "core_web_vitals", testDetailsLighthouse[url], options, url, settings, "performance", data.url_slug)
+          UI.buildTableBody(el.id, "core_web_vitals", Controls.getGoogleDataByUrl(url), options, url, settings, "performance", data.url_slug)
         })
       })
     }
@@ -2372,30 +2484,30 @@ $(document).ready(function () {
             UI.buildTableBody(el.id, "meta_viewport", data.meta_viewport[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "doctype", data.doctype[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "http_status_code", data.http_status_code[originalIndex], options, url, settings, "seo", data.meta_title)
-            lighthouseStatus ? UI.buildTableBody(el.id, "google_overall", testDetailsLighthouse[url], options, url, settings, "performance") : ""
-            lighthouseStatus ? UI.buildTableBody(el.id, "google_lighthouse", testDetailsLighthouse[url], options, url, settings, "performance") : ""
-            lighthouseStatus ? UI.buildTableBody(el.id, "core_web_vitals", testDetailsLighthouse[url], options, url, settings, "performance") : ""
+            lighthouseStatus ? UI.buildTableBody(el.id, "google_overall", Controls.getGoogleDataByUrl(url), options, url, settings, "performance") : ""
+            lighthouseStatus ? UI.buildTableBody(el.id, "google_lighthouse", Controls.getGoogleDataByUrl(url), options, url, settings, "performance") : ""
+            lighthouseStatus ? UI.buildTableBody(el.id, "core_web_vitals", Controls.getGoogleDataByUrl(url), options, url, settings, "performance") : ""
             UI.buildTableBody(el.id, "mobile_friendly", data.mobile_friendly[originalIndex], options, url, settings, "performance")
 
-            UI.buildTableBody(el.id, "gzip_compression", data.gzip_compression[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "html_compression", data.html_compression[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "css_compression", data.css_compression[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "js_compression", data.js_compression[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "css_caching_enable", data.css_caching_enable[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "js_caching_enable", data.js_caching_enable[originalIndex], options, url, settings, "best-practices")
-            // UI.buildTableBody(el.id, "page_size", data.page_size[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "nested_tables", data.nested_tables[originalIndex], options, url, settings, "best-practices")
-            UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "gzip_compression", data.cbp_labels.gzip_compression[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "html_compression", data.cbp_labels.html_compression[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "css_compression", data.cbp_labels.css_compression[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "js_compression", data.cbp_labels.js_compression[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "css_caching_enable", data.cbp_labels.css_caching_enable[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "js_caching_enable", data.cbp_labels.js_caching_enable[originalIndex], options, url, settings, "best-practices")
+            // UI.buildTableBody(el.id, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "nested_tables", data.cbp_labels.nested_tables[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "frameset", data.cbp_labels.frameset[originalIndex], options, url, settings, "best-practices")
 
-            UI.buildTableBody(el.id, "is_safe_browsing", data.is_safe_browsing[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "cross_origin_links", data.cross_origin_links[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "protocol_relative_resource", data.protocol_relative_resource[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "content_security_policy_header", data.content_security_policy_header[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "x_frame_options_header", data.x_frame_options_header[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "hsts_header", data.hsts_header[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "bad_content_type", data.bad_content_type[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "ssl_certificate_enable", data.ssl_certificate_enable[originalIndex], options, url, settings, "security")
-            UI.buildTableBody(el.id, "folder_browsing_enable", data.folder_browsing_enable[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "is_safe_browsing", data.security_labels.is_safe_browsing[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "cross_origin_links", data.security_labels.cross_origin_links[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "protocol_relative_resource", data.security_labels.protocol_relative_resource[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "content_security_policy_header", data.security_labels.content_security_policy_header[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "x_frame_options_header", data.security_labels.x_frame_options_header[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "hsts_header", data.security_labels.hsts_header[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "bad_content_type", data.security_labels.bad_content_type[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "ssl_certificate_enable", data.security_labels.ssl_certificate_enable[originalIndex], options, url, settings, "security")
+            UI.buildTableBody(el.id, "folder_browsing_enable", data.security_labels.folder_browsing_enable[originalIndex], options, url, settings, "security")
 
           })
         })
@@ -2426,26 +2538,26 @@ $(document).ready(function () {
           lighthouseStatus ? UI.buildTableHeader("core_web_vitals", testDetailsLighthouse, 14, options, settings, "performance") : ""
           UI.buildTableHeader("mobile_friendly", data.mobile_friendly, 1, options, settings, "performance")
 
-          UI.buildTableHeader("gzip_compression", data.gzip_compression, 1, options, settings, "best-practices")
-          UI.buildTableHeader("html_compression", data.html_compression, 1, options, settings, "best-practices")
-          UI.buildTableHeader("css_compression", data.css_compression, 1, options, settings, "best-practices")
-          UI.buildTableHeader("js_compression", data.js_compression, 1, options, settings, "best-practices")
-          UI.buildTableHeader("css_caching_enable", data.css_caching_enable, 1, options, settings, "best-practices")
-          UI.buildTableHeader("js_caching_enable", data.js_caching_enable, 1, options, settings, "best-practices")
-          // UI.buildTableHeader("page_size", data.page_size, 1, options, settings, "best-practices")
-          UI.buildTableHeader("nested_tables", data.nested_tables, 1, options, settings, "best-practices")
-          UI.buildTableHeader("frameset", data.frameset, 1, options, settings, "best-practices")
+          UI.buildTableHeader("gzip_compression", data.cbp_labels.gzip_compression, 1, options, settings, "best-practices")
+          UI.buildTableHeader("html_compression", data.cbp_labels.html_compression, 1, options, settings, "best-practices")
+          UI.buildTableHeader("css_compression", data.cbp_labels.css_compression, 1, options, settings, "best-practices")
+          UI.buildTableHeader("js_compression", data.cbp_labels.js_compression, 1, options, settings, "best-practices")
+          UI.buildTableHeader("css_caching_enable", data.cbp_labels.css_caching_enable, 1, options, settings, "best-practices")
+          UI.buildTableHeader("js_caching_enable", data.cbp_labels.js_caching_enable, 1, options, settings, "best-practices")
+          // UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "best-practices")
+          UI.buildTableHeader("nested_tables", data.cbp_labels.nested_tables, 1, options, settings, "best-practices")
+          UI.buildTableHeader("frameset", data.cbp_labels.frameset, 1, options, settings, "best-practices")
 
 
-          UI.buildTableHeader("is_safe_browsing", data.is_safe_browsing, 1, options, settings, "security")
-          UI.buildTableHeader("cross_origin_links", data.cross_origin_links, 1, options, settings, "security")
-          UI.buildTableHeader("protocol_relative_resource", data.protocol_relative_resource, 1, options, settings, "security")
-          UI.buildTableHeader("content_security_policy_header", data.content_security_policy_header, 1, options, settings, "security")
-          UI.buildTableHeader("x_frame_options_header", data.x_frame_options_header, 1, options, settings, "security")
-          UI.buildTableHeader("hsts_header", data.hsts_header, 1, options, settings, "security")
-          UI.buildTableHeader("bad_content_type", data.bad_content_type, 1, options, settings, "security")
-          UI.buildTableHeader("ssl_certificate_enable", data.ssl_certificate_enable, 1, options, settings, "security")
-          UI.buildTableHeader("folder_browsing_enable", data.folder_browsing_enable, 1, options, settings, "security")
+          UI.buildTableHeader("is_safe_browsing", data.security_labels.is_safe_browsing, 1, options, settings, "security")
+          UI.buildTableHeader("cross_origin_links", data.security_labels.cross_origin_links, 1, options, settings, "security")
+          UI.buildTableHeader("protocol_relative_resource", data.security_labels.protocol_relative_resource, 1, options, settings, "security")
+          UI.buildTableHeader("content_security_policy_header", data.security_labels.content_security_policy_header, 1, options, settings, "security")
+          UI.buildTableHeader("x_frame_options_header", data.security_labels.x_frame_options_header, 1, options, settings, "security")
+          UI.buildTableHeader("hsts_header", data.security_labels.hsts_header, 1, options, settings, "security")
+          UI.buildTableHeader("bad_content_type", data.security_labels.bad_content_type, 1, options, settings, "security")
+          UI.buildTableHeader("ssl_certificate_enable", data.security_labels.ssl_certificate_enable, 1, options, settings, "security")
+          UI.buildTableHeader("folder_browsing_enable", data.security_labels.folder_browsing_enable, 1, options, settings, "security")
       }
 
       static getAllUrls(data){
@@ -2503,9 +2615,11 @@ $(document).ready(function () {
       static loadData(loadData){
           DB.returnData(loadData)
           .done(function(data){
-              const testDetails = Controls.updateTestDataForm(JSON.parse(data.test_details.results))
+            console.log(data)
+            const testDetails = data.results
 
-              const allUrls = Controls.getAllUrls(testDetails)
+
+              allUrls = Controls.getAllUrls(testDetails)
               const updatedUrls = groupUrlsBySubfolder(allUrls);
               if(page.includes("reports")){
                 Controls.buildTableReports(testDetails, updatedUrls)
@@ -2528,14 +2642,171 @@ $(document).ready(function () {
 
       static activateEvents(){
     
+          // Events
+        $("#recheckAllTracker").on("click", async function(e){
+          await Controls.recheckStart()
+          e.preventDefault()
+        })
       }
+
+      static async checkIfTestsAreRunning() {
+        try {
+          // Check dashboard tests status
+          const dashboardResponse = await fetch(`/api/check-status-dashboard/${projectId}`);
+          const dashboardData = await dashboardResponse.json();
+          
+          // Check Google tests status
+          const googleResponse = await fetch(`/api/check-status/${projectId}`);
+          const googleData = await googleResponse.json();
+          
+          // If any test is still running, return true
+          if (dashboardData.status === 'pending' || dashboardData.status === 'in_progress' || googleData.status === 'pending' || googleData.status === 'in_progress') {
+            return true;
+          }
+          
+          return false;
+        } catch (error) {
+          console.error('Error checking test status:', error);
+          // If there's an error, assume tests might be running to be safe
+          return true;
+        }
+      }
+
+
+      static async recheckStart(){
+        if(recheckAllowed){
+          // First check if any tests are currently running
+          const testsRunning = await Controls.checkIfTestsAreRunning();
+          
+          if (testsRunning) {
+            // Show message that we need to wait for tests to complete
+            UI.showWaitingMessage();
+            
+            // Wait for all tests to complete
+            await Controls.waitForTestsToComplete();
+            
+          }else{
+          // Now proceed with recheck
+          recheckAllowed = false
+          
+          // Update button state to show recheck is starting
+          UI.updateRecheckButtonState(true)
+          
+          DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
+            .done(function(data){
+                urls = data.slice(0, recheckMax)
+                urlsToCheck = recheckMax
+  
+                removeLoader()
+                UI.buildRecheckLoader()
+                obj = {
+                  meta_title: [],
+                  meta_desc: [],
+                  robots_meta: [],
+                  canonical_url: [],
+                  url_slug: [],
+                  meta_viewport: [],
+                  doctype: [],
+                  favicon: [],
+                  page_size: [],
+                  xml_sitemap: [],
+                  html_sitemap: [],
+                  images: [],
+                  open_graph_tags: [],
+                  twitter_tags: [],
+                  http_status_code: [],
+                  broken_links: [],
+                  security_labels: {
+                      is_safe_browsing: [],
+                      cross_origin_links: [],
+                      protocol_relative_resource: [],
+                      content_security_policy_header: [],
+                      x_frame_options_header: [],
+                      hsts_header: [],
+                      bad_content_type: [],
+                      ssl_certificate_enable: [],
+                      folder_browsing_enable: [],
+                  },
+                  cbp_labels: {
+                      html_compression: [],
+                      css_compression: [],
+                      js_compression: [],
+                      gzip_compression: [],
+                      nested_tables: [],
+                      frameset: [],
+                      page_size: [],
+                      css_caching_enable: [],
+                      js_caching_enable: [],
+                      frameset: [],
+                  },
+                  google_overall: [],
+                  google_lighthouse: [],
+                  core_web_vitals: [],
+                  mobile_friendly: [],
+                }
+                // UI.recheckStartedAlert()
+                // Controls.startTest(urls, "recheck")
+  
+  
+  
+                // async function checkStatusDashboard() {
+                //   let controller;
+              
+                //   while (true) {
+              
+                //       // Cancel any previous unfinished request
+                //       if (controller) controller.abort();
+                //       controller = new AbortController();
+              
+                //       try {
+                //           const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+                //               signal: controller.signal
+                //           });
+              
+                //           const { status, results } = await response.json();
+                //           Controls.updateProgressRecheck(results);
+              
+                //           if (status === 'completed') {
+              
+                //               Controls.endTest();
+              
+                //               setTimeout(() => {
+                //                   recheckAllowed = true;
+                //                   UI.updateRecheckButtonState(false); // re-enable button
+                //               }, 100);
+              
+                //               break; // stop loop
+                //           }
+                //       } catch (e) {
+                //           // ignore abort errors
+                //           if (e.name !== "AbortError") console.error(e);
+                //       }
+              
+                //       // wait 1 second before next request
+                //       await new Promise(res => setTimeout(res, 1000));
+                //   }
+                // }
+              
+                // checkStatusDashboard();
+              
+  
+  
+  
+  
+          })
+          }
+        
+        }
+      }
+
+      
 
 
       static init(){
           allLabels = getAllTestLabels("dashboard").allLabels
           page = location.pathname.split('/').slice(1)
           buildLoader()
-          const projectId = getActiveProjectId()
+          projectId = getActiveProjectId()
           DB.getDashboardShowStatus(projectId)
           .done(function(data) {
               if(data.dashboardStatus){
@@ -2580,6 +2851,7 @@ $(document).ready(function () {
       }
     }
   })
+  
 
   $("#openUrl").on('click', function (e) {
     window.open(activeOptionsModalUrl, '_blank').focus();

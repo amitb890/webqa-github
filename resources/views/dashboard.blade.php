@@ -3,7 +3,7 @@
 @section("content")
 
 
-<div class="dashboard_content dashboard-elements d-none">
+<div class="dashboard-page dashboard_content dashboard-elements d-none">
   <div class="dashboard_recheck_area">
     <p>Last updated: <span id="lastUpdated"></span></p>
     <a href="#" class="das_rec_btn" id="recheckBtn">Recheck</a>
