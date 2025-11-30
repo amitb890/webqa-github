@@ -6,7 +6,7 @@
     <!-- main sections starts -->
     <main class="main-sections blog-padding">
       <div class="inner_content">
-        <div class="container-fluid">
+        <div class="container-fluid tools-landingpage-container">
           <!-- tools page root start -->
           <div class="tools-root-main-area">
             <!-- tools title area start -->

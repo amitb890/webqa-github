@@ -1,7 +1,7 @@
 @extends(auth()->check() ? 'layouts.app' : 'layouts.master')
 
 @section("title")
-webqa - Previous Tests
+Previous Tests | Webqa
 @endsection
 
 @section('content')
@@ -12,7 +12,7 @@ webqa - Previous Tests
 
                 <!-- Test Result Area Start -->
                 <div class="test_result_area">
-                    <h2>Previous Tests</h2>
+                    <h2>Previous Tests</h2><p>A list of all the previous tests made on the website.</p>
                     <span class="failed-list"></span>
 
                     <div class="test_result_table">

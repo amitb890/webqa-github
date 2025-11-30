@@ -441,3 +441,28 @@ $(document).ready(function () {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const imgs = document.querySelectorAll(".as1 img");
+  let loadedCount = 0;
+
+  imgs.forEach(img => {
+
+    function reveal() {
+      img.classList.add("loaded");
+      
+      loadedCount++;
+      if (loadedCount === imgs.length) {
+
+        imgs.forEach(i => i.classList.add("loaded"));
+      }
+    }
+
+    if (img.complete) {
+      reveal();
+    } else {
+      img.onload = reveal;
+      img.onerror = reveal;
+    }
+  });
+});
+

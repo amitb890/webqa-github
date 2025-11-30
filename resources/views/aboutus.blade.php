@@ -18,8 +18,8 @@
                     <img class="as1-left-img2"  src="{{ asset('new-assets/assets/images/aboutUs/as1-left-img-absolute.svg') }}" alt="marketing analyst">
                 </div>
                 <div class="as1-center">
-                    <h1 class="as1-center-h1"> <span style="color: #417cec;">Website auditing</span> done at scale!</h1>
-                    <p class="as1-center-p">Run precise checks on demand—or in bulk—and cut through noise to the fixes that matter.</p>
+                    <h1 class="as1-center-h1">We bring <span style="color: #417cec;">control</span> to website audits.</h1>
+                    <p class="as1-center-p">Modern teams shape higher quality websites with audits that adapt to their standards, not the other way around.</p>
                 </div>
                 <div class="as1-right">
                     <img class="as1-right-img2" src="{{ asset('new-assets/assets/images/aboutUs/as1-right-img-absolute.svg') }}" alt="reports">
@@ -37,15 +37,13 @@
                             <h1 style="color: #fff;">About Webqa</h1>
                             <h1 style="color: #fff;"></h1>
                         </div>
-                        <p class="as2-dtop-left-p">From solo creators to enterprise teams, Webqa makes page-level audits fast and reliable with customizable checks, shareable analysis links, and site-wide tracking that surfaces what to fix first.</p>
+                        <p class="as2-dtop-left-p">Webqa is a website auditing and testing platform. <br><br>We help teams understand, improve, and maintain the quality of their websites across SEO, performance, security, and web development best practices.</p>
                     </div>
                     <div class="as2-dtop-right">
                         <p class="as2-dtop-right-p1">
-                            Webqa helps you evaluate any page across SEO, performance, best practices, mobile, and security—then turn results into clear next steps.
+                            Auditing a website properly is getting harder - not because there aren’t enough tools, but because none of them let you truly define your own standards.
                         </p>
-                        <p class="as2-dtop-right-p2">
-                            Define your own acceptance criteria for each test (for example, title length and casing rules, “must not equal H1,” and more) and get a precise Pass/Fail against your standards. Each analysis receives a unique, shareable URL and supports exports to PDF, CSV, and XLSX for easy hand-offs. When you need to move faster across templates, the Tools section lets you run a single check on up to 100 URLs at once. Getting started is free: add your site, we auto-detect URLs via XML sitemaps, and prepare a dashboard for 10 URLs with links to detailed reports and a Website Tracker for cross-page patterns.
-                        </p>
+                        <p class="as2-dtop-right-p2">Most website auditors lock you into their rules, apply the same checks to every website, and leave you stitching together results from multiple sources just to get a complete picture.<br><br>Webqa exists to change that.<br><br>It’s built for teams who care about doing audits the right way for their context. You decide what “good” looks like and align the checks to match, instead of settling for generic, one-size-fits-all reports. By bringing everything into one place and letting you shape how audits work from project to project, Webqa turns website QA from an exhausting chore into a repeatable, standards-driven practice.</p>
                     </div>
                     <div class="as2-line1"></div>
                 </div>
@@ -55,8 +53,7 @@
                     </div>
                     <div class="as2-dmid-right">
                         <h2 class="as2-dmid-right-h" style="color: #fff;">Our Mission</h2>
-                        <p class="as2-dmid-right-p">
-                            Empower teams to ship better webpages faster by turning audits into clear, customizable checks—with shareable results, actionable reports, and tools that scale from a single URL to entire site sections.
+                        <p class="as2-dmid-right-p">Our mission is to make website auditing calm, consistent and standards driven.<br><br>You shouldn’t need ten different tools, conflicting rules, or scattered spreadsheets to test a single page. With Webqa, teams define what “good” looks like once, audit against those standards, and align around a single source of truth.
                         </p>
                     </div>
                     <div class="as2-line2"></div>
@@ -69,7 +66,7 @@
                     <div class="as2-dlast-right">
                         <h2 class="as2-dlast-right-h" style="color: #fff;">Our Vision</h2>
                         <p class="as2-dlast-right-p">
-                            A web where quality is measurable and consistent—where anyone can define standards, audit with confidence, and fix what matters without friction.
+                            A web where quality is measurable and consistent - where you are empowered to define standards, audit with confidence, and fix what matters without friction.
                         </p>
                     </div>
                 </div>
@@ -103,7 +100,7 @@
                            <img class="as3-down-two-img-div2" src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="website tracker icon 2"> 
                     </div>
                     <h4 class="as3-down-two-h">Website Tracker</h4>
-                    <p class="as3-down-two-p">See every metric for every URL in one big, filterable table—perfect for spotting patterns across templates and catching regressions early</p>
+                    <p class="as3-down-two-p">See every metric for every URL in one big, filterable table - perfect for spotting patterns across templates and catching regressions early.</p>
                     <button class="as3-down-buton" type="button"
   onclick="window.open('https://webqa.co/features/website-tracker', '_blank', 'noopener,noreferrer')">
   Learn more
@@ -115,7 +112,7 @@
                         <img class="as3-down-three-img2" src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="reports icon">
                     </div>
                     <h4 class="as3-down-three-h">Reports</h4>
-                    <p class="as3-down-three-p">Drill into tabular, per-metric reports (titles, descriptions, canonicals, speed, and more) straight from dashboard widgets for fast triage and fixes.</p>
+                    <p class="as3-down-three-p">Drill into tabular, per-metric reports (titles, descriptions, canonicals, speed etc) for fast triage and fixes.</p>
                     <button class="as3-down-buton" type="button"
   onclick="window.open('https://webqa.co/features/reports', '_blank', 'noopener,noreferrer')">
   Learn more
@@ -127,7 +124,7 @@
                         <img class="as3-down-four-img2" src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(3).svg') }}" alt="settings icon">
                     </div>
                     <h4 class="as3-down-four-h">Settings</h4>
-                    <p class="as3-down-four-p">Define project-level rules that drive Pass/Fail for each test—your standards, not generic ones—so teams align on exactly what “good” looks like.</p>
+                    <p class="as3-down-four-p">Define project level rules that defines acceptance criteria for each test. Help teams align on exactly what “good” looks like.</p>
                     <button class="as3-down-buton" type="button"
   onclick="window.open('https://webqa.co/features/settings', '_blank', 'noopener,noreferrer')">
   Learn more
@@ -143,7 +140,7 @@
             <div class="container as4-inner">
                 <div class="as4-topd">
                     <div class="as4-topd-h">
-                        <h1>Explore our Tools</h1>
+                        <h1>Explore some of our Tools</h1>
                       
                     </div>
                     <p class="as4-topd-p">
@@ -151,32 +148,32 @@
                     </p>
                 </div>
                 <div class="as4-cards">
-                    <a href="">
+                    <a href="https://webqa.co/tool/http-status-code">
                         <div class="as4-card">
                         <div class="as4-card-imgs">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="http status code checker icon 1">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="http status code checker icon 2">
                         </div>
-                        <h4>HTTP Status Code Checker</h4>
-                        <p>Spot crawl blockers fast—check live response codes for single pages or bulk lists so you can fix redirects, 4xx/5xx, and SEO-impacting errors in one sweep.</p>
+                        <h4>HTTP Status Code</h4>
+                        <p>Check live response codes for single pages or bulk URL lists, then fix redirects, 4xx/5xxs, and other crawl issues before they hurt your website's SEO.</p>
                     </div>
                     </a>
-                    <a href="">
+                    <a href="https://webqa.co/tool/meta-title">
                         <div class="as4-card">
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(1).svg') }}" alt="meta title test icon">
                         </div>
-                        <h4>Meta Title Test</h4>
-                        <p>Enforce your title standards at scale: set min/max length, casing rules, exclude words from casing checks, and ensure titles aren’t identical to H1—then get a clear Pass/Fail.</p>
+                        <h4>Meta Title</h4>
+                        <p>Keep page titles consistent and in shape: set your preferred length and casing, ensure they differ from H1s, and get a clear pass/fail for every page.</p>
                     </div>
                     </a>
-                    <a href="">
+                    <a href="https://webqa.co/tool/google-core-web-vitals">
                         <div class="as4-card">
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="core web vitals test icon">
                         </div>
                         <h4>Core Web Vitals</h4>
-                        <p>Measure LCP, CLS, and INP/Lighthouse metrics to understand what’s slowing users down and prioritize fixes that move the needle on UX and rankings</p>
+                        <p>Measure core web vitals metrics (LCP, CLS, INP) to find what’s slowing your pages down, then focus on the fixes that improve UX and performance.</p>
                     </div>
                     </a>
                     <a href="">
@@ -184,18 +181,18 @@
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="broken link checker icon">
                         </div>
-                        <h4>Broken Links Checker</h4>
-                        <p>Hunt down 404s and dead outbound links that hurt SEO and UX—clean them up and keep users (and crawlers) moving</p>
+                        <h4>Broken Links</h4>
+                        <p>Check any page for broken links in seconds. Find 404s and dead internal or external links before they hurt your users and SEO.</p>
                     </div>
                     </a>
-                    <a href="">
+                    <a href="https://webqa.co/tool/robotstxt">
                         <div class="as4-card">
                         <div class="as4-card-imgs">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="robotstxt checker icon 1">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="robotstxt checker icon 2">
                         </div>
-                        <h4>Robots.txt Tester</h4>
-                        <p>Validate crawl directives and catch disallow rules or syntax issues before they block important pages from indexing. Great for migrations and template changes.</p>
+                        <h4>Robots.txt</h4>
+                        <p>Validate crawl directives and catch disallow rules before they block pages from indexing. Great for website migrations and template changes.</p>
                     </div>
                     </a>
                     <a href="">
@@ -204,7 +201,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(3).svg') }}" alt="Images checker icon">
                         </div>
                         <h4>Images</h4>
-                        <p>Audit image-related SEO on any page—surface missing or weak alt attributes and other image issues so you can boost accessibility, relevance, and load experience</p>
+                        <p>Scan any page for image issues: missing or weak alt text and other problems that affect accessibility, relevance, and how fast images feel.</p>
                     </div>
                     </a>
                 </div>
@@ -219,50 +216,92 @@
          <section class="as5">
             <div class="as5-inner container">
                 <div>
-                    <h1>Why Users Love Webqa</h1>
-                    <p>Clear insights. Customizable audits. Real impact. Hear what professionals are saying about their experience with Webqa.</p>
+                    <h1>Loved by SEOs, developers and Digital Teams</h1>
+                    <p>Real stories from professionals and teams sharing the problems they’ve solved and the wins they’re proud of.</p>
                 </div>
                 <div class="as5-cards-wrapper">
                     <div class="as5-cards">
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/Ellipse-93.svg') }}" alt="Customer testimonial on webqa - 1">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-8.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 1">
                                 <div class="as5-card-img-p">
-                                    <h6>Matt Diggity</h6>
-                                    <p>Owner, DiggityMarketing.com</p>
+                                    <h6>Nigel Tan</h6>
+                                    <p>Marketing, NovaTrade</p>
                                 </div>
                             </div>
-                            <p class="as5-card-p">Running a site audit with Webqa became part of our weekly routine. The ability to customize checks saved us time and gave us exactly the insights we needed.</p>
+                            <p class="as5-card-p">Running a website audit with Webqa has become part of our weekly routine. The ability to customize checks saved us time and gave us exactly the insights we needed.</p>
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/Ellipse-94.svg') }}" alt="Customer testimonial on webqa - 2">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-2.jpeg') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
                                 <div class="as5-card-img-p">
-                                    <h6>Rachel Miller</h6>
-                                    <p>Founder, Pagewheel.com</p>
+                                    <h6>Riya Salgaonkar</h6>
+                                    <p>Project Manager, Sealink Capital</p>
                                 </div>
                             </div>
-                            <p class="as5-card-p">Webqa helped us uncover technical SEO issues we didn’t even know existed. The level of detail in each report made optimizing our site straightforward and impactful</p>
+                            <p class="as5-card-p">Having all our SEO, performance, and technical checks in one place finally replaced the messy stack of tools we used before. Everything we need is under one roof and far easier to manage.</p>
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/Ellipse-95.svg') }}" alt="Customer testimonial on webqa - 3">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-4.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
                                 <div class="as5-card-img-p">
-                                    <h6>Brittany Berger</h6>
-                                    <p>Marketing, WorkBrighter.co</p>
+                                    <h6>Edward Clarke</h6>
+                                    <p>Software Engineer, Autodesk</p>
                                 </div>
                             </div>
-                            <p class="as5-card-p">We rely on Webqa before every client site launch. It’s like having a QA team on standby that spots everything—from missing tags to slow pages</p>
+                            <p class="as5-card-p">Customisable audits helped us improve page speed and accessibility without needing multiple tools. It gave our team a clear, focused list of fixes we could act on immediately.</p>
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/Ellipse-95.svg') }}" alt="Customer testimonial on webqa - 4">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-5.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
                                 <div class="as5-card-img-p">
-                                    <h6>Ryan Robinson</h6>
-                                    <p>Blogger & Consultant, RyRob.com</p>
+                                    <h6>Miguel Perez</h6>
+                                    <p>Product Manager, TestGorilla</p>
                                 </div>
                             </div>
-                            <p class="as5-card-p">"Webqa’s customizable audits helped us improve page speed and accessibility without needing multiple tools. Our performance score jumped within a week."</p>
+                            <p class="as5-card-p">During our website migration, Webqa became essential. It highlighted redirect gaps, missing metadata, and structural issues early—saving us from post launch surprises.</p>
+                        </div>
+                        <div class="as5-card">
+                            <div class="as5-card-img">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-3.jpeg') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <div class="as5-card-img-p">
+                                    <h6>Arun Mohan</h6>
+                                    <p>Developer, Redian Software</p>
+                                </div>
+                            </div>
+                            <p class="as5-card-p">We rely on Webqa before every client site launch. It’s like having a QA team on standby that spots everything, from missing tags to slow pages.</p>
+                        </div>
+                        
+                        
+                        <div class="as5-card">
+                            <div class="as5-card-img">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-6.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <div class="as5-card-img-p">
+                                    <h6>Hadia Saeed</h6>
+                                    <p>SEO Manager, Clicktap Digital</p>
+                                </div>
+                            </div>
+                            <p class="as5-card-p">Managing audits for multiple client sites used to be chaotic. With Webqa’s project setup and consistent checks, we can run technical audits at scale without losing accuracy.</p>
+                        </div>
+                        <div class="as5-card">
+                            <div class="as5-card-img">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-7.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 3">
+                                <div class="as5-card-img-p">
+                                    <h6>Claire Wang</h6>
+                                    <p>Marketing, Nytelock Digital</p>
+                                </div>
+                            </div>
+                            <p class="as5-card-p">The ability to download clean PDF and XLSX reports has been a game changer. Sharing findings with clients and internal teams is faster and far more organised.</p>
+                        </div>
+                        <div class="as5-card">
+                            <div class="as5-card-img">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-1.jpeg') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 4">
+                                <div class="as5-card-img-p">
+                                    <h6>Neo Ramatla</h6>
+                                    <p>Consultant, Chilli Media</p>
+                                </div>
+                            </div>
+                            <p class="as5-card-p">Webqa helped us uncover technical SEO issues we didn’t even know existed. The level of detail in each report made optimizing our site straightforward and impactful.</p>
                         </div>
                     </div>
                 </div>

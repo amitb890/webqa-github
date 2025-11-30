@@ -168,47 +168,59 @@
                 <div class="as6-cards">
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I retrieve my password?</h5>
+                            <h5 class="as6-card-question-h5">What is the Webpage Audit feature?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>The Webpage Audit feature of WebQA is a comprehensive check-up of your website pages. It runs technical, performance, SEO, mobile-responsiveness and best-practice audits — then delivers a clear report showing issues (e.g., broken links, slow loading, meta tag problems, security headers missing) along with actionable insights.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">What's included in the free trial?</h5>
+                            <h5 class="as6-card-question-h5">Why should I use WebQA’s Webpage Audit over other website auditing tools?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>While many SEO tools focus mainly on keywords and meta tags, WebQA’s audit covers multiple dimensions: technical website issues (headers, HTTP status codes), performance (loading speed, mobile responsiveness), security headers (CSP, HSTS) and best-practice checks. These broader tests help uncover issues that can hurt user experience, ranking and site trust.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I remove extra keywords/projects after switching to a subscription plan with lower limits?</h5>
+                            <h5 class="as6-card-question-h5">How often should I run the Webpage Audit?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>It’s best practice to run the audit:</p>
+                            <ul>
+                                <li>Before launching a new page or site version, to catch issues early.</li>
+                                <li>After major updates (content, design, functionality) to validate nothing broke.</li>
+                                <li>Regularly (monthly/quarterly) for ongoing monitoring, since performance/security issues can emerge over time.</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I change my login and password?</h5>
+                            <h5 class="as6-card-question-h5">What types of problems will the audit identify?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Typical problems WebQA will flag include:</p>
+                            <ul>
+                                <li>HTTP errors (4xx/5xx) or redirect loops.</li>
+                                <li>Missing or mis-used HTTP security headers (e.g., CSP, X-Frame-Options, HSTS) enabling vulnerabilities.</li>
+                                <li>Slow page loads or mobile-responsiveness issues.</li>
+                                <li>SEO problems: missing/meta tag issues, broken links, thin content, etc.</li>
+                                <li>HTML/code best-practice issues: invalid markup, missing alt attributes, etc..</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How to set the location where I want to track keywords?</h5>
+                            <h5 class="as6-card-question-h5">Can I customise the audit rules to suit my website or business?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Yes — WebQA supports customisable audits, letting you define your own rules and benchmarks so you focus on what matters most for your website. This ensures the audit remains relevant and aligned with your quality objectives.</p>
                         </div>
                     </div>
                 </div>
