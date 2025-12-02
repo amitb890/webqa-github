@@ -803,11 +803,11 @@ $( document ).ready(function() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td class="text-center">${i+1}</td>
-                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left content-td">${result.content != null ? result.content : "-"}</td>
                     <td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
                     <td class="${settings.is_title_equal_h1 ? "" : "d-none hidden-element"}">No</td>
-                    <td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
+                    <td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "d-none hidden-element"}" style="text-align:center;">${result.casing ? result.casing : "-"}</td>
                     <td class="${result.status ? "result_pass" : "result_fail"} strong" ><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                     `
                     tbody.appendChild(tr)

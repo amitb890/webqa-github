@@ -9259,6 +9259,9 @@ h6 {
   color: #373737;
 }
 
+/* Tools section Table area starts */
+
+
 .test_result_area{
   padding: 15px 0px;
 }
@@ -9354,15 +9357,20 @@ h6 {
   border-bottom: none;
   border-left: none;
   vertical-align: middle;
-} */
+} 
+*/
 
+/* commenting this out on 2 Dec 2025 - this is messing up text alignment in table 
 .result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
   text-align: center!important;
 }
+*/
+
+
 
 
 .result_data_body tr td a {
-  color: #6E6E6E;
+  color: #707278;
   text-decoration: none;
 }
 
@@ -9511,7 +9519,8 @@ table.bulk-table td:last-child {
   margin-bottom: 0px;
 }
 .result_pass{
-  color: #68BF7B!important;
+color: #68BF7B!important;
+
 }
 .result_fail{
   color: #DC7373!important;
@@ -9554,7 +9563,7 @@ table.bulk-table td:last-child {
   rotate: 180deg;
 }
 
-
+/* Tools section Table area Ends */
 
 .main_tools_meta_description {
   margin-top: 80px;
@@ -12237,7 +12246,7 @@ table.bulk-table td:last-child {
 }
 
 table.dataTable {
-  color: #f1f5ff;
+  color: #707278;
   --dt-row-selected: 241, 245, 255;
   --dt-row-selected-text: 110, 110, 110;
 }
