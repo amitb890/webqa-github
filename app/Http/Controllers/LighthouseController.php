@@ -18,6 +18,8 @@ class LighthouseController extends Controller
         $projectsController = new ProjectsController();
         $urls = $request->input('urls');
         $project_id = $request->input('project_id');
+        $userId = auth()->id();
+        $lighthouseQueues = ['lighthouse_1','lighthouse_2','lighthouse_3','lighthouse_4','lighthouse_5'];
 
         if (empty($urls) || !is_array($urls)) {
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
@@ -38,9 +40,14 @@ class LighthouseController extends Controller
             'urls' => json_encode($request->urls),
             'status' => 'in_progress',
         ]);
+
+
+
+        $index = ($userId - 1) % count($lighthouseQueues);
+        $userQueue = $lighthouseQueues[$index];
     
-        dispatch(new RunLighthouseTest($test->id))->onQueue('lighthouse');
-    
+        dispatch(new RunLighthouseTest($test->id, auth()->id()))->onQueue($userQueue);    
+        
         return response()->json([
             'message' => 'Test started successfully',
             'test_id' => $test->id,

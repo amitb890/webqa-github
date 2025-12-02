@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 5, recheckGoogle = 2, recheckSingleMax = 10
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
@@ -494,7 +494,6 @@ $(document).ready(function () {
 
 
     static buildLoaderCards(data){
-      console.log(data)
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
             if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
@@ -2262,7 +2261,6 @@ $(document).ready(function () {
               // CHECKING IF DASHBOARD WAS BUILT
               DB.getDashboardShowStatus(projectId)
               .done(function(data) {
-                console.log(data)
                   if(data.dashboardStatus === 1){
 
                     Controls.buildDashboard()
@@ -2652,7 +2650,6 @@ $(document).ready(function () {
   
         
     static getShowDashboardStatus(element){
-      console.log(element)
       for (const [key, value] of Object.entries(element)) {
         const el = element[key]
         if(el.length > 0){
@@ -2763,6 +2760,7 @@ $(document).ready(function () {
     static updateTestDataForm(results){
       for (const [key, value] of Object.entries(results)) {
         for (const [key1, value1] of Object.entries(results[key])) {
+          console.log(key1, value, results[key])
           const result = JSON.parse(value1)
           const label = Controls.getActiveLabel(key1)
           const dbName = label.db_name
@@ -2791,11 +2789,28 @@ $(document).ready(function () {
       return obj
     }
 
+
+    static cleanNulls(obj) {
+      for (const key in obj) {
+          if (obj[key] === null || obj[key] === undefined) {
+              delete obj[key];
+          }
+      }
+      return obj;
+    }
     
 
     static buildDashboard(dashboardStatus){
         DB.getTestData(projectId)
         .done(function(data) {
+          if(data.results.security_labels){
+            data.results.security_labels = Controls.cleanNulls(data.results.security_labels) 
+          }
+
+          if(data.results.cbp_labels){
+            data.results.cbp_labels = Controls.cleanNulls(data.results.cbp_labels) 
+          }
+
             const testDetails = data.results
             const project = data.project
             $(".dashboard_top_items_main").html("")

@@ -350,7 +350,7 @@ class ProjectsController extends Controller
         }
 
         if ($detailsStatus === "recheck-single") {
-            $dashboardStatus = 3; // new recheck single status
+            $dashboardStatus = 3; // new recheck status
         }
     
         return response()->json([

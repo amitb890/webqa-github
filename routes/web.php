@@ -198,6 +198,9 @@ Route::post('/test/start-dashboard-test', [App\Http\Controllers\Test\TestControl
 Route::post('/test/update-single-dashboard-test', [App\Http\Controllers\Test\TestController2::class, 'updateSingleTest']);
 Route::get('/api/check-status-dashboard/{testId}', [App\Http\Controllers\Test\TestController2::class, 'checkStatus']);
 
+Route::post('/api/start-tests', [App\Http\Controllers\LighthouseController::class, 'startTests']);
+Route::get('/api/check-status/{testId}', [App\Http\Controllers\LighthouseController::class, 'checkStatus']);
+
 Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/get-analysis', [App\Http\Controllers\Test\TestController::class, 'getAnalysis'])->name('test.get-analysis');
     Route::post('/collect', [App\Http\Controllers\Test\TestController::class, 'collect'])->name('test.collect');

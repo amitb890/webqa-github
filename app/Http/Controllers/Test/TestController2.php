@@ -35,6 +35,7 @@ class TestController2 extends Controller
     public function startTests(Request $request)
     {
         $queues = ['dashboard_1','dashboard_2','dashboard_3','dashboard_4','dashboard_5'];
+        $userId = auth()->id();
         $userQueue = 'dashboard_' . Auth::id(); // Unique queue per user
 
         $projectsController = new ProjectsController();
@@ -127,9 +128,8 @@ class TestController2 extends Controller
     
 
             // Pick queue with least pending jobs
-            $selectedQueue = collect($queues)->sortBy(function($queue) {
-                return \Illuminate\Support\Facades\Redis::llen('queues:' . $queue);
-            })->first();
+            $index = ($userId - 1) % count($queues);
+            $userQueue = $queues[$index];
 
             dispatch((new RunTest($result->id, $project_id, $type, $dashboardTest->id, $recheck_label))
                 ->onQueue($userQueue));

@@ -24,7 +24,6 @@ class RunSinglePageSpeedTest implements ShouldQueue
 
     public function __construct($resultId)
     {
-        $this->onQueue('lighthouse');
         $this->resultId = $resultId;
     }
 

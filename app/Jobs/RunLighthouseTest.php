@@ -15,17 +15,20 @@ class RunLighthouseTest implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $testId;
+    public $userId;
 
-    public function __construct($testId)
+    public function __construct($testId, $userId)
     {
-        $this->onQueue('lighthouse');
         $this->testId = $testId;
+        $this->userId = $userId;
     }
 
     public function handle()
     {
         $test = LighthouseTest::findOrFail($this->testId);
         $urls = json_decode($test->urls, true);
+        $userId = $this->userId;
+        $lighthouseQueues = ['lighthouse_1','lighthouse_2','lighthouse_3','lighthouse_4','lighthouse_5'];
 
         foreach ($urls as $urlIndex => $url) {
             foreach (['desktop', 'mobile'] as $strategyIndex => $strategy) {
@@ -38,8 +41,12 @@ class RunLighthouseTest implements ShouldQueue
         
                 // Delay based on URL + strategy index to stagger jobs
                 $delaySeconds = ($urlIndex * 2) + $strategyIndex; // 2s per URL + 1s for strategy
-                dispatch(new RunSinglePageSpeedTest($result->id))
-                    ->onQueue('lighthouse');
+
+
+                $index = ($userId - 1) % count($lighthouseQueues);
+                $userQueue = $lighthouseQueues[$index];
+    
+                dispatch(new RunSinglePageSpeedTest($result->id))->onQueue($userQueue);
             }
         }
     }

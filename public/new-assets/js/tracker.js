@@ -836,10 +836,20 @@ $(document).ready(function () {
         const { DateTime } = luxon;
         const projectSettings = dataSetting ? dataSetting[0].settings : null;
 
-        if(ignore_tests.includes(type)){
-          time = "2025-03-28 08:08:23"
+        if(window.location.href.includes("/reports")){
+          if(!result){
+            return
+          }
+        }
+
+        if(result){
+          if(ignore_tests.includes(type)){
+            time = "2025-03-28 08:08:23"
+          }else{
+            time = new DateTime.fromSeconds(parseInt(result.tested_at))
+          }
         }else{
-          time = new DateTime.fromSeconds(parseInt(result.tested_at))
+          time = ""
         }
         time = time.toLocaleString({day: 'numeric', month: 'long', year: 'numeric'});
           let td = options.tableBody
@@ -876,38 +886,74 @@ $(document).ready(function () {
           
 
               switch(type){
-                  case "title":
-                      td.innerHTML+=``
-                      
-                      if (projectSettings.meta_title == 1) {  
-                      td.innerHTML+=`<td class="text-start">${result.content != null ? result.content : "-"}</td>`
-                      }
-                    if (projectSettings.max_title_length == 1) {
-                      td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>`
-                    }
-                    if (projectSettings.is_title_equal_h1 == 1) {
-                      td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}">No</td>`
-                    }
-                    
-                    if (projectSettings.title_casing_both == 1 || result.project_settings.title_casing_camel == 1 || result.project_settings.title_casing_sentence == 1) {
-                    td.innerHTML+=`<td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
-                      `
-                    }
-                      break;
-                  case "description":
-                      td.innerHTML+=`
-                      <td>${result.content != null ? result.content : "-"}</td>
-                      <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
-                      `
-                      break;
-                  case "robots":
-                      td.innerHTML+=`
-                      <td class="${result.isExists ? "result_fail" : "result_pass"}">${result.isExists ? "Yes" : "No"}</td>
-                      <td class="">${result.content != null && result.content != "" ? result.content : "-"}</td>
-                      `
-                      break;
-                  case "canonical":
-                      let msg
+                 case "title":
+                     if (!result) {
+                       if (projectSettings && projectSettings.meta_title == 1) {  
+                         td.innerHTML+=`<td class="text-start"></td>`;
+                       }
+                       if (projectSettings && projectSettings.max_title_length == 1) {
+                         td.innerHTML+=`<td class="${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}"></td>`;
+                       }
+                       if (projectSettings && projectSettings.is_title_equal_h1 == 1) {
+                         td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}"></td>`;
+                       }
+                       if (projectSettings && (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1)) {
+                         td.innerHTML+=`<td class="${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}"></td>`;
+                       }
+                       break;
+                     }
+                     td.innerHTML+=``
+                     
+                     if (projectSettings.meta_title == 1) {  
+                     td.innerHTML+=`<td class="text-start">${result.content != null ? result.content : "-"}</td>`
+                     }
+                   if (projectSettings.max_title_length == 1) {
+                     td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>`
+                   }
+                   if (projectSettings.is_title_equal_h1 == 1) {
+                     td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}">No</td>`
+                   }
+                   
+                   if (projectSettings.title_casing_both == 1 || result.project_settings.title_casing_camel == 1 || result.project_settings.title_casing_sentence == 1) {
+                   td.innerHTML+=`<td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
+                     `
+                   }
+                     break;
+                 case "description":
+                     if (!result) {
+                       td.innerHTML+=`
+                       <td></td>
+                       <td class="${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}"></td>
+                       `;
+                       break;
+                     }
+                     td.innerHTML+=`
+                     <td>${result.content != null ? result.content : "-"}</td>
+                     <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
+                     `
+                     break;
+                 case "robots":
+                     if (!result) {
+                       td.innerHTML+=`
+                       <td></td>
+                       <td></td>
+                       `;
+                       break;
+                     }
+                     td.innerHTML+=`
+                     <td class="${result.isExists ? "result_fail" : "result_pass"}">${result.isExists ? "Yes" : "No"}</td>
+                     <td class="">${result.content != null && result.content != "" ? result.content : "-"}</td>
+                     `
+                     break;
+                 case "canonical":
+                     if (!result) {
+                       td.innerHTML+=`
+                       <td class="text-start"></td>
+                       <td class="${settings.canonical_url_equal_url ? "" : "hidden-element-tracker"}"></td>
+                       `;
+                       break;
+                     }
+                     let msg
                       switch(result.statusIsEqualURL){
                           case true:
                               msg = "Yes"
@@ -925,6 +971,38 @@ $(document).ready(function () {
                       `
                       break;
                     case "url_slug":
+                      if (!result) {
+                        td.innerHTML += `<td></td>`;
+
+                        if (projectSettings && (projectSettings.max_url_length == 1 || projectSettings.min_url_length == 1)) {
+                          td.innerHTML += `<td class="${settings.max_url_length || settings.min_url_length ? "" : "hidden-element-tracker"}"></td>`;
+                        }
+
+                        if (projectSettings && projectSettings.url_no_numbers == 1) {
+                            td.innerHTML += `<td></td>`;
+                        }
+
+                        if (projectSettings && projectSettings.url_no_special == 1) {
+                            td.innerHTML += `<td></td>`;
+                        }
+
+                        if (projectSettings && projectSettings.url_slug_lowercase == 1) {
+                            td.innerHTML += `<td></td>`;
+                        }
+
+                        if (projectSettings && projectSettings.url_casing_only_hyphens == 1) {
+                            td.innerHTML += `<td></td>`;
+                        }
+
+                        if (projectSettings && projectSettings.url_casing_only_underscores == 1) {
+                            td.innerHTML += `<td></td>`;
+                        }
+
+                        if (projectSettings && projectSettings.url_stop_words == 1) {
+                            td.innerHTML += `<td></td>`;
+                        }
+                        break;
+                      }
                       td.innerHTML += `
                       <td>${result.content != null ? result.content : "-"}</td>`;
 
@@ -972,7 +1050,7 @@ $(document).ready(function () {
                                 <td class="${result.statusStopWords ? "result_pass" : "result_fail"}">${result.statusStopWords ? "No" : "Yes"}</td>
                             `;
                         }
-                      break;
+                     break;
                     // case "images":
                     //   result.problems.forEach((prob, z)=>{
                     //     td.innerHTML += `
@@ -993,22 +1071,46 @@ $(document).ready(function () {
                     //     // tbody.appendChild(tr)
                     // })
                     //   break;
-                    case "favicon":
+                  case "favicon":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td class="text-start"></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="text-start"><a href="${result.content}" target="_blank">${result.content}</a></td>
                       `
                       break;
                      case "meta_viewport":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.isExists ? "result_pass" : "result_fail"}"> ${result.isExists ? "Yes" : "No"}</td>
                       `
                       break;
                      case "doctype":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.isExists ? "result_pass" : "result_fail"}">${result.isExists ? "Yes" : "No"}</td>
                       `
                       break;
                     case "http_status_code":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       const acceptedCodes = projectSettings.http_status_code_accepted.split(',').map(Number);
                       const tdClass = acceptedCodes.includes(result.httpCode) ? "result_pass" : "result_fail";
                       td.innerHTML+=`
@@ -1016,6 +1118,23 @@ $(document).ready(function () {
                       `
                       break;
                     case "open_graph_tags":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td class="align-left"></td>
+                        <td class="${settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker"}"></td>
+                        <td class="${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker"}"></td>
+                        <td class="${settings.is_og_title_equal_title ? "" : "hidden-element-tracker"}"></td>
+                        <td class="align-left"></td>
+                        <td class="${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "hidden-element-tracker"}"></td>
+                        <td class="${settings.is_og_desc_equal_desc ? "" : "hidden-element-tracker"}"></td>
+                        <td class="align-left"></td>
+                        <td class="${settings.og_image_dimensions_min || settings.og_image_dimensions_exact ? "" : "hidden-element-tracker"}"></td>
+                        <td class="align-left"></td>
+                        <td class="${settings.max_og_url_length ? "" : "hidden-element-tracker"}"></td>
+                        <td class="${settings.is_og_url_equal_url ? "" : "hidden-element-tracker"}"></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="align-left">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
@@ -1032,6 +1151,19 @@ $(document).ready(function () {
                       `
                       break;
                     case "twitter_tags":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td class="align-left"></td>
+                        <td class="${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker"}"></td>
+                        <td class="${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker"}"></td>
+                        <td class="${settings.is_twitter_title_equal_title ? "" : "hidden-element-tracker"}"></td>
+                        <td class="align-left"></td>
+                        <td class="${settings.twitter_image_dimensions_min || settings.twitter_image_dimensions_exact ? "" : "hidden-element-tracker"}"></td>
+                        <td class="align-left"></td>
+                        <td class="${settings.max_twitter_image_alt_length ? "" : "hidden-element-tracker"}"></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="align-left">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
@@ -1154,54 +1286,114 @@ $(document).ready(function () {
                     }
              
                     break;
-                  case "mobile_friendly":
+                 case "mobile_friendly":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Mobile friendly" : "Not Mobile friendly"}</td>   
                     `
                     break;
                   
                   
-                  case "gzip_compression":
+                 case "gzip_compression":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                     `
                     break;
                   case "html_compression":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                     `
                     break;
                   case "css_compression":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                     `
                     break;
                   case "js_compression":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                     `
                     break;
                   case "css_caching_enable":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                     `
                     break;
                   case "js_caching_enable":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                     `
                     break;
                   case "page_size":
+                    if (!result) {
+                      td.innerHTML+=`
+                      <td></td>
+                      `;
+                      break;
+                    }
                     td.innerHTML+=`
                     <td class="${result.status ? "result_pass" : "result_fail"}">${result.contentLengthUnits}</td>
                     `
                     break;
                     case "nested_tables":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Does not exist" : "Exists"}</td>
                       `
                       break;
                     case "frameset":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Does not exist" : "Exists"}</td>
                       `
@@ -1209,46 +1401,100 @@ $(document).ready(function () {
   
   
                     case "is_safe_browsing":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                       `
                       break;
                     case "cross_origin_links":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Does not exist" : "Exists"}</td>
                       `
                       break;
                     case "protocol_relative_resource":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Does not exist" : "Exists"}</td>
                       `
                       break;
                     case "content_security_policy_header":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                       `
                       break;
                     case "x_frame_options_header":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                       `
                       break;
                     case "hsts_header":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                       `
                       break;
                     case "bad_content_type":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Does not exist" : "Exists"}</td>
                       `
                       break;
                     case "ssl_certificate_enable":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Enabled" : "Disabled"}</td>
                       `
                       break;
                     case "folder_browsing_enable":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        `;
+                        break;
+                      }
                       td.innerHTML+=`
                       <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "Disabled" : "Enbled"}</td>
                       `
@@ -1763,7 +2009,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.meta_title[originalIndex]){
+                urlsList.push(url)
+              }
               
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "title", data.meta_title[originalIndex], options, url, settings, "seo", data.meta_title)
@@ -1780,7 +2028,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.meta_desc[originalIndex]){
+                urlsList.push(url)
+              }
 
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "description", data.meta_desc[originalIndex], options, url, settings, "seo")
@@ -1796,7 +2046,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.http_status_code[originalIndex]){
+                urlsList.push(url)
+              }
 
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "http_status_code", data.http_status_code[originalIndex], options, url, settings, "seo", data.meta_title)
@@ -1813,7 +2065,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.url_slug[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "url_slug", data.url_slug[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1830,7 +2084,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.canonical_url[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "canonical", data.canonical_url[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1848,7 +2104,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.robots_meta[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "robots", data.robots_meta[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1865,7 +2123,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.doctype[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "doctype", data.doctype[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1884,7 +2144,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.meta_viewport[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "meta_viewport", data.meta_viewport[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1902,7 +2164,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.favicon[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "favicon", data.favicon[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1922,7 +2186,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.images[originalIndex]){
+                urlsList.push(url)
+              }
       
              
               const problems =  data.images[originalIndex].problems;
@@ -1945,7 +2211,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.gzip_compression[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "gzip_compression", data.gzip_compression[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1964,7 +2232,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.css_compression[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "css_compression", data.css_compression[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -1982,7 +2252,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.js_compression[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "js_compression", data.js_compression[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2000,7 +2272,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.html_compression[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "html_compression", data.html_compression[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2019,7 +2293,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.css_caching_enable[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "css_caching_enable", data.css_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2038,7 +2314,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.js_caching_enable[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "js_caching_enable", data.js_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2057,7 +2335,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.page_size[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "page_size", data.page_size[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2075,7 +2355,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.nested_tables[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "nested_tables", data.nested_tables[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2093,7 +2375,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.frameset[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2112,7 +2396,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.frameset[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2131,7 +2417,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.is_safe_browsing[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "is_safe_browsing", data.is_safe_browsing[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2150,7 +2438,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.cross_origin_links[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "cross_origin_links", data.cross_origin_links[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2169,7 +2459,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.protocol_relative_resource[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "protocol_relative_resource", data.protocol_relative_resource[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2188,7 +2480,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.content_security_policy_header[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "content_security_policy_header", data.content_security_policy_header[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2207,7 +2501,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.frameset[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2226,7 +2522,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.hsts_header[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "hsts_header", data.hsts_header[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2245,7 +2543,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.bad_content_type[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "bad_content_type", data.bad_content_type[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2264,7 +2564,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.ssl_certificate_enable[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "ssl_certificate_enable", data.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2283,7 +2585,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.ssl_certificate_enable[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "ssl_certificate_enable", data.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2302,7 +2606,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.folder_browsing_enable[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "folder_browsing_enable", data.folder_browsing_enable[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2321,7 +2627,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.x_frame_options_header[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "x_frame_options_header", data.x_frame_options_header[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2340,7 +2648,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.open_graph_tags[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "open_graph_tags", data.open_graph_tags[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2359,7 +2669,9 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              urlsList.push(url)
+              if(data.twitter_tags[originalIndex]){
+                urlsList.push(url)
+              }
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "twitter_tags", data.twitter_tags[originalIndex], options, url, settings, "seo", data.url_slug)
@@ -2377,9 +2689,12 @@ $(document).ready(function () {
              const url = urlEl.url
              const originalIndex = urlEl.original_index
 
-             urlsList.push(url)
+             const googleData = Controls.getGoogleDataByUrl(url)
+             if(googleData){
+               urlsList.push(url)
+             }
              const options = UI.initTableBody(el.id)
-             UI.buildTableBody(el.id, "google_overall", Controls.getGoogleDataByUrl(url), options, url, settings, "performance", data.url_slug)
+             UI.buildTableBody(el.id, "google_overall", googleData, options, url, settings, "performance", data.url_slug)
            })
          })
        }
@@ -2396,9 +2711,12 @@ $(document).ready(function () {
             const url = urlEl.url
             const originalIndex = urlEl.original_index
 
-            urlsList.push(url)
+            const googleData = Controls.getGoogleDataByUrl(url)
+            if(googleData){
+              urlsList.push(url)
+            }
             const options = UI.initTableBody(el.id)
-            UI.buildTableBody(el.id, "google_lighthouse", Controls.getGoogleDataByUrl(url), options, url, settings, "performance", data.url_slug)
+            UI.buildTableBody(el.id, "google_lighthouse", googleData, options, url, settings, "performance", data.url_slug)
           })
         })
       }
@@ -2415,9 +2733,12 @@ $(document).ready(function () {
           const url = urlEl.url
           const originalIndex = urlEl.original_index
 
-          urlsList.push(url)
+          const googleData = Controls.getGoogleDataByUrl(url)
+          if(googleData){
+            urlsList.push(url)
+          }
           const options = UI.initTableBody(el.id)
-          UI.buildTableBody(el.id, "core_web_vitals", Controls.getGoogleDataByUrl(url), options, url, settings, "performance", data.url_slug)
+          UI.buildTableBody(el.id, "core_web_vitals", googleData, options, url, settings, "performance", data.url_slug)
         })
       })
     }
@@ -2433,7 +2754,9 @@ $(document).ready(function () {
         const url = urlEl.url
         const originalIndex = urlEl.original_index
 
-        urlsList.push(url)
+        if(data.mobile_friendly[originalIndex]){
+          urlsList.push(url)
+        }
         const options = UI.initTableBody(el.id)
         UI.buildTableBody(el.id, "mobile_friendly", data.mobile_friendly[originalIndex], options, url, settings, "performance", data.url_slug)
       })
@@ -2462,10 +2785,14 @@ $(document).ready(function () {
 
       static buildTableBody(options, data, settings, updatedUrls){
         updatedUrls.forEach(el=>{
+          console.log(el)
           UI.buildRootURLElement(el)
 
           const urls = el.urls
           urls.forEach(urlEl=>{
+
+
+
             const url = urlEl.url
             const originalIndex = urlEl.original_index
 
@@ -2642,6 +2969,7 @@ $(document).ready(function () {
 
       static activateEvents(){
     
+        console.log(urlsList)
           // Events
         $("#recheckAllTracker").on("click", async function(e){
           await Controls.recheckStart()

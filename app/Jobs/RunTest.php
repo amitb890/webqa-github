@@ -144,13 +144,31 @@ class RunTest implements ShouldQueue
              json_encode($projectsController->getLabels($projectId))
          )->original->all_labels;
 
-         if ($typeOfTest === "single_recheck") { // if single recheck we only use 1 label
-            $labels = collect($labels)
-                ->where('db_name', $this->recheck_label)
-                ->values()
-                ->toArray();
+
+
+        if ($typeOfTest === "single_recheck") { // if single recheck we only use 1 label
+            // If the recheck label refers to a parent group (like "security_labels")
+            $isParent = collect($labels)->contains(function ($label) {
+                return isset($label->dashboard_parent)
+                    && $label->dashboard_parent === $this->recheck_label;
+            });
+        
+            if ($isParent) {
+                // Get ALL labels that belong to this parent group
+                $labels = collect($labels)
+                    ->where('dashboard_parent', $this->recheck_label)
+                    ->values()
+                    ->toArray();
+            } else {
+                // Normal case → only one specific label
+                $labels = collect($labels)
+                    ->where('db_name', $this->recheck_label)
+                    ->values()
+                    ->toArray();
+            }
         }
 
+        
 
 
          $settings = projectSettings::where("projects_id", $projectId)
