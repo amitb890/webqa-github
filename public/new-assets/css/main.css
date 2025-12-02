@@ -9263,7 +9263,9 @@ h6 {
 
 
 .test_result_area{
-  padding: 15px 0px;
+  padding: 36px;
+    background: #fefefe;
+    border-radius: 8px;
 }
 .test_result_area h2{
   font-weight: 500;
@@ -9564,6 +9566,7 @@ color: #68BF7B!important;
 }
 
 .bulk-table thead th{font-weight:bold;}
+.result_data_body tr td a:hover{color:#3a7cec;}
 
 .failed-list {
     background: #fef6f6;

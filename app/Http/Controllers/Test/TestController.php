@@ -3507,11 +3507,11 @@ class TestController extends Controller
             $crossOriginLinksData = $helpers->crossOriginLinks($url, $html);
             if(count($crossOriginLinksData) > 0) {
                 $status = false;
-                $message = 'Cross Origin Links';
+                $message = 'Unsafe cross-origin links found';
 
             } else {
                 $status = true;
-                $message = 'Cross origin links not found';
+                $message = 'Unsafe cross-origin links not found';
             }
         }
 

@@ -449,6 +449,16 @@ $( document ).ready(function() {
         $(".test_result_area").html("")
     }
 
+function toggleFailedListVisibility() {
+    const el = document.querySelector(".failed-list");
+    if (!el) return;
+
+    // Hide when empty (or only whitespace)
+    el.style.display = el.textContent.trim().length ? "" : "none";
+}
+
+
+
 
     function startTest(){
         const url = constructTestURL(url_list[0])
@@ -737,6 +747,7 @@ $( document ).ready(function() {
             ol.appendChild(li)
         })
         document.querySelector(".failed-list-data").appendChild(ol)
+        toggleFailedListVisibility(); 
     }
 
     function convertObjToIntVal(obj){
@@ -764,6 +775,8 @@ $( document ).ready(function() {
               <div class="table-responsive">
               ${UI.getTableTop(label.name, label.slug)}
             </div>`;
+        
+        toggleFailedListVisibility(); // hides it initially
 
         const table = document.createElement("table")
         table.classList.add("table")
@@ -1271,18 +1284,18 @@ $( document ).ready(function() {
                         table.classList.add("custom-dataTable")  
                         thead = `<thead class="result_data_header">
                         <tr>
-                            <th>#</th>
-                            <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                            <th>Result</th>
+                            <th style="width:3%;">#</th>
+                            <th class="result_header" style="width:60%;"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                            <th style="width:37%;">Result</th>
                         </tr>
                         </thead>`
 
                         results.forEach((result, i)=>{
                             const tr = document.createElement("tr")
                             tr.innerHTML = `
-                            <td>${i+1}</td>
+                            <td style="text-align:center;">${i+1}</td>
                             <td class="align-left">${result.tested_url}</td>
-                            <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
+                            <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                             `
                             tbody.appendChild(tr)
                         })
@@ -1614,54 +1627,54 @@ $( document ).ready(function() {
                 table.classList.add("custom-dataTable")
                 thead = `<thead class="result_data_header">
              <tr>
-                <th>#</th>
-                <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                <th class="export-hidden-element">Output</th>
-                <th>Result</th>
+                <th style="width:3%;">#</th>
+                <th class="result_header" style="width:60%;"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                <th class="export-hidden-element" style="width:18%;">Output</th>
+                <th style="width:10%;">Result</th>
             </tr>
             </thead>`
 
             results.forEach((result, i)=>{
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
-                <td>${i+1}</td>
+                <td style="text-align:center;">${i+1}</td>
                 <td class="align-left">${result.tested_url}</td>
-                <td class="export-hidden-element">${result.message}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong">${result.status ? "PASS" : "FAIL"}
+                <td class="export-hidden-element" style="text-align:center;">${result.message}</td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;font-weight:bold;">${result.status ? "PASS" : "FAIL"}
                 <span class="export-hidden-element">
                 <br><br>
              
                 ${result.status ? `` : `<span data-bs-toggle="modal" data-bs-target="#crossOriginModal${i}" 
-                style="cursor: pointer;">List of Links</span>`}
+                style="cursor: pointer;font-weight:normal;font-size:12px;color:#6e6e6e;">List of Links</span>`}
                 
 
                 
                 <div class="modal custom-modal" id="crossOriginModal${i}">
                 <div class="modal-dialog">
-                  <div class="modal-content">
+                  <div class="modal-content" style="border-radius:7px;">
                   <!-- Modal Header -->
-                    <div class="modal-header">
-                     <span class="modal-title">Cross origin links</span>
-                     <span  class="tool-test-close close modal-close" data-bs-dismiss="modal">&times;</span>
+                    <div class="modal-header" style="background: #f4f7fe;border-radius:7px;">
+                     <h1 class="modal-title fs-5" style="font-weight:bold;">Unsafe cross origin links</h1>
+                     <button type="button" class="btn-close" style="cursor:pointer;" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                  <!-- Modal Body -->
-                 <div class="modal-body">
-                 <span style="padding-bottom: 10px;" class="analysis-body-css">Below are the links found on this page which qualify as Cross origin links.</span>
-                 <div class="modal-table-div">
-                 <table class="tool-table">
+                 <div class="modal-body" style="text-align:left;font-weight:normal;">
+                 <p style="margin-bottom:20px;">Below are the cross-origin links found on this page.</p>
+                 
+
+                 <table class="tool-table" style="background:#FFFFFF;border:1px solid #FFFFFF;">
 
           <tbody>          
                  ${result.crossOriginLinksData.map((item, index) => `
                        <tr>
-                         <td>${index + 1}</td>
-                         <td>
-                         <span><a href="${item}" target="_blank"><i class="fas fa-external-link-alt" style="color:#c3c9d1"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
+                         <td style="width:5%">${index + 1}</td>
+                         <td><span><a href="${item}" target="_blank">${item}</a></span>
                          </td>
                      </tr>
                      `).join('')}   
                            </tbody>  
                 </table>
-                </div>
+
                 </div>
                <!-- Modal Footer -->
              </div>
@@ -2044,20 +2057,20 @@ $( document ).ready(function() {
             table.classList.add("custom-dataTable")
             thead = `<thead class="result_data_header">
              <tr>
-                <th>#</th>
-                <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                <th>Meta Viewport Tag Present?</th>
-                <th>Result</th>
+                <th style="width:3%;">#</th>
+                <th class="result_header" style="width:60%;"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                <th style="width:19%;">Meta viewport tag present?</th>
+                <th style="width:18%;">Result</th>
             </tr>
             </thead>`
 
             results.forEach((result, i)=>{
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
-                <td>${i+1}</td>
+                <td style="text-align:center;">${i+1}</td>
                 <td class="align-left">${result.tested_url}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "Yes" : "No"}</strong></td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "Yes" : "No"}</strong></td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                 `
                 tbody.appendChild(tr)
             })
