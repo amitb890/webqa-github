@@ -9563,6 +9563,24 @@ color: #68BF7B!important;
   rotate: 180deg;
 }
 
+.bulk-table thead th{font-weight:bold;}
+
+.failed-list {
+    background: #fef6f6;
+    border-radius: 5px;
+    border: 1px solid var(--text-orange-red);
+    display: block;
+    padding-top: 12px;
+    color: #2b2640;
+    font-size: 14px;
+    max-width: 650px;
+    text-align: center;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.failed-list a{color: #3a7cec;}
+
 /* Tools section Table area Ends */
 
 .main_tools_meta_description {
