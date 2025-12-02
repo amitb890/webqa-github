@@ -354,6 +354,7 @@ class UI{
 
 $( document ).ready(function() {
     Controls.init()
+    toggleTestResultAreaVisibility();
     const label = JSON.parse($("#data_value").val())
     let results = [], resultsFailed = [], resultsPassed = []
     let activeUpdateData
@@ -445,9 +446,11 @@ $( document ).ready(function() {
   
 
 
-    function clearTables(){
-        $(".test_result_area").html("")
-    }
+function clearTables(){
+    $(".test_result_area").html("");
+    toggleTestResultAreaVisibility();
+}
+
 
 function toggleFailedListVisibility() {
     const el = document.querySelector(".failed-list");
@@ -457,6 +460,13 @@ function toggleFailedListVisibility() {
     el.style.display = el.textContent.trim().length ? "" : "none";
 }
 
+function toggleTestResultAreaVisibility() {
+    const el = document.querySelector(".test_result_area");
+    if (!el) return;
+
+    // Hide when empty (or only whitespace)
+    el.style.display = el.innerHTML.trim().length ? "" : "none";
+}
 
 
 
@@ -2155,6 +2165,8 @@ function toggleFailedListVisibility() {
         table.appendChild(tbody)
 
         $(".test_result_area .table-responsive").append(table)
+        
+        toggleTestResultAreaVisibility();
 
         if ($('.custom-dataTable').length) {
             var datatableClass =  'custom-dataTable';
