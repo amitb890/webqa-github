@@ -6,14 +6,48 @@ class ToolXlsx {
 
         // Clone the table to work with
         let table;
+        let dataTable = null;
+        let originalPageLength = null;
+        let tableElement = null;
 
+        // Check if table exists and if it has DataTable instance
         if ($(".test_result_area table").length) {
-        table = $(".test_result_area table").clone()[0];
-        } else {
-        table = $("#reportTable").clone()[0];
-        $(table).find(".dropdown-toggle-tracker-circle").remove();
-        $(table).find(".dropdown-menu").remove();
-        $(table).find(".dropdown-toggle").remove();
+            tableElement = $(".test_result_area table")[0];
+            // Check if DataTable is initialized on this table
+            if ($.fn.DataTable && $(tableElement).hasClass('custom-dataTable')) {
+                try {
+                    dataTable = $(tableElement).DataTable();
+                    if (dataTable) {
+                        // Store original page length
+                        originalPageLength = dataTable.page.len();
+                        // Temporarily show all rows
+                        dataTable.page.len(-1).draw();
+                    }
+                } catch (e) {
+                    console.log("DataTable not found or error:", e);
+                }
+            }
+            table = $(tableElement).clone()[0];
+        } else if ($("#reportTable").length) {
+            tableElement = $("#reportTable")[0];
+            // Check if DataTable is initialized on this table
+            if ($.fn.DataTable && $(tableElement).hasClass('custom-dataTable')) {
+                try {
+                    dataTable = $(tableElement).DataTable();
+                    if (dataTable) {
+                        // Store original page length
+                        originalPageLength = dataTable.page.len();
+                        // Temporarily show all rows
+                        dataTable.page.len(-1).draw();
+                    }
+                } catch (e) {
+                    console.log("DataTable not found or error:", e);
+                }
+            }
+            table = $(tableElement).clone()[0];
+            $(table).find(".dropdown-toggle-tracker-circle").remove();
+            $(table).find(".dropdown-menu").remove();
+            $(table).find(".dropdown-toggle").remove();
         }
 
         $(table).find(".export-hidden-element").remove();
@@ -23,6 +57,11 @@ class ToolXlsx {
 
         // Dynamically adjust column widths
         ToolXlsx.setColumnWidths(table, worksheet);
+
+        // Restore original page length if DataTable was used
+        if (dataTable && originalPageLength !== null) {
+            dataTable.page.len(originalPageLength).draw();
+        }
 
         // Download the file
         const buffer = await workbook.xlsx.writeBuffer();

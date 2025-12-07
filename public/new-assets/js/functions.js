@@ -539,12 +539,38 @@ function clearAlerts(){
     $(`.alert`).remove()
     $(`.invalid-feedback`).remove()
     $(`.success-feedback`).remove()
+    // Remove red border from accor-single-item elements (only if they exist)
+    // This ensures backward compatibility with pages that don't have accor-single-item
+    const accorItems = $(`.accor-single-item`);
+    if(accorItems.length > 0){
+        accorItems.css({
+            'border': '',
+            'border-radius': ''
+        });
+        // Restore original text color for accor-head when errors are cleared
+        accorItems.find('.accor-head .accor-title-btn span').css({
+            'color': ''
+        });
+    }
 }
 
 function clearAlertsNew(){
     $(`.alert`).remove()
     $(`.invalid-feedback`).remove()
     $(`.success-feedback`).remove()
+    // Remove red border from accor-single-item elements (only if they exist)
+    // This ensures backward compatibility with pages that don't have accor-single-item
+    const accorItems = $(`.accor-single-item`);
+    if(accorItems.length > 0){
+        accorItems.css({
+            'border': '',
+            'border-radius': ''
+        });
+        // Restore original text color for accor-head when errors are cleared
+        accorItems.find('.accor-head .accor-title-btn span').css({
+            'color': ''
+        });
+    }
   }
 
 function scrollToTop(){
@@ -936,13 +962,30 @@ function buildAlert(data){
 
 function displayAlert(classVal, data){
     const div = buildAlert(data)
-    $(`${classVal}`)[0].prepend(div)
-    if(!data.notHide){
-        $(".alert").fadeTo(3000, 500).slideUp(500, function() {
-            $(".alert").slideUp(500);
-            $(".alert").remove();
-        });
+    const targetElement = $(`${classVal}`)[0]
+    if(targetElement){
+        targetElement.prepend(div)
+        if(!data.notHide){
+            $(".alert").fadeTo(3000, 500).slideUp(500, function() {
+                $(".alert").slideUp(500);
+                $(".alert").remove();
+            });
+        }
+    } else {
+        console.error(`Element with selector "${classVal}" not found. Cannot display alert.`)
     }
+}
+
+function displayAlertNoHide(classVal, data){
+    // Display alert that never auto-hides (persistent alert)
+    const div = buildAlert(data)
+    const targetElement = $(`${classVal}`)[0]
+    if(targetElement){
+        targetElement.prepend(div)
+    } else {
+        console.error(`Element with selector "${classVal}" not found. Cannot display alert.`)
+    }
+    // No auto-hide logic - alert stays until manually dismissed
 }
 
 function toggleHomePageSettingsArea(){
@@ -1215,18 +1258,50 @@ function isSingleWord(str){
 
 function validate(data){
     if(data.status === 0){
+        const errorAccorItems = new Set(); // Track which accor-single-item elements have errors
+        
         for (const key in data.msg) {
-            const msg = data.msg[key][0]
+            // Handle both array and string error messages
+            const msg = Array.isArray(data.msg[key]) ? data.msg[key][0] : data.msg[key];
+            if(!msg) continue; // Skip if no message
+            
             const alert = buildAlertNew(msg)
+            let fieldElement = null;
+            
             if($(`#${key}`)[0] || $(`.${key}`)[0]){
                 if($(`#${key}`)[0]){
-                    $(`#${key}`)[0].parentElement.appendChild(alert)
+                    fieldElement = $(`#${key}`)[0];
+                    fieldElement.parentElement.appendChild(alert)
                 }
                 if($(`.${key}`)[0]){
-                        $(`.${key}`)[0].parentElement.appendChild(alert)
+                    fieldElement = $(`.${key}`)[0];
+                    fieldElement.parentElement.appendChild(alert)
                 }
             }else{
-              $(`[name=${key}]`)[0].parentElement.parentElement.prepend(alert)
+                if($(`[name=${key}]`)[0]){
+                    fieldElement = $(`[name=${key}]`)[0];
+                    fieldElement.parentElement.parentElement.prepend(alert)
+                }
+            }
+            
+            // Find parent accor-single-item and add red border (only if it exists)
+            // This ensures backward compatibility with pages that don't have accor-single-item
+            if(fieldElement){
+                const accorItem = $(fieldElement).closest('.accor-single-item');
+                if(accorItem.length > 0 && accorItem[0] && !errorAccorItems.has(accorItem[0])){
+                    errorAccorItems.add(accorItem[0]);
+                    accorItem.css({
+                        'border': '1px solid red',
+                        'border-radius': '4px'
+                    });
+                    // Change accor-head text color to red when error occurs
+                    const accorHeadSpan = accorItem.find('.accor-head .accor-title-btn span');
+                    if(accorHeadSpan.length > 0){
+                        accorHeadSpan.css({
+                            'color': 'rgba(194, 40, 44, 1)'
+                        });
+                    }
+                }
             }
         }
     }
@@ -2649,7 +2724,7 @@ function getAllTestLabels(type, label = "default"){
             parent: "seo",
         },
         {
-            displayName: "Robot.txt",
+            displayName: "Robots.txt",
             name: "robot_text_test",
             dbName: "robot_text_test",
             url: "/test/robot-text-test",

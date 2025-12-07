@@ -69,10 +69,78 @@ $( document ).ready(function() {
 
   // DEALS WITH UI ELEMENTS(BUILDING AND RENDERING HTML TO THE DOM)
   class UI{
+    // Helper function to update loader-single-item background when tests are complete
+    static updateContainerBackground(contentId){
+      const content = document.getElementById(contentId)
+      if(!content) return
+      
+      const container = content.closest(".loader-single-item-container")
+      if(!container) return
+      
+      const loaderItem = container.querySelector(".loader-single-item")
+      if(!loaderItem) return
+      
+      // When content is closed, check if all tests are complete
+      const table = content.querySelector(".status-table")
+      if(table){
+        const allRows = table.querySelectorAll("tbody tr")
+        const totalRows = allRows.length
+        
+        if(totalRows > 0){
+          let completedCount = 0
+          allRows.forEach(row => {
+            const firstTd = row.querySelector("td")
+            if(firstTd && !firstTd.classList.contains("testing")){
+              completedCount++
+            }
+          })
+          
+          // If all tests are complete, set gray background on loader-single-item
+          if(completedCount === totalRows){
+            loaderItem.style.setProperty("background-color", "rgba(230, 235, 242, 1)", "important")
+          }
+        }
+      }
+    }
+    
+    // Function to update all container backgrounds based on content visibility
+    static updateAllContainerBackgrounds(){
+      const contentSections = ["seo-content", "performance-content", "best-practices-content", "security-content"]
+      contentSections.forEach(contentId => {
+        UI.updateContainerBackground(contentId)
+      })
+    }
+    
     static updateLoaderCurrentTestStatus(label){
       UI.collapsePreviousParent(label)
       document.getElementById(label.name).querySelector(".loader-item-current").textContent = "Testing..."
+      
+      // Open the content section when its first test starts
+      const parentType = label.parent
+      if(!parentType || parentType === "seo"){
+        // SEO tests (default case)
+        const seoContent = document.getElementById("seo-content")
+        if(seoContent && seoContent.style.display !== "block"){
+          seoContent.style.display = "block"
+        }
+      } else if(parentType === "performance"){
+        const performanceContent = document.getElementById("performance-content")
+        if(performanceContent && performanceContent.style.display !== "block"){
+          performanceContent.style.display = "block"
+        }
+      } else if(parentType === "bestPractices"){
+        const bestPracticesContent = document.getElementById("best-practices-content")
+        if(bestPracticesContent && bestPracticesContent.style.display !== "block"){
+          bestPracticesContent.style.display = "block"
+        }
+      } else if(parentType === "security"){
+        const securityContent = document.getElementById("security-content")
+        if(securityContent && securityContent.style.display !== "block"){
+          securityContent.style.display = "block"
+        }
+      }
     }
+
 
     
   static setNeedleByValue(value) {
@@ -117,31 +185,40 @@ $( document ).ready(function() {
     }, frameRate);
   }
 
-    static collapsePreviousParent(data){
+static collapsePreviousParent(data){
       let parentCard = data.parent
-
 
       // collapse elements parent div after all elements are testing
       if(parentCard === "performance"){
         if(document.getElementById("seo-content")){
           document.getElementById("seo-content").style.display = "none"
+          // Update background after closing
+          UI.updateAllContainerBackgrounds()
         }        
       }
 
       if(parentCard === "bestPractices"){
         if(document.getElementById("performance-content")){
           document.getElementById("performance-content").style.display = "none"
+          // Update background after closing
+          UI.updateAllContainerBackgrounds()
         }
       }
 
       if(parentCard === "security"){
         if(document.getElementById("best-practices-content")){
           document.getElementById("best-practices-content").style.display = "none"
+          // Update background after closing
+          UI.updateAllContainerBackgrounds()
         }
       }
 
       // end collapse
     }
+
+
+
+
     static getBrokenLinks(allLinks, limit){
       let html = ""
       let i = 0
@@ -1694,6 +1771,8 @@ $( document ).ready(function() {
     var content = document.getElementById(id);
     if (content.style.display === "block") {
         content.style.display = "none";
+        // Update background when closing (gray if tests complete)
+        UI.updateContainerBackground(id);
     } else {
         content.style.display = "block";
     }
@@ -3201,6 +3280,9 @@ $( document ).ready(function() {
       div.classList.add("analysis-card")
       div.setAttribute("data-name", data.label.name)
       data.status ? div.classList.add("card__pass") : div.classList.add("card__failed")
+      // Default favicon - will be updated via AJAX
+      const defaultFavicon = '/new-assets/assets/images/amazon.png';
+      let testedUrlFavicon = defaultFavicon;
       let icon
       if(data.status){
           icon = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -3923,11 +4005,11 @@ $( document ).ready(function() {
                                         <div class="card-text-link-container">
                                           <div class="card-text-link-image">
                                             <span class="icon">
-                                              <img id="activeFavicon" src="http://127.0.0.1:8000/storage/images/67a9d25d46e0ffavicon.ico" alt="icon">
+                                               <img id="activeFavicon" src="${testedUrlFavicon}" alt="icon">
                                             </span>
                                           </div>
                                           <div class="card-text-link">
-                                            <span>Setmore</span>
+                                            <span class="web-title"></span>
                                             <a class="card-text-link" href="${projectUrl}" target="_blank">${projectUrl}</a>
                                           </div>
                                         </div>
@@ -4033,6 +4115,53 @@ $( document ).ready(function() {
                 }else{
                   document.getElementById(parentID).appendChild(div)
                 }
+
+                // Fetch favicon via AJAX if snippet preview exists
+                if(data.showSnippet && projectUrl){
+                  const faviconImg = div.querySelector('#activeFavicon');
+                  if(faviconImg){
+                    $.ajax({
+                      url: '/test/get-favicon-url',
+                      type: 'POST',
+                      data: {
+                        url: projectUrl,
+                        _token: $('meta[name="csrf-token"]').attr('content'),
+                      },
+                      success: function(response){
+                        if(response.favicon && response.favicon !== ''){
+                          faviconImg.src = response.favicon;
+                        }
+
+                       const webTitle = getFormattedName(projectUrl)
+                       $('.web-title').text(webTitle)
+                      },
+                      error: function(){
+                        // Keep default favicon on error
+                      }
+                    });
+                  }
+                }
+  }
+function getFormattedName(url) {
+    // Remove 'https://', 'http://', 'www.', and trailing slashes
+    let domain = url.replace(/https?:\/\/(www\.)?/, '').replace(/\/.*/, '');
+    
+    // Split the domain by dots
+    let parts = domain.split('.');
+    
+    let name;
+    if (parts.length >= 3) {
+        // If 3 or more dots are present, take the third-to-last part
+        name = parts[parts.length - 3];
+    } else {
+        // Otherwise, take the second-to-last part
+        name = parts[parts.length - 2];
+    }
+    
+    // Capitalize the first letter and insert into input field
+    let formattedName = name.charAt(0).toUpperCase() + name.slice(1);
+    $('.onbording_project_name').val(formattedName);
+    return formattedName;
   }
 
       
@@ -4098,6 +4227,15 @@ $( document ).ready(function() {
         'border-bottom-right-radius': '0 !important',
         'border-bottom-left-radius': '0 !important'
       });
+      
+      // Close all content sections when all tests are finished
+      const contentSections = ["seo-content", "performance-content", "best-practices-content", "security-content"]
+      contentSections.forEach(contentId => {
+        const content = document.getElementById(contentId)
+        if(content){
+          content.style.display = "none"
+        }
+      })
 
 
       // firstTest = false
@@ -4592,7 +4730,55 @@ $( document ).ready(function() {
         document.getElementById(data.label.name).querySelector(".loader-item-chip").textContent = "FAIL"
       }
 
+      // Helper function to check and close content section when all tests are complete
+      function checkAndCloseSection(contentId, parentType){
+        const content = document.getElementById(contentId)
+        if(!content) return
+        
+        const table = content.querySelector(".status-table")
+        if(!table) return
+        
+        const allRows = table.querySelectorAll("tbody tr")
+        const totalRows = allRows.length
+        if(totalRows === 0) return
+        
+        let completedCount = 0
+        allRows.forEach(row => {
+          const firstTd = row.querySelector("td")
+          if(firstTd && !firstTd.classList.contains("testing")){
+            completedCount++
+          }
+        })
+        
+        // Check if all tests are done (all rows' first td no longer have "testing" class)
+        if(completedCount === totalRows){
+          content.style.display = "none"
+          // Set background color of the loader-single-item when tests are complete and content is closed
+          const container = content.closest(".loader-single-item-container")
+          if(container){
+            const loaderItem = container.querySelector(".loader-single-item")
+            if(loaderItem){
+              loaderItem.style.setProperty("background-color", "rgba(230, 235, 242, 1)", "important")
+            }
+          }
+        }
+      }
+
+      // Check and close sections based on test parent type
+      const parentType = data.label.parent
+      if(!parentType || parentType === "seo"){
+        // SEO tests (default case)
+        checkAndCloseSection("seo-content", "seo")
+      } else if(parentType === "performance"){
+        checkAndCloseSection("performance-content", "performance")
+      } else if(parentType === "bestPractices"){
+        checkAndCloseSection("best-practices-content", "bestPractices")
+      } else if(parentType === "security"){
+        checkAndCloseSection("security-content", "security")
+      }
       
+      // Update all container backgrounds to ensure consistency
+      UI.updateAllContainerBackgrounds()
   }
 
   function hideThatPass(e, type){

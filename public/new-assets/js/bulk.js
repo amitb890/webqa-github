@@ -154,13 +154,11 @@ class UI{
                 i++
   
                 html+=`
-                <p>
-                    <span>${i}</span>
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.3333 5.33333C11.1565 5.33333 10.987 5.40357 10.8619 5.5286C10.7369 5.65362 10.6667 5.82319 10.6667 6V10C10.6667 10.1768 10.5964 10.3464 10.4714 10.4714C10.3464 10.5964 10.1768 10.6667 10 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H6C6.17681 1.33333 6.34638 1.2631 6.4714 1.13807C6.59643 1.01305 6.66667 0.843478 6.66667 0.666667C6.66667 0.489856 6.59643 0.320286 6.4714 0.195262C6.34638 0.0702379 6.17681 0 6 0H2C1.46957 0 0.960859 0.210714 0.585787 0.585787C0.210714 0.960859 0 1.46957 0 2V10C0 10.5304 0.210714 11.0391 0.585787 11.4142C0.960859 11.7893 1.46957 12 2 12H10C10.5304 12 11.0391 11.7893 11.4142 11.4142C11.7893 11.0391 12 10.5304 12 10V6C12 5.82319 11.9298 5.65362 11.8047 5.5286C11.6797 5.40357 11.5101 5.33333 11.3333 5.33333Z" fill="#8F8F8F"></path>
-                    <path d="M8.66532 1.33333H9.71866L5.52532 5.52C5.46284 5.58198 5.41324 5.65571 5.3794 5.73695C5.34555 5.81819 5.32812 5.90533 5.32812 5.99333C5.32812 6.08134 5.34555 6.16848 5.3794 6.24972C5.41324 6.33096 5.46284 6.40469 5.52532 6.46667C5.5873 6.52915 5.66103 6.57875 5.74227 6.61259C5.82351 6.64644 5.91065 6.66387 5.99866 6.66387C6.08667 6.66387 6.1738 6.64644 6.25504 6.61259C6.33628 6.57875 6.41002 6.52915 6.47199 6.46667L10.6653 2.28V3.33333C10.6653 3.51014 10.7356 3.67971 10.8606 3.80474C10.9856 3.92976 11.1552 4 11.332 4C11.5088 4 11.6784 3.92976 11.8034 3.80474C11.9284 3.67971 11.9987 3.51014 11.9987 3.33333V0.666667C11.9987 0.489856 11.9284 0.320286 11.8034 0.195262C11.6784 0.0702379 11.5088 0 11.332 0H8.66532C8.48851 0 8.31894 0.0702379 8.19392 0.195262C8.0689 0.320286 8.00061 0.489856 8.00061 0.666667C8.00061 0.843478 8.07085 1.01305 8.19587 1.13807C8.3209 1.2631 8.49047 1.33333 8.66728 1.33333Z" fill="#8F8F8F"></path>
-                    </svg>
-                    <a href="${key}" target="_blank">${key}</a>
+                <p style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="display: flex; align-items: center; gap: 10px;">
+                        <span>${i}</span>
+                        <a href="${key}" target="_blank">${key}</a>
+                    </span>
                     <strong>${status}</strong>
                 </p>`
               }
@@ -275,10 +273,11 @@ class UI{
             <div class="download_result">
                 <ul class="datatable_download_result">
                     <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
-                   
+               <!-- <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+               <!-- <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
+
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
                     </ul>
@@ -1772,23 +1771,136 @@ function toggleTestResultAreaVisibility() {
                     <tr>
                         <th>#</th>
                         <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                        <th># of broken links</th>
+                        <th>Internal</th>
+                        <th>External</th>
+
+                        
                         <th>List of broken links</th>
                         <th>Result</th>
                     </tr>
                 </thead>`
-
+                
+                // Create single modal outside the loop (check if it already exists)
+                let brokenLinksModal = document.getElementById("brokenLinksModal")
+                if(!brokenLinksModal){
+                    brokenLinksModal = document.createElement("div")
+                    brokenLinksModal.className = "modal custom-modal"
+                    brokenLinksModal.id = "brokenLinksModal"
+                    brokenLinksModal.innerHTML = `
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <span class="modal-title">List of Broken link</span>
+                                    <span class="tool-test-close close modal-close" data-bs-dismiss="modal">&times;</span>
+                                </div>
+                                <!-- Modal Body -->
+                                <div class="modal-body">
+                                    <div class="modal-table-div" id="brokenLinksModalContent">
+                                        <!-- Content will be dynamically updated here -->
+                                    </div>
+                                </div>
+                                <!-- Modal Footer -->
+                            </div>
+                        </div>
+                    `
+                    // Append modal to body (outside table)
+                    document.body.appendChild(brokenLinksModal)
+                }
+                
+                // Initialize or get Bootstrap modal instance
+                let brokenLinksModalInstance = bootstrap.Modal.getInstance(brokenLinksModal)
+                if(!brokenLinksModalInstance){
+                    brokenLinksModalInstance = new bootstrap.Modal(brokenLinksModal, {
+                        keyboard: false
+                    })
+                }
+                
+                // Store broken links data for each row (use window or a more accessible scope)
+                if(!window.brokenLinksData){
+                    window.brokenLinksData = []
+                } else {
+                    window.brokenLinksData = [] // Reset for new table
+                }
+                
             results.forEach((result, i)=>{
                 const tr = document.createElement("tr")
+                
+                // Determine what to show in the "List of broken links" column
+                let listOfBrokenLinksContent = ""
+                
+                if(result.status_url){
+                    // URL was parsed successfully
+                    const totalBroken = result.totalBrokenLinks != null ? result.totalBrokenLinks : 0
+                    
+                    if(totalBroken > 0){
+                        // Store broken links data for this row
+                        window.brokenLinksData[i] = {
+                            allLinks: result.allLinks,
+                            tested_url: result.tested_url,
+                            totalBroken: totalBroken
+                        }
+                        
+                        // Has broken links - show clickable link
+                        listOfBrokenLinksContent = `<span class="show-broken-links-modal" data-row-index="${i}" style="cursor: pointer; color: #3A7CEC; text-decoration: underline;">List of Broken link</span>`
+                    } else {
+                        // No broken links (totalBrokenLinks is 0) - show message
+                        listOfBrokenLinksContent = result.message || "No broken links found"
+                    }
+                } else {
+                    // URL parsing failed - show error message
+                    listOfBrokenLinksContent = result.message
+                }
+                
                 tr.innerHTML = `
                 <td>${i+1}</td>
                 <td class="align-left">${result.tested_url}</td>
-                <td class="align-left">${result.status_url ? result.totalBrokenLinks != null ? result.totalBrokenLinks : 0 : "NA"}</td>
-                <td class="align-left">${result.status_url ? UI.getBrokenLinks(result.allLinks, false) : result.message}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}<td>`
+                <td class="align-left">${result.status_url ? result.internal != null ? result.internal.length  : 0 : "NA"}</td>
+                <td class="align-left">${result.status_url ? result.external != null ? result.external.length  : 0 : "NA"}</td>
+
+                <td class="align-left">${listOfBrokenLinksContent}</td>
+                <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>`
                 tbody.appendChild(tr)
             })
+            
+            // Add click event handler for "List of Broken link" links (using event delegation)
+            $(document).off('click', '.show-broken-links-modal').on('click', '.show-broken-links-modal', function(e){
+                e.preventDefault()
+                e.stopPropagation()
+                const rowIndex = parseInt($(this).data('row-index'))
+                const rowData = window.brokenLinksData && window.brokenLinksData[rowIndex]
+                
+                if(rowData && rowData.allLinks){
+                    // Generate broken links HTML
+                    const brokenLinksHtml = UI.getBrokenLinks(rowData.allLinks, false)
+                    
+                    // Update modal content
+                    const modalContent = document.getElementById('brokenLinksModalContent')
+                    if(modalContent){
+                        modalContent.innerHTML = brokenLinksHtml
+                        
+                        // Get or create modal instance
+                        const modalElement = document.getElementById('brokenLinksModal')
+                        let modalInstance = bootstrap.Modal.getInstance(modalElement)
+                        if(!modalInstance){
+                            modalInstance = new bootstrap.Modal(modalElement, {
+                                keyboard: false
+                            })
+                        }
+                        
+                        // Show modal
+                        modalInstance.show()
+                    } else {
+                        console.error('Modal content element not found')
+                    }
+                } else {
+                    console.error('Row data or allLinks not found for index:', rowIndex)
+                }
+            })
+            
+            createDatatableElement();    
             break;
+
 
             case "headings-test":
                 table.classList.add("dataTable")
@@ -2350,9 +2462,12 @@ function toggleTestResultAreaVisibility() {
                 <span>Show rows:</span>
                 <select name="" id="rows-per-page" class="btn btn-outline-gray">
                     <option value="10">10</option>
-                    <option value="20">20</option>
                     <option value="30">30</option>
-                    <option value="40">40</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                    <option value="-1">All</option>
                 </select>
             </div>
         </div>`;
@@ -2396,7 +2511,10 @@ function toggleTestResultAreaVisibility() {
     
         // Change the page length when the rows per page selector is changed
         $rowsPerPage.change(function () {
-            tableImg.page.len($(this).val()).draw();
+            var selectedValue = $(this).val();
+            // Convert to integer, -1 means show all rows
+            var pageLength = parseInt(selectedValue);
+            tableImg.page.len(pageLength).draw();
             updatePaginationInfo();
         });
     

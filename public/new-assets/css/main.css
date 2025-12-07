@@ -4669,9 +4669,17 @@ h6 {
   padding: 20px 50px;
 }
 
+.loader-single-item-container {
+  border: 1px solid rgba(230, 235, 242, 1);
+  margin-bottom: 4px;
+  border-radius: 4px;
+}
+
+
 .loader-single-item {
-  border-bottom: 1px solid #ddd;
   padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
   cursor: pointer;
   font-weight: bold;
   display: flex;
@@ -4681,7 +4689,6 @@ h6 {
   line-height: 17.71px;
   letter-spacing: 0%;
   color: #222;
-  padding-left: 0;
 }
 
 .loader-single-item *:nth-child(2){
@@ -4705,12 +4712,21 @@ h6 {
   font-weight: 700;
 }
 
-
 .loader-list-items .content {
+    display: none;
     padding: 10px;
-    border-bottom: 1px solid #ddd;
+    /* border-bottom: 1px solid #ddd; */
     padding-left: 0;
 }
+
+#seo-content,
+#performance-content,
+#best-practices-content,
+#security-content {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
 .status-table {
     width: 100%;
     border-collapse: collapse;
@@ -4752,6 +4768,10 @@ h6 {
   padding-left: 8px!important;
 }
 
+.loader-item-chip {
+  border-radius: 20px;
+}
+
 .loader-list-items span{
   font-weight: 300;
 }
@@ -4772,7 +4792,8 @@ h6 {
 .status-table tbody tr td:last-child{
   text-align: right;
   margin-left: auto;
-}
+  margin-top: 5px;
+} 
 
 .loader-list-items .fail{
   color: #DC7373;
@@ -6939,8 +6960,9 @@ h6 {
 }
 
 .webqa__alert.alert-danger{
-  color: #842029!important;
-  background: #f8d7da!important;
+  color: rgba(194, 40, 44, 1)  !important;
+  background: rgba(247, 236, 236, 1)  !important;
+  border: 1px solid rgba(236, 194, 194, 1);
 }
 
 .webqa__alert .btn-close {
@@ -9287,6 +9309,7 @@ h6 {
   justify-content: flex-end;
   padding: 20px;
   margin: 0;
+  gap: 0;
 }
 
 .datatable_download_result {
@@ -9301,10 +9324,7 @@ h6 {
   border-color: inherit !important; /* Inherits the color from the parent element */
   /* Add any other styles you need */
 }
-.custom-modal table
-{
-  width: 100%; border-collapse: collapse; background: #FEF6F6; border-radius: 15px;
-}
+.custom-modal table{width: 100%; border-collapse: collapse; background: transparent; border-radius: 15px;}
 .custom-modal td
 {
   text-align: left !important; padding: 5px 8px 5px 8px !important;
@@ -9326,7 +9346,7 @@ h6 {
 
 .download_result ul li{
   list-style: none;
-  margin-left: 4px;
+  margin-left: 0;
   font-size: 14px;
   line-height: 18px;
 }
@@ -9348,8 +9368,10 @@ h6 {
 }
 
 .download_result ul li button img{
-  width: 16px;
-  margin-right: 5px;
+  width: 20px;
+  height: 20px;
+  margin-right: 0;
+  object-fit: contain;
 }
 /* .result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
   font-size: 13px;
@@ -12604,13 +12626,11 @@ table.dataTable {
   color: rgb(89 89 255) !important;
 }
 .modal-table-div {
-  background: #FEF6F6 !important; 
+  background: transparent !important; 
   border-radius: 15px!important; 
   padding: 15px !important;
   max-height: 300px !important; 
-      overflow-y: scroll !important;
 }
-
 
 .tool-table tbody, td, tfoot, th, thead, tr{
   /* border-style: none !important; */
@@ -17123,6 +17143,18 @@ background-color:#f5f8ff !important;
 
 /* Code block ends */
 
-
+.code-block-grey {
+background: #EEE;
+margin-bottom: 20px;
+font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, Liberation Mono, monospace !important;
+padding: 20px;
+border-radius: 6px;
+font-size: 15px;
+}
+.single-post-content h5 {
+font-weight: bold;
+margin-bottom: 20px;
+margin-top: 20px;
+}
 
 /* CSS added by Amit Ends */

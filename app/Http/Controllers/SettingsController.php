@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Projects;
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
+use App\Models\ReportSettings;
 use Helper;
 
 class SettingsController extends Controller
@@ -67,7 +68,8 @@ class SettingsController extends Controller
             return abort(404);
         }
         $settings = projectSettings::where("projects_id", $project->id)->with("settingsSub")->orderBy('id', 'DESC')->get()->first();
-        return view("user.settings.index", compact("user", "settings", "project"));
+        $reportSettings = ReportSettings::where("user_id", $user->id)->orderBy('id', 'DESC')->get()->first();
+        return view("user.settings.index", compact("user", "settings", "project", "reportSettings"));
     }
 
     public function saveSitemap(Request $request, $id)
@@ -837,7 +839,27 @@ class SettingsController extends Controller
             $settingsState = $settings->save();
             $settingsSubState = $settingsSub->save();
 
-            if($settingsState && $settingsSubState){
+            // Save report settings if provided
+            $reportSettingsState = true;
+            if(isset($data['reportSettings']) && !empty($data['reportSettings'])){
+                $user = Auth::user();
+                
+                // Get or create report settings for user
+                $reportSettings = ReportSettings::where("user_id", $user->id)->orderBy('id', 'DESC')->get()->first();
+                
+                if (!$reportSettings) {
+                    // Create default report settings for user
+                    $reportSettings = ReportSettings::create([
+                        'user_id' => $user->id,
+                        'type' => 'user'
+                    ]);
+                }
+                
+                // Update report settings with the provided data
+                $reportSettingsState = $reportSettings->update($data['reportSettings']);
+            }
+
+            if($settingsState && $settingsSubState && $reportSettingsState){
                 return response()->json(['status'=>1,'msg'=>'Settings updated successfully']);
             }else{
                 return response()->json(['status'=>0,'msg'=>'There was an error while updating settings, please try again later.']);

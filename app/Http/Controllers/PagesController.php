@@ -275,6 +275,7 @@ class PagesController extends Controller
         if (Str::contains($projectUrl, 'test-archive-web-app')) {
             // Only include records where web_app = 1
             $query->where('web_app', 1);
+            $testUrl = 'analysis-report/';
 
             // Also restrict to logged-in user if authenticated
             if (Auth::check()) {
@@ -284,15 +285,16 @@ class PagesController extends Controller
         } elseif (Str::contains($projectUrl, 'test-archive')) {
             // Only include web_app = 0 (normal analysis)
             $query->where('web_app', 0);
+            $testUrl = 'analysis-report/w/';
         }
     }
 
     // Retrieve filtered data
     $results = $query->get();
 
-    return DataTables::of($results)
-        ->addColumn('report', function ($row) {
-            $url = url('analysis/' . $row->test_key);
+return DataTables::of($results) 
+        ->addColumn('report', function ($row) use ($testUrl) {
+            $url = url($testUrl . $row->test_key);
 
             return '<div class="report-cell">
                 <a href="' . $url . '" target="_blank" class="report-link" title="Open URL">

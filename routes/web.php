@@ -18,10 +18,27 @@ use Symfony\Component\HttpClient\HttpClient;
 Route::get('/login/google', [App\Http\Controllers\LoginController::class, 'redirectToGoogle']);
 Route::get('/login/google/callback', [App\Http\Controllers\LoginController::class, 'handleGoogleCallback']);
 
+Route::get('/logout', function() {
+    // Logout authenticated user if any
+    if (auth()->check()) {
+        auth()->logout();
+    }
+    
+    // Destroy all session data
+    session()->flush();
+    
+    // Regenerate session ID for security
+    session()->regenerate(true);
+    
+    // Redirect to home page
+    return redirect('/')->with('message', 'You have been logged out successfully.');
+})->name('logout.get');
+
 Route::get('/', [App\Http\Controllers\PagesController::class, 'index'])->name('index');
 Route::resource('blog', App\Http\Controllers\BlogsController::class);
 Route::resource('support', App\Http\Controllers\SupportController::class);
-Route::get('/analysis/{id}', [App\Http\Controllers\PagesController::class, 'analysis'])->name('analysis');
+Route::get('/analysis-report/w/{id}', [App\Http\Controllers\PagesController::class, 'analysis'])->name('analysis');
+
 Route::get('/tools', [App\Http\Controllers\BulkToolsController::class, 'index'])->name('tools-landing');
 Route::get('/tool/{slug}', [App\Http\Controllers\BulkToolsController::class, 'show'])->name('tool');
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
@@ -122,7 +139,7 @@ Route::middleware('auth')->group(function () {
        Route::get('website-tracker', [App\Http\Controllers\TrackerController::class, 'index'])->name('tracker');
         Route::get('website-tracker-test', [App\Http\Controllers\TrackerController::class, 'indexTest'])->name('trackerTest');
         Route::get('dashboard', [App\Http\Controllers\PagesController::class, 'dashboard'])->name('dashboard');
-        Route::get('/app-analysis/{ref_id?}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])
+        Route::get('/analysis-report/{ref_id?}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])
     ->name('app-analysis');
         Route::resource('profile', App\Http\Controllers\ProfileController::class);
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
@@ -235,6 +252,7 @@ Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/og-tags', [App\Http\Controllers\Test\TestController::class, 'ogTags'])->name('test.og-tags');
     Route::post('/twitter-tags', [App\Http\Controllers\Test\TestController::class, 'twitterTags'])->name('test.twitter-tags');
     Route::post('/favicon', [App\Http\Controllers\Test\TestController::class, 'favicon'])->name('test.favicon');
+    Route::post('/get-favicon-url', [App\Http\Controllers\Test\TestController::class, 'getFaviconUrl'])->name('test.get-favicon-url');
     Route::post('/xml-sitemap', [App\Http\Controllers\Test\TestController::class, 'xmlSitemap'])->name('test.xml-sitemap');
     Route::post('/xml-sitemap-multiple', [App\Http\Controllers\Test\TestController::class, 'xmlSitemapMultiple'])->name('test.xml-sitemap-multiple');
     Route::post('/html-sitemap', [App\Http\Controllers\Test\TestController::class, 'htmlSitemap'])->name('test.html-sitemap');
