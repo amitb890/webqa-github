@@ -2106,45 +2106,48 @@ function addTableToPDF(doc, y) {
     
     // Get all data from all pages by checking if DataTable is available
     let allData = [];
+    let dataTable = null;
+    let originalPageLength = null;
     
-    // Debug: Check what's available
-    console.log("Table element:", tableElement);
-    console.log("DataTable available:", window.DataTable);
-    console.log("Table has DataTable:", tableElement.DataTable);
-    
-    // Try to get all data by temporarily showing all rows
-    if (window.DataTable && tableElement.DataTable) {
+    // Check if jQuery DataTables is available and table has DataTable instance
+    if (typeof $ !== 'undefined' && $.fn.DataTable && $(tableElement).hasClass('custom-dataTable')) {
         try {
-            const dataTable = tableElement.DataTable();
-            console.log("DataTable instance found");
-            
-            // Store original page length
-            const originalPageLength = dataTable.page.len();
-            console.log("Original page length:", originalPageLength);
-            
-            // Temporarily show all rows
-            dataTable.page.len(-1).draw();
-            
-            // Get all visible rows after showing all
-            const tableRows = tableElement.querySelectorAll("tbody tr");
-            console.log("All visible rows after showing all:", tableRows.length);
-            
-            allData = Array.from(tableRows).map((row, index) => {
-                const cells = row.querySelectorAll("td");
-                return [
-                    (index + 1).toString(), // # - Auto increment number starting from 1
-                    cells[0] ? (cells[0].querySelector("a")?.href || "") : "", // Image Link - Show actual URL
-                    cells[1]?.textContent.trim() || "", // Alt Text
-                    cells[3]?.textContent.trim() || "", // File Size
-                    cells[8]?.textContent.trim() || "", // File Name
-                    cells[6]?.textContent.trim() || ""  // Issues
-                ];
-            });
-            
-            // Restore original page length
-            dataTable.page.len(originalPageLength).draw();
-            console.log("Restored original page length");
-            
+            dataTable = $(tableElement).DataTable();
+            if (dataTable) {
+                console.log("DataTable instance found");
+                
+                // Store original page length
+                originalPageLength = dataTable.page.len();
+                console.log("Original page length:", originalPageLength);
+                
+                // Temporarily show all rows
+                dataTable.page.len(-1).draw();
+                
+                // Wait a moment for DOM to update (DataTables draw is async)
+                // Get all visible rows after showing all
+                const tableRows = tableElement.querySelectorAll("tbody tr");
+                console.log("All visible rows after showing all:", tableRows.length);
+                
+                allData = Array.from(tableRows).map((row, index) => {
+                    const cells = row.querySelectorAll("td");
+                    return [
+                        (index + 1).toString(), // # - Auto increment number starting from 1
+                        cells[0] ? (cells[0].querySelector("a")?.href || "") : "", // Image Link - Show actual URL
+                        cells[1]?.textContent.trim() || "", // Alt Text
+                        cells[3]?.textContent.trim() || "", // File Size
+                        cells[8]?.textContent.trim() || "", // File Name
+                        cells[6]?.textContent.trim() || ""  // Issues
+                    ];
+                });
+                
+                // Restore original page length
+                if (originalPageLength !== null) {
+                    dataTable.page.len(originalPageLength).draw();
+                    console.log("Restored original page length");
+                }
+            } else {
+                throw new Error("DataTable instance not found");
+            }
         } catch (error) {
             console.log("Error with DataTable approach:", error);
             // Fallback to visible rows only
@@ -2163,7 +2166,7 @@ function addTableToPDF(doc, y) {
             });
         }
     } else {
-        // Fallback: get visible rows only
+        // Fallback: get visible rows only (no DataTable)
         const tableRows = tableElement.querySelectorAll("tbody tr");
         console.log("No DataTable found, using visible rows count:", tableRows.length);
         allData = Array.from(tableRows).map((row, index) => {

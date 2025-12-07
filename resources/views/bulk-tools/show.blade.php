@@ -168,10 +168,25 @@
                         @endif
 
                         @if($d['slug'] === 'broken-links')
+                      
                         <div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" id="broken_links">
-                            <label class="form-check-label" for="broken_links">Check for all broken links(links that do not have 200 status code)</label>
+                          <input class="form-check-input" type="checkbox" id="broken_links" checked="">
+                          <label class="form-check-label" for="broken_links">
+                          Check for all broken links(links that do not have 200 status code)
+                          </label>
                         </div>
+                        <div class="form-check">
+                          <input class="form-check-input hideInputCheck" type="checkbox" id="broken_links_exclude_urls">
+                          <label class="form-check-label" for="broken_links_exclude_urls">
+                                                Exclude specific URLs from broken links check
+                        </label>
+                      </div>
+                      <div class="hideInputCheckElement" style="display: none;">
+                        <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                          Ignore List
+                        </a>
+                        <div class="mt-2" id="brokenLinksExcludedPreview"></div>
+                      </div>
                         @endif
 
 

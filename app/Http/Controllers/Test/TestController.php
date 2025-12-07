@@ -13,11 +13,13 @@ use App\Models\Projects;
 use App\Models\TestResults;
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
+use App\Models\CachedTest;
 use App\Mail\EmailReportMail;
 use Helper;
 use Illuminate\Support\Facades\Http;
 use Exception;
 use Auth;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 
 class TestController extends Controller
@@ -190,7 +192,24 @@ class TestController extends Controller
 
 
                 if(isset($data["saveInDB"])){
-                    $ref_id = $helpers->generateRandomString();
+                    // Get the latest test_key from cached_tests table (ordered by numeric value)
+                    $latestCachedTest = TestResults::orderByRaw('CAST(ref_id AS UNSIGNED) DESC')->first();
+                    
+                    if($latestCachedTest && $latestCachedTest->ref_id){
+                        // If records exist, get latest test_key and increment by 1
+                        $ref_id = (int)$latestCachedTest->ref_id + 1;
+                        
+                        // Check if this ref_id already exists, if so keep incrementing
+                        while(TestResults::where('ref_id', (string)$ref_id)->exists()){
+                            $ref_id++;
+                        }
+                    } else {
+                        // If it's the first record in cached_tests, start with 100001
+                        $ref_id = 100001;
+                    }
+                    
+                    // Convert to string to match test_key format
+                    $ref_id = (string)$ref_id;
 
                     // saving ref_id as a cookie
                     if(isset($data["page"])){
@@ -1743,6 +1762,19 @@ class TestController extends Controller
         echo json_encode($object);
     }
 
+
+    public function getFaviconUrl(Request $request){
+        $helpers = new Helper();
+        $url = $request->input('url');
+        
+        if (!$url) {
+            return response()->json(['favicon' => '']);
+        }
+        
+        $favicon = $helpers->getFavicon($url);
+        
+        return response()->json(['favicon' => $favicon ? $favicon : '']);
+    }
 
     public function xmlSitemap(Request $request){
         $helpers = new Helper();
@@ -3829,6 +3861,10 @@ class TestController extends Controller
         $object->content = $content;
         $object->status_url = $output->status;
         $object->totalBrokenLinks = $output->totalBrokenLinks;
+        $object->external = $output->external;
+        $object->internal = $output->internal;
+
+        
         if($output->status){
             $object->allLinks = $output->results;
         }

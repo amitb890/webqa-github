@@ -176,7 +176,7 @@ $( document ).ready(function() {
                     })
                     startStatus = true
                 }else if(data.status === 1){
-                    window.location.href = `/analysis/${data.ref_id}`
+                    window.location.href = `/analysis-report/w/${data.ref_id}`
                 }else if(data.status === 2){
                     removeLoader()
                     displayAlertSimple(alertClass, {

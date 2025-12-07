@@ -213,7 +213,7 @@
                                 </label>
                               </button>
 
-                              <!-- <button
+                              <button
                                 class="nav-link"
                                 data-controls="v-pills-h1-heading"
                               >
@@ -224,9 +224,9 @@
                                     checked
                                     data-name="h1_heading_tag"
                                   />
-                                  H1 heading tag
+                                  Headings
                                 </label>
-                              </button> -->
+                              </button>
 
                               <button
                                 class="nav-link"
@@ -491,6 +491,20 @@
                               aria-orientation="vertical"
                             >
 
+                             <button
+                                class="nav-link"
+                                data-controls="v-pills-gzip-compression"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input customizer-check-input"
+                                    type="checkbox"
+                                    checked
+                                    data-name="gzip_compression"
+                                  />
+                                  GZIP Compression
+                                </label>
+                              </button>
                             <button
                                 class="nav-link"
                                 data-controls="v-pills-html-compression"
@@ -537,20 +551,7 @@
                                 </label>
                               </button>
 
-                              <button
-                                class="nav-link"
-                                data-controls="v-pills-gzip-compression"
-                              >
-                                <label class="form-check">
-                                  <input
-                                    class="form-check-input customizer-check-input"
-                                    type="checkbox"
-                                    checked
-                                    data-name="gzip_compression"
-                                  />
-                                  GZIP Compression
-                                </label>
-                              </button>
+                             
 
 
                               <button
@@ -625,6 +626,20 @@
                                     data-name="frameset"
                                   />
                                   Frameset
+                                </label>
+                              </button>
+                                   <button
+                                class="nav-link"
+                                data-controls="v-pills-broken-links"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input customizer-check-input"
+                                    type="checkbox"
+                                    checked
+                                    data-name="broken_links"
+                                  />
+                                  Broken Links
                                 </label>
                               </button>
 
@@ -715,20 +730,7 @@
                               </button>
 
 
-                              <button
-                                class="nav-link d-none"
-                                data-controls="v-pills-broken-links"
-                              >
-                                <label class="form-check">
-                                  <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    checked
-                                    data-name="broken_links"
-                                  />
-                                  Broken Links
-                                </label>
-                              </button>
+                         
 
                               <button
                                 class="nav-link"
@@ -774,7 +776,20 @@
                                   HSTS Header
                                 </label>
                               </button>
-
+                              <button
+                                class="nav-link"
+                                data-controls="v-pills-content-type"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input customizer-check-input"
+                                    type="checkbox"
+                                    checked
+                                    data-name="bad_content_type"
+                                  />
+                                  Bad content Type
+                                </label>
+                              </button>
                               <button
                                 class="nav-link"
                                 data-controls="v-pills-ssl"
@@ -790,20 +805,7 @@
                                 </label>
                               </button>
 
-                              <button
-                                class="nav-link"
-                                data-controls="v-pills-content-type"
-                              >
-                                <label class="form-check">
-                                  <input
-                                    class="form-check-input customizer-check-input"
-                                    type="checkbox"
-                                    checked
-                                    data-name="bad_content_type"
-                                  />
-                                  Bad content Type
-                                </label>
-                              </button>
+                              
 
                               <button
                                 class="nav-link"
@@ -999,6 +1001,83 @@
                             value="Reset to Default"
                           />
                         </div> -->
+                      </div>
+                    </div>
+                    <div
+                      class="tab-pane fade"
+                      id="v-pills-h1-heading"
+                    >
+                      <div class="home-meta-content">
+                        <h5 class="home-meta-title">Headings</h5>
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" id="h1_heading_tag" checked>
+                              <label class="form-check-label" for="h1_heading_tag">
+                              Every page must have at least one H1 heading tag
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h1_heading_tag_length">
+                              <label class="form-check-label" for="h1_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h1_heading_tag_length_val" value="" min="0" max="100"> H1 heading tag
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h2_heading_tag_length">
+                              <label class="form-check-label" for="h2_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h2_heading_tag_length_val" value="" min="0" max="100"> H2 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h3_heading_tag_length">
+                              <label class="form-check-label" for="h3_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h3_heading_tag_length_val" value="" min="0" max="100"> H3 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h4_heading_tag_length">
+                              <label class="form-check-label" for="h4_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h4_heading_tag_length_val" value="" min="0" max="100"> H4 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h5_heading_tag_length">
+                              <label class="form-check-label" for="h5_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h5_heading_tag_length_val" value="" min="0" max="100"> H5 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h6_heading_tag_length">
+                              <label class="form-check-label" for="h6_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h6_heading_tag_length_val" value="" min="0" max="100"> H6 heading tag
+                              </label>
+                            </div>
+                        </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn-done btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                       
                       </div>
                     </div>
                     <div
@@ -4377,20 +4456,31 @@
               
 
                     <div
-                      class="tab-pane fade d-none"
+                      class="tab-pane fade"
                       id="v-pills-broken-links"
                     >
                       <div class="home-meta-content">
                         <h5 class="home-meta-title">Broken Links</h5>
                         <div class="meta-content">
                           <div class="accor-content">
-                            
-                          <div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" id="broken_links">
-                            <label class="form-check-label" for="broken_links">Linked pages must return a valid HTTP 200 OK response—not 3xx loops, 4xx errors, or 5xx failures.</label>
-                        </div>
-                        
-                        
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="broken_links" checked="">
+                                <label class="form-check-label" for="broken_links">
+                                Check for all broken links(links that do not have 200 status code)
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input hideInputCheck" type="checkbox" id="broken_links_exclude_urls">
+                                <label class="form-check-label" for="broken_links_exclude_urls">
+                                                      Exclude specific URLs from broken links check
+                              </label>
+                            </div>
+                            <div class="hideInputCheckElement" style="display: none;">
+                              <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                                Ignore List
+                              </a>
+                              <div class="mt-2" id="brokenLinksExcludedPreview"></div>
+                            </div>
                           </div>
                           <div class="home-content-button">
                             <input

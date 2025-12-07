@@ -56,14 +56,15 @@ public function store(Request $request)
     ]);
 
     $userId = Auth::check() ? Auth::id() : null;
-
+    
     // ✅ Use projectUrl from AJAX
     $url = $request->projectRoute ?? '';
 
     $webApp = 0;
-    if (Str::contains($url, 'app-analysis')) {
+
+    if (Str::endsWith($url, '/analysis-report')) {
         $webApp = 1;
-    } elseif (Str::contains($url, 'analysis')) {
+    } elseif (preg_match('/\/analysis-report\/w\/\d+$/', $url)) {
         $webApp = 0;
     }
 

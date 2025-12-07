@@ -342,22 +342,60 @@ class Helpers{
         return false;
     }
     
-    function onlyHyphen($str) {
-        $answer = false;
-        $join = [" ", "_", "/"];
-        for($i = 0;$i < count($join); $i++){
-            $p = $join[$i];
-            $splitStr = explode($p, $str);
-            if(count($splitStr) > 1){
-                $answer = false;
-                break;
-            }else{
-                $answer = true;
-            }
-        }
-        return $answer;
+    // function onlyHyphen($str) {
+    //     $answer = false;
+    //     $join = [" ", "_", "/"];
+    //     for($i = 0;$i < count($join); $i++){
+    //         $p = $join[$i];
+    //         $splitStr = explode($p, $str);
+    //         if(count($splitStr) > 1){
+    //             $answer = false;
+    //             break;
+    //         }else{
+    //             $answer = true;
+    //         }
+    //     }
+    //     return $answer;
        
+    // }
+
+   function onlyHyphen($str) {
+    $parts = explode('/', $str);
+    $hasHyphen = false;
+
+    foreach ($parts as $part) {
+        // No empty parts
+        if (trim($part) === '') {
+            return false;
+        }
+
+        // Space not allowed
+        if (str_contains($part, ' ')) {
+            return false;
+        }
+
+        // Allowed characters: letters, numbers, hyphens ONLY
+        if (!preg_match('/^[A-Za-z0-9-]+$/', $part)) {
+            return false;
+        }
+
+        // Check if this part contains a hyphen
+        if (str_contains($part, '-')) {
+            $hasHyphen = true;
+        }
     }
+
+    // If no part contains hyphen → return dash (-)
+    if (!$hasHyphen) {
+        return "-";
+    }
+
+    // Otherwise valid
+    return true;
+}
+
+
+
 
 
     function char_count($str, $letter){

@@ -229,7 +229,7 @@ $( document ).ready(function() {
 
                             startStatus = true
                         }else if(data.status === 1){
-                            window.location.href = `/app-analysis`
+                            window.location.href = `/analysis-report`
                         }else if(data.status === 2){
                             removeLoader()
                             $('.validationPopup').show()
