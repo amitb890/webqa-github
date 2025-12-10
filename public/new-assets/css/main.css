@@ -5610,7 +5610,7 @@ h6 {
   top: 20px;
 }
 .meta-list-brokenBody .card-body {
-  background: #f6e1e2;
+  background: #f5f7fb;
   border-radius: 16px;
 }
 .meta-list-brokenBody .modal-content {
@@ -9373,6 +9373,23 @@ h6 {
   margin-right: 0;
   object-fit: contain;
 }
+
+.bulk-download-result ul li button img {
+  width: 36px;
+  height: 36px;
+  margin-right: 0;
+  object-fit: contain;
+}
+
+.bulk-datatable-download-result {
+  padding-bottom: 5px !important;
+  padding-top: 5px !important;
+  padding-right: 20px !important;
+  padding-left: 20px !important;
+}
+
+
+
 /* .result_data_body tr td:not(.bulk-headings-message):not(.table-headings-collapse td) {
   font-size: 13px;
   line-height: 18px;
@@ -13875,6 +13892,143 @@ nav .nav-tabs{
     font-size: 12px;
   }
 }
+
+
+/* Bulk Broken Links Modal Styles */
+.bulk-broken-links-modal .card-body {
+  background: #f7f8fa;
+  border-radius: 16px;
+  padding: 20px;
+  overflow-x: hidden;
+}
+
+#brokenLinksModal .modal-content {
+  max-height: none;
+  height: auto;
+}
+
+#brokenLinksModal .modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.bulk-broken-links-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: transparent;
+  table-layout: fixed;
+  overflow-wrap: break-word;
+}
+
+.bulk-broken-links-table thead tr,
+.bulk-broken-links-table tbody tr {
+  display: table-row;
+  width: 100%;
+}
+
+.bulk-broken-links-table thead th,
+.bulk-broken-links-table tbody td {
+  display: table-cell;
+  box-sizing: border-box;
+  text-align: left;
+  font-weight: 300;
+  padding: 12px 15px;
+  vertical-align: middle;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.bulk-broken-links-table thead th {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+  border-bottom: 0;
+  background: transparent;
+}
+
+.bulk-broken-links-table tbody td {
+  border-bottom: 0;
+}
+
+.bulk-broken-links-table tbody tr td:first-child {
+  width: 50px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.bulk-broken-links-table tbody tr td:nth-child(2) {
+  width: auto;
+  max-width: 0;
+}
+
+.bulk-broken-links-table tbody tr td:last-child {
+  text-align: center;
+  width: 150px;
+  min-width: 150px;
+}
+
+.bulk-broken-links-table thead th:first-child {
+  width: 50px;
+  text-align: center;
+}
+
+.bulk-broken-links-table thead th:nth-child(2) {
+  width: auto;
+}
+
+.bulk-broken-links-table thead th:last-child {
+  width: 150px;
+  min-width: 150px;
+}
+
+
+.bulk-broken-links-table .url-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.bulk-broken-links-table .url-cell a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bulk-broken-links-table .broken-link-url {
+  color: #3A7CEC;
+  word-break: break-all;
+  font-weight: 400;
+  white-space: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  text-decoration: underline;
+  display: inline-block;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+#brokenLinksModal .modal-dialog {
+  max-width: 750px;
+  width: 100%;
+}
+
+.bulk-broken-links-table .serial-number {
+  text-align: center;
+  font-weight: 600;
+  color: var(--dark);
+  padding: 12px 15px;
+}
+
+
 
 /* Sitemap numbering styles */
 .sitemap-container {

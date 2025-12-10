@@ -531,7 +531,7 @@
                           <img src="/new-assets/assets/images/tools-root/unsafe_cross.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'frameset'])}}">Broken Links</a>
+                          <a href="{{route('tool', ['slug'=>'broken-links'])}}">Broken Links</a>
                           <p>Frames divide your browser window into several portions, each of which can load a different HTML document. Users and search engine robots both have problems with frames.</p>
                         </div>
                       </div>

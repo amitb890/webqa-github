@@ -343,6 +343,7 @@ class Helpers{
     }
     
 function onlyHyphen($str) {
+    $str = trim($str, '/');
     $parts = explode('/', $str);
     $hasHyphen = false;
 

@@ -1767,9 +1767,24 @@ static collapsePreviousParent(data){
 
   }   
 
-  function toggleLoaderDropdown(id) {
+function toggleLoaderDropdown(id) {
+
     var content = document.getElementById(id);
-    if (content.style.display === "block") {
+    const isCurrentlyOpen = content.style.display === "block";   
+
+    // Close all other open accordions first
+
+    const allContentElements = document.querySelectorAll(".loader-single-item-container .content");
+    allContentElements.forEach(function(element) {
+      if(element.id !== id && element.style.display === "block") {
+        element.style.display = "none";
+        // Update background when closing (gray if tests complete)
+        UI.updateContainerBackground(element.id);
+      }
+    });
+    
+    // Toggle the clicked accordion
+    if (isCurrentlyOpen) {
         content.style.display = "none";
         // Update background when closing (gray if tests complete)
         UI.updateContainerBackground(id);
@@ -4009,8 +4024,8 @@ static collapsePreviousParent(data){
                                             </span>
                                           </div>
                                           <div class="card-text-link">
-                                            <span class="web-title"></span>
-                                            <a class="card-text-link" href="${projectUrl}" target="_blank">${projectUrl}</a>
+                                          <span class="web-title">Setmore</span>
+                                          <a class="card-text-link" href="${projectUrl}" target="_blank">${projectUrl.length > 80 ? projectUrl.substring(0, 80) + ' ...' : projectUrl}</a>
                                           </div>
                                         </div>
                                         <div class="card-single-text">

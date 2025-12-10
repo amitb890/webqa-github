@@ -137,6 +137,9 @@ class UI{
     static getBrokenLinks(allLinks){
         let html = ""
         let i = 0
+        let brokenUrls = []
+        
+        // Collect all broken URLs first
         for (var key in allLinks) {
           if (allLinks.hasOwnProperty(key)) {
               let status
@@ -144,29 +147,47 @@ class UI{
   
               if(state == "fulfilled"){
                 const value = allLinks[key]["value"];
-  
                 status = value["status"]
               }else{
                 status = 404
               }
   
               if(status != 200 && status != 0 && status != 405){
-                i++
-  
-                html+=`
-                <p style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="display: flex; align-items: center; gap: 10px;">
-                        <span>${i}</span>
-                        <a href="${key}" target="_blank">${key}</a>
-                    </span>
-                    <strong>${status}</strong>
-                </p>`
+                brokenUrls.push({url: key, status: status})
               }
           }
         }
-        if(i === 0){
-            html = "NA"
+        
+        if(brokenUrls.length === 0){
+            return "NA"
         }
+        
+        // Add table header
+        html += `<table class="bulk-broken-links-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>URL</th>
+              <th>HTTP Status Code</th>
+            </tr>
+          </thead>
+          <tbody>`
+        
+        // Display broken links
+        brokenUrls.forEach((item, index) => {
+          
+          html+=`<tr>
+            <td class="serial-number">${index+1}</td>
+            <td>
+              <div class="url-cell">
+                <a href="${item.url}" target="_blank"><span class="broken-link-url">${item.url}</span></a>
+              </div>
+            </td>
+            <td><strong>${item.status}</strong></td>
+          </tr>`
+        })
+        
+        html += `</tbody></table>`
         return html
     }
   
@@ -202,7 +223,7 @@ class UI{
     }
 
 
-    static getTableTop(label, slug){
+static getTableTop(label, slug){
         let div = ""
         let csvName = this.prepareCsvName(slug);
         if(label === "og:title"){
@@ -213,10 +234,10 @@ class UI{
                 <div class="table-cat-element" data-name="table_og_url"><span>Open Graph URL</span></div>
                 <div class="table-cat-element" data-name="table_og_image"><span>Open Graph Image</span></div>
             </div>
-            <div class="download_result">
+            <div class="download_result bulk-download-result">
                 <ul>
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
+                    
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
                 </ul>
                 </div>
@@ -229,22 +250,22 @@ class UI{
                 <div class="table-cat-element" data-name="table_twitter_image"><span>Twitter Image</span></div>
                 <div class="table-cat-element" data-name="table_twitter_image_alt"><span>Twitter Image Alt</span></div>
             </div>
-            <div class="download_result">
+            <div class="download_result bulk-download-result">
                 <ul>
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
+                    
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
                 </ul>
                 </div>
             </div>`
         }else if(label === "img"){
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+                    <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
 
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -254,12 +275,13 @@ class UI{
             `
         }else if(label === "page_speed_google_lighthouse" || label === "page_speed_google" || label === "page_speed_google_core"){
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk download-csv-bulk-rowspan website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+                <!--   <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+                    <li class='download-csv-bulk download-csv-bulk-rowspan website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                <!--    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
 
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -270,10 +292,10 @@ class UI{
         } 
         else if(label === "title"){
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-               <!-- <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+                <!--   <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
                     <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
                <!-- <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
@@ -287,12 +309,13 @@ class UI{
         }
         else{
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+          <!--         <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+                <!--     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
                     </ul>
@@ -1784,23 +1807,31 @@ function toggleTestResultAreaVisibility() {
                 let brokenLinksModal = document.getElementById("brokenLinksModal")
                 if(!brokenLinksModal){
                     brokenLinksModal = document.createElement("div")
-                    brokenLinksModal.className = "modal custom-modal"
+                    brokenLinksModal.className = "modal fade meta-list-brokenBody"
                     brokenLinksModal.id = "brokenLinksModal"
+                    brokenLinksModal.setAttribute("aria-labelledby", "exampleModalToggleLabel")
+                    brokenLinksModal.setAttribute("tabindex", "1")
+                    brokenLinksModal.setAttribute("aria-hidden", "true")
+                    brokenLinksModal.style.display = "none"
                     brokenLinksModal.innerHTML = `
-                        <div class="modal-dialog">
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
-                                <!-- Modal Header -->
                                 <div class="modal-header">
-                                    <span class="modal-title">List of Broken link</span>
-                                    <span class="tool-test-close close modal-close" data-bs-dismiss="modal">&times;</span>
+                                    <div>
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                                            List of broken links
+                                        </h1>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <!-- Modal Body -->
-                                <div class="modal-body">
-                                    <div class="modal-table-div" id="brokenLinksModalContent">
-                                        <!-- Content will be dynamically updated here -->
+                                <div class="modal-body" style="overflow-x: hidden;">
+                                    <div class="card-body bulk-broken-links-modal">
+                                        <div class="meta-list-single" id="brokenLinksModalContent" style="overflow-x: hidden;">
+                                            <!-- Content will be dynamically updated here -->
+                                        </div>
                                     </div>
                                 </div>
-                                <!-- Modal Footer -->
+                                <div class="modal-footer-alert"></div>
                             </div>
                         </div>
                     `

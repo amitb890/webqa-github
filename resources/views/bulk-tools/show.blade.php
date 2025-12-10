@@ -2875,6 +2875,8 @@
                 @include("bulk-tools.posts.nested-tables")         
             @elseif($d['slug'] === 'frameset')
                 @include("bulk-tools.posts.frameset")
+            @elseif($d['slug'] === 'broken-links')
+                @include("bulk-tools.posts.broken-links")
             @elseif($d['slug'] === 'page-size')
                 @include("bulk-tools.posts.page-size")
             @elseif($d['slug'] === 'x-frame-options-header-test')
