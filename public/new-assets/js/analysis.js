@@ -1761,9 +1761,17 @@ static collapsePreviousParent(data){
       $(".loader-list-items").on( "click", function(e) {
         if(e.target.classList.contains("dropdown-toggle")){
           toggleLoaderDropdown(e.target.getAttribute("data-id"))
+        } else if(e.target.closest(".loader-single-item")){
+          // Handle click on loader-single-item itself
+          const loaderItem = e.target.closest(".loader-single-item");
+          const container = loaderItem.closest(".loader-single-item-container");
+          const dropdownToggle = container.querySelector(".dropdown-toggle");
+          if(dropdownToggle){
+            toggleLoaderDropdown(dropdownToggle.getAttribute("data-id"))
+          }
         }
     
-      })    
+      })  
 
   }   
 
@@ -1802,7 +1810,7 @@ function toggleLoaderDropdown(id) {
         <span class="success"><span class="details-passed">0</span> Test Passed</span> 
         <span class="fail"><span class="details-failed">0</span> Test Failed</span>
         <span>
-          <a class="dropdown-toggle" data-id="${idVal}" href="javascript:void()"></a>
+          <a class="dropdown-toggle loader-dropdown-toggle-analysis" data-id="${idVal}" href="javascript:void()"></a>
         </span>
       </div>
       <div id="${idVal}" class="content">

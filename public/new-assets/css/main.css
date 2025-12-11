@@ -17311,4 +17311,18 @@ margin-bottom: 20px;
 margin-top: 20px;
 }
 
+/* New CSS for loader dropdown toggle icon */
+.loader-dropdown-toggle-analysis::after {
+  content: "";
+  border: 1px solid transparent;
+  width: 8px;
+  height: 8px;
+  border-color: transparent transparent var(--text-gray) var(--text-gray);
+  rotate: -45deg;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+
+
 /* CSS added by Amit Ends */
