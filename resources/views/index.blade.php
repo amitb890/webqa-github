@@ -5131,137 +5131,176 @@
           <!-- Designed Area end -->
 
 
-          <!-- problems Area Start -->
-          <div class="problems_area">
-            <div class="home_section_title">
-              <h2>Solve Website Issues Before They Hurt Your Growth</h2>
-              <p>
-                WebQA helps you uncover and fix the issues holding your website back — from slow-loading pages and broken meta tags to poor security and missed best practices. With clear insights and customizable audits, you can resolve problems early, boost performance, and keep your site search-engine and user-friendly.
-              </p>
-            </div>
-            <div class="problems_content">
-              <div class="problem_left_content">
-                <div class="accordion" id="accordionExample">
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                      <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                      >
-                        Website QA
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseOne"
-                      class="accordion-collapse collapse show"
-                      aria-labelledby="headingOne"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Spot errors, broken HTML tags, and performance issues instantly.
-                        </p>
+<!-- problems Area Start -->
+<div class="problems_area">
+  <div class="home_section_title">
+    <h2>Solve Website Issues Before They Hurt Your Growth</h2>
+    <p>
+      WebQA helps you uncover and fix the issues holding your website back — from slow-loading pages and broken meta tags to poor security and missed best practices. With clear insights and customizable audits, you can resolve problems early, boost performance, and keep your site search-engine and user-friendly.
+    </p>
+  </div>
 
-                        <a href="https://webqa.co/features/webpage-audit" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                      <button
-                        class="accordion-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseTwo"
-                        aria-expanded="false"
-                        aria-controls="collapseTwo"
-                      >
-                        Website Tracker
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseTwo"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="headingTwo"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Monitor your site’s health and track changes over time.
-                        </p>
+  <div class="problems_content">
+    <div class="problem_left_content">
+      <div class="accordion" id="accordionExample">
 
-                        <a href="https://webqa.co/features/website-tracker" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                      <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseThree"
-                        aria-expanded="false"
-                        aria-controls="collapseThree"
-                      >
-                        Customised Audits
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseThree"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="headingThree"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Set your own rules and audit your site your way.
-                        </p>
-
-                        <a href="https://webqa.co/features/settings" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingFore">
-                      <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseFore"
-                        aria-expanded="false"
-                        aria-controls="collapseFore"
-                      >
-                        Reports
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseFore"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="headingFore"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Get clear pass/fail results with actionable insights.
-                        </p>
-
-                        <a href="https://webqa.co/features/reports" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="problem_right_content">
-                <img src="/new-assets/assets/images/home/problem-img.svg" alt="img" />
-              </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOne"
+              aria-expanded="true"
+              aria-controls="collapseOne"
+              data-img="/new-assets/assets/images/home/problem-img-qa.png"
+            >
+              Website QA
+            </button>
+          </h2>
+          <div
+            id="collapseOne"
+            class="accordion-collapse collapse show"
+            aria-labelledby="headingOne"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Spot errors, broken HTML tags, and performance issues instantly.</p>
+              <a href="https://webqa.co/features/webpage-audit" class="tryFreeBtn">Learn more</a>
             </div>
           </div>
-          <!-- problems Area End -->
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button
+              class="accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo"
+              aria-expanded="false"
+              aria-controls="collapseTwo"
+              data-img="/new-assets/assets/images/home/problem-img-tracker.png"
+            >
+              Website Tracker
+            </button>
+          </h2>
+          <div
+            id="collapseTwo"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingTwo"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Monitor your site’s health and track changes over time.</p>
+              <a href="https://webqa.co/features/website-tracker" class="tryFreeBtn">Learn more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingThree">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseThree"
+              aria-expanded="false"
+              aria-controls="collapseThree"
+              data-img="/new-assets/assets/images/home/problem-img-audits.png"
+            >
+              Customised Audits
+            </button>
+          </h2>
+          <div
+            id="collapseThree"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingThree"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Set your own rules and audit your site your way.</p>
+              <a href="https://webqa.co/features/settings" class="tryFreeBtn">Learn more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingFore">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseFore"
+              aria-expanded="false"
+              aria-controls="collapseFore"
+              data-img="/new-assets/assets/images/home/problem-img-reports.png"
+            >
+              Reports
+            </button>
+          </h2>
+          <div
+            id="collapseFore"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingFore"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Get clear pass/fail results with actionable insights.</p>
+              <a href="https://webqa.co/features/reports" class="tryFreeBtn">Learn more</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="problem_right_content">
+      <!-- Give the image an id so JS can update it -->
+      <img
+        id="problemAccordionImage"
+        src=""
+        alt="img"
+      />
+    </div>
+  </div>
+</div>
+<!-- problems Area End -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const imgEl = document.getElementById("problemAccordionImage");
+    const accordionEl = document.getElementById("accordionExample");
+
+    if (!imgEl || !accordionEl) return;
+
+    function setImgFromButton(btn) {
+      const newSrc = btn && btn.getAttribute("data-img");
+      if (newSrc) imgEl.src = newSrc;
+    }
+
+    // 1) Update image when an accordion button is clicked (works regardless of BS version)
+    accordionEl.addEventListener("click", function (e) {
+      const btn = e.target.closest(".accordion-button");
+      if (!btn) return;
+      setImgFromButton(btn);
+    });
+
+    // 2) Set initial image from the currently open panel (or first button as fallback)
+    const openCollapse = accordionEl.querySelector(".accordion-collapse.show");
+    if (openCollapse) {
+      const btn =
+        accordionEl.querySelector(`[data-bs-target="#${openCollapse.id}"]`) ||
+        accordionEl.querySelector(`[data-target="#${openCollapse.id}"]`);
+      setImgFromButton(btn);
+    } else {
+      // fallback: first accordion button
+      setImgFromButton(accordionEl.querySelector(".accordion-button"));
+    }
+  });
+</script>
+
+
 
 
           <!-- assurance Area Start -->
@@ -5393,7 +5432,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-seo.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5419,7 +5458,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-performance.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5445,7 +5484,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-performance.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5471,7 +5510,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-best-practices.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5497,7 +5536,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-security.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>

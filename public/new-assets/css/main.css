@@ -4238,9 +4238,7 @@ h6 {
   gap: 20px;
 }
 
-.tricker_download_option .dropdown-toggle::after {
-  display: none;
-}
+
 
 .tracker_downloading_link li a {
   display: flex;
@@ -4699,6 +4697,18 @@ h6 {
   margin-left: 10px;
 }
 
+/* New CSS for loader dropdown toggle icon */
+.loader-dropdown-toggle::after {
+  content: "";
+  border: 1px solid transparent;
+  width: 8px;
+  height: 8px;
+  border-color: transparent transparent var(--text-gray) var(--text-gray);
+  rotate: -45deg;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+}
 .loader-list-items h4{
   font-family: Circular Std;
   font-weight: 450;
@@ -11705,9 +11715,6 @@ color: #68BF7B!important;
 .problem_right_content {
   flex-basis: 60%;
   border-radius: 10px;
-  background: #fff;
-  box-shadow: 0px 0px 50px 0px rgba(177, 191, 214, 0.13);
-  padding: 33px 22px;
 }
 
 .problem_right_content img {
@@ -17323,6 +17330,5 @@ margin-top: 20px;
   vertical-align: middle;
   margin-left: 5px;
 }
-
 
 /* CSS added by Amit Ends */
