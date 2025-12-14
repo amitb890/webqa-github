@@ -6,7 +6,7 @@
 @section('og-title', 'Share Actionable Audit Findings with Website Reports | Webqa')
 @section('og-description', 'Website Reports turns audit data into clear tables—titles, speed, canonicals, and more. Jump in from widgets and export PDF/CSV/XLSX for streamlined hand-offs.')
 @section('og-url', 'https://webqa.co/features/reports')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/features-reports.png')
 @section('og-image-alt', 'Website reports')
 
 

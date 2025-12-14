@@ -5,7 +5,7 @@
 @section('og-title', 'Customize Website Audits and Act Faster | Webqa')
 @section('og-description', 'Set your criteria, test any page, and see decisive results. Use Website Tracker, Reports, and bulk tools to prioritize fixes and keep every page release-ready.')
 @section('og-url', 'https://webqa.co/')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/home.png')
 @section('og-image-alt', 'Webqa')
 @section("content")
 

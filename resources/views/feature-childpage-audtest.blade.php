@@ -6,7 +6,7 @@
 @section('og-title', 'Custom Webpage Audits with Shareable Results | Webqa')
 @section('og-description', 'Define acceptance criteria, test any page, and see decisive Pass/Fail outcomes. Each analysis includes a shareable URL and exports to PDF/CSV/XLSX.')
 @section('og-url', 'https://webqa.co/features/webpage-audit')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/features-webpage-audit.png')
 @section('og-image-alt', 'Webpage audit')
 
 @section("content")

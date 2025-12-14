@@ -4,8 +4,9 @@
 @section('og-title', 'Test Meta Descriptions with Custom Rules | Webqa')
 @section('og-description', 'Audit meta descriptions against your standards—set length limits and rules, see decisive Pass/Fail outcomes, and export results to share and act quickly.')
 @section('og-url', 'https://webqa.co/tool/meta-description')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools-meta-description.png')
 @section('og-image-alt', 'Meta description test')
+
 
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">

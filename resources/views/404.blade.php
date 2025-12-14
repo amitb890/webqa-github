@@ -2,7 +2,12 @@
 
 @section('title', 'Page not found | Webqa')
 @section('meta-description', 'The page that you are looking for does not exist.')
+@section('og-title', 'Page not found | Webqa')
+@section('og-description', 'The page that you are looking for does not exist.')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/home.png')
+@section('og-url', 'https://webqa.co/')
 @section("content")
+
 
     <!-- Section 1 starts -->
      <section class="ep1 container">

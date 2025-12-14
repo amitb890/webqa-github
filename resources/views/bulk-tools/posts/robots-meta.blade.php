@@ -4,7 +4,7 @@
 @section('og-title', 'Test Robots Meta Tags & Directives | Webqa')
 @section('og-description', 'Audit robots meta directives—index/follow, noindex, nofollow, noarchive, nosnippet, and more. See decisive outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/robots-meta')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools-robots-meta.png')
 @section('og-image-alt', 'Robots meta test')
 
 <div class="single-post-content-main bulk-tool-test">
