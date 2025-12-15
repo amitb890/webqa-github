@@ -5301,45 +5301,58 @@
 </script>
 
 
+<!-- Steps Area Start -->
+    <section class="fcat4">
+      <div class="fcat4-mainD">
+        <h1 class="fcat4-mainD-h">Steps for Website Auditing</h1>
+        <div class="fcat4-mainD-cards">
+          <div class="fcat4-mainD-d-card">
+            <img src="{{ asset('new-assets/assets/images/home/step-1.png') }}" alt="">
+            <div class="fcat4-mainD-d-card-ld">
+              <div class="fcat4-mainD-d-card-d1">
+                <h6>1</h6>
+              </div>
+              <div class="fcat4-mainD-d-card-ldd"></div>
+            </div>
+            <div class="fcat4-mainD-d-card-d2">
+              <h6>Define your acceptance criteria</h6>
+              <p>Define acceptance criteria for each tests, to ensure your website meets a given quality standard.</p>
+            </div>
+          </div>
+          <div class="fcat4-mainD-d-card">
+            <img src="{{ asset('new-assets/assets/images/home/step-2.png') }}" alt="">
+            <div class="fcat4-mainD-d-card-ld">
+              <div class="fcat4-mainD-d-card-d1">
+                <h6>2</h6>
+              </div>
+              <div class="fcat4-mainD-d-card-ldd"></div>
+            </div>
+            <div class="fcat4-mainD-d-card-d2">
+              <h6>Align team members on the same page</h6>
+              <p>Align development, marketing, design, content - bring clarity and align team members on the same page.</p>
+            </div>
+          </div>
+          <div class="fcat4-mainD-d-card">
+            <img src="{{ asset('new-assets/assets/images/home/step-3.png') }}" alt="">
+            <div class="fcat4-mainD-d-card-ld">
+              <div class="fcat4-mainD-d-card-d1">
+                <h6>3</h6>
+              </div>
+              <div class="fcat4-mainD-d-card-ldd" style="opacity:0;"></div>
+            </div>
+            <div class="fcat4-mainD-d-card-d2">
+              <h6>Ensure highest quality and standards</h6>
+              <p>Scan your website for issues, fix them and ensure the highest level of quality and standards.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<!-- Steps Area End -->
 
 
           <!-- assurance Area Start -->
-          <div class="assurance_area">
-            <div class="assurance_content">
-              <div class="assurance_left_content">
-                <h2>
-                  3 Steps to improve your website quality assurance process
-                </h2>
-                <div class="assurance_left_img">
-                  <img src="/new-assets/assets/images/home/assurance.png" alt="img" />
-                </div>
-              </div>
-              <div class="assurance_right_content">
-                <p>
-                  We give you a completely customisable Quality assurance tool
-                  using which you can design a quality assurance process for
-                  your website. The website quality assurance tool covers
-                  Technical SEO checks,Pagespeed checks, Mobile responsiveness,
-                  and HTML best practices. Apart from this, you can setup a
-                  website tracker and setup alerts for your website, so that
-                  when something is broken you are immediately informed via
-                  email and SMS notifications.
-                </p>
-                <div class="assurance_right_bottom_content">
-                  <img src="/new-assets/assets/images/home/hand.png" alt="img" />
-                  <h3>Bring people on the same page</h3>
-
-                  <p>
-                    The biggest problem in a quality assurance process for a
-                    website is bringing people on the same page. This includes
-                    Web developers, project managers, Marketing Analysts,
-                    Designers and other team members working collaboratively on
-                    a single website.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          
           <!-- assurance Area End -->
 
          <!-- customisable Area Start -->
