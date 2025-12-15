@@ -189,9 +189,6 @@
                   </ul>
                 </div>
               </li>
-              <li class="nav-item-Faq"><a href="https://webqa.co/test-archive/" >Previous Tests</a></li>
-              <li class="nav-item-Faq"><a href="https://webqa.co/articles/" >Articles</a></li>
-              <li class="nav-item-Faq"><a href="https://webqa.co/about" >About Us</a></li>
             </ul>
           </div>
           <div class="login_area">

@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="fcs1-d2" id="fcat1-d2">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/iP7k4x-MRCSU9zvi8Cz4-Photoroom-1.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-hero.png') }}" alt="">
         </div>
      </section>
     <!-- Section 1 Ends -->
@@ -60,11 +60,10 @@
                 </p> 
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card-2">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1065.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-health-score.png') }}" alt="webpage audit test - health score">
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card">
-                <img
-                 src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1066.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-metrics.png') }}" alt="webpage audit test - metrics">
             </div>
             <div class="fcwt2-d2-card-d padding-left" id="fcat2-d2-card-d-4">
                 <h3>
@@ -88,10 +87,10 @@
                 </p>
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card-6">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1065-(1).svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-improvements.png') }}" alt="">
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card-7">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1066-(1).svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-seo.png') }}" alt="">
             </div>
             <div class="fcwt2-d2-card-d padding-left" id="fcat3-d2-card-d-8">
                 <h3>
@@ -113,7 +112,7 @@
         <h1 class="fcat4-mainD-h">Steps for Website Auditing</h1>
         <div class="fcat4-mainD-cards">
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/left-card.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/step1.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>1</h6>
@@ -126,7 +125,7 @@
             </div>
           </div>
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/center-card.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/step2.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>2</h6>
@@ -139,7 +138,7 @@
             </div>
           </div>
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/right-card.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/step3.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>3</h6>
