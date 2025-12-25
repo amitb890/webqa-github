@@ -203,10 +203,9 @@ class rememberUrl {
 if(this.onDelete == true) {
         div.innerHTML = `
           <div class="toast-header">
-            <strong class="mr-auto">The URL does not belongs to any of your projects,
-            <br>
-            General settings will apply
-            </strong>
+            <h6> 
+            URL Does not Belong to a Project
+            </h6>
             <button type="button" class="ml-auto mb-1 close toastClose" data-dismiss="toast" aria-label="Close" style="border: 0;
                 color: #6E6E6E;
                 background-color: #fff;
@@ -216,7 +215,12 @@ if(this.onDelete == true) {
             <span aria-hidden="true">×</span>
             </button>
         </div>
-        <div class="toast-body" style="    border-bottom: var(--bs-toast-border-width) solid var(--bs-toast-header-border-color);
+        
+            <div class="toast-footer" style="margin: 10px; text-align: right;">
+                This URL does not belong to any of your projects, general settings will apply.
+            </div>
+
+            <div class="toast-body" style="    border-bottom: var(--bs-toast-border-width) solid var(--bs-toast-header-border-color);
         border-top-left-radius: calc(var(--bs-toast-border-radius) - var(--bs-toast-border-width));
         border-top-right-radius: calc(var(--bs-toast-border-radius) - var(--bs-toast-border-width));">
        <span style="    display: inline-block;
@@ -225,11 +229,20 @@ if(this.onDelete == true) {
                         type="checkbox"
                          id="rememberURLCheckbox" name=""
                       /> Don't show this again</span>
+
+        <div class="toast-body-last">
         <button type="button" class="btn btn_primary rounded-pill" id="iUnderstand">I Understand</button>
         </div>
-            <div class="toast-footer" style="margin: 10px; text-align: right;">
-                if you want to customize the settings for this URL, please create a project first.
-            </div>
+        
+        </div>
+
+        
+
+        <div class="toast-body-footerTwo">
+        <p>
+        To customise the settings for this URL, <a href="/projects/create" target="_blank">create a project</a> first.
+        </p>
+        </div>
            `;
        
         
@@ -2835,3 +2848,335 @@ function getAllTestLabels(type, label = "default"){
         allLabels: SEOLabels.concat(securityLabels, CBPLabels, performanceLabels)
     }
 }
+
+(function () {
+  // Select only textareas that need numbering
+  const textareas = document.querySelectorAll('textarea.urlsList, textarea.auto-number');
+
+  textareas.forEach((textarea) => {
+
+    function togglePadding() {
+    if (textarea.value.trim() !== "") {
+        textarea.classList.add("has-content");
+    } else {
+        textarea.classList.remove("has-content");
+    }
+    }
+    // Find the container for numbers
+    const container = textarea.closest('.urls-list-container, .footer_search_box');
+    if (!container) return;
+
+    // Find the numbers div inside the container
+    const numbers = container.querySelector('.urlsList-numbers, .footer_control-numbers');
+    if (!numbers) return;
+
+    // Create a hidden mirror div (optional, can help with visual line height if needed)
+    const mirror = document.createElement('div');
+    mirror.style.position = 'absolute';
+    mirror.style.visibility = 'hidden';
+    mirror.style.top = '-99999px';
+    mirror.style.left = '-99999px';
+    mirror.style.whiteSpace = 'pre-wrap';
+    mirror.style.wordWrap = 'break-word';
+    mirror.style.boxSizing = 'border-box';
+    mirror.style.padding = getComputedStyle(textarea).padding;
+    mirror.style.width = textarea.offsetWidth + 'px';
+    mirror.style.fontFamily = getComputedStyle(textarea).fontFamily;
+    mirror.style.fontSize = getComputedStyle(textarea).fontSize;
+    document.body.appendChild(mirror);
+
+    function getLineHeightPx() {
+      const cs = getComputedStyle(textarea);
+      if (cs.lineHeight === 'normal') return parseFloat(cs.fontSize) * 1.2;
+      return parseFloat(cs.lineHeight);
+    }
+
+    function syncMirrorWidth() {
+      mirror.style.width = textarea.clientWidth + 'px';
+    }
+
+    function renderLineNumbers() {
+    const value = textarea.value.trim();
+
+    // If textarea is empty → show no numbers
+    if (value === "") {
+        numbers.innerHTML = "";
+        return;
+    }
+
+    // Count lines
+    const lines = textarea.value.split("\n").length;
+
+    let html = "";
+    for (let i = 1; i <= lines; i++) {
+        html += `<div>${i}.</div>`;  // <-- dot added here
+    }
+
+    numbers.innerHTML = html;
+    }
+
+
+    function syncHeightAndScroll() {
+      numbers.style.height = textarea.clientHeight + 'px';
+      numbers.scrollTop = textarea.scrollTop;
+    }
+
+    // Initial render
+    togglePadding();
+    syncMirrorWidth();
+    renderLineNumbers();
+    syncHeightAndScroll();
+    
+
+    // Event listeners
+    textarea.addEventListener('input', () => {
+      togglePadding(); 
+      renderLineNumbers();
+      syncHeightAndScroll();
+      
+    });
+
+    textarea.addEventListener('scroll', () => {
+      numbers.scrollTop = textarea.scrollTop;
+    });
+
+    window.addEventListener('resize', () => {
+      syncMirrorWidth();
+      renderLineNumbers();
+      syncHeightAndScroll();
+    });
+
+    // ResizeObserver fallback
+    if (window.ResizeObserver) {
+      const ro = new ResizeObserver(() => {
+        syncMirrorWidth();
+        renderLineNumbers();
+        syncHeightAndScroll();
+      });
+      ro.observe(textarea);
+    } else {
+      let lastH = textarea.clientHeight;
+      setInterval(() => {
+        if (textarea.clientHeight !== lastH || textarea.clientWidth !== mirror.offsetWidth) {
+          lastH = textarea.clientHeight;
+          syncMirrorWidth();
+          renderLineNumbers();
+          syncHeightAndScroll();
+        }
+      }, 250);
+    }
+  });
+})();
+
+function initCustomTextareaScrollbar(textareaSelector, scrollbarSelector) {
+  const textarea = document.querySelector(textareaSelector);
+  const scrollbar = document.querySelector(scrollbarSelector);
+  if (!textarea || !scrollbar) return;
+
+  const thumb = scrollbar.querySelector('.custom-thumb');
+  if (!thumb) return;
+
+  let isDragging = false;
+  let startY = 0;
+  let startScrollTop = 0;
+
+  function updateThumb() {
+    const visible = textarea.clientHeight;
+    const total = textarea.scrollHeight;
+
+    if (total <= visible) {
+      thumb.style.display = 'none';
+      return;
+    } else {
+      thumb.style.display = 'block';
+    }
+
+    const thumbHeight = Math.max(
+      (visible / total) * scrollbar.clientHeight,
+      30
+    );
+    thumb.style.height = thumbHeight + 'px';
+
+    const maxThumbTop = scrollbar.clientHeight - thumbHeight;
+    const scrollRatio = textarea.scrollTop / (total - visible || 1);
+
+    thumb.style.top = scrollRatio * maxThumbTop + 'px';
+  }
+
+  /* ===== Textarea → Thumb ===== */
+  textarea.addEventListener('scroll', updateThumb);
+  window.addEventListener('resize', updateThumb);
+
+  /* ===== Thumb → Textarea (DRAG) ===== */
+  thumb.addEventListener('mousedown', (e) => {
+    isDragging = true;
+    startY = e.clientY;
+    startScrollTop = textarea.scrollTop;
+    document.body.style.userSelect = 'none';
+  });
+
+  document.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const visible = textarea.clientHeight;
+    const total = textarea.scrollHeight;
+    const thumbHeight = thumb.offsetHeight;
+    const maxThumbTop = scrollbar.clientHeight - thumbHeight;
+
+    const deltaY = e.clientY - startY;
+    const scrollDelta =
+      (deltaY / maxThumbTop) * (total - visible);
+
+    textarea.scrollTop = startScrollTop + scrollDelta;
+
+    updateThumb(); // 🔥 THIS LINE FIXES IT
+  });
+
+  document.addEventListener('mouseup', () => {
+    isDragging = false;
+    document.body.style.userSelect = '';
+  });
+
+  // Init
+  updateThumb();
+}
+initCustomTextareaScrollbar(
+  'textarea.urlsList',
+  '.custom-scrollbar'
+);
+
+
+function initUrlBasedNumbering(textareaSelector) {
+  const textarea = document.querySelector(textareaSelector);
+  if (!textarea) return;
+
+  const container = textarea.closest('.urls-list-container');
+  if (!container) return;
+
+  const numbersLayer = document.createElement('div');
+  numbersLayer.className = 'url-numbers-layer';
+  container.appendChild(numbersLayer);
+
+  const numbersInner = document.createElement('div');
+  numbersInner.className = 'url-numbers-inner';
+  numbersLayer.appendChild(numbersInner);
+
+  // Mirror for wrapped height calculation
+  const mirror = document.createElement('div');
+  const cs = getComputedStyle(textarea);
+
+//   numbersLayer.style.paddingTop = cs.paddingTop;
+//   numbersLayer.style.boxSizing = 'border-box';
+
+  const paddingTopPx = parseFloat(cs.paddingTop);
+
+  Object.assign(mirror.style, {
+    position: 'absolute',
+    visibility: 'hidden',
+    whiteSpace: 'pre-wrap',
+    wordWrap: 'break-word',
+    fontFamily: cs.fontFamily,
+    fontSize: cs.fontSize,
+    lineHeight: cs.lineHeight,
+    padding: cs.padding,
+    boxSizing: cs.boxSizing
+  });
+
+  document.body.appendChild(mirror);
+
+  function applyDigitLayout(lineCount) {
+  const digits = lineCount.toString().length;
+
+  let width = 30;
+  let padding = 30;
+
+  if (digits >= 3) {
+    width = 40;
+    padding = 40;
+  }
+  if (digits >= 4) {
+    width = 50;
+    padding = 50;
+  }
+
+  numbersLayer.style.width = width + 'px';
+  textarea.style.paddingLeft = padding + 'px';
+
+  // ✅ FULL padding string — not paddingLeft
+  mirror.style.padding = `
+    ${cs.paddingTop}
+    ${cs.paddingRight}
+    ${cs.paddingBottom}
+    ${padding}px
+  `;
+}
+
+function render() {
+  const value = textarea.value;
+  const NUMBER_TOP_OFFSET = 5;
+  const NUMBER_LEFT_OFFSET = 2;
+
+  if (!value.trim()) {
+    numbersInner.innerHTML = '';
+    return;
+  }
+
+  const urls = value.split('\n');
+
+  // 1️⃣ Apply layout
+  applyDigitLayout(urls.length);
+
+  // 2️⃣ FORCE browser to commit layout
+  textarea.offsetWidth;
+
+  // 3️⃣ Match mirror width AFTER padding change
+  mirror.style.width = textarea.clientWidth + 'px';
+
+  // 4️⃣ Build mirror content
+  mirror.innerHTML = urls.map(u => `<div>${u || ' '}</div>`).join('');
+
+  numbersInner.innerHTML = '';
+
+  // 5️⃣ Position numbers using wrapped heights
+  [...mirror.children].forEach((line, i) => {
+  const n = document.createElement('div');
+  n.className = 'url-number';
+  n.textContent = `${i + 1}.`;
+
+  n.style.top =
+    (line.offsetTop - paddingTopPx + NUMBER_TOP_OFFSET) + 'px';
+
+  n.style.left = NUMBER_LEFT_OFFSET + 'px';
+
+  numbersInner.appendChild(n);
+});
+
+
+  numbersLayer.style.height = textarea.clientHeight + 'px';
+  numbersLayer.style.overflow = 'hidden'; 
+}
+const ro = new ResizeObserver(() => {
+  render();
+});
+ro.observe(textarea);
+
+  textarea.addEventListener('scroll', () => {
+    numbersInner.style.transform = `translateY(-${textarea.scrollTop}px)`;
+  });
+
+  textarea.addEventListener('input', render);
+  window.addEventListener('resize', render);
+
+  render();
+
+  // Auto-init safety
+  let lastValue = '';
+  const wait = setInterval(() => {
+    if (textarea.value && textarea.value !== lastValue) {
+      lastValue = textarea.value;
+      render();
+    }
+    if (textarea.value.trim()) clearInterval(wait);
+  }, 100);
+}
+initUrlBasedNumbering('.urlsList');

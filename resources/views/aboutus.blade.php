@@ -6,7 +6,7 @@
 @section('og-title', 'About Webqa — Smarter Website Auditing')
 @section('og-description', 'Discover how Webqa turns audits into action with your standards, clear results, shareable analyses, and site-wide tracking to prioritize fixes.')
 @section('og-url', 'https://webqa.co/aboutus')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/og/home.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
 @section('og-image-alt', 'About Webqa')
 
 @section("content")

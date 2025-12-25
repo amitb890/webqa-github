@@ -1795,25 +1795,19 @@ function featureChildPageSettingsCarousel() {
   const cards = document.querySelectorAll(".fcs3-d2-card");
   let activeIndex = Array.from(cards).findIndex(card => card.classList.contains("card-active"));
 
-  const leftArrow = document.querySelector(".fcs3-d3-d1"); // left div
-  const rightArrow = document.querySelector(".fcs3-d3-d2"); // right div
+  const leftArrow = document.querySelector(".fcs3-d3-d1");
+  const rightArrow = document.querySelector(".fcs3-d3-d2");
 
-  // Stop the function if the required elements don’t exist
-  if (cards.length === 0 || !leftArrow || !rightArrow) {
-    return;
-  }
+  if (cards.length === 0 || !leftArrow || !rightArrow) return;
 
   function updateActiveCard(newIndex) {
-    if (newIndex < 0 || newIndex >= cards.length) return; // stop at edges
+    if (newIndex < 0 || newIndex >= cards.length) return;
 
-    // remove active class from old card
     cards[activeIndex].classList.remove("card-active");
 
-    // add active class to new card
     activeIndex = newIndex;
     cards[activeIndex].classList.add("card-active");
 
-    // optional: center/scroll the active card
     cards[activeIndex].scrollIntoView({
       behavior: "smooth",
       inline: "center",
@@ -1821,24 +1815,38 @@ function featureChildPageSettingsCarousel() {
     });
   }
 
+  /* ARROWS */
   leftArrow.addEventListener("click", () => {
     updateActiveCard(activeIndex - 1);
-
-    // toggle arrow-active class
     leftArrow.classList.add("arrow-active");
     rightArrow.classList.remove("arrow-active");
   });
 
   rightArrow.addEventListener("click", () => {
     updateActiveCard(activeIndex + 1);
-
-    // toggle arrow-active class
     rightArrow.classList.add("arrow-active");
     leftArrow.classList.remove("arrow-active");
+  });
+
+  /* === NEW: CLICK A CARD TO SELECT IT === */
+  cards.forEach((card, index) => {
+    card.addEventListener("click", () => {
+      updateActiveCard(index);
+
+      // optional: set arrow states depending on which side was selected
+      if (index === 0) {
+        leftArrow.classList.add("arrow-active");
+        rightArrow.classList.remove("arrow-active");
+      } else if (index === cards.length - 1) {
+        rightArrow.classList.add("arrow-active");
+        leftArrow.classList.remove("arrow-active");
+      }
+    });
   });
 }
 
 featureChildPageSettingsCarousel();
+
 
 
 // feature Child Page Settings FAQs, Coding Best Practices dropdown

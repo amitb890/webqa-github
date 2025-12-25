@@ -14893,7 +14893,7 @@ nav .nav-tabs{
 .fr4-d2{
   flex: 1;
   z-index: -1;
-  height:100%;
+  height:316px;
 
   position:relative;
 }
@@ -14901,6 +14901,8 @@ nav .nav-tabs{
   transform: scaleX(-1); /* flips horizontally */
   height: 100%;
   width:100%;
+  object-fit: cover;   /* prevents distortion */
+  object-position: center 30%;
 }
 #fcwt-s6 img{
   transform: scaleX(1) !important;
@@ -17034,26 +17036,7 @@ background-color:#f5f8ff !important;
 .accor-content b{color:#000;}
 .performance-button{text-align:right;}
 
-/* About us page Image fixed - Imran */
 
-.as1 img {
-  opacity: 0;
-  transition: opacity 0.4s ease-in-out;
-}
-
-.as1 img.loaded {
-  opacity: 1;
-}
-
-/* Website header dropdown - Imran */
-.dropdown2{
-  position:relative !important;
-}
-.dropdown-menu{
-  position:absolute !important;
-  top:5px !important;
-  left:0 !important;
-}
 
 
 
@@ -17336,3 +17319,438 @@ margin-top: 20px;
 }
 
 /* CSS added by Amit Ends */
+
+
+/* Imran css styles for order 20 Nov Starts */
+
+
+/* Task 3 Styles Start */
+
+.as1 img {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.as1 img.loaded {
+  opacity: 1;
+}
+
+
+/* Task 4 Styles Start */
+.fcs3-d2-card:hover{
+  cursor: pointer !important;
+}
+
+/* Task 4 Styles End */
+
+
+/* Task 5 Styles Start */
+
+.contact-us-form form .message label{
+  position:static !important;
+  margin-bottom: auto !important;
+}
+.contact-us-form form .message #message{
+    margin-left: 0px !important;
+  }
+.contact-us-form form .name,
+  .contact-us-form form .email,
+  .contact-us-form form .subject,
+  .contact-us-form form .message{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:20px;
+  }
+
+
+/* Task 5 Styles End */
+
+/* Task 6 Styles Start */
+.search_box .form-control{
+  color:#333;
+  font-weight: lighter;
+}
+/* Task 6 Styles End */
+
+
+/* Task 7 Styles Start */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 72px;
+    display: flex;
+    z-index: 11;
+    height:200%;
+}
+.analysis-score.container-health-score{
+  position: relative;
+}
+.control-hide-show{
+  position:absolute;
+  bottom:-50px;
+  right:0;
+  z-index: 5;
+}
+
+.analysis-content-body {
+    padding-left: 0px;
+} 
+.analysis-sticky-cat{
+  margin-top:60px;
+}
+
+
+#healthScore-tooltip{
+  top: 40px;
+  left: -110px;
+  /* width: 430px; */
+  width:230px;
+}
+/* UPDATED ARROW */
+#healthScore-tooltip::before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background:#f1f5ff;
+  border-radius: 1px;
+
+  /* Border now points downward */
+  border-left: 1px solid #2b56a5;
+  border-top: 1px solid #2b56a5;
+
+  /* Arrow positioned on top */
+  top: -8px; /* moves arrow above card */
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+
+  z-index: -1;
+  box-shadow: 0px 0px 50px #e9e8e8;
+}
+
+.card-help-body {
+  top: 40px;
+  left: -100px;
+}
+.card-help-body::before {
+  content: "";
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background:#f1f5ff;
+  border-radius: 1px;
+
+  /* Arrow pointing downward */
+  border-left: 1px solid #2b56a5;
+  border-top: 1px solid #2b56a5;
+
+  /* Position arrow at top */
+  top: -8px;
+
+  /* Move arrow towards left, tweak this value */
+  left: 100px; /* <-- adjust this to move the arrow horizontally */
+
+  transform: rotate(45deg);
+  box-shadow: 0px 0px 50px #e9e8e8;
+  z-index: -1;
+}
+
+
+
+
+.card #chs-analysisProgress{
+  display:none !important;
+}
+
+
+.card-help-body{
+  position: absolute;
+  top: 40px;
+  left: -100px;
+  width: 230px;
+  
+}
+
+/* Task 7 Styles End */
+
+
+
+/* Task 8 Starts */
+.login_modal .modal-header .btn-close {
+    opacity: 1 !important;
+    background-size: 12px !important;
+    margin-top: -18px !important;
+    margin-right: -10px !important;
+}
+/* Task 8 Ends */
+
+
+
+/* Task 9 Styles Start */
+
+.toast.rememberUrl{
+    width: 523px !important;
+    height:188px !important;
+    position: fixed !important;
+    top: 30% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    border-radius:5px !important;
+    /* padding-bottom:15px !important; */
+    padding-bottom:0px !important;
+}
+
+.toast-header{
+  position:relative !important;
+  display:block !important;
+  padding-top:10px;
+  padding-bottom: 0px !important;
+  border: none !important;
+}
+.toast-header strong{
+  text-align:left;
+}
+
+
+.toastClose{
+  position:absolute !important;
+  right:5px !important;
+  top:2px !important;
+  /* margin-bottom:20px !important; */
+}
+
+.toast-footer{
+  margin:10px 0 !important;
+  margin-top: 16px !important;
+  /* margin-bottom: 6px !important; */
+  max-width:400px;
+  text-align: left !important;
+  padding:0 0.75rem;
+  font-size: 12px !important;
+}
+.toast-body{
+  padding-top:0px !important;
+  padding-bottom:0px !important;
+  border: none !important;
+  display:flex;
+}
+.toast-body span{
+  display:flex!important;
+  align-items: center !important;
+  width:100% !important;
+  margin-top: 0rem !important;
+  gap:4px !important;
+}
+.toast-body span #rememberURLCheckbox{
+  margin-bottom:2px !important;
+}
+#iUnderstand{
+  /* margin-left:70%; */
+  margin-bottom: 0px !important;
+}
+
+.toast-body-footerTwo p{
+  pointer-events: all;
+  font-size: 12px;
+  margin:0px !important;
+  padding:0px !important;
+  padding: 0 0.75rem!important;
+  margin-top:17px !important;
+
+  /* max-width:400px !important;
+  margin:0 auto !important; */
+}
+.toast-body-footerTwo p a{
+  color:#417cec;
+}
+#iUnderstand {
+    margin-left: 0% !important;
+    padding:0px !important;
+    height: 35px !important;
+    width: 130px !important;
+}
+/* Task 9 Styles End */
+
+
+
+/* Task 11 Starts */
+
+.sitemap-container{
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+
+.sitemap-numbers{
+  width: 46px;             
+  min-width: 46px;
+  text-align: right;
+  padding-right: 8px;
+  color: #6e6e7a;
+  font-size: 14px; 
+  line-height: 1.6;         
+  user-select: none;
+  overflow: hidden;        
+}
+
+
+.sitemap-textarea{
+  flex: 1;
+  min-height: 160px;
+  resize: vertical;         
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;         
+  padding: 8px 10px;
+  box-sizing: border-box;
+  white-space: pre-wrap;   
+  word-wrap: break-word;
+}
+
+
+.sitemap-numbers div {
+  padding: 2px 0;
+}
+
+.urls-list-container {
+  position: relative;
+  padding-left:7px;
+  padding-top:10px;
+}
+
+
+.url-numbers-layer {
+  position: absolute;
+  top: 11px;
+  left: 0px;
+  width: 30px;
+  pointer-events: none;
+}
+
+.url-numbers-inner {
+  position: relative;
+}
+
+.url-number {
+  position: absolute;
+  text-align: right;
+  width: 100%;
+  font-size: 14px;
+  color: #cfcfcf;
+  line-height: 23px; 
+  padding-top:5px !important;
+}
+
+
+
+
+textarea.urlsList {
+  padding-left: 30px;
+  padding-top:10px !important;
+  padding-bottom:10px !important;
+  line-height: 1.4em;
+  resize: vertical; 
+  box-sizing: border-box;
+  white-space: pre-wrap;   
+  word-wrap: break-word;
+  overflow: auto;
+  line-height: 23px;
+  scrollbar-width: none; 
+}
+textarea.urlsList::-webkit-scrollbar {
+  width: 0;
+  display: none;          
+}
+
+.custom-scrollbar {
+  position: absolute;
+  top: 20px;
+  right: 8px;
+  width: 3px;
+  height: calc(100% - 110px);
+  background-color:#ededed;
+}
+
+.custom-thumb {
+  position: absolute;  
+  top: 20px;
+  right: 0px;
+  width: 100%;
+  background-color: #d5d5dd;
+  cursor: pointer;
+  height: 40px;
+}
+
+
+
+
+
+
+.footer_search_box{
+  position: relative;
+  overflow: hidden;
+}
+
+.tools_body_content .footer_control {
+  width: 100%;
+  min-height: 200px;
+  max-height: 300px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  background: #f7f8fb;
+  outline: none;
+  border: 2px solid var(--border-dark);
+  font-size:16px;
+  overflow-y: auto;  
+  overflow-x: hidden;
+  line-height:22px;
+  color: #6e6e6e;
+}
+.footer_control-numbers {
+  position: absolute;
+  left: 0;
+  top: 7px;
+  width: 40px;
+  padding: 6px 0;
+  text-align: right;
+  user-select: none;
+  color: #cfcfcf;
+  line-height: 22px;
+  overflow-y: hidden;
+  pointer-events: none;
+  font-size:15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-right:5px;
+  height: calc(100% - 17px) !important;
+}
+textarea.auto-number {
+  /* padding-left: 45px !important;  */
+  resize: vertical;
+  box-sizing: border-box;
+  white-space: pre-wrap;   
+  word-wrap: break-word;
+  transition: padding-left 0.15s ease;
+  overflow-y: auto;   /* allow vertical scroll */
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Chrome, Safari, Edge (WebKit) */
+textarea.auto-number::-webkit-scrollbar {
+  display: none;
+}
+
+textarea.auto-number.has-content {
+  padding-left: 45px;
+}
+
+/* Task 11 Ends */
+/* Imran css styles for order 20 Nov Ends */
+
+
+

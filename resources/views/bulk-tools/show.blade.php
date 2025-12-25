@@ -129,9 +129,10 @@
                 <p class="col2-p" style="font-size:18px;">{{$d["main_para"]}}</p>
                 
 
-                <div class="footer_search_item">
+                 <div class="footer_search_item">
                   <div class="footer_search_box">
-                    <textarea class="footer_control" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl') }}</textarea>
+                    <div class="footer_control-numbers" id="footer_controlNumbers"></div>
+                    <textarea class="footer_control auto-number" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl') }}</textarea>
                   </div>
                 </div>
 
