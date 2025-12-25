@@ -26,8 +26,18 @@ class CustomURL implements Rule
      */
     public function passes($attribute, $value)
     {
-        $this->attribute = $attribute; 
-        return preg_match("/(http|https):\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*)/i", $value);
+        $this->attribute = $attribute;
+        
+        // Trim whitespace from the URL
+        $value = trim($value);
+        
+        // Return false if empty after trimming
+        if (empty($value)) {
+            return false;
+        }
+        
+        // Updated regex pattern that handles trailing slashes and spaces better
+        return preg_match("/(http|https):\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}([-a-zA-Z0-9@:%_\+.~#?&=]*)/i", $value);
     }
 
     /**

@@ -52,7 +52,6 @@ $(document).on("click", ".project_urlAction_delete", function () {
   appendUrlList()
 });
 
-
 $(document).on("click", ".url_search_edit", function () {
   $('.project_url_title').show();
   if ($('#project_url_search').val() != "") {

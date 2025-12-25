@@ -1,0 +1,49 @@
+/* Project Create/Edit Form Styles - Textarea width matching */
+
+/* Ensure textareas match the exact width of form-control text input fields */
+.project-single-input textarea {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* Specifically target the URLs list and XML sitemap textareas */
+#urlsList,
+#xmlSitemap {
+    width: 50% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* Override any col-md-12 or other width classes on textareas */
+.project-single-input textarea.col-md-12 {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* Ensure textareas match form-control styling exactly */
+.project-single-input textarea.form-control {
+    width: 100% !important;
+    max-width: 100%;
+    box-sizing: border-box;
+    display: block;
+}
+
+/* Match padding, border, and other properties to form-control for visual consistency */
+.project-single-input textarea {
+    padding: 0.375rem 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Reduce height of XML Sitemap textarea */
+#xmlSitemap {
+    min-height: auto;
+    height: auto;
+}

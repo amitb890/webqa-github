@@ -465,8 +465,13 @@ class ProjectsController extends Controller
 
             $scheme = isset($parsed['scheme']) ? $parsed['scheme'] : 'https';
             $host   = isset($parsed['host']) ? $parsed['host'] : '';
-
-            $homepage = $scheme . '://' . $host;
+            
+            // Step 4: Normalize host - remove www. prefix
+            $host = preg_replace('/^www\./i', '', $host);
+            
+            // Step 5: Normalize scheme - always use https for storage
+            // This ensures https://example.com and http://example.com are stored the same way
+            $homepage = 'https://' . $host;
 
 
             // get project favicon
@@ -609,9 +614,29 @@ class ProjectsController extends Controller
             $project->user_id = Auth::id();
             $project->name = $request->input('name');
 
-            // Convert homepage URL to origin
-            $homepageRequest = parse_url($request->input('homepage'));
-            $homepage = $homepageRequest["scheme"] . "://" . $homepageRequest["host"];
+            // Convert homepage URL to origin with normalization
+            $rawInput = $request->input('homepage');
+            
+            // Step 1: Trim and remove invisible characters
+            $rawInput = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', trim($rawInput));
+            
+            // Step 2: Add scheme if missing
+            if (!preg_match('#^https?://#i', $rawInput)) {
+                $rawInput = 'https://' . $rawInput;
+            }
+            
+            // Step 3: Parse URL and safely rebuild
+            $parsed = parse_url($rawInput);
+            
+            $scheme = isset($parsed['scheme']) ? $parsed['scheme'] : 'https';
+            $host   = isset($parsed['host']) ? $parsed['host'] : '';
+            
+            // Step 4: Normalize host - remove www. prefix
+            $host = preg_replace('/^www\./i', '', $host);
+            
+            // Step 5: Normalize scheme - always use https for storage
+            // This ensures https://example.com and http://example.com are stored the same way
+            $homepage = 'https://' . $host;
 
             // Get project favicon
             $favicon = $helpers->getFavicon($homepage);
@@ -830,6 +855,65 @@ class ProjectsController extends Controller
         }
 
         return response()->json(['message' => 'Project name is unique.', 'uniqueError' => true]);
+    }
+
+    public function checkUniqueProjectHomepage(Request $request)
+    {
+        $homepage = $request->input('homepage');
+        
+        // Normalize homepage URL to origin (scheme + host) - same as in createProject
+        $rawInput = $homepage;
+        
+        // Step 1: Trim and remove invisible characters
+        $rawInput = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', trim($rawInput));
+        
+        // Step 2: Add scheme if missing
+        if (!preg_match('#^https?://#i', $rawInput)) {
+            $rawInput = 'https://' . $rawInput;
+        }
+        
+        // Step 3: Parse URL and safely rebuild
+        $parsed = parse_url($rawInput);
+        
+        $scheme = isset($parsed['scheme']) ? $parsed['scheme'] : 'https';
+        $host   = isset($parsed['host']) ? $parsed['host'] : '';
+        
+        // Step 4: Normalize host - remove www. prefix
+        $host = preg_replace('/^www\./i', '', $host);
+        
+        // Step 5: Normalize scheme - always use https for comparison
+        // This ensures https://example.com and http://example.com are treated as same
+        $normalizedHomepage = 'https://' . $host;
+        
+        // Check for both http and https versions, and with/without www
+        // We need to check all possible variations:
+        // - https://example.com
+        // - http://example.com
+        // - https://www.example.com
+        // - http://www.example.com
+        $variations = [
+            'https://' . $host,
+            'http://' . $host,
+            'https://www.' . $host,
+            'http://www.' . $host,
+        ];
+        
+        if ($request->projectId != 0) {
+            $existingProject = Projects::whereIn('homepage', $variations)
+                ->where("user_id", Auth::id())
+                ->where('id', '!=', $request->projectId)
+                ->first();
+        } else {
+            $existingProject = Projects::whereIn('homepage', $variations)
+                ->where("user_id", Auth::id())
+                ->first();
+        }
+
+        if ($existingProject) {
+            return response()->json(['message' => 'Project URL already exists.', 'uniqueError' => false]);
+        }
+
+        return response()->json(['message' => 'Project URL is unique.', 'uniqueError' => true]);
     }
 
     public function checkValidUrl(Request $request)

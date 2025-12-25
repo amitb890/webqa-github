@@ -162,6 +162,7 @@ Route::middleware('auth')->group(function () {
         Route::get('get-test-data-single/{id}/{label}', [App\Http\Controllers\ProjectsController::class, 'getTestDataSingle'])->name('getTestDataSingle');
         Route::post('editProject', [App\Http\Controllers\ProjectsController::class, 'editProject'])->name('editProject');
         Route::post('check-unique-project-name', [App\Http\Controllers\ProjectsController::class, 'checkUniqueProjectName'])->name('checkUniqueProjectName');
+        Route::post('check-unique-project-homepage', [App\Http\Controllers\ProjectsController::class, 'checkUniqueProjectHomepage'])->name('checkUniqueProjectHomepage');
         Route::post('editProject', [App\Http\Controllers\ProjectsController::class, 'editProject'])->name('editProject');
         Route::get('get-projects-data', [App\Http\Controllers\ProjectsController::class, 'getProjectData'])->name('getProjectData');
         Route::get('get-show-dashboard-status/{id}', [App\Http\Controllers\ProjectsController::class, 'getShowDashboardStatus'])->name('getShowDashboardStatus');

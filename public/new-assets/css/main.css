@@ -9990,6 +9990,10 @@ color: #68BF7B!important;
   border-radius: 20px;
 }
 
+#urlsList.has-serial-numbers {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 .sitemap_area {
   display: flex;
   align-items: center;
