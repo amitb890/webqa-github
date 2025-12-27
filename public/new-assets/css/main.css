@@ -15933,13 +15933,13 @@ max-width: 900px;
   padding-bottom: 100px  !important;
 }
 
-#fcat3-d2-card img{
+/* #fcat3-d2-card img{
   max-height: 350px;
   transform:scale(2.1);
   z-index: 3;
   overflow: hidden;
   margin-left: 30px;
-}
+} */
 
 #fcat3-d2-card-d-5{
   padding-top: 100px;
@@ -17750,6 +17750,18 @@ textarea.auto-number.has-content {
 }
 
 /* Task 11 Ends */
+
+.modal-content-position{
+  position:relative;
+}
+
+.modal-content-cross{
+  color: #000;
+  cursor: pointer;
+  position:absolute;
+  top:12px;
+  right:20px;
+}
 /* Imran css styles for order 20 Nov Ends */
 
 
