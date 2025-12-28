@@ -5,7 +5,7 @@
 @section('og-title', 'Customize Website Audits and Act Faster | Webqa')
 @section('og-description', 'Set your criteria, test any page, and see decisive results. Use Website Tracker, Reports, and bulk tools to prioritize fixes and keep every page release-ready.')
 @section('og-url', 'https://webqa.co/')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/home.png')
 @section('og-image-alt', 'Webqa')
 @section("content")
 
@@ -213,7 +213,7 @@
                                 </label>
                               </button>
 
-                              <!-- <button
+                              <button
                                 class="nav-link"
                                 data-controls="v-pills-h1-heading"
                               >
@@ -224,9 +224,9 @@
                                     checked
                                     data-name="h1_heading_tag"
                                   />
-                                  H1 heading tag
+                                  Headings
                                 </label>
-                              </button> -->
+                              </button>
 
                               <button
                                 class="nav-link"
@@ -490,7 +490,21 @@
                               role="tablist"
                               aria-orientation="vertical"
                             >
-
+                            <button
+                                class="nav-link"
+                                data-controls="v-pills-gzip-compression"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input customizer-check-input"
+                                    type="checkbox"
+                                    checked
+                                    data-name="gzip_compression"
+                                  />
+                                  GZIP Compression
+                                </label>
+                              </button>
+                              
                             <button
                                 class="nav-link"
                                 data-controls="v-pills-html-compression"
@@ -537,20 +551,6 @@
                                 </label>
                               </button>
 
-                              <button
-                                class="nav-link"
-                                data-controls="v-pills-gzip-compression"
-                              >
-                                <label class="form-check">
-                                  <input
-                                    class="form-check-input customizer-check-input"
-                                    type="checkbox"
-                                    checked
-                                    data-name="gzip_compression"
-                                  />
-                                  GZIP Compression
-                                </label>
-                              </button>
 
 
                               <button
@@ -625,6 +625,21 @@
                                     data-name="frameset"
                                   />
                                   Frameset
+                                </label>
+                              </button>
+                              
+                              <button
+                                class="nav-link"
+                                data-controls="v-pills-broken-links"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input customizer-check-input"
+                                    type="checkbox"
+                                    checked
+                                    data-name="broken_links"
+                                  />
+                                  Broken Links
                                 </label>
                               </button>
 
@@ -715,20 +730,7 @@
                               </button>
 
 
-                              <button
-                                class="nav-link d-none"
-                                data-controls="v-pills-broken-links"
-                              >
-                                <label class="form-check">
-                                  <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    checked
-                                    data-name="broken_links"
-                                  />
-                                  Broken Links
-                                </label>
-                              </button>
+                              
 
                               <button
                                 class="nav-link"
@@ -777,6 +779,20 @@
 
                               <button
                                 class="nav-link"
+                                data-controls="v-pills-content-type"
+                              >
+                                <label class="form-check">
+                                  <input
+                                    class="form-check-input customizer-check-input"
+                                    type="checkbox"
+                                    checked
+                                    data-name="bad_content_type"
+                                  />
+                                  Bad content Type
+                                </label>
+                              </button>
+                              <button
+                                class="nav-link"
                                 data-controls="v-pills-ssl"
                               >
                                 <label class="form-check">
@@ -790,20 +806,7 @@
                                 </label>
                               </button>
 
-                              <button
-                                class="nav-link"
-                                data-controls="v-pills-content-type"
-                              >
-                                <label class="form-check">
-                                  <input
-                                    class="form-check-input customizer-check-input"
-                                    type="checkbox"
-                                    checked
-                                    data-name="bad_content_type"
-                                  />
-                                  Bad content Type
-                                </label>
-                              </button>
+                             
 
                               <button
                                 class="nav-link"
@@ -999,6 +1002,83 @@
                             value="Reset to Default"
                           />
                         </div> -->
+                      </div>
+                    </div>
+                                        <div
+                      class="tab-pane fade"
+                      id="v-pills-h1-heading"
+                    >
+                      <div class="home-meta-content">
+                        <h5 class="home-meta-title">Headings</h5>
+                        <div class="meta-content">
+                          <div class="accor-content">
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" id="h1_heading_tag" checked>
+                              <label class="form-check-label" for="h1_heading_tag">
+                              Every page must have at least one H1 heading tag
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h1_heading_tag_length">
+                              <label class="form-check-label" for="h1_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h1_heading_tag_length_val" value="" min="0" max="100"> H1 heading tag
+                              </label>
+                            </div>
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h2_heading_tag_length">
+                              <label class="form-check-label" for="h2_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h2_heading_tag_length_val" value="" min="0" max="100"> H2 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h3_heading_tag_length">
+                              <label class="form-check-label" for="h3_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h3_heading_tag_length_val" value="" min="0" max="100"> H3 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h4_heading_tag_length">
+                              <label class="form-check-label" for="h4_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h4_heading_tag_length_val" value="" min="0" max="100"> H4 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h5_heading_tag_length">
+                              <label class="form-check-label" for="h5_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h5_heading_tag_length_val" value="" min="0" max="100"> H5 heading tag
+                              </label>
+                            </div>
+
+                            <div class="form-check">
+                              <input class="form-check-input" type="checkbox" value="" id="h6_heading_tag_length">
+                              <label class="form-check-label" for="h6_heading_tag_length">
+                              A page can have at most
+                                <input class="slider-input-text" type="number" id="h6_heading_tag_length_val" value="" min="0" max="100"> H6 heading tag
+                              </label>
+                            </div>
+                        </div>
+                          <div class="home-content-button">
+                            <input
+                              class="btn-cancel btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Cancel"
+                            />
+                            <input
+                              class="btn-done btn btn_primary rounded-pill"
+                              type="submit"
+                              value="Done"
+                            />
+                          </div>
+                        </div>
+                       
                       </div>
                     </div>
                     <div
@@ -4375,22 +4455,33 @@
               
 
                     <div
-                      class="tab-pane fade d-none"
+                      class="tab-pane fade"
                       id="v-pills-broken-links"
                     >
                       <div class="home-meta-content">
                         <h5 class="home-meta-title">Broken Links</h5>
-                        <div class="meta-content"><p>No Customisations are available for this test.</p>
-                          <div class="accor-content" style="display:none;">
-                            
-                          <div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" id="broken_links">
-                            <label class="form-check-label" for="broken_links">Linked pages must return a valid HTTP 200 OK response—not 3xx loops, 4xx errors, or 5xx failures.</label>
-                        </div>
-                        
-                        
+                        <div class="meta-content">
+                          <div class="accor-content">
+                              <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="broken_links" checked="">
+                                <label class="form-check-label" for="broken_links">
+                                Check for all broken links(links that do not have 200 status code)
+                                </label>
+                              </div>
+                              <div class="form-check">
+                                <input class="form-check-input hideInputCheck" type="checkbox" id="broken_links_exclude_urls">
+                                <label class="form-check-label" for="broken_links_exclude_urls">
+                                                      Exclude specific URLs from broken links check
+                              </label>
+                            </div>
+                            <div class="hideInputCheckElement" style="display: none;">
+                              <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                                Ignore List
+                              </a>
+                              <div class="mt-2" id="brokenLinksExcludedPreview"></div>
+                            </div>
                           </div>
-                          <div class="home-content-button" style="display:none;">
+                          <div class="home-content-button">
                             <input
                               class="btn-cancel btn btn_primary rounded-pill"
                               type="submit"
@@ -5040,176 +5131,228 @@
           <!-- Designed Area end -->
 
 
-          <!-- problems Area Start -->
-          <div class="problems_area">
-            <div class="home_section_title">
-              <h2>Solve Website Issues Before They Hurt Your Growth</h2>
-              <p>
-                WebQA helps you uncover and fix the issues holding your website back — from slow-loading pages and broken meta tags to poor security and missed best practices. With clear insights and customizable audits, you can resolve problems early, boost performance, and keep your site search-engine and user-friendly.
-              </p>
-            </div>
-            <div class="problems_content">
-              <div class="problem_left_content">
-                <div class="accordion" id="accordionExample">
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingOne">
-                      <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseOne"
-                        aria-expanded="true"
-                        aria-controls="collapseOne"
-                      >
-                        Website QA
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseOne"
-                      class="accordion-collapse collapse show"
-                      aria-labelledby="headingOne"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Spot errors, broken HTML tags, and performance issues instantly.
-                        </p>
+<!-- problems Area Start -->
+<div class="problems_area">
+  <div class="home_section_title">
+    <h2>Solve Website Issues Before They Hurt Your Growth</h2>
+    <p>
+      WebQA helps you uncover and fix the issues holding your website back — from slow-loading pages and broken meta tags to poor security and missed best practices. With clear insights and customizable audits, you can resolve problems early, boost performance, and keep your site search-engine and user-friendly.
+    </p>
+  </div>
 
-                        <a href="https://webqa.co/features/webpage-audit" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingTwo">
-                      <button
-                        class="accordion-button"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseTwo"
-                        aria-expanded="false"
-                        aria-controls="collapseTwo"
-                      >
-                        Website Tracker
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseTwo"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="headingTwo"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Monitor your site’s health and track changes over time.
-                        </p>
+  <div class="problems_content">
+    <div class="problem_left_content">
+      <div class="accordion" id="accordionExample">
 
-                        <a href="https://webqa.co/features/website-tracker" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingThree">
-                      <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseThree"
-                        aria-expanded="false"
-                        aria-controls="collapseThree"
-                      >
-                        Customised Audits
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseThree"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="headingThree"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Set your own rules and audit your site your way.
-                        </p>
-
-                        <a href="https://webqa.co/features/settings" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="accordion-item">
-                    <h2 class="accordion-header" id="headingFore">
-                      <button
-                        class="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target="#collapseFore"
-                        aria-expanded="false"
-                        aria-controls="collapseFore"
-                      >
-                        Reports
-                      </button>
-                    </h2>
-                    <div
-                      id="collapseFore"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="headingFore"
-                      data-bs-parent="#accordionExample"
-                    >
-                      <div class="accordion-body">
-                        <p>
-                          Get clear pass/fail results with actionable insights.
-                        </p>
-
-                        <a href="https://webqa.co/features/reports" class="tryFreeBtn">Learn more</a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="problem_right_content">
-                <img src="/new-assets/assets/images/home/problem-img.svg" alt="img" />
-              </div>
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingOne">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseOne"
+              aria-expanded="true"
+              aria-controls="collapseOne"
+              data-img="/new-assets/assets/images/home/problem-img-qa.png"
+            >
+              Website QA
+            </button>
+          </h2>
+          <div
+            id="collapseOne"
+            class="accordion-collapse collapse show"
+            aria-labelledby="headingOne"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Spot errors, broken HTML tags, and performance issues instantly.</p>
+              <a href="https://webqa.co/features/webpage-audit" class="tryFreeBtn">Learn more</a>
             </div>
           </div>
-          <!-- problems Area End -->
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingTwo">
+            <button
+              class="accordion-button"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseTwo"
+              aria-expanded="false"
+              aria-controls="collapseTwo"
+              data-img="/new-assets/assets/images/home/problem-img-tracker.png"
+            >
+              Website Tracker
+            </button>
+          </h2>
+          <div
+            id="collapseTwo"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingTwo"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Monitor your site’s health and track changes over time.</p>
+              <a href="https://webqa.co/features/website-tracker" class="tryFreeBtn">Learn more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingThree">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseThree"
+              aria-expanded="false"
+              aria-controls="collapseThree"
+              data-img="/new-assets/assets/images/home/problem-img-audits.png"
+            >
+              Customised Audits
+            </button>
+          </h2>
+          <div
+            id="collapseThree"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingThree"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Set your own rules and audit your site your way.</p>
+              <a href="https://webqa.co/features/settings" class="tryFreeBtn">Learn more</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="headingFore">
+            <button
+              class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapseFore"
+              aria-expanded="false"
+              aria-controls="collapseFore"
+              data-img="/new-assets/assets/images/home/problem-img-reports.png"
+            >
+              Reports
+            </button>
+          </h2>
+          <div
+            id="collapseFore"
+            class="accordion-collapse collapse"
+            aria-labelledby="headingFore"
+            data-bs-parent="#accordionExample"
+          >
+            <div class="accordion-body">
+              <p>Get clear pass/fail results with actionable insights.</p>
+              <a href="https://webqa.co/features/reports" class="tryFreeBtn">Learn more</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="problem_right_content">
+      <!-- Give the image an id so JS can update it -->
+      <img
+        id="problemAccordionImage"
+        src=""
+        alt="img"
+      />
+    </div>
+  </div>
+</div>
+<!-- problems Area End -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const imgEl = document.getElementById("problemAccordionImage");
+    const accordionEl = document.getElementById("accordionExample");
+
+    if (!imgEl || !accordionEl) return;
+
+    function setImgFromButton(btn) {
+      const newSrc = btn && btn.getAttribute("data-img");
+      if (newSrc) imgEl.src = newSrc;
+    }
+
+    // 1) Update image when an accordion button is clicked (works regardless of BS version)
+    accordionEl.addEventListener("click", function (e) {
+      const btn = e.target.closest(".accordion-button");
+      if (!btn) return;
+      setImgFromButton(btn);
+    });
+
+    // 2) Set initial image from the currently open panel (or first button as fallback)
+    const openCollapse = accordionEl.querySelector(".accordion-collapse.show");
+    if (openCollapse) {
+      const btn =
+        accordionEl.querySelector(`[data-bs-target="#${openCollapse.id}"]`) ||
+        accordionEl.querySelector(`[data-target="#${openCollapse.id}"]`);
+      setImgFromButton(btn);
+    } else {
+      // fallback: first accordion button
+      setImgFromButton(accordionEl.querySelector(".accordion-button"));
+    }
+  });
+</script>
+
+
+<!-- Steps Area Start -->
+    <section class="fcat4">
+      <div class="fcat4-mainD">
+        <h1 class="fcat4-mainD-h">Steps for Website Auditing</h1>
+        <div class="fcat4-mainD-cards">
+          <div class="fcat4-mainD-d-card">
+            <img src="{{ asset('new-assets/assets/images/home/step-1.png') }}" alt="">
+            <div class="fcat4-mainD-d-card-ld">
+              <div class="fcat4-mainD-d-card-d1">
+                <h6>1</h6>
+              </div>
+              <div class="fcat4-mainD-d-card-ldd"></div>
+            </div>
+            <div class="fcat4-mainD-d-card-d2">
+              <h6>Define your acceptance criteria</h6>
+              <p>Define acceptance criteria for each tests, to ensure your website meets a given quality standard.</p>
+            </div>
+          </div>
+          <div class="fcat4-mainD-d-card">
+            <img src="{{ asset('new-assets/assets/images/home/step-2.png') }}" alt="">
+            <div class="fcat4-mainD-d-card-ld">
+              <div class="fcat4-mainD-d-card-d1">
+                <h6>2</h6>
+              </div>
+              <div class="fcat4-mainD-d-card-ldd"></div>
+            </div>
+            <div class="fcat4-mainD-d-card-d2">
+              <h6>Align team members on the same page</h6>
+              <p>Align development, marketing, design, content - bring clarity and align team members on the same page.</p>
+            </div>
+          </div>
+          <div class="fcat4-mainD-d-card">
+            <img src="{{ asset('new-assets/assets/images/home/step-3.png') }}" alt="">
+            <div class="fcat4-mainD-d-card-ld">
+              <div class="fcat4-mainD-d-card-d1">
+                <h6>3</h6>
+              </div>
+              <div class="fcat4-mainD-d-card-ldd" style="opacity:0;"></div>
+            </div>
+            <div class="fcat4-mainD-d-card-d2">
+              <h6>Ensure highest quality and standards</h6>
+              <p>Scan your website for issues, fix them and ensure the highest level of quality and standards.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+<!-- Steps Area End -->
 
 
           <!-- assurance Area Start -->
-          <div class="assurance_area">
-            <div class="assurance_content">
-              <div class="assurance_left_content">
-                <h2>
-                  3 Steps to improve your website quality assurance process
-                </h2>
-                <div class="assurance_left_img">
-                  <img src="/new-assets/assets/images/home/assurance.png" alt="img" />
-                </div>
-              </div>
-              <div class="assurance_right_content">
-                <p>
-                  We give you a completely customisable Quality assurance tool
-                  using which you can design a quality assurance process for
-                  your website. The website quality assurance tool covers
-                  Technical SEO checks,Pagespeed checks, Mobile responsiveness,
-                  and HTML best practices. Apart from this, you can setup a
-                  website tracker and setup alerts for your website, so that
-                  when something is broken you are immediately informed via
-                  email and SMS notifications.
-                </p>
-                <div class="assurance_right_bottom_content">
-                  <img src="/new-assets/assets/images/home/hand.png" alt="img" />
-                  <h3>Bring people on the same page</h3>
-
-                  <p>
-                    The biggest problem in a quality assurance process for a
-                    website is bringing people on the same page. This includes
-                    Web developers, project managers, Marketing Analysts,
-                    Designers and other team members working collaboratively on
-                    a single website.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+          
           <!-- assurance Area End -->
 
          <!-- customisable Area Start -->
@@ -5302,7 +5445,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-seo.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5328,7 +5471,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-performance.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5354,7 +5497,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-performance.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5380,7 +5523,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-best-practices.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>
@@ -5406,7 +5549,7 @@
                     <div
                       class="home_images_tab_right"
                       style="
-                        background: url(/new-assets/assets/images/home/home-images-tab.png)
+                        background: url(/new-assets/assets/images/home/group-security.png)
                           no-repeat scroll center center / cover;
                       "
                     ></div>

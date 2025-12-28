@@ -11,49 +11,38 @@
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Doctype</h2>
 
-    <p>In the web design and development landscape, certain markers guide browsers on correctly interpreting and displaying a webpage. One such pivotal marker is the Doctype.</p>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>A DOCTYPE is the first line of an HTML document that tells browsers which HTML standard to expect and helps them render your page in a given Standards Mode. DOCTYPE stands for Document Type Declaration.</p>
+  <ol>
+    <li>The DOCTYPE is an instruction to the browser, not an HTML tag.</li>
+    <li>A correct DOCTYPE helps browsers render pages consistently using Standards Mode instead of Quirks Mode.</li>
+    <li>For modern websites, the recommended DOCTYPE is the simple HTML5 declaration: <code>&lt;!DOCTYPE html&gt;</code>.</li>
+    <li>Missing or incorrect doctypes can cause layout inconsistencies across browsers (spacing, box model issues, typography, etc.).</li>
+    <li>Checking DOCTYPE is a quick, high-impact best practice in technical SEO and QA workflows.</li>
+  </ol>
+</div>
 
-    <h3>What is the Doctype?</h3>
-    <p>The Doctype (<code>&lt;!DOCTYPE&gt;</code>) declaration stands at the forefront of every HTML document. Think of Doctype as the rulebook that tells browsers which version of HTML or XHTML the document uses. By understanding this version, browsers can render the page accurately, ensuring that users see the webpage as the designer intended.</p>
 
-    <p>The Doctype Declaration should always be the initial line in an HTML document, though comments can precede it if necessary.</p>
+<h3>What is a DOCTYPE?</h3>
+<p>A DOCTYPE declaration tells the browser what type of document it is about to read, so it can choose the right rendering rules.</p><p>A doctype declaration is added at the top of the HTML document, an example is shown below:</p>
+<div class="code-block">
+  <code>
+    <span class="token-tag">&lt;!DOCTYPE</span> <span class="token-attr">html</span><span class="token-tag">&gt;</span><br>
+  </code>
+</div>
+<p>The DOCTYPE should be the very first thing in your HTML before &lt;html&gt;, before &lt;head&gt;, before &lt;body&gt; and before any comments.</p>
 
-    <p>Here is a sample of how the Doctype declaration would look:</p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_doctype_1.png') }}"  class="img-fluid my-4">
+<h3>Why Does DOCTYPE Matter?</h3>
+<p>Even if your page “looks fine” today, DOCTYPE can cause subtle problems that turn into bigger QA issues later.</p>
+<ul>
+<li><b>It helps browsers render the page correctly</b> - With the right DOCTYPE, browsers generally use a modern standards-based rendering approach (Standards Mode). Without it, some browsers may fall back to Quirks Mode behaviors.</li>
+<li><b>It reduces cross-browser layout surprises</b> - DOCTYPE issues can show up as annoying inconsistencies like unexpected spacing and margins, differences in box sizing behavior, table and form layout weirdness, font sizing differences</li>
+</ul>   
 
+<p>Browsers typically choose either between "Standards mode" or "Quirks mode". The standards mode supports modern rendering rules while the quirks mode is legacy behaviors meant to support older web pages.</p>
+<p>A correct HTML5 DOCTYPE strongly encourages Standards Mode.</p>
 
-    <pre><code>&lt;!DOCTYPE html&gt;</code></pre>
-
-    <h3>The Evolution and Importance of Doctype</h3>
-    <p>HTML, the foundational language of the web, has seen numerous iterations since its conception. With its evolution, the need to distinguish between various versions became evident, leading to the introduction of Doctype. In the initial stages of HTML, browsers often rendered content in 'quirks mode,' attempting to display content even if it wasn't standard-compliant. However, as more structured versions like HTML4, XHTML, and the prevalent HTML5 emerged, browsers moved towards a 'standards mode,' referencing the Doctype to understand which rules should be applied.</p>
-
-    <p>Today, in a digital era emphasizing consistent user experiences, the importance of Doctype cannot be overstated. It acts as:</p>
-
-    <ul>
-      <li><b>Mode Selector:</b> Guiding browsers between 'quirks mode' and 'standards mode' ensures content is uniformly presented across different browsers.</li>
-      <li><b>Validation Tool:</b> When developers validate their code, Doctype specifies which version's rules should be checked against.</li>
-      <li><b>Professionalism Indicator:</b> Utilizing the appropriate Doctype is a nod to upholding web standards and best practices.</li>
-    </ul>
-
-    <h3>Do's and Don'ts For Doctype</h3>
-
-    <b>✅ Do's:</b>
-    <ul>
-      <li>Always declare the Doctype at the very beginning of an HTML document.</li>
-      <li>Choose the appropriate Doctype based on your design needs and your HTML version.</li>
-    </ul>
-
-    <b>❌ Don'ts:</b>
-    <ul>
-      <li>Avoid omitting the Doctype. A missing Doctype may push browsers into quirks mode, leading to inconsistent rendering.</li>
-      <li>Don't use outdated Doctypes unless you are maintaining legacy projects.</li>
-    </ul>
-
-    <p>✨ <b>Bonus Tip:</b> The <code>&lt;!DOCTYPE&gt;</code> declaration is <b>NOT</b> case-sensitive.</p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_doctype_2.png') }}"  class="img-fluid my-4">
-
-    <h3>Conclusion</h3>
-    <p>The Doctype is a foundational pillar in web development, ensuring that browsers interpret and display content as intended. Providing this clarity at the onset of a document upholds the integrity of web designs and acts as a beacon of best practices. It's a testament to the web's evolution and an essential tool that guarantees uniformity and precision across various browsers.</p>
 
     <!-- Start FAQ -->
     <div class="getting-recover-main recover-faq-area">

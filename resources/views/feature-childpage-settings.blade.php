@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'fcps'])
 
 @section('title', 'Define Project-Wide Audit Rules in Settings | Webqa')
 @section('meta-description', 'Set acceptance criteria for each test—title length, casing, “must not equal H1,” and more. Apply rules across audits and tools for consistent Pass/Fail results.')
@@ -6,7 +6,7 @@
 @section('og-title', 'Settings: Define Project-Wide Audit Rules | Webqa')
 @section('og-description', 'Configure the criteria that power your checks. Choose only the parameters you need and ensure consistent, standards-based results across audits and bulk tools.')
 @section('og-url', 'https://webqa.co/features/settings')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/features-settings.png')
 @section('og-image-alt', 'Settings')
 
 @section("content")

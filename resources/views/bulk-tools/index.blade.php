@@ -6,7 +6,7 @@
     <!-- main sections starts -->
     <main class="main-sections blog-padding">
       <div class="inner_content">
-        <div class="container-fluid">
+        <div class="container-fluid tools-landingpage-container">
           <!-- tools page root start -->
           <div class="tools-root-main-area">
             <!-- tools title area start -->
@@ -118,7 +118,7 @@
                       
                       <div class="tools-root-item">
                         <div class="root-icon">
-                           <img src="/new-assets/assets/images/tools-root/broken.svg" alt="icon">
+                           <img src="/new-assets/assets/images/tools-root/url-slug.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'url-slug'])}}">URL Slug</a>
@@ -218,7 +218,7 @@
                       <!-- XMl Sitemap -->
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/title.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/xml-sitemap.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'xml-sitemap'])}}">XML Sitemap</a>
@@ -230,7 +230,7 @@
                       <!-- HTML Sitemap -->
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/graph.png" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/html-sitemap.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'html-sitemap'])}}">HTML Sitemap</a>
@@ -528,10 +528,10 @@
                       <!-- Broken Links  -->
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/unsafe_cross.svg" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/broken-links.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'frameset'])}}">Broken Links</a>
+                          <a href="{{route('tool', ['slug'=>'broken-links'])}}">Broken Links</a>
                           <p>Frames divide your browser window into several portions, each of which can load a different HTML document. Users and search engine robots both have problems with frames.</p>
                         </div>
                       </div>
@@ -552,7 +552,7 @@
                       <!-- Unsafe cross origin links -->
                       <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/unsafe_cross.svg" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/unsafe-cross-origin-links.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'unsafe-cross-origin-links-test'])}}">Unsafe Cross Origin Links</a>
@@ -564,7 +564,7 @@
                        
                        <div class="tools-root-item">
                         <div class="root-icon">
-                          <img src="/new-assets/assets/images/tools-root/broken.svg" alt="icon">
+                          <img src="/new-assets/assets/images/tools-root/protocol-relative-resource-links.svg" alt="icon">
                         </div>
                         <div class="root-content">
                           <a href="{{route('tool', ['slug'=>'protocall-relative-resource-links-test'])}}">Protocal Relative Resource Links</a>

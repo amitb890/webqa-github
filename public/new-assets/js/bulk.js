@@ -137,6 +137,9 @@ class UI{
     static getBrokenLinks(allLinks){
         let html = ""
         let i = 0
+        let brokenUrls = []
+        
+        // Collect all broken URLs first
         for (var key in allLinks) {
           if (allLinks.hasOwnProperty(key)) {
               let status
@@ -144,31 +147,47 @@ class UI{
   
               if(state == "fulfilled"){
                 const value = allLinks[key]["value"];
-  
                 status = value["status"]
               }else{
                 status = 404
               }
   
               if(status != 200 && status != 0 && status != 405){
-                i++
-  
-                html+=`
-                <p>
-                    <span>${i}</span>
-                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.3333 5.33333C11.1565 5.33333 10.987 5.40357 10.8619 5.5286C10.7369 5.65362 10.6667 5.82319 10.6667 6V10C10.6667 10.1768 10.5964 10.3464 10.4714 10.4714C10.3464 10.5964 10.1768 10.6667 10 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H6C6.17681 1.33333 6.34638 1.2631 6.4714 1.13807C6.59643 1.01305 6.66667 0.843478 6.66667 0.666667C6.66667 0.489856 6.59643 0.320286 6.4714 0.195262C6.34638 0.0702379 6.17681 0 6 0H2C1.46957 0 0.960859 0.210714 0.585787 0.585787C0.210714 0.960859 0 1.46957 0 2V10C0 10.5304 0.210714 11.0391 0.585787 11.4142C0.960859 11.7893 1.46957 12 2 12H10C10.5304 12 11.0391 11.7893 11.4142 11.4142C11.7893 11.0391 12 10.5304 12 10V6C12 5.82319 11.9298 5.65362 11.8047 5.5286C11.6797 5.40357 11.5101 5.33333 11.3333 5.33333Z" fill="#8F8F8F"></path>
-                    <path d="M8.66532 1.33333H9.71866L5.52532 5.52C5.46284 5.58198 5.41324 5.65571 5.3794 5.73695C5.34555 5.81819 5.32812 5.90533 5.32812 5.99333C5.32812 6.08134 5.34555 6.16848 5.3794 6.24972C5.41324 6.33096 5.46284 6.40469 5.52532 6.46667C5.5873 6.52915 5.66103 6.57875 5.74227 6.61259C5.82351 6.64644 5.91065 6.66387 5.99866 6.66387C6.08667 6.66387 6.1738 6.64644 6.25504 6.61259C6.33628 6.57875 6.41002 6.52915 6.47199 6.46667L10.6653 2.28V3.33333C10.6653 3.51014 10.7356 3.67971 10.8606 3.80474C10.9856 3.92976 11.1552 4 11.332 4C11.5088 4 11.6784 3.92976 11.8034 3.80474C11.9284 3.67971 11.9987 3.51014 11.9987 3.33333V0.666667C11.9987 0.489856 11.9284 0.320286 11.8034 0.195262C11.6784 0.0702379 11.5088 0 11.332 0H8.66532C8.48851 0 8.31894 0.0702379 8.19392 0.195262C8.0689 0.320286 8.00061 0.489856 8.00061 0.666667C8.00061 0.843478 8.07085 1.01305 8.19587 1.13807C8.3209 1.2631 8.49047 1.33333 8.66728 1.33333Z" fill="#8F8F8F"></path>
-                    </svg>
-                    <a href="${key}" target="_blank">${key}</a>
-                    <strong>${status}</strong>
-                </p>`
+                brokenUrls.push({url: key, status: status})
               }
           }
         }
-        if(i === 0){
-            html = "NA"
+        
+        if(brokenUrls.length === 0){
+            return "NA"
         }
+        
+        // Add table header
+        html += `<table class="bulk-broken-links-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>URL</th>
+              <th>HTTP Status Code</th>
+            </tr>
+          </thead>
+          <tbody>`
+        
+        // Display broken links
+        brokenUrls.forEach((item, index) => {
+          
+          html+=`<tr>
+            <td class="serial-number">${index+1}</td>
+            <td>
+              <div class="url-cell">
+                <a href="${item.url}" target="_blank"><span class="broken-link-url">${item.url}</span></a>
+              </div>
+            </td>
+            <td><strong>${item.status}</strong></td>
+          </tr>`
+        })
+        
+        html += `</tbody></table>`
         return html
     }
   
@@ -204,7 +223,7 @@ class UI{
     }
 
 
-    static getTableTop(label, slug){
+static getTableTop(label, slug){
         let div = ""
         let csvName = this.prepareCsvName(slug);
         if(label === "og:title"){
@@ -215,10 +234,10 @@ class UI{
                 <div class="table-cat-element" data-name="table_og_url"><span>Open Graph URL</span></div>
                 <div class="table-cat-element" data-name="table_og_image"><span>Open Graph Image</span></div>
             </div>
-            <div class="download_result">
+            <div class="download_result bulk-download-result">
                 <ul>
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
+                    
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
                 </ul>
                 </div>
@@ -231,22 +250,22 @@ class UI{
                 <div class="table-cat-element" data-name="table_twitter_image"><span>Twitter Image</span></div>
                 <div class="table-cat-element" data-name="table_twitter_image_alt"><span>Twitter Image Alt</span></div>
             </div>
-            <div class="download_result">
+            <div class="download_result bulk-download-result">
                 <ul>
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
+                    
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
                 </ul>
                 </div>
             </div>`
         }else if(label === "img"){
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+                    <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
                     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
 
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -256,12 +275,13 @@ class UI{
             `
         }else if(label === "page_speed_google_lighthouse" || label === "page_speed_google" || label === "page_speed_google_core"){
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk download-csv-bulk-rowspan website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+                <!--   <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+                    <li class='download-csv-bulk download-csv-bulk-rowspan website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                <!--    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
 
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -272,13 +292,14 @@ class UI{
         } 
         else if(label === "title"){
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
-                   
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+                <!--   <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+               <!-- <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
+
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
                     </ul>
@@ -288,12 +309,13 @@ class UI{
         }
         else{
             div = `
-            <div class="download_result">
-                <ul class="datatable_download_result">
-                    <li>Download:</li>
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/htdocs.png" alt="icon" title="Download XLSX"></button></li>
+            <div class="download_result bulk-download-result">
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    
+          <!--         <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
+                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+                <!--     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
                     </ul>
@@ -354,6 +376,7 @@ class UI{
 
 $( document ).ready(function() {
     Controls.init()
+    toggleTestResultAreaVisibility();
     const label = JSON.parse($("#data_value").val())
     let results = [], resultsFailed = [], resultsPassed = []
     let activeUpdateData
@@ -445,9 +468,28 @@ $( document ).ready(function() {
   
 
 
-    function clearTables(){
-        $(".test_result_area").html("")
-    }
+function clearTables(){
+    $(".test_result_area").html("");
+    toggleTestResultAreaVisibility();
+}
+
+
+function toggleFailedListVisibility() {
+    const el = document.querySelector(".failed-list");
+    if (!el) return;
+
+    // Hide when empty (or only whitespace)
+    el.style.display = el.textContent.trim().length ? "" : "none";
+}
+
+function toggleTestResultAreaVisibility() {
+    const el = document.querySelector(".test_result_area");
+    if (!el) return;
+
+    // Hide when empty (or only whitespace)
+    el.style.display = el.innerHTML.trim().length ? "" : "none";
+}
+
 
 
     function startTest(){
@@ -728,7 +770,7 @@ $( document ).ready(function() {
  
     function buildFailedList(list){
         const p = document.createElement("p")
-        p.innerHTML = "Some urls were not tested, <a href='javascript:void()' id='showFailedModal'>Click here</a> to view them."
+        p.innerHTML = "Some URLs weren’t tested because they returned 404 (Not Found). <a href='javascript:void()' id='showFailedModal'>View details</a>"
         document.querySelector(".failed-list").appendChild(p)
         const ol = document.createElement("ol")
         list.forEach(data=>{
@@ -737,6 +779,7 @@ $( document ).ready(function() {
             ol.appendChild(li)
         })
         document.querySelector(".failed-list-data").appendChild(ol)
+        toggleFailedListVisibility(); 
     }
 
     function convertObjToIntVal(obj){
@@ -764,6 +807,8 @@ $( document ).ready(function() {
               <div class="table-responsive">
               ${UI.getTableTop(label.name, label.slug)}
             </div>`;
+        
+        toggleFailedListVisibility(); // hides it initially
 
         const table = document.createElement("table")
         table.classList.add("table")
@@ -803,12 +848,12 @@ $( document ).ready(function() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td class="text-center">${i+1}</td>
-                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left content-td">${result.content != null ? result.content : "-"}</td>
-                    <td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
-                    <td class="${settings.is_title_equal_h1 ? "" : "d-none hidden-element"}">No</td>
-                    <td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
-                    <td class="${result.status ? "result_pass" : "result_fail"} strong" ><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
+                    <td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "d-none hidden-element"}" style="text-align:center;">${result.content != null ? result.content.length : 0}</td>
+                    <td class="${settings.is_title_equal_h1 ? "" : "d-none hidden-element"}" style="text-align:center;">No</td>
+                    <td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "d-none hidden-element"}" style="text-align:center;">${result.casing ? result.casing : "-"}</td>
+                    <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                     `
                     tbody.appendChild(tr)
                 })
@@ -1271,18 +1316,18 @@ $( document ).ready(function() {
                         table.classList.add("custom-dataTable")  
                         thead = `<thead class="result_data_header">
                         <tr>
-                            <th>#</th>
-                            <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                            <th>Result</th>
+                            <th style="width:3%;">#</th>
+                            <th class="result_header" style="width:60%;"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                            <th style="width:37%;">Result</th>
                         </tr>
                         </thead>`
 
                         results.forEach((result, i)=>{
                             const tr = document.createElement("tr")
                             tr.innerHTML = `
-                            <td>${i+1}</td>
+                            <td style="text-align:center;">${i+1}</td>
                             <td class="align-left">${result.tested_url}</td>
-                            <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
+                            <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                             `
                             tbody.appendChild(tr)
                         })
@@ -1614,54 +1659,54 @@ $( document ).ready(function() {
                 table.classList.add("custom-dataTable")
                 thead = `<thead class="result_data_header">
              <tr>
-                <th>#</th>
-                <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                <th class="export-hidden-element">Output</th>
-                <th>Result</th>
+                <th style="width:3%;">#</th>
+                <th class="result_header" style="width:60%;"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                <th class="export-hidden-element" style="width:18%;">Output</th>
+                <th style="width:10%;">Result</th>
             </tr>
             </thead>`
 
             results.forEach((result, i)=>{
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
-                <td>${i+1}</td>
+                <td style="text-align:center;">${i+1}</td>
                 <td class="align-left">${result.tested_url}</td>
-                <td class="export-hidden-element">${result.message}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong">${result.status ? "PASS" : "FAIL"}
+                <td class="export-hidden-element" style="text-align:center;">${result.message}</td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;font-weight:bold;">${result.status ? "PASS" : "FAIL"}
                 <span class="export-hidden-element">
                 <br><br>
              
                 ${result.status ? `` : `<span data-bs-toggle="modal" data-bs-target="#crossOriginModal${i}" 
-                style="cursor: pointer;">List of Links</span>`}
+                style="cursor: pointer;font-weight:normal;font-size:12px;color:#6e6e6e;">List of Links</span>`}
                 
 
                 
                 <div class="modal custom-modal" id="crossOriginModal${i}">
                 <div class="modal-dialog">
-                  <div class="modal-content">
+                  <div class="modal-content" style="border-radius:7px;">
                   <!-- Modal Header -->
-                    <div class="modal-header">
-                     <span class="modal-title">Cross origin links</span>
-                     <span  class="tool-test-close close modal-close" data-bs-dismiss="modal">&times;</span>
+                    <div class="modal-header" style="background: #f4f7fe;border-radius:7px;">
+                     <h1 class="modal-title fs-5" style="font-weight:bold;">Unsafe cross origin links</h1>
+                     <button type="button" class="btn-close" style="cursor:pointer;" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                  <!-- Modal Body -->
-                 <div class="modal-body">
-                 <span style="padding-bottom: 10px;" class="analysis-body-css">Below are the links found on this page which qualify as Cross origin links.</span>
-                 <div class="modal-table-div">
-                 <table class="tool-table">
+                 <div class="modal-body" style="text-align:left;font-weight:normal;">
+                 <p style="margin-bottom:20px;">Below are the cross-origin links found on this page.</p>
+                 
+
+                 <table class="tool-table" style="background:#FFFFFF;border:1px solid #FFFFFF;">
 
           <tbody>          
                  ${result.crossOriginLinksData.map((item, index) => `
                        <tr>
-                         <td>${index + 1}</td>
-                         <td>
-                         <span><a href="${item}" target="_blank"><i class="fas fa-external-link-alt" style="color:#c3c9d1"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
+                         <td style="width:5%">${index + 1}</td>
+                         <td><span><a href="${item}" target="_blank">${item}</a></span>
                          </td>
                      </tr>
                      `).join('')}   
                            </tbody>  
                 </table>
-                </div>
+
                 </div>
                <!-- Modal Footer -->
              </div>
@@ -1749,23 +1794,144 @@ $( document ).ready(function() {
                     <tr>
                         <th>#</th>
                         <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                        <th># of broken links</th>
+                        <th>Internal</th>
+                        <th>External</th>
+
+                        
                         <th>List of broken links</th>
                         <th>Result</th>
                     </tr>
                 </thead>`
-
+                
+                // Create single modal outside the loop (check if it already exists)
+                let brokenLinksModal = document.getElementById("brokenLinksModal")
+                if(!brokenLinksModal){
+                    brokenLinksModal = document.createElement("div")
+                    brokenLinksModal.className = "modal fade meta-list-brokenBody"
+                    brokenLinksModal.id = "brokenLinksModal"
+                    brokenLinksModal.setAttribute("aria-labelledby", "exampleModalToggleLabel")
+                    brokenLinksModal.setAttribute("tabindex", "1")
+                    brokenLinksModal.setAttribute("aria-hidden", "true")
+                    brokenLinksModal.style.display = "none"
+                    brokenLinksModal.innerHTML = `
+                        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <div>
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                                            List of broken links
+                                        </h1>
+                                    </div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" style="overflow-x: hidden;">
+                                    <div class="card-body bulk-broken-links-modal">
+                                        <div class="meta-list-single" id="brokenLinksModalContent" style="overflow-x: hidden;">
+                                            <!-- Content will be dynamically updated here -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer-alert"></div>
+                            </div>
+                        </div>
+                    `
+                    // Append modal to body (outside table)
+                    document.body.appendChild(brokenLinksModal)
+                }
+                
+                // Initialize or get Bootstrap modal instance
+                let brokenLinksModalInstance = bootstrap.Modal.getInstance(brokenLinksModal)
+                if(!brokenLinksModalInstance){
+                    brokenLinksModalInstance = new bootstrap.Modal(brokenLinksModal, {
+                        keyboard: false
+                    })
+                }
+                
+                // Store broken links data for each row (use window or a more accessible scope)
+                if(!window.brokenLinksData){
+                    window.brokenLinksData = []
+                } else {
+                    window.brokenLinksData = [] // Reset for new table
+                }
+                
             results.forEach((result, i)=>{
                 const tr = document.createElement("tr")
+                
+                // Determine what to show in the "List of broken links" column
+                let listOfBrokenLinksContent = ""
+                
+                if(result.status_url){
+                    // URL was parsed successfully
+                    const totalBroken = result.totalBrokenLinks != null ? result.totalBrokenLinks : 0
+                    
+                    if(totalBroken > 0){
+                        // Store broken links data for this row
+                        window.brokenLinksData[i] = {
+                            allLinks: result.allLinks,
+                            tested_url: result.tested_url,
+                            totalBroken: totalBroken
+                        }
+                        
+                        // Has broken links - show clickable link
+                        listOfBrokenLinksContent = `<span class="show-broken-links-modal" data-row-index="${i}" style="cursor: pointer; color: #3A7CEC; text-decoration: underline;">List of Broken link</span>`
+                    } else {
+                        // No broken links (totalBrokenLinks is 0) - show message
+                        listOfBrokenLinksContent = result.message || "No broken links found"
+                    }
+                } else {
+                    // URL parsing failed - show error message
+                    listOfBrokenLinksContent = result.message
+                }
+                
                 tr.innerHTML = `
                 <td>${i+1}</td>
                 <td class="align-left">${result.tested_url}</td>
-                <td class="align-left">${result.status_url ? result.totalBrokenLinks != null ? result.totalBrokenLinks : 0 : "NA"}</td>
-                <td class="align-left">${result.status_url ? UI.getBrokenLinks(result.allLinks, false) : result.message}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}<td>`
+                <td class="align-left">${result.status_url ? result.internal != null ? result.internal.length  : 0 : "NA"}</td>
+                <td class="align-left">${result.status_url ? result.external != null ? result.external.length  : 0 : "NA"}</td>
+
+                <td class="align-left">${listOfBrokenLinksContent}</td>
+                <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>`
                 tbody.appendChild(tr)
             })
+            
+            // Add click event handler for "List of Broken link" links (using event delegation)
+            $(document).off('click', '.show-broken-links-modal').on('click', '.show-broken-links-modal', function(e){
+                e.preventDefault()
+                e.stopPropagation()
+                const rowIndex = parseInt($(this).data('row-index'))
+                const rowData = window.brokenLinksData && window.brokenLinksData[rowIndex]
+                
+                if(rowData && rowData.allLinks){
+                    // Generate broken links HTML
+                    const brokenLinksHtml = UI.getBrokenLinks(rowData.allLinks, false)
+                    
+                    // Update modal content
+                    const modalContent = document.getElementById('brokenLinksModalContent')
+                    if(modalContent){
+                        modalContent.innerHTML = brokenLinksHtml
+                        
+                        // Get or create modal instance
+                        const modalElement = document.getElementById('brokenLinksModal')
+                        let modalInstance = bootstrap.Modal.getInstance(modalElement)
+                        if(!modalInstance){
+                            modalInstance = new bootstrap.Modal(modalElement, {
+                                keyboard: false
+                            })
+                        }
+                        
+                        // Show modal
+                        modalInstance.show()
+                    } else {
+                        console.error('Modal content element not found')
+                    }
+                } else {
+                    console.error('Row data or allLinks not found for index:', rowIndex)
+                }
+            })
+            
+            createDatatableElement();    
             break;
+
 
             case "headings-test":
                 table.classList.add("dataTable")
@@ -2044,20 +2210,20 @@ $( document ).ready(function() {
             table.classList.add("custom-dataTable")
             thead = `<thead class="result_data_header">
              <tr>
-                <th>#</th>
-                <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
-                <th>Meta Viewport Tag Present?</th>
-                <th>Result</th>
+                <th style="width:3%;">#</th>
+                <th class="result_header" style="width:60%;"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                <th style="width:19%;">Meta viewport tag present?</th>
+                <th style="width:18%;">Result</th>
             </tr>
             </thead>`
 
             results.forEach((result, i)=>{
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
-                <td>${i+1}</td>
+                <td style="text-align:center;">${i+1}</td>
                 <td class="align-left">${result.tested_url}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "Yes" : "No"}</strong></td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "Yes" : "No"}</strong></td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                 `
                 tbody.appendChild(tr)
             })
@@ -2142,6 +2308,8 @@ $( document ).ready(function() {
         table.appendChild(tbody)
 
         $(".test_result_area .table-responsive").append(table)
+        
+        toggleTestResultAreaVisibility();
 
         if ($('.custom-dataTable').length) {
             var datatableClass =  'custom-dataTable';
@@ -2325,9 +2493,12 @@ $( document ).ready(function() {
                 <span>Show rows:</span>
                 <select name="" id="rows-per-page" class="btn btn-outline-gray">
                     <option value="10">10</option>
-                    <option value="20">20</option>
                     <option value="30">30</option>
-                    <option value="40">40</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                    <option value="-1">All</option>
                 </select>
             </div>
         </div>`;
@@ -2371,7 +2542,10 @@ $( document ).ready(function() {
     
         // Change the page length when the rows per page selector is changed
         $rowsPerPage.change(function () {
-            tableImg.page.len($(this).val()).draw();
+            var selectedValue = $(this).val();
+            // Convert to integer, -1 means show all rows
+            var pageLength = parseInt(selectedValue);
+            tableImg.page.len(pageLength).draw();
             updatePaginationInfo();
         });
     

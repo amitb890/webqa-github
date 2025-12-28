@@ -238,10 +238,14 @@
                           <div class="form-card-title">
                             <h3>Enter URLs list</h3>
                           </div>
+                     
                           <div class="form-card-input urls-list-container">
-                            <textarea class="form-control" rows="10" id="urlsList">
-
+                            {{-- <div class="urlsList-numbers" id="urlsListNumbers"></div> --}}
+                            <textarea class="form-control urlsList" rows="10" id="urlsList">
                             </textarea>
+                              <div class="custom-scrollbar">
+                                  <div class="custom-thumb"></div>
+                              </div>
                           </div>
 
                           <div class="onboard-form-button">

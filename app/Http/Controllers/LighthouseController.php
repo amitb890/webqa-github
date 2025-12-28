@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\RunLighthouseTest;
 use App\Models\LighthouseTest;
 use App\Models\LighthouseResult;
+use App\Models\Projects;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Controllers\ProjectsController;
@@ -56,6 +57,18 @@ class LighthouseController extends Controller
 
 
 
+
+    }
+
+
+    public function updateGoogleRecheckActiveUrls(Request $request)
+    {
+        $urlsCount = $request->input('urls_count');
+        $projectId = $request->input('project_id');
+       
+
+        $project = Projects::find($projectId)->first();
+        $project->update(['google_urls_checked_active' => $urlsCount]);
 
     }
 

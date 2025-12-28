@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'frp'])
 
 @section('title', 'Features that Turn Audits into Action | Webqa')
 @section('meta-description', 'Explore Webqa features—Webpage Audit, Website Tracker, Reports, and Settings. Set your standards, audit any URL, share results, and export PDF/CSV/XLSX.')

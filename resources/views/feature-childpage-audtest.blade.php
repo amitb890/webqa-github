@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'fcpwa'])
 
 @section('title', 'Run Precise Webpage Audits with Clear Pass/Fail | Webqa')
 @section('meta-description', 'Audit any URL against your standards. Set criteria like title length and casing, get Pass/Fail results, share analysis links, and export PDF/CSV/XLSX.')
@@ -6,7 +6,7 @@
 @section('og-title', 'Custom Webpage Audits with Shareable Results | Webqa')
 @section('og-description', 'Define acceptance criteria, test any page, and see decisive Pass/Fail outcomes. Each analysis includes a shareable URL and exports to PDF/CSV/XLSX.')
 @section('og-url', 'https://webqa.co/features/webpage-audit')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/features-webpage-audit.png')
 @section('og-image-alt', 'Webpage audit')
 
 @section("content")
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="fcs1-d2" id="fcat1-d2">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/iP7k4x-MRCSU9zvi8Cz4-Photoroom-1.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-hero.png') }}" alt="">
         </div>
      </section>
     <!-- Section 1 Ends -->
@@ -60,11 +60,10 @@
                 </p> 
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card-2">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1065.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-health-score.png') }}" alt="webpage audit test - health score">
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card">
-                <img
-                 src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1066.svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-metrics.png') }}" alt="webpage audit test - metrics">
             </div>
             <div class="fcwt2-d2-card-d padding-left" id="fcat2-d2-card-d-4">
                 <h3>
@@ -88,10 +87,10 @@
                 </p>
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card-6">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1065-(1).svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-improvements.png') }}" alt="">
             </div>
             <div class="fcwt2-d2-card" id="fcat3-d2-card-7">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/Group-1066-(1).svg') }}" alt="">
+                <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/audit-test-seo.png') }}" alt="">
             </div>
             <div class="fcwt2-d2-card-d padding-left" id="fcat3-d2-card-d-8">
                 <h3>
@@ -113,7 +112,7 @@
         <h1 class="fcat4-mainD-h">Steps for Website Auditing</h1>
         <div class="fcat4-mainD-cards">
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/left-card.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/step1.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>1</h6>
@@ -126,7 +125,7 @@
             </div>
           </div>
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/center-card.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/step2.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>2</h6>
@@ -139,7 +138,7 @@
             </div>
           </div>
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/right-card.svg') }}" alt="">
+            <img src="{{ asset('new-assets/assets/images/feature-childpage-audtest/step3.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>3</h6>
@@ -168,47 +167,59 @@
                 <div class="as6-cards">
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I retrieve my password?</h5>
+                            <h5 class="as6-card-question-h5">What is the Webpage Audit feature?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>The Webpage Audit feature of WebQA is a comprehensive check-up of your website pages. It runs technical, performance, SEO, mobile-responsiveness and best-practice audits — then delivers a clear report showing issues (e.g., broken links, slow loading, meta tag problems, security headers missing) along with actionable insights.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">What's included in the free trial?</h5>
+                            <h5 class="as6-card-question-h5">Why should I use WebQA’s Webpage Audit over other website auditing tools?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>While many SEO tools focus mainly on keywords and meta tags, WebQA’s audit covers multiple dimensions: technical website issues (headers, HTTP status codes), performance (loading speed, mobile responsiveness), security headers (CSP, HSTS) and best-practice checks. These broader tests help uncover issues that can hurt user experience, ranking and site trust.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I remove extra keywords/projects after switching to a subscription plan with lower limits?</h5>
+                            <h5 class="as6-card-question-h5">How often should I run the Webpage Audit?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>It’s best practice to run the audit:</p>
+                            <ul>
+                                <li>Before launching a new page or site version, to catch issues early.</li>
+                                <li>After major updates (content, design, functionality) to validate nothing broke.</li>
+                                <li>Regularly (monthly/quarterly) for ongoing monitoring, since performance/security issues can emerge over time.</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I change my login and password?</h5>
+                            <h5 class="as6-card-question-h5">What types of problems will the audit identify?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Typical problems WebQA will flag include:</p>
+                            <ul>
+                                <li>HTTP errors (4xx/5xx) or redirect loops.</li>
+                                <li>Missing or mis-used HTTP security headers (e.g., CSP, X-Frame-Options, HSTS) enabling vulnerabilities.</li>
+                                <li>Slow page loads or mobile-responsiveness issues.</li>
+                                <li>SEO problems: missing/meta tag issues, broken links, thin content, etc.</li>
+                                <li>HTML/code best-practice issues: invalid markup, missing alt attributes, etc..</li>
+                            </ul>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How to set the location where I want to track keywords?</h5>
+                            <h5 class="as6-card-question-h5">Can I customise the audit rules to suit my website or business?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Yes — WebQA supports customisable audits, letting you define your own rules and benchmarks so you focus on what matters most for your website. This ensures the audit remains relevant and aligned with your quality objectives.</p>
                         </div>
                     </div>
                 </div>

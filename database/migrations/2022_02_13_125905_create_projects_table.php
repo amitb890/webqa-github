@@ -22,6 +22,8 @@ class CreateProjectsTable extends Migration
             $table->string("landing_page_preview");
             $table->boolean("dashboard_show_status")->default(false);
             $table->boolean("google_show_status")->default(false);
+            $table->enum('recheck_type',['initial', 'single','overall'])->default('initial');
+            $table->integer("google_urls_checked_active")->default(1);
             $table->timestamps();
         });
     }

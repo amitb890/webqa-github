@@ -18,6 +18,7 @@ use Helper;
 use Illuminate\Support\Facades\Http;
 use Exception;
 use Auth;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 
 class TestController extends Controller
@@ -189,8 +190,25 @@ class TestController extends Controller
                 });
 
 
-                if(isset($data["saveInDB"])){
-                    $ref_id = $helpers->generateRandomString();
+                  if(isset($data["saveInDB"])){
+                    // Get the latest test_key from cached_tests table (ordered by numeric value)
+                    $latestCachedTest = TestResults::orderByRaw('CAST(ref_id AS UNSIGNED) DESC')->first();
+                    
+                    if($latestCachedTest && $latestCachedTest->ref_id){
+                        // If records exist, get latest test_key and increment by 1
+                        $ref_id = (int)$latestCachedTest->ref_id + 1;
+                        
+                        // Check if this ref_id already exists, if so keep incrementing
+                        while(TestResults::where('ref_id', (string)$ref_id)->exists()){
+                            $ref_id++;
+                        }
+                    } else {
+                        // If it's the first record in cached_tests, start with 100001
+                        $ref_id = 100001;
+                    }
+                    
+                    // Convert to string to match test_key format
+                    $ref_id = (string)$ref_id;
 
                     // saving ref_id as a cookie
                     if(isset($data["page"])){
@@ -219,6 +237,7 @@ class TestController extends Controller
             }
         }
     }
+
 
 
 
@@ -3507,11 +3526,11 @@ class TestController extends Controller
             $crossOriginLinksData = $helpers->crossOriginLinks($url, $html);
             if(count($crossOriginLinksData) > 0) {
                 $status = false;
-                $message = 'Cross Origin Links';
+                $message = 'Unsafe cross-origin links found';
 
             } else {
                 $status = true;
-                $message = 'Cross origin links not found';
+                $message = 'Unsafe cross-origin links not found';
             }
         }
 

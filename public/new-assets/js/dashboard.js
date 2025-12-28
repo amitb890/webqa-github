@@ -1,9 +1,10 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1
+  var recheckMax = 1, recheckGoogle = 2, recheckSingleMax = 10, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
+  var projectSettings, projectFinal
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
   var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {
     keyboard: false 
@@ -73,6 +74,24 @@ $(document).ready(function () {
           },error: function(data){
           }
         });
+    }
+
+
+    static async updateGoogleRecheckActiveUrls() {
+      const response = await fetch('/api/update-google-recheck-active-urls', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' ,
+            "_token": $('meta[name="csrf-token"]').attr('content'),
+          },
+          body: JSON.stringify({ 
+            "_token": $('meta[name="csrf-token"]').attr('content'),
+            "urls_count": recheckGoogle, 
+            "project_id": projectId
+          })
+      });
+
+      return response.json()
+
     }
 
     static updateAlertStatus(){
@@ -544,7 +563,7 @@ $(document).ready(function () {
 
     static getSingleLoaderCardElement(label, data){
         let element
-        const settings = data.settings
+        const settings = projectSettings
         // Get the label object to access reportsUrl
         const labelObj = Controls.getActiveLabel(label)
         const reportsUrl = labelObj && labelObj.reportsUrl ? labelObj.reportsUrl : "#"
@@ -2009,13 +2028,13 @@ $(document).ready(function () {
                   <div class="deshboard_inner_description border_bottom">
                     <p>Totals Images <span>${data.totalImages}</span></p>
                     <p>
-                      Image file name with high file name characters (>${settings.image_name_max_characters_val} characters) <span class="${data.imageNameLengthOver > 0 ? 'danger' : 'success'}">${data.imageNameLengthOver}</span>
+                      Image file name with high file name characters (>${settings.settings_sub.image_name_max_characters_val} characters) <span class="${data.imageNameLengthOver > 0 ? 'danger' : 'success'}">${data.imageNameLengthOver}</span>
                     </p>
                     <p>
                       Images with missing alternative text <span class="${data.imageNameMissingAlt > 0 ? 'danger' : 'success'}">${data.imageNameMissingAlt}</span>
                     </p>
                     <p>
-                      Images with high file size (>${settings.image_max_size_val} KB) <span class="${data.imageSizeOver > 0 ? 'danger' : 'success'}">${data.imageSizeOver}</span>
+                      Images with high file size (>${settings.settings_sub.image_max_size_val} KB) <span class="${data.imageSizeOver > 0 ? 'danger' : 'success'}">${data.imageSizeOver}</span>
                     </p>
                   </div>
                 </div>
@@ -2388,21 +2407,13 @@ $(document).ready(function () {
     }
 
 
-    static updateGoogleCards(results){
-      let resultsTotal, total
-      total = googleUrlsToCheck
+    static updateGoogleCards(results, refreshState = false){
+  
 
-      if(results){
-        resultsTotal = Object.keys(results).length
-      }else{
-        resultsTotal = 0
-      }
 
-      total = total * 2
-
+      const progress = Controls.getGoogleCurrentProgress(results, refreshState)
 
       if(document.querySelectorAll(".page_speed_content").length > 0){
-        const progress = Controls.getGoogleCurrentProgress(results)
         $("#card_google_overall .dashboard-page-speed-progress, #card_google_lighthouse .dashboard-page-speed-progress, #card_core_web_vitals .dashboard-page-speed-progress").css({width: progress + "%"})
         $("#card_google_overall .page_speed_content span, #card_google_lighthouse .page_speed_content span, #card_core_web_vitals .page_speed_content span").html(progress + "%")
 
@@ -2412,19 +2423,25 @@ $(document).ready(function () {
         div.classList.add("page_speed_content")
         div.innerHTML =  
             `<div class="progress">
-              <div class="progress-bar dashboard-page-speed-progress" role="progressbar" aria-label="Success example" style="width: ${getReportProgress(resultsTotal, total, true)}" aria-valuenow="${getReportProgress(resultsTotal, total, false)}" title="" aria-valuemin="0" aria-valuemax="100"> </div>
+              <div class="progress-bar dashboard-page-speed-progress" role="progressbar" aria-label="Success example" style="width: ${progress}%" aria-valuenow="${progress}" title="" aria-valuemin="0" aria-valuemax="100"> </div>
             </div>
-            <span>${getReportProgress(resultsTotal, total, true)}</span>
+            <span>${progress} %</span>
             <p>Calculating pages speed, please wait...</p>`
             $("#card_google_overall .broken_links_content, #card_google_lighthouse .broken_links_content, #card_core_web_vitals .broken_links_content").remove()
             $("#card_google_overall .single_dashboard_card, #card_google_lighthouse .single_dashboard_card, #card_core_web_vitals .single_dashboard_card").append(div)
       }
     }
 
-    static getGoogleCurrentProgress(results){
+    static getGoogleCurrentProgress(results, refreshState){
       let resultsTotal, total
-      total = googleUrlsToCheck
+
+      if(refreshState){
+        total = googleUrlsToCheck
+      }else{
+        total = recheckGoogle
+      }
       total = total * 2
+      
 
       if(results){
         resultsTotal = Object.keys(results).length
@@ -2443,13 +2460,13 @@ $(document).ready(function () {
           }else{
 
             (async () => {
-              let urlsGoogle
+              urlsGoogleFinal
               if(refreshState){
-                urlsGoogle = recheckGoogle
+                urlsGoogleFinal = recheckGoogle
               }else{
-                urlsGoogle = googleUrlsToCheck
+                urlsGoogleFinal = googleUrlsToCheck
               }
-              const testId = await DB.startGoogleTests(urlsGoogle)
+              const testId = await DB.startGoogleTests(urlsGoogleFinal)
 
             })()
           }
@@ -2760,7 +2777,6 @@ $(document).ready(function () {
     static updateTestDataForm(results){
       for (const [key, value] of Object.entries(results)) {
         for (const [key1, value1] of Object.entries(results[key])) {
-          console.log(key1, value, results[key])
           const result = JSON.parse(value1)
           const label = Controls.getActiveLabel(key1)
           const dbName = label.db_name
@@ -2803,6 +2819,7 @@ $(document).ready(function () {
     static buildDashboard(dashboardStatus){
         DB.getTestData(projectId)
         .done(function(data) {
+          projectSettings = data.settings
           if(data.results.security_labels){
             data.results.security_labels = Controls.cleanNulls(data.results.security_labels) 
           }
@@ -2812,7 +2829,7 @@ $(document).ready(function () {
           }
 
             const testDetails = data.results
-            const project = data.project
+            projectFinal = data.project
             $(".dashboard_top_items_main").html("")
             UI.buildWidgetSidebar()
 
@@ -2824,7 +2841,7 @@ $(document).ready(function () {
               .done(function(alertsData){
                 UI.buildDBAlerts(alertsData.alerts)
                 removeLoader()
-                UI.toggleDashboardElements(project)
+                UI.toggleDashboardElements(projectFinal)
     
                 Controls.buildCards(testDetails)
     
@@ -3074,7 +3091,7 @@ $(document).ready(function () {
           const interval = setInterval(async () => {
               const response = await fetch(`/api/check-status/${projectId}`);
               const { status, results } = await response.json();
-              Controls.updateGoogleCards(results)
+              Controls.updateGoogleCards(results, true)
 
               // Handle Google error logic
               const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
@@ -3086,6 +3103,8 @@ $(document).ready(function () {
                   
                   // Re-enable recheck button after Google tile refresh completion
                   UI.updateRecheckButtonState(false)
+
+                  DB.updateGoogleRecheckActiveUrls()
               }
           }, 5000); // Check every 5 seconds
         }

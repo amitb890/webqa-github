@@ -1,4 +1,4 @@
-@extends('layouts.master')
+@extends('layouts.master', ['headerPadding' => 'wst'])
 
 @section('title', 'Track Every URL in One Live Table | Webqa')
 @section('meta-description', 'Replace spreadsheets with Website Tracker. See metrics for every URL, grouped by directory. Re-check in a click, view pass/fail colors, and export CSV/XLSX.')

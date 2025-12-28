@@ -134,12 +134,6 @@ $(document).on("click", ".download-pdf-btn", function () {
     if (hasHttpStatusCodeContent) y = addSeparatorLine(doc, y); // Add separator after HTTP Status Code Test
     y = checkPageBreak(doc, y, 60);
 
-    const brokenLinksY = y;
-    y = renderBrokenLinksTest(doc, y);
-    const hasBrokenLinksContent = y > brokenLinksY;
-    if (hasBrokenLinksContent) y = addSeparatorLine(doc, y); // Add separator after Broken Links Test
-    y = checkPageBreak(doc, y, 60);
-
     // === Headings Test ===
     y = renderHeadingsTest(doc, y);
     y = checkPageBreak(doc, y, 60);
@@ -214,7 +208,16 @@ $(document).on("click", ".download-pdf-btn", function () {
     const bestPracticesY = y;
     y = renderBestPracticesTable(doc, y);
     const hasBestPractices = y > bestPracticesY;
-    // Removed separator line between Best Practices and Security tables
+    y = checkPageBreak(doc, y, 60);
+    
+    // === Broken Links Test (Best Practices Category) ===
+    const brokenLinksY = y;
+    y = renderBrokenLinksTest(doc, y);
+    const hasBrokenLinksContent = y > brokenLinksY;
+    y = checkPageBreak(doc, y, 60);
+    
+    // === Broken Links Table ===
+    y = addBrokenLinksTableToPDF(doc, y);
     y = checkPageBreak(doc, y, 60);
 
     const securityY = y;
@@ -1275,14 +1278,145 @@ function renderBrokenLinksTest(doc, y) {
     const el = document.querySelector('.analysis-card[data-name="broken_links"]');
     if (!el) return y;
 
-    const brokenLinksContent = el.querySelector(".card-single-content span:nth-of-type(2)")?.innerText || "N/A";
-    const status = el.querySelector(".status_pdf")?.innerText || "N/A";
+    // Try multiple selectors to get the message content reliably
+    const messageSpan = el.querySelector(".card-single-content .message_pdf") || 
+                       el.querySelector(".card-single-content span:nth-of-type(2)");
+    const brokenLinksContent = messageSpan?.innerText?.trim() || "N/A";
     
-    // Add label to match Meta Description styling
-    const content = `Broken Links Test Content: ${brokenLinksContent}`;
+    // Get status from the badge
+    const statusBadge = el.querySelector(".card-single-content .status_pdf") || 
+                       el.querySelector(".status_pdf");
+    const status = statusBadge?.innerText?.trim() || "N/A";
+    
+    // Use the content directly without redundant prefix
+    const content = brokenLinksContent;
     
     // Use drawSectionNoLength without length display
     return drawSectionNoLength(doc, "Broken Links Test", content, status, y);
+}
+
+/* ---------- Broken Links Table ---------- */
+function addBrokenLinksTableToPDF(doc, y) {
+    // Get the table from inside the broken-links-modal (not the card view)
+    const modalElement = document.querySelector("#broken-links-modal");
+    if (!modalElement) {
+        return y; // Don't show anything if modal not found
+    }
+    
+    const tableElement = modalElement.querySelector(".broken-links-table");
+    if (!tableElement) {
+        return y; // Don't show anything if table not found
+    }
+
+    // Headers for broken links table
+    const headers = ["Sr. No.", "URL", "HTTP Status Code"];
+    
+    // Get all data from the table
+    let allData = [];
+    const tableRows = tableElement.querySelectorAll("tbody tr");
+    
+    allData = Array.from(tableRows).map((row, index) => {
+        const cells = row.querySelectorAll("td");
+        // First column: URL (get from link href, broken-link-url span, or text)
+        const urlCell = cells[0];
+        let urlLink = "";
+        if (urlCell) {
+            const linkElement = urlCell.querySelector("a");
+            if (linkElement) {
+                // Prefer href attribute, fallback to broken-link-url span, then full text
+                urlLink = linkElement.href || 
+                         linkElement.querySelector(".broken-link-url")?.textContent.trim() || 
+                         linkElement.textContent.trim();
+                
+                // Clean up URL if it has index prefix (e.g., "1. https://example.com" -> "https://example.com")
+                if (urlLink && !urlLink.startsWith('http')) {
+                    urlLink = urlLink.replace(/^\d+\.\s*/, '').trim();
+                }
+            } else {
+                // No link, just get text content
+                urlLink = urlCell.textContent.trim();
+                // Clean up URL if it has index prefix
+                if (urlLink && !urlLink.startsWith('http')) {
+                    urlLink = urlLink.replace(/^\d+\.\s*/, '').trim();
+                }
+            }
+        }
+        
+        // Second column: HTTP Status Code (get from strong tag or text)
+        const statusCell = cells[1];
+        const statusCode = statusCell ? (statusCell.querySelector("strong")?.textContent.trim() || statusCell.textContent.trim()) : "";
+        
+        return [
+            (index + 1).toString(), // Serial number
+            urlLink || "",
+            statusCode || ""
+        ];
+    });
+    
+    // Only render table if there's data
+    if (allData.length === 0) {
+        return y;
+    }
+
+    doc.autoTable({
+        startY: y - 4,
+        head: [headers],
+        body: allData,
+        theme: "grid",
+        styles: { 
+            fontSize: 9, 
+            cellPadding: 2, 
+            valign: "middle", 
+            halign: "left",
+            lineColor: [232, 232, 232], // rgba(232, 232, 232, 1) - light gray border
+            lineWidth: 0.1 // Previous border width
+        },
+        headStyles: { 
+            fillColor: [213, 229, 255], // Custom background color: rgba(213, 229, 255, 1)
+            textColor: [34, 34, 34], // rgba(34, 34, 34, 1) - dark gray text
+            fontStyle: 'medium', // Font weight 500
+            fontSize: 9, // 9px font size
+            lineHeight: 1.0, // 100% line height
+            halign: 'center'
+        },
+        didDrawCell: function(data) {
+            const font = window.PDF_FONT_FAMILY || "Roboto";
+            // Custom drawing for URL header to ensure left alignment
+            if (data.section === 'head' && data.column.index === 1) {
+                // Clear the cell first
+                doc.setFillColor(213, 229, 255);
+                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height, 'F');
+                
+                // Draw border
+                doc.setDrawColor(232, 232, 232);
+                doc.setLineWidth(0.1);
+                doc.rect(data.cell.x, data.cell.y, data.cell.width, data.cell.height);
+                
+                // Draw text left-aligned
+                doc.setFont(font, 'medium');
+                doc.setFontSize(9);
+                doc.setTextColor(34, 34, 34);
+                doc.text('URL', data.cell.x + 2, data.cell.y + data.cell.height/2 + 2);
+            }
+            
+            // Add clickable links for URL column (index 1)
+            if (data.section === 'body' && data.column.index === 1 && data.cell.text && data.cell.text[0]) {
+                const url = data.cell.text[0];
+                if (url && (url.startsWith('http') || url.startsWith('https'))) {
+                    // Add clickable link area for the entire cell
+                    doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, { url: url, target: '_blank' });
+                }
+            }
+        },
+        margin: { left: 10, right: 10 },
+        columnStyles: {
+            0: { halign: 'center', cellWidth: 20 }, // Serial number column (centered, narrow)
+            1: { halign: 'left', cellWidth: 130 },  // URL column (left-aligned, wider)
+            2: { halign: 'center', cellWidth: 40 }   // HTTP Status Code column (centered)
+        }
+    });
+
+    return doc.lastAutoTable.finalY + 10;
 }
 
 /* ---------- Headings Test ---------- */
@@ -2106,45 +2240,48 @@ function addTableToPDF(doc, y) {
     
     // Get all data from all pages by checking if DataTable is available
     let allData = [];
+    let dataTable = null;
+    let originalPageLength = null;
     
-    // Debug: Check what's available
-    console.log("Table element:", tableElement);
-    console.log("DataTable available:", window.DataTable);
-    console.log("Table has DataTable:", tableElement.DataTable);
-    
-    // Try to get all data by temporarily showing all rows
-    if (window.DataTable && tableElement.DataTable) {
+    // Check if jQuery DataTables is available and table has DataTable instance
+    if (typeof $ !== 'undefined' && $.fn.DataTable && $(tableElement).hasClass('custom-dataTable')) {
         try {
-            const dataTable = tableElement.DataTable();
-            console.log("DataTable instance found");
-            
-            // Store original page length
-            const originalPageLength = dataTable.page.len();
-            console.log("Original page length:", originalPageLength);
-            
-            // Temporarily show all rows
-            dataTable.page.len(-1).draw();
-            
-            // Get all visible rows after showing all
-            const tableRows = tableElement.querySelectorAll("tbody tr");
-            console.log("All visible rows after showing all:", tableRows.length);
-            
-            allData = Array.from(tableRows).map((row, index) => {
-                const cells = row.querySelectorAll("td");
-                return [
-                    (index + 1).toString(), // # - Auto increment number starting from 1
-                    cells[0] ? (cells[0].querySelector("a")?.href || "") : "", // Image Link - Show actual URL
-                    cells[1]?.textContent.trim() || "", // Alt Text
-                    cells[3]?.textContent.trim() || "", // File Size
-                    cells[8]?.textContent.trim() || "", // File Name
-                    cells[6]?.textContent.trim() || ""  // Issues
-                ];
-            });
-            
-            // Restore original page length
-            dataTable.page.len(originalPageLength).draw();
-            console.log("Restored original page length");
-            
+            dataTable = $(tableElement).DataTable();
+            if (dataTable) {
+                console.log("DataTable instance found");
+                
+                // Store original page length
+                originalPageLength = dataTable.page.len();
+                console.log("Original page length:", originalPageLength);
+                
+                // Temporarily show all rows
+                dataTable.page.len(-1).draw();
+                
+                // Wait a moment for DOM to update (DataTables draw is async)
+                // Get all visible rows after showing all
+                const tableRows = tableElement.querySelectorAll("tbody tr");
+                console.log("All visible rows after showing all:", tableRows.length);
+                
+                allData = Array.from(tableRows).map((row, index) => {
+                    const cells = row.querySelectorAll("td");
+                    return [
+                        (index + 1).toString(), // # - Auto increment number starting from 1
+                        cells[0] ? (cells[0].querySelector("a")?.href || "") : "", // Image Link - Show actual URL
+                        cells[1]?.textContent.trim() || "", // Alt Text
+                        cells[3]?.textContent.trim() || "", // File Size
+                        cells[8]?.textContent.trim() || "", // File Name
+                        cells[6]?.textContent.trim() || ""  // Issues
+                    ];
+                });
+                
+                // Restore original page length
+                if (originalPageLength !== null) {
+                    dataTable.page.len(originalPageLength).draw();
+                    console.log("Restored original page length");
+                }
+            } else {
+                throw new Error("DataTable instance not found");
+            }
         } catch (error) {
             console.log("Error with DataTable approach:", error);
             // Fallback to visible rows only
@@ -2163,7 +2300,7 @@ function addTableToPDF(doc, y) {
             });
         }
     } else {
-        // Fallback: get visible rows only
+        // Fallback: get visible rows only (no DataTable)
         const tableRows = tableElement.querySelectorAll("tbody tr");
         console.log("No DataTable found, using visible rows count:", tableRows.length);
         allData = Array.from(tableRows).map((row, index) => {
@@ -2669,6 +2806,7 @@ function renderBestPracticesTable(doc, y) {
 
     // Title
     const x = 10;
+    y += 8; // Add spacing before heading to prevent overlap with previous section
     doc.setFont(font, "medium").setFontSize(12);
     doc.text("Best Practices", x, y);
     y += 12; // Increased spacing to prevent separator overlap

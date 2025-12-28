@@ -23,6 +23,10 @@ class RunLighthouseTest implements ShouldQueue
         $this->userId = $userId;
     }
 
+
+
+    
+
     public function handle()
     {
         $test = LighthouseTest::findOrFail($this->testId);

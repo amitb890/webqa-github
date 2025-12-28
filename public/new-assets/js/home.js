@@ -176,7 +176,7 @@ $( document ).ready(function() {
                     })
                     startStatus = true
                 }else if(data.status === 1){
-                    window.location.href = `/analysis/${data.ref_id}`
+                    window.location.href = `/analysis-report/w/${data.ref_id}`
                 }else if(data.status === 2){
                     removeLoader()
                     displayAlertSimple(alertClass, {
@@ -437,6 +437,31 @@ $(document).ready(function () {
     } else if ($(this).hasClass("lh-mobile")) {
       $(".lighthouse-mobile").show();
       $(".lighthouse-desktop").hide();
+    }
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const imgs = document.querySelectorAll(".as1 img");
+  let loadedCount = 0;
+
+  imgs.forEach(img => {
+
+    function reveal() {
+      img.classList.add("loaded");
+      
+      loadedCount++;
+      if (loadedCount === imgs.length) {
+
+        imgs.forEach(i => i.classList.add("loaded"));
+      }
+    }
+
+    if (img.complete) {
+      reveal();
+    } else {
+      img.onload = reveal;
+      img.onerror = reveal;
     }
   });
 });

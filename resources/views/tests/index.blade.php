@@ -1,4 +1,11 @@
-@extends(auth()->check() ? 'layouts.app' : 'layouts.master')
+@php
+    $url = request()->path(); // current URL path
+    $layout = Str::contains($url, 'test-archive-web-app')
+                ? 'layouts.app'
+                : 'layouts.master';
+@endphp
+
+@extends($layout)
 
 @section("title")
 webqa - Previous Tests
@@ -12,7 +19,7 @@ webqa - Previous Tests
 
                 <!-- Test Result Area Start -->
                 <div class="test_result_area">
-                    <h2>Previous Tests</h2>
+                    <h2>Previous Tests</h2><p>A list of all the previous tests made on the website.</p>
                     <span class="failed-list"></span>
 
                     <div class="test_result_table">
@@ -67,9 +74,12 @@ webqa - Previous Tests
                                 <span>Show rows:</span>
                                 <select id="rows-per-page" class="btn btn-outline-gray">
                                     <option value="10">10</option>
-                                    <option value="20">20</option>
                                     <option value="30">30</option>
-                                    <option value="40">40</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                    <option value="500">500</option>
+                                    <option value="-1">All</option>
                                 </select>
                             </div>
                         </div>
@@ -180,7 +190,10 @@ webqa - Previous Tests
             });
 
             $rowsPerPage.change(function() {
-                table.page.len($(this).val()).draw();
+                var selectedValue = $(this).val();
+                // Convert to integer, -1 means show all rows
+                var pageLength = parseInt(selectedValue);
+                table.page.len(pageLength).draw();
             });
 
             $canPageGo.keypress(function(e) {

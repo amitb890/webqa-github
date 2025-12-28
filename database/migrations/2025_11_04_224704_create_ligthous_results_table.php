@@ -34,6 +34,6 @@ class CreateLigthousResultsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('lighthouse_tests');
+        Schema::dropIfExists('lighthouse_results');
     }
 }

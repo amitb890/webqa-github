@@ -144,14 +144,17 @@ function displayAlertSwithProject(classVal, data){
   $(".collaps_sidebar").click(function () {
     $(".side_content").slideToggle(function () {
       $(".collaps_sidebar").toggleClass("rotate");
+  
       if ($(window).width() > 991) {
         $(".footer-area").toggleClass("small");
+        $("body").toggleClass("sidebar-expanded");
       }
     });
-    $('.settingsCollapse').collapse('hide');
+    $(".settingsCollapse").collapse("hide");
   });
 
 
+  
   // Hover color effects for sidebar items
 $(".msbt-items, .msbl-items").hover(
   function () {
@@ -351,17 +354,29 @@ $("#sidebar-pin").click(function () {
   }
 });
 
+
+
 $(document).ready(function () {
   $(".ssbl-item-top").click(function () {
     const clickedItem = $(this);
     const list = clickedItem.next("ul");
     const subSidebarLower = $(".sub-sidebar-lower");
 
-    $(".ssbl-item-top").not(clickedItem).removeClass("active");
-    $(".ssbl-item-top").not(clickedItem).next("ul").slideUp(300);
+    // Reset others
+    $(".ssbl-item-top").not(clickedItem).each(function () {
+      $(this).removeClass("active");
+      $(this).children("img").attr("src", plusIcon);
+      $(this).next("ul").slideUp(300);
+    });
 
     clickedItem.toggleClass("active");
     list.slideToggle(300);
+    
+    // Icon swap
+    const icon = clickedItem.children("img");
+    icon.attr("src", clickedItem.hasClass("active") ? minusIcon : plusIcon);
+
+    // Scroll state
 
     const anyVisible = $(".sub-sidebar-lower ul:visible").length > 0;
     subSidebarLower.toggleClass("open-scroll", anyVisible);
@@ -1783,25 +1798,19 @@ function featureChildPageSettingsCarousel() {
   const cards = document.querySelectorAll(".fcs3-d2-card");
   let activeIndex = Array.from(cards).findIndex(card => card.classList.contains("card-active"));
 
-  const leftArrow = document.querySelector(".fcs3-d3-d1"); // left div
-  const rightArrow = document.querySelector(".fcs3-d3-d2"); // right div
+  const leftArrow = document.querySelector(".fcs3-d3-d1");
+  const rightArrow = document.querySelector(".fcs3-d3-d2");
 
-  // Stop the function if the required elements don’t exist
-  if (cards.length === 0 || !leftArrow || !rightArrow) {
-    return;
-  }
+  if (cards.length === 0 || !leftArrow || !rightArrow) return;
 
   function updateActiveCard(newIndex) {
-    if (newIndex < 0 || newIndex >= cards.length) return; // stop at edges
+    if (newIndex < 0 || newIndex >= cards.length) return;
 
-    // remove active class from old card
     cards[activeIndex].classList.remove("card-active");
 
-    // add active class to new card
     activeIndex = newIndex;
     cards[activeIndex].classList.add("card-active");
 
-    // optional: center/scroll the active card
     cards[activeIndex].scrollIntoView({
       behavior: "smooth",
       inline: "center",
@@ -1809,20 +1818,33 @@ function featureChildPageSettingsCarousel() {
     });
   }
 
+  /* ARROWS */
   leftArrow.addEventListener("click", () => {
     updateActiveCard(activeIndex - 1);
-
-    // toggle arrow-active class
     leftArrow.classList.add("arrow-active");
     rightArrow.classList.remove("arrow-active");
   });
 
   rightArrow.addEventListener("click", () => {
     updateActiveCard(activeIndex + 1);
-
-    // toggle arrow-active class
     rightArrow.classList.add("arrow-active");
     leftArrow.classList.remove("arrow-active");
+  });
+
+  /* === NEW: CLICK A CARD TO SELECT IT === */
+  cards.forEach((card, index) => {
+    card.addEventListener("click", () => {
+      updateActiveCard(index);
+
+      // optional: set arrow states depending on which side was selected
+      if (index === 0) {
+        leftArrow.classList.add("arrow-active");
+        rightArrow.classList.remove("arrow-active");
+      } else if (index === cards.length - 1) {
+        rightArrow.classList.add("arrow-active");
+        leftArrow.classList.remove("arrow-active");
+      }
+    });
   });
 }
 

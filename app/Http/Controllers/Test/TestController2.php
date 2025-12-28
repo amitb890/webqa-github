@@ -76,7 +76,15 @@ class TestController2 extends Controller
         //         }
         //     }
         // }
+
+
     
+        // delete alerts
+        if($type != "single_recheck"){ // only delete if not single recheck
+            Alerts::where("project_id", $project_id)->delete();
+        }
+
+
         // Update project testing status
         $projectsController->updateTestingStatus($project_id);
     
@@ -131,7 +139,7 @@ class TestController2 extends Controller
             $index = ($userId - 1) % count($queues);
             $userQueue = $queues[$index];
 
-            dispatch((new RunTest($result->id, $project_id, $type, $dashboardTest->id, $recheck_label))
+            dispatch((new RunTest($result->id, $project_id, $type, $dashboardTest->id, $recheck_label, count($urls), $userId))
                 ->onQueue($userQueue));
 
         }

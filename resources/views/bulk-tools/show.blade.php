@@ -129,9 +129,10 @@
                 <p class="col2-p" style="font-size:18px;">{{$d["main_para"]}}</p>
                 
 
-                <div class="footer_search_item">
+                 <div class="footer_search_item">
                   <div class="footer_search_box">
-                    <textarea class="footer_control" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl') }}</textarea>
+                    <div class="footer_control-numbers" id="footer_controlNumbers"></div>
+                    <textarea class="footer_control auto-number" placeholder="Enter upto 100 urls, one url per line" id="urlValue">{{ session('bulkUrl') }}</textarea>
                   </div>
                 </div>
 
@@ -168,10 +169,24 @@
                         @endif
 
                         @if($d['slug'] === 'broken-links')
-                        <div class="form-check">
-                            <input class="form-check-input" checked type="checkbox" id="broken_links">
-                            <label class="form-check-label" for="broken_links">Check for all broken links(links that do not have 200 status code)</label>
+                       <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="broken_links" checked="">
+                          <label class="form-check-label" for="broken_links">
+                          Check for all broken links(links that do not have 200 status code)
+                          </label>
                         </div>
+                        <div class="form-check">
+                          <input class="form-check-input hideInputCheck" type="checkbox" id="broken_links_exclude_urls">
+                          <label class="form-check-label" for="broken_links_exclude_urls">
+                                                Exclude specific URLs from broken links check
+                        </label>
+                      </div>
+                      <div class="hideInputCheckElement" style="display: none;">
+                        <a type="button" class="add-more-broken-links-excluded" id="addMoreBrokenLinksExcluded">
+                          Ignore List
+                        </a>
+                        <div class="mt-2" id="brokenLinksExcludedPreview"></div>
+                      </div>
                         @endif
 
 
@@ -2861,6 +2876,8 @@
                 @include("bulk-tools.posts.nested-tables")         
             @elseif($d['slug'] === 'frameset')
                 @include("bulk-tools.posts.frameset")
+            @elseif($d['slug'] === 'broken-links')
+                @include("bulk-tools.posts.broken-links")
             @elseif($d['slug'] === 'page-size')
                 @include("bulk-tools.posts.page-size")
             @elseif($d['slug'] === 'x-frame-options-header-test')

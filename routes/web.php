@@ -21,7 +21,7 @@ Route::get('/login/google/callback', [App\Http\Controllers\LoginController::clas
 Route::get('/', [App\Http\Controllers\PagesController::class, 'index'])->name('index');
 Route::resource('blog', App\Http\Controllers\BlogsController::class);
 Route::resource('support', App\Http\Controllers\SupportController::class);
-Route::get('/analysis/{id}', [App\Http\Controllers\PagesController::class, 'analysis'])->name('analysis');
+Route::get('/analysis-report/w/{id}', [App\Http\Controllers\PagesController::class, 'analysis'])->name('analysis');
 Route::get('/tools', [App\Http\Controllers\BulkToolsController::class, 'index'])->name('tools-landing');
 Route::get('/tool/{slug}', [App\Http\Controllers\BulkToolsController::class, 'show'])->name('tool');
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
@@ -122,8 +122,8 @@ Route::middleware('auth')->group(function () {
        Route::get('website-tracker', [App\Http\Controllers\TrackerController::class, 'index'])->name('tracker');
         Route::get('website-tracker-test', [App\Http\Controllers\TrackerController::class, 'indexTest'])->name('trackerTest');
         Route::get('dashboard', [App\Http\Controllers\PagesController::class, 'dashboard'])->name('dashboard');
-        Route::get('/app-analysis/{ref_id?}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])
-    ->name('app-analysis');
+        Route::get('/analysis-report/{ref_id?}', [App\Http\Controllers\PagesController::class, 'appAnalysis'])
+        ->name('app-analysis');
         Route::resource('profile', App\Http\Controllers\ProfileController::class);
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
         Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap');
@@ -145,6 +145,7 @@ Route::middleware('auth')->group(function () {
         Route::get('get-test-data-single/{id}/{label}', [App\Http\Controllers\ProjectsController::class, 'getTestDataSingle'])->name('getTestDataSingle');
         Route::post('editProject', [App\Http\Controllers\ProjectsController::class, 'editProject'])->name('editProject');
         Route::post('check-unique-project-name', [App\Http\Controllers\ProjectsController::class, 'checkUniqueProjectName'])->name('checkUniqueProjectName');
+        Route::post('check-unique-project-homepage', [App\Http\Controllers\ProjectsController::class, 'checkUniqueProjectHomepage'])->name('checkUniqueProjectHomepage');
         Route::post('editProject', [App\Http\Controllers\ProjectsController::class, 'editProject'])->name('editProject');
         Route::get('get-projects-data', [App\Http\Controllers\ProjectsController::class, 'getProjectData'])->name('getProjectData');
         Route::get('get-show-dashboard-status/{id}', [App\Http\Controllers\ProjectsController::class, 'getShowDashboardStatus'])->name('getShowDashboardStatus');
@@ -200,6 +201,8 @@ Route::get('/api/check-status-dashboard/{testId}', [App\Http\Controllers\Test\Te
 
 Route::post('/api/start-tests', [App\Http\Controllers\LighthouseController::class, 'startTests']);
 Route::get('/api/check-status/{testId}', [App\Http\Controllers\LighthouseController::class, 'checkStatus']);
+Route::post('/api/update-google-recheck-active-urls', [App\Http\Controllers\LighthouseController::class, 'updateGoogleRecheckActiveUrls']);
+
 
 Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/get-analysis', [App\Http\Controllers\Test\TestController::class, 'getAnalysis'])->name('test.get-analysis');

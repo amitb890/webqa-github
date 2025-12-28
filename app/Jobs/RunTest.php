@@ -39,6 +39,9 @@ class RunTest implements ShouldQueue
     protected $type;
     protected $dashboardTestId;
     protected $recheck_label;
+    protected $total_urls_count;
+    protected $user_id;
+
     
 
 
@@ -115,13 +118,15 @@ class RunTest implements ShouldQueue
      *
      * @param \App\Models\DashboardTests $dashboardTest
      */
-    public function __construct($resultId, $projectId, $type, $dashboardTestId, $recheck_label)
+    public function __construct($resultId, $projectId, $type, $dashboardTestId, $recheck_label, $total_urls_count, $user_id)
     {
         $this->resultId = $resultId;
         $this->projectId = $projectId;
         $this->type = $type;
         $this->dashboardTestId = $dashboardTestId;
         $this->recheck_label = $recheck_label;
+        $this->total_urls_count = $total_urls_count;
+        $this->user_id = $user_id;
     }
 
     /**
@@ -130,6 +135,7 @@ class RunTest implements ShouldQueue
 
      public function handle()
      {
+  
          $result = DashboardTestsDetails::findOrFail($this->resultId);
      
          $helpers = new Helper();
@@ -143,6 +149,16 @@ class RunTest implements ShouldQueue
          $labels = json_decode(
              json_encode($projectsController->getLabels($projectId))
          )->original->all_labels;
+
+         $DB_MSG = "";
+         if($this->type === "recheck"){
+             $DB_MSG = "Your dashboard has been rechecked for <b>" .  $this->total_urls_count . " Urls</b>.";
+         }else if($this->type === "single_recheck"){
+             $DB_MSG = "Your dashboard has been rechecked for <b>" .  $this->recheck_label . "</b>.";
+         }
+         else{
+             $DB_MSG = "Your dashboard has been prepared for <b>" .  $this->total_urls_count . " Urls</b> only. To check the whole project, please <a id='recheckHyperlink' href='javascript:void()'>re-check</a> once.";
+         }
 
 
 
@@ -496,6 +512,17 @@ class RunTest implements ShouldQueue
      
              DashboardTests::where('id', $this->dashboardTestId)
                  ->update(['status' => 'completed']);
+
+             // create success alert
+            if($this->type != "single_recheck"){
+                $alert = new Alerts();
+                $alert->user_id = $this->user_id;
+                $alert->project_id = $projectId;
+                $alert->message = $DB_MSG;
+                $alert->page = "dashboard";
+                $alert->status = 1;
+                $alert->save();
+            }
          }
      }
      

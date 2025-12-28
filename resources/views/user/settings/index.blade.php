@@ -46,9 +46,8 @@
                             <button class="nav-link" id="v-pills-security-tab" data-bs-toggle="pill" data-bs-target="#v-pills-security" type="button" role="tab" aria-controls="v-pills-security" aria-selected="false">
                                 Security
                             </button>
-                            <button class="nav-link"><a href="{{ route('report-settings.edit') }}" style="color: inherit; text-decoration: none;">
-                Reports</a>
-                            </button>
+                             <button class="nav-link" id="v-pills-reports-tab" data-bs-toggle="pill" data-bs-target="#v-pills-reports" type="button" role="tab" aria-controls="v-pills-reports" aria-selected="false">Reports
+                             </button>
 
 
 
@@ -652,15 +651,7 @@
                                             <input class="slider-input-text" type="number" id="h1HeadingTagLengthVal" value="{{$settings->settingsSub->h1_heading_tag_length_val}}" min="0" max="100"> H1 heading tag
                                         </label>
                                     </div>
-                                </div>
-                                <div class="accor-content-button">
-                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultH1HeadingTagEnable" />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="accor-body">
-                            <div class="meta-content">
-                                <div class="accor-content">
+                            
 
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" value="" id="h2HeadingTagLength" {{ $settings->settingsSub->h2_heading_tag_length ? "checked" : "" }} />
@@ -701,8 +692,10 @@
                                             <input class="slider-input-text" type="number" id="h6HeadingTagLengthVal" value="{{$settings->settingsSub->h6_heading_tag_length_val}}" min="0" max="100"> H6 heading tag
                                         </label>
                                     </div>
-
-
+                                </div>
+                                
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultH1HeadingTagEnable"/>
                                 </div>
                             </div>
                         </div>
@@ -4114,16 +4107,1223 @@
                 </div>
             </div>
             <!-- coding practices tab content end -->
-        </div>
+  <!-- reports tab content start -->
+      <div
+        class="tab-pane fade"
+        id="v-pills-reports"
+        role="tabpanel"
+        aria-labelledby="v-pills-reports-tab"
+        tabindex="0"
+      >
+        <div class="tab-content-area">
+          <!-- SEO accordion -->
+          <div class="accor-single-item">
+            <div class="accor-head">
+              <div class="accor-title-btn">
+                <button>
+                  <img
+                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
+                    alt="btn"
+                  />
+                </button>
+                <span>SEO</span>
+              </div>
+            </div>
+            <div class="accor-body">
+              <div class="meta-content" style="background-color: rgba(255, 255, 255, 1); padding: 0;">
+                <div class="accor-content" style="padding: 0;">
+                  <!-- Meta Title Report -->
+                  <div class="report-item" style="border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin: 0;">
+                    <div class="report-label">
+                      <span>Meta Title</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/meta-title" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchMetaTitleReport"
+                              {{ !$reportSettings || $reportSettings->meta_title ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-        <!-- default button start -->
-        <div class="reset-bottom-btn">
-            <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettings" />
+                  <!-- Meta Description Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Meta Description</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/description" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchMetaDescReport"
+                              {{ !$reportSettings || $reportSettings->meta_desc ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Robots Meta Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Robots Meta Tag</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/robots-meta" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchRobotsMetaReport"
+                              {{ !$reportSettings || $reportSettings->robots_meta ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Canonical URL Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Canonical URL</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/canonical" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchCanonicalUrlReport"
+                              {{ !$reportSettings || $reportSettings->canonical_url ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Images Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Images</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/images" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchImagesReport"
+                              {{ !$reportSettings || $reportSettings->images ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- URL Slug Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>URL Slug</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/url-slug" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchUrlSlugReport"
+                              {{ !$reportSettings || $reportSettings->url_slug ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Robots.txt Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Robots.txt</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/robots-meta" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchRobotTextTestReport"
+                              {{ !$reportSettings || $reportSettings->robot_text_test ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Headings Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Headings</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/headings" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchH1HeadingTagReport"
+                              {{ !$reportSettings || $reportSettings->h1_heading_tag ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- XML Sitemap Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>XML Sitemap</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/xml-sitemap" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchXmlSitemapReport"
+                              {{ !$reportSettings || $reportSettings->xml_sitemap ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Open Graph Title Tag Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Open Graph Title Tag</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/og-tags" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchOpenGraphTagsReport"
+                              {{ !$reportSettings || $reportSettings->open_graph_tags ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Twitter Tags Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Twitter Tags</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/twitter-tags" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchTwitterTagsReport"
+                              {{ !$reportSettings || $reportSettings->twitter_tags ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Favicon Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Favicon</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/favicon" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchFaviconReport"
+                              {{ !$reportSettings || $reportSettings->favicon ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Meta Viewport Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Meta Viewport</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/meta-viewport" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchMetaViewportReport"
+                              {{ !$reportSettings || $reportSettings->meta_viewport ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Doctype Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Doctype</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/doctype" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchDoctypeReport"
+                              {{ !$reportSettings || $reportSettings->doctype ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- HTTP Status Code Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>HTTP Status Code</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/http-status-code" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchHttpStatusCodeReport"
+                              {{ !$reportSettings || $reportSettings->http_status_code ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Performance accordion -->
+          <div class="accor-single-item">
+            <div class="accor-head">
+              <div class="accor-title-btn">
+                <button>
+                  <img
+                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
+                    alt="btn"
+                  />
+                </button>
+                <span>Performance</span>
+              </div>
+            </div>
+            <div class="accor-body">
+              <div class="meta-content" style="background-color: rgba(255, 255, 255, 1); padding: 0;">
+                <div class="accor-content" style="padding: 0;">
+                  <!-- Overall Score Report -->
+                  <div class="report-item" style="border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin: 0;">
+                    <div class="report-label">
+                      <span>Overall Score</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/google-page-speed-insights" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchGoogleOverallReport"
+                              {{ !$reportSettings || $reportSettings->google_overall ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Lighthouse Score Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Lighthouse Score</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/google-page-speed-lighthouse" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchGoogleLighthouseReport"
+                              {{ !$reportSettings || $reportSettings->google_lighthouse ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Core Web Vitals Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Core Web Vitals</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/google-page-speed-core-web-vitals" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchCoreWebVitalsReport"
+                              {{ !$reportSettings || $reportSettings->core_web_vitals ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Mobile Friendliness Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Mobile Friendliness</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/mobile-friendly" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchMobileFriendlyReport"
+                              {{ !$reportSettings || $reportSettings->mobile_friendly ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Best Practices accordion -->
+          <div class="accor-single-item">
+            <div class="accor-head">
+              <div class="accor-title-btn">
+                <button>
+                  <img
+                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
+                    alt="btn"
+                  />
+                </button>
+                <span>Best Practices</span>
+              </div>
+            </div>
+            <div class="accor-body">
+              <div class="meta-content" style="background-color: rgba(255, 255, 255, 1); padding: 0;">
+                <div class="accor-content" style="padding: 0;">
+                  <!-- HTML Compression Report -->
+                  <div class="report-item" style="border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin: 0;">
+                    <div class="report-label">
+                      <span>HTML Compression</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/html-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchHtmlCompressionReport"
+                              {{ !$reportSettings || $reportSettings->html_compression ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- CSS Compression Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>CSS Compression</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/css-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchCssCompressionReport"
+                              {{ !$reportSettings || $reportSettings->css_compression ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- JS Compression Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>JavaScript Compression</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/js-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchJsCompressionReport"
+                              {{ !$reportSettings || $reportSettings->js_compression ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- GZIP Compression Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>GZIP Compression</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/gzip-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchGzipCompressionReport"
+                              {{ !$reportSettings || $reportSettings->gzip_compression ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- CSS Caching Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>CSS Caching</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/css-caching" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchCssCachingReport"
+                              {{ !$reportSettings || $reportSettings->css_caching_enable ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- JS Caching Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>JS Caching</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/js-caching" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchJsCachingReport"
+                              {{ !$reportSettings || $reportSettings->js_caching_enable ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Page Size Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Page Size</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/page-size" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchPageSizeReport"
+                              {{ !$reportSettings || $reportSettings->page_size ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Nested Tables Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Nested Tables</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/nested-tables" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchNestedTablesReport"
+                              {{ !$reportSettings || $reportSettings->nested_tables ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Frameset Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Frameset</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/frameset" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchFramesetReport"
+                              {{ !$reportSettings || $reportSettings->frameset ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Broken Links Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Broken Links</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/broken-links" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchBrokenLinksReport"
+                              {{ !$reportSettings || $reportSettings->broken_links ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Security accordion -->
+          <div class="accor-single-item">
+            <div class="accor-head">
+              <div class="accor-title-btn">
+                <button>
+                  <img
+                    src="/new-assets/assets/images/setting/menu-content-arrow.svg"
+                    alt="btn"
+                  />
+                </button>
+                <span>Security</span>
+              </div>
+            </div>
+            <div class="accor-body">
+              <div class="meta-content" style="background-color: rgba(255, 255, 255, 1); padding: 0;">
+                <div class="accor-content" style="padding: 0;">
+                  <!-- Safe Browsing Report -->
+                  <div class="report-item" style="border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin: 0;">
+                    <div class="report-label">
+                      <span>Safe Browsing</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/safe-browsing" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchSafeBrowsingReport"
+                              {{ !$reportSettings || $reportSettings->is_safe_browsing ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Unsafe Cross Origin Links Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Unsafe Cross Origin Links</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/unsafe-cross-origin-links" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchCrossOriginLinksReport"
+                              {{ !$reportSettings || $reportSettings->cross_origin_links ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Protocol Relative Resource Links Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Protocol Relative Resource Links</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/protocol-relative-resource" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchProtocolRelativeResourceReport"
+                              {{ !$reportSettings || $reportSettings->protocol_relative_resource ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Content Security Policy Header Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Content Security Policy Header</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/content-security-policy-header" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchContentSecurityPolicyReport"
+                              {{ !$reportSettings || $reportSettings->content_security_policy_header ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- X Frame Options Header Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>X Frame Options Header</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/x-frame-options-header" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchXFrameOptionsReport"
+                              {{ !$reportSettings || $reportSettings->x_frame_options_header ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- HSTS Header Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>HSTS Header</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/hsts-header" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchHstsHeaderReport"
+                              {{ !$reportSettings || $reportSettings->hsts_header ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Bad Content Type Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Bad Content Type</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/bad-content-type" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchBadContentTypeReport"
+                              {{ !$reportSettings || $reportSettings->bad_content_type ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- SSL Certificate Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>SSL Certificate</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/ssl-certificate" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchSslCertificateReport"
+                              {{ !$reportSettings || $reportSettings->ssl_certificate_enable ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Directory Browsing Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>Directory Browsing</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/directory-browsing" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchFolderBrowsingReport"
+                              {{ !$reportSettings || $reportSettings->folder_browsing_enable ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- default button end -->
+      </div>
+      <!-- reports tab content end -->
     </div>
+
+    <!-- default button start -->
+    <div class="reset-bottom-btn">
+      <input
+        class="reset-default btn btn_primary rounded-pill"
+        type="submit"
+        value="Reset"
+        id="defaultSettings"
+      />
+    </div>
+    <!-- default button end -->
+  </div>
 </div>
 <!-- setting content and tab content area end -->
+
+<style>
+.report-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid #e9ecef;
+    gap: 20px;
+}
+
+.report-item:last-child {
+    border-bottom: none;
+}
+
+.report-label {
+    flex: 1;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+.report-actions {
+    margin-right: 80px;
+}
+
+.open-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.open-link:hover {
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.open-link i {
+    font-size: 12px;
+}
+
+.report-switch {
+    flex-shrink: 0;
+}
+</style>
 
 
 
@@ -5059,7 +6259,7 @@
     }
 
 
-    function saveAjax(obj){
+function saveAjax(obj){
         $.ajax({
             url : `/settings/${settings.id}`,
             type : 'PUT',
@@ -5067,17 +6267,36 @@
                 "data": obj,
                 "_method": 'PUT',
                 "_token": $('meta[name="csrf-token"]').attr('content'),
-      },       
+            },       
             success : function(data) {
                 let alertData = data
                 if(data.status === 0){
                     validate(data)
+                    const errors = []
+                    for(const key in data.msg){
+                        const messages = data.msg[key]
+                        if(Array.isArray(messages)){
+                            messages.forEach(m=>errors.push(m))
+                        }else if(typeof messages === 'string'){
+                            errors.push(messages)
+                        }
+                    }
+                    let listMsg
+                    if(errors.length > 1){
+                        const numbered = errors.map((m,i)=>`<div style="padding-bottom: 5px;">${i+1}. ${m}</div>`).join('')
+                        listMsg = `Please fix the following errors before saving the settings:<div style="padding-top: 10px;">${numbered}</div>`
+                    }else if(errors.length === 1){
+                        listMsg = errors[0]
+                    }else{
+                        listMsg = "There were some errors, please fix them before saving."
+                    }
                     alertData = {
                         status: 0,
-                        msg: "There were some errors, please fix them before saving."
+                        msg: listMsg
+                        // notHide: true
                     }
                 }
-                displayAlert(".setting-alert-area", alertData)
+                displayAlertNoHide(".setting-alert-area", alertData)
                 scrollToTop()
             },
             error: function(data){
@@ -5086,6 +6305,71 @@
                 }
             }
         });
+    }
+
+    function getReportSettings() {
+        // Collect all report settings checkbox values
+        const reportSettings = {};
+        
+        // Collect all report checkbox values (only those with "Report" suffix in ID)
+        const reportCheckboxes = document.querySelectorAll('#v-pills-reports input[type="checkbox"][id$="Report"]');
+        reportCheckboxes.forEach(checkbox => {
+            // Map checkbox ID to database field name
+            let fieldName = checkbox.id.replace('switch', '').replace('Report', '');
+            
+            // Convert camelCase to snake_case for database fields
+            fieldName = fieldName.replace(/([A-Z])/g, '_$1').toLowerCase();
+            if (fieldName.startsWith('_')) {
+                fieldName = fieldName.substring(1);
+            }
+            
+            // Special cases for field name mapping
+            const fieldMapping = {
+                'meta_title': 'meta_title',
+                'meta_desc': 'meta_desc',
+                'robots_meta': 'robots_meta',
+                'canonical_url': 'canonical_url',
+                'images': 'images',
+                'url_slug': 'url_slug',
+                'robot_text_test': 'robot_text_test',
+                'h1_heading_tag': 'h1_heading_tag',
+                'xml_sitemap': 'xml_sitemap',
+                'open_graph_tags': 'open_graph_tags',
+                'twitter_tags': 'twitter_tags',
+                'favicon': 'favicon',
+                'meta_viewport': 'meta_viewport',
+                'doctype': 'doctype',
+                'http_status_code': 'http_status_code',
+                'google_overall': 'google_overall',
+                'google_lighthouse': 'google_lighthouse',
+                'core_web_vitals': 'core_web_vitals',
+                'mobile_friendly': 'mobile_friendly',
+                'html_compression': 'html_compression',
+                'css_compression': 'css_compression',
+                'js_compression': 'js_compression',
+                'gzip_compression': 'gzip_compression',
+                'css_caching': 'css_caching_enable',
+                'js_caching': 'js_caching_enable',
+                'page_size': 'page_size',
+                'nested_tables': 'nested_tables',
+                'frameset': 'frameset',
+                'broken_links': 'broken_links',
+                'safe_browsing': 'is_safe_browsing',
+                'cross_origin_links': 'cross_origin_links',
+                'protocol_relative_resource': 'protocol_relative_resource',
+                'content_security_policy': 'content_security_policy_header',
+                'x_frame_options': 'x_frame_options_header',
+                'hsts_header': 'hsts_header',
+                'bad_content_type': 'bad_content_type',
+                'ssl_certificate': 'ssl_certificate_enable',
+                'folder_browsing': 'folder_browsing_enable'
+            };
+            
+            const dbFieldName = fieldMapping[fieldName] || fieldName;
+            reportSettings[dbFieldName] = checkbox.checked ? 1 : 0;
+        });
+        
+        return reportSettings;
     }
 
 

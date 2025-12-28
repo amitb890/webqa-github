@@ -47,8 +47,8 @@
    <!-- header main starts -->
     <header id="headerMain" class="header_main genarel_header_main">
       <nav class="navbar_main">
-        <div class="container-fluid container-fluid-tool-page header_home_page">
-          <div class="container-fluid-inner">
+        <div class="container-fluid container-fluid-main container-fluid-tool-page header_home_page {{ $headerPadding ?? '' }}">
+      <div class="container-fluid-inner">
             <a href="{{ route('index') }}" class="navbar-brand">
             <img
               src="/new-assets/assets/images/webQA_logo.png"
@@ -189,9 +189,6 @@
                   </ul>
                 </div>
               </li>
-              <li class="nav-item-Faq"><a href="https://webqa.co/test-archive/" >Previous Tests</a></li>
-              <li class="nav-item-Faq"><a href="https://webqa.co/articles/" >Articles</a></li>
-              <li class="nav-item-Faq"><a href="https://webqa.co/about" >About Us</a></li>
             </ul>
           </div>
           <div class="login_area">
