@@ -142,17 +142,17 @@ class CreateProjectSettingsSubTable extends Migration
             $table->boolean("robot_text_test_block_url")->default(1);
 
             $table->boolean("h1_heading_tag")->default(1);
-            $table->boolean("h1_heading_tag_length")->default(1);
+            $table->boolean("h1_heading_tag_length")->default(0);
             $table->bigInteger("h1_heading_tag_length_val")->nullable();
-            $table->boolean("h2_heading_tag_length")->default(1);
+            $table->boolean("h2_heading_tag_length")->default(0);
             $table->bigInteger("h2_heading_tag_length_val")->nullable();
-            $table->boolean("h3_heading_tag_length")->default(1);
+            $table->boolean("h3_heading_tag_length")->default(0);
             $table->bigInteger("h3_heading_tag_length_val")->nullable();
-            $table->boolean("h4_heading_tag_length")->default(1);
+            $table->boolean("h4_heading_tag_length")->default(0);
             $table->bigInteger("h4_heading_tag_length_val")->nullable();
-            $table->boolean("h5_heading_tag_length")->default(1);
+            $table->boolean("h5_heading_tag_length")->default(0);
             $table->bigInteger("h5_heading_tag_length_val")->nullable();
-            $table->boolean("h6_heading_tag_length")->default(1);
+            $table->boolean("h6_heading_tag_length")->default(0);
             $table->bigInteger("h6_heading_tag_length_val")->nullable();
 
             $table->boolean("broken_links")->default(1)->nullable();
