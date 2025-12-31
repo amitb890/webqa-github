@@ -88,10 +88,7 @@
                     </div>
                     <h4 class="as3-down-one-h">Webpage Audit</h4>
                     <p class="as3-down-one-p">Analyze a page against your standards and instantly share or export findings to prioritize SEO, performance, and quality fixes.</p>
-                    <button class="as3-down-buton" type="button"
-  onclick="window.open('https://webqa.co/features/webpage-audit', '_blank', 'noopener,noreferrer')">
-  Learn more
-</button>
+                    <button class="as3-down-buton" type="button" onclick="window.open('{{ url('/features/webpage-audit') }}', '_blank', 'noopener,noreferrer')">Learn more</button>
 
                 </div>
                 <div class="as3-down-card">
@@ -101,10 +98,8 @@
                     </div>
                     <h4 class="as3-down-two-h">Website Tracker</h4>
                     <p class="as3-down-two-p">See every metric for every URL in one big, filterable table - perfect for spotting patterns across templates and catching regressions early.</p>
-                    <button class="as3-down-buton" type="button"
-  onclick="window.open('https://webqa.co/features/website-tracker', '_blank', 'noopener,noreferrer')">
-  Learn more
-</button>
+                    <button class="as3-down-buton" type="button" onclick="window.open('{{ url('/features/website-tracker') }}', '_blank', 'noopener,noreferrer')">Learn more</button>
+                   
 
                 </div>
                 <div class="as3-down-card">
@@ -113,10 +108,8 @@
                     </div>
                     <h4 class="as3-down-three-h">Reports</h4>
                     <p class="as3-down-three-p">Drill into tabular, per-metric reports (titles, descriptions, canonicals, speed etc) for fast triage and fixes.</p>
-                    <button class="as3-down-buton" type="button"
-  onclick="window.open('https://webqa.co/features/reports', '_blank', 'noopener,noreferrer')">
-  Learn more
-</button>
+                    <button class="as3-down-buton" type="button" onclick="window.open('{{ url('/features/reports') }}', '_blank', 'noopener,noreferrer')">Learn more</button>
+                    
 
                 </div>
                 <div class="as3-down-card">
@@ -125,11 +118,7 @@
                     </div>
                     <h4 class="as3-down-four-h">Settings</h4>
                     <p class="as3-down-four-p">Define project level rules that defines acceptance criteria for each test. Help teams align on exactly what “good” looks like.</p>
-                    <button class="as3-down-buton" type="button"
-  onclick="window.open('https://webqa.co/features/settings', '_blank', 'noopener,noreferrer')">
-  Learn more
-</button>
-
+                    <button class="as3-down-buton" type="button" onclick="window.open('{{ url('/features/settings') }}', '_blank', 'noopener,noreferrer')">Learn more</button>
                 </div>
             </div>
          </section>
@@ -148,7 +137,7 @@
                     </p>
                 </div>
                 <div class="as4-cards">
-                    <a href="https://webqa.co/tool/http-status-code">
+                    <a target="_blank" href="{{ url('/tool/http-status-code') }}">
                         <div class="as4-card">
                         <div class="as4-card-imgs">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="http status code checker icon 1">
@@ -158,7 +147,7 @@
                         <p>Check live response codes for single pages or bulk URL lists, then fix redirects, 4xx/5xxs, and other crawl issues before they hurt your website's SEO.</p>
                     </div>
                     </a>
-                    <a href="https://webqa.co/tool/meta-title">
+                    <a target="_blank" href="{{ url('/tool/meta-title') }}">
                         <div class="as4-card">
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(1).svg') }}" alt="meta title test icon">
@@ -167,7 +156,8 @@
                         <p>Keep page titles consistent and in shape: set your preferred length and casing, ensure they differ from H1s, and get a clear pass/fail for every page.</p>
                     </div>
                     </a>
-                    <a href="https://webqa.co/tool/google-core-web-vitals">
+                    <a target="_blank" href="{{ url('/tool/google-core-web-vitals') }}">
+                    
                         <div class="as4-card">
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="core web vitals test icon">
@@ -176,7 +166,7 @@
                         <p>Measure core web vitals metrics (LCP, CLS, INP) to find what’s slowing your pages down, then focus on the fixes that improve UX and performance.</p>
                     </div>
                     </a>
-                    <a href="">
+                    <a target="_blank" href="{{ url('/tool/broken-links') }}">
                         <div class="as4-card">
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="broken link checker icon">
@@ -185,7 +175,7 @@
                         <p>Check any page for broken links in seconds. Find 404s and dead internal or external links before they hurt your users and SEO.</p>
                     </div>
                     </a>
-                    <a href="https://webqa.co/tool/robotstxt">
+                   <a target="_blank" href="{{ url('/tool/robotstxt') }}">
                         <div class="as4-card">
                         <div class="as4-card-imgs">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="robotstxt checker icon 1">
@@ -195,7 +185,7 @@
                         <p>Validate crawl directives and catch disallow rules before they block pages from indexing. Great for website migrations and template changes.</p>
                     </div>
                     </a>
-                    <a href="">
+                    <a target="_blank" href="{{ url('/tool/images') }}">
                         <div class="as4-card">
                         <div class="as4-card-img">
                             <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(3).svg') }}" alt="Images checker icon">
@@ -205,7 +195,7 @@
                     </div>
                     </a>
                 </div>
-                <button class="as4-button" type="button" onclick="window.open('https://webqa.co/tools', '_blank', 'noopener,noreferrer')">View All Tools</button>
+                <button class="as4-button" type="button" onclick="window.open('{{ url('/tools') }}', '_blank', 'noopener,noreferrer')">View All Tools</button>
 
             </div>
          </section>

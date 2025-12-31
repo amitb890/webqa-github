@@ -1491,7 +1491,7 @@ public function getContentType($response)
                 'slug' => 'meta-title',
                 'route' => 'tool/meta-title',
                 'main_heading' => 'Meta Title Test',
-                'main_para' => 'Check meta title content at scale — length, casing, and “not same as H1” — so every page leads with a clear, click-worthy headline.',
+                'main_para' => 'Check meta title content of multiple urls at once - check for maximum and minimum length, proper casing and whether meta title content is equal to content of heading tags.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1503,7 +1503,7 @@ public function getContentType($response)
                 'slug' => 'meta-description',
                 'route' => 'tool/meta-description',
                 'main_heading' => 'Meta Description Test',
-                'main_para' => 'Scan multiple URLs for concise, informative meta description content — hit the sweet spot on length and clarity to boost relevance and optimise higher click through rates from search engine result pages.',
+                'main_para' => 'Check meta description content for multiple urls - check for maximum and minimum length of meta descriptions.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1515,7 +1515,7 @@ public function getContentType($response)
                 'slug' => 'robots-meta',
                 'route' => 'tool/robots-meta',
                 'main_heading' => 'Robots Meta Tag Test',
-                'main_para' => 'Verify index/follow directives across pages — catch accidental noindex,nofollow directives in Robots meta tag and keep important URLs discoverable.',
+                'main_para' => 'Verify index and follow directives of Robots Meta tag across multiple URLs - catch accidental noindex, nofollow directives in Robots meta tag and keep important URLs discoverable.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1527,7 +1527,7 @@ public function getContentType($response)
                 'slug' => 'canonical-url',
                 'route' => 'tool/canonical-url',
                 'main_heading' => 'Canonical URL Test',
-                'main_para' => 'Bulk check canonicals for multiple URLs. Confirm canonical tags are present and correct, self-referencing where needed and never duplicated across variants.',
+                'main_para' => 'Bulk check canonicals for multiple URLs. Confirm canonical tags are present and correct, self-referencing where needed and never duplicated across different URL variants.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1539,7 +1539,7 @@ public function getContentType($response)
                 'slug' => 'images',
                 'route' => 'tool/images',
                 'main_heading' => 'Images Test',
-                'main_para' => 'Bulk check images across pages on your website. Find missing or weak alternate text and oversized images —improve accessibility, relevance, and load speed in one sweep.',
+                'main_para' => 'Bulk check images across multiple pages on your website. Find missing or weak alternate text, oversized images , incorrect image file names - helps you to improve accessibility, relevance, and load speed of webpages.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
@@ -1551,19 +1551,19 @@ public function getContentType($response)
                 'slug' => 'url-slug',
                 'route' => 'tool/url-slug',
                 'main_heading' => 'URL Slug Test',
-                'main_para' => 'Bulk Check URL Slugs of your website. Ensure slugs are clean and consistent —lowercase, hyphenated, readable, and free of odd characters or bloat.',
+                'main_para' => 'Bulk Check URL Slugs for multiple pages of your website. Ensure slugs are clean and consistent - lowercase, hyphenated, readable, and free of odd and bloated characters.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
             [
-                'displayName' => 'Robot.txt',
+                'displayName' => 'Robots.txt',
                 'name' => 'robotstxt-test',
                 'dbName' => 'robotstxt',
                 'url' => '/test/robotstxt',
                 'slug' => 'robotstxt',
                 'route' => 'tool/robotstxt',
                 'main_heading' => 'Robots.txt Test',
-                'main_para' => 'Validate robots.txt rules —syntax, Disallow/Allow, and sitemap lines — so crawlers see exactly what you intend.',
+                'main_para' => 'Validate robots.txt rules - syntax, Disallow, Allow, and sitemap statements — so crawlers see exactly what you intend to crawl and what you do not intend to crawl.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
                 'bulk_ignore' => true
@@ -1576,7 +1576,7 @@ public function getContentType($response)
                 'slug' => 'headings',
                 'route' => 'tool/headings',
                 'main_heading' => 'Headings Test',
-                'main_para' => 'Bulk check Heading tags content across yoru website pages. Audit heading structures — one solid H1, logical hierarchy, no duplicates — so content is scannable for users and bots.',
+                'main_para' => 'Bulk check Heading tags content across multiple website pages. Audit heading structures - one solid H1, logical hierarchy of headings, no duplicate headings content — so that headings content is optimised for users and search engines.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],

@@ -114,7 +114,7 @@
                 <div class="dropdown dropdown2">
                   <a
                     class="dropdown-toggle"
-                    href="https://webqa.co/tools"
+                    href="{{ url('/tools') }}"
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"

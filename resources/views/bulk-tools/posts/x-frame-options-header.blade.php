@@ -10,145 +10,125 @@
 
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">
-    <h2 class="tools_des_fastheading">X-Frame-Options Header</h2>
+    <h2 class="tools_des_fastheading">X Frame Options Header</h2>
 
-    <p>The X-Frame-Options Header is a simple yet crucial line of defense for websites, preventing them from being embedded into malicious sites or hijacked.</p>
 
-    <h3>What Is the X-Frame-Options Header?</h3>
-    <p>In simple terms, the X-Frame-Options Header is like a security guard for a building, ensuring only the right people enter. It decides who can and cannot display your website within a frame. Having this in place creates a digital boundary, making it harder for malicious websites to exploit your content.</p>
 
-    <h3>Why Is It Important to Care about the X-Frame-Options Header?</h3>
-    <p>Imagine a scenario where a suspicious website overlays a transparent frame over a trustworthy site. As you click thinking you're on the trusted website, you inadvertently interact with the concealed malicious site beneath. This deceptive act is known as clickjacking, and the X-Frame-Options Header helps prevent it.</p>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>An X Frame Options Header Test checks whether your website sends the "X-Frame-Options" response header to control if your pages can be embedded inside an iframe.</p>
+  <ol>
+    <li>X-Frame-Options helps protects your website from clickjacking attacks by restricting framing.</li>
+    <li>The two primary values are "DENY" (block all framing) and "SAMEORIGIN" (allow only same-origin framing).</li>
+    <li>The "ALLOW-FROM" directive is obsolete and is generally not recommended to be used.</li>
+    <li>Modern best practice is to use "Content-Security-Policy: frame-ancestors" for more flexible control, often alongside X-Frame-Options for ensuring maximum compatibility.</li>
+    <li>This tool helps you confirm whether the header is present or not, correctly configured, and aligned with your embedding needs.</li>
+  </ol>
+</div>
 
-    <h3>Where is the X-Frame-Options Header Located?</h3>
-    <p>The X-Frame-Options Header is located within the HTTP response headers of a website. When a browser requests a website, the server sends back an HTTP response. Within this response are several headers that guide the browser on handling the content. One of these headers is the X-Frame-Options.</p>
 
-    <h3>How Does the X-Frame-Options Header Work? Diving into Directives</h3>
-    <p>The X-Frame-Options Header employs a set of directives that dictate who can embed your webpage. These directives act as rules, guiding browsers on how to display content and who can frame it. Let's unpack the three core directives to understand their roles:</p>
+<h3>What Is the X-Frame-Options Header and How Does It Work?</h3>
+<p>The X-Frame-Options header is a browser security mechanism that controls whether a webpage is allowed to be displayed inside a frame or iframe.</p>
 
-    <h4>DENY:</h4>
-    <p>This is the "Do Not Enter" sign for web content. Implementing this directive ensures that absolutely no site, regardless of its origin, can embed or frame your website. It's the most restrictive setting, offering maximal protection against unwanted framing.</p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/x-frame_1.png') }}" alt="Nested Table HTML Example" class="img-fluid my-4">
+<p>Its primary purpose is to protect websites from clickjacking attacks, where a malicious site embeds your webpage in a hidden or deceptive iframe and tricks users into clicking buttons, links, or controls they didn’t intend to interact with.</p>
 
-    <h4>SAMEORIGIN:</h4>
-    <p>This is akin to an "Only Family Allowed" sign at a private event. By using this directive, you're permitting only your website to embed or frame its content. It restricts other external sites but allows for content embedding on pages within your site.</p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/x-frame_2.png') }}" alt="Nested Table HTML Example" class="img-fluid my-4">
+<p>When a browser attempts to load a page inside an iframe, it checks the "X-Frame-Options response header" sent by the embedded page. Based on the directive set in that header, the browser decides whether to allow or block the page from being displayed in the iframe.</p>
 
-    <h4>ALLOW-FROM:</h4>
-    <p>Picture this as a selective guest list at an exclusive party. This directive lets you handpick specific websites that can frame your content. It's best suited for scenarios where you trust certain partners or domains to showcase your material.</p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/x-frame_3.png') }}" alt="Nested Table HTML Example" class="img-fluid my-4">
+<p>If framing is not allowed, the browser prevents the page from rendering inside the iframe entirely. If framing is restricted to the same origin, the browser allows it only when the parent page comes from the same protocol, domain, and port.</p>
 
-    <h3>Setting Up the X-Frame-Options Header: Your Implementation Blueprint</h3>
-    <ul>
-      <li><strong>Decide on Your Directive:</strong> Reflect on how protective you wish to be about who frames your content. Pick a directive that aligns best with your security concerns and sharing preferences.</li>
-      <li><strong>Integration on Your Website:</strong> This phase requires diving into your website's backend configurations. While it might sound technical, a proficient web developer or site administrator can integrate this header smoothly.</li>
-      <li><strong>Verification is Key:</strong> You mustn't rest easy after setting it up. It's paramount to check if your X-Frame-Options Header is up, running, and functioning as desired. Ample online tools and utilities are designed to audit and validate your header settings.</li>
-    </ul>
+<p>Because this protection is enforced directly by the browser, it remains effective even if an attacker controls the page that is attempting to embed your site. This makes X-Frame-Options a reliable defense against UI redress and framing based attacks.</p>
 
-    <h3>Understanding Clickjacking and X-Frame-Options Header</h3>
-    <p>Clickjacking, also known as "UI redress attack," is a malicious technique where attackers trick users into clicking something different from what the user perceives. In essence, it overlays an invisible frame over a visible page. So, when users think they're clicking on one element, they unknowingly perform actions on another hidden page. The X-Frame-Options Header is designed to counteract such sneaky methods, ensuring your website isn't used as a puppet in these deceptive acts.</p>
 
-    <h3>The Few Caveats of X-Frame-Options Header</h3>
-    <p>The realm of online security is a constant game of cat and mouse. While tools like the X-Frame-Options Header offer reliable protection, it's crucial to remember that no fortress is entirely breach-proof. There may be instances where glitches inadvertently block genuine content framing. Hence, keeping a keen eye through regular monitoring and timely updates becomes a pivotal part of the defense strategy.</p>
+<h3>X-Frame-Options Directives</h3>
+<p>The X-Frame-Options header supports a few directives that determine whether your pages can be embedded inside an iframe. Choosing the right value depends on whether you want to block all framing, allow framing only on your own website, or allow specific external domains to embed your website as an iFrame.</p>
 
-    <h3>In Conclusion</h3>
-    <p>Though the term "X-Frame-Options Header" might seem like a mouthful, its essence is pure gold for your website's safety. Envision it as the vigilant guard at your site's gate, ensuring only the suitable entities access your content. This safeguards your website and reinforces user trust, guaranteeing a genuine and seamless online experience.</p>
+<h5>DENY</h5>
+<p>The DENY directive blocks the webpage from being framed by any website, including your own website.</p>
+<p><b>Best for:</b> Login pages, checkout pages, admin panels, account settings, and any page where a user can take sensitive actions.</p>
 
-    <!-- Start FAQ -->
-    <div class="getting-recover-main recover-faq-area">
-      <h3>FAQs</h3>
-      <div class="accordion" id="accordionPanelsStayOpenExample">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-purpose">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-purpose"
-              aria-expanded="false"
-              aria-controls="collapse-purpose">
-              What is the primary purpose of the X-Frame-Options Header?
-            </button>
-          </h2>
-          <div id="collapse-purpose"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-purpose">
-            <div class="accordion-body">
-              <p>The X-Frame-Options Header is primarily used to prevent clickjacking attacks by controlling whether a browser can render a page inside an &lt;iframe&gt; or &lt;frame&gt;.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-alternatives">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-alternatives"
-              aria-expanded="false"
-              aria-controls="collapse-alternatives">
-              Are there alternatives to the X-Frame-Options Header for preventing clickjacking?
-            </button>
-          </h2>
-          <div id="collapse-alternatives"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-alternatives">
-            <div class="accordion-body">
-              <p>Yes, the Content Security Policy (CSP) with the frame-ancestors directive is an alternative and more modern approach to controlling which sites can embed your content.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-multiple-domains">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-multiple-domains"
-              aria-expanded="false"
-              aria-controls="collapse-multiple-domains">
-              Can I allow multiple domains to frame my content using X-Frame-Options?
-            </button>
-          </h2>
-          <div id="collapse-multiple-domains"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-multiple-domains">
-            <div class="accordion-body">
-              <p>No, the X-Frame-Options Header does not support allowing multiple domains. If you need to permit multiple domains, consider using a Content Security Policy (CSP) with the frame-ancestors directive instead.</p>
-            </div>
-          </div>
-        </div>
+<h5>SAMEORIGIN</h5>
+<p>SAMEORIGIN allows the page to be framed only by pages from the same origin (same protocol, domain, and port).</p>
+<p><b>Best for:</b> Sites that legitimately embed their own webpages within their own domain, such as internal dashboards or embedded sections of the same website on other pages. If you want to retain the absolute control of embedded your own webpages within your website and do not want to allow any other website to be able to embed your webpage, use this directive.</p>
 
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-necessity">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-necessity"
-              aria-expanded="false"
-              aria-controls="collapse-necessity">
-              Does every website need to implement the X-Frame-Options Header?
-            </button>
-          </h2>
-          <div id="collapse-necessity"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-necessity">
-            <div class="accordion-body">
-              <p>While it's beneficial for sites containing sensitive user data or transaction capabilities, not every website requires it. However, it's a good security practice to implement it as a layer of defense against potential clickjacking.</p>
-            </div>
-          </div>
-        </div>
+<h5>ALLOW-FROM</h5>
+<p>ALLOW-FROM attempts to allow framing only from a specific URL, but browser support is limited and it’s considered obsolete in modern web development implementations.</p>
+<p>If you need to allow framing from specific trusted partner domains, the recommended approach is to use "Content-Security-Policy: frame-ancestors", which provides reliable allow listing across modern browsers.</p>
 
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-check">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-check"
-              aria-expanded="false"
-              aria-controls="collapse-check">
-              How do I check if my website has an active X-Frame-Options Header?
-            </button>
-          </h2>
-          <div id="collapse-check"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-check">
-            <div class="accordion-body">
-              <p>You can inspect your website's HTTP response headers using browser developer tools or specific online tools designed to check headers. Look for the "X-Frame-Options" entry in the response headers.</p>
-            </div>
-          </div>
+
+<h3>X Frame Options vs CSP frame ancestors</h3>
+<p>X Frame Options is a widely supported security header that helps prevent clickjacking by restricting whether your pages can be embedded in an iframe. However, it has certain limitations especially if you need to allow framing from specific external domains.</p>
+
+<p>That’s where Content Security Policy (CSP) header comes in. CSP includes a directive called "frame-ancestors", which provides more flexible and modern control over who can embed your pages.</p>
+
+<ol>
+  <li><b>X Frame Options</b> is simple and commonly used, but it mainly supports DENY and SAMEORIGIN and does not reliably support allowlists across browsers.</li>
+  <li><b>CSP frame ancestors</b> lets you define an allowlist of trusted domains that can frame your content, making it better for partner embeds and complex setups.</li>
+</ol>
+
+<p><div class="red-highlight-table"><b>Important:</b> If you want framing protection using Content Security Policy, you must explicitly set frame-ancestors. It is not automatically covered by other CSP directives.</div></p>
+
+<p>It is recommended to use CSP frame ancestors when you need precise control especially allowlisting, and keep X Frame Options as a compatibility layer where appropriate.</p>
+
+<!-- Start FAQ -->
+<div class="getting-recover-main recover-faq-area">
+  <h3>FAQs on X-Frame-Options Header Test</h3>
+  <div class="accordion" id="accordionPanelsStayOpenExample">
+    @foreach([
+      [
+        'q' => 'What does X-Frame-Options protect against?',
+        'a' => 'X-Frame-Options helps protect against clickjacking attacks, where a malicious website may embed your page in an iframe to trick users into clicking something they didn’t intend to.'
+      ],
+      [
+        'q' => 'Which is better: DENY or SAMEORIGIN?',
+        'a' => 'DENY is the strongest option because it blocks all framing, even by your own webpages. SAMEORIGIN is useful when your site legitimately needs to embed its own pages within the same domain but you want to restrict embedding from other domains.'
+      ],
+      [
+        'q' => 'What is ALLOW-FROM and should I use it?',
+        'a' => 'ALLOW-FROM was intended to allow framing from a specific URL, but it has limited support and is considered obsolete. If you need to allow specific domains, use Content-Security-Policy (CSP) frame-ancestors instead.'
+      ],
+      [
+        'q' => 'Can I allow my page to be embedded on a partner domain?',
+        'a' => 'Yes, but X-Frame-Options is not ideal for allowlisting. The recommended approach is to use CSP frame-ancestors, which supports reliable allowlists across modern browsers.'
+      ],
+      [
+        'q' => 'Do I need CSP frame-ancestors if I already use X-Frame-Options?',
+        'a' => 'Not always. X-Frame-Options is often enough for basic protection. However, frame-ancestors is more flexible and is considered the modern best practice, especially when you need to allow trusted third-party embeds.'
+      ],
+      [
+        'q' => 'Why is my iframe not working?',
+        'a' => 'If the embedded page sends X-Frame-Options: DENY, it cannot be framed anywhere. If it sends SAMEORIGIN, it can only be framed by pages from the same origin. In both cases, browsers will block the iframe if the embedding page isn’t allowed.'
+      ],
+      [
+        'q' => 'Should I enable framing protection on all pages?',
+        'a' => 'Most websites should protect sensitive pages like login, account, checkout, and admin areas. For public content that must be embedded (like widgets or docs), use CSP frame-ancestors to allow only trusted domains.'
+      ],
+      [
+        'q' => 'Can this header break legitimate embeds on my own site?',
+        'a' => 'Yes. If you use DENY, even your own site can’t embed the page. If your site requires internal embedding, SAMEORIGIN is usually the better choice.'
+      ]
+    ] as $faq)
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+          aria-expanded="false"
+          aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          {{ $faq['q'] }}
+        </button>
+      </h2>
+      <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+        class="accordion-collapse collapse"
+        aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+        <div class="accordion-body">
+          <p>{{ $faq['a'] }}</p>
         </div>
       </div>
     </div>
-    <!-- End FAQ -->
+    @endforeach
+  </div>
+</div>
+<!-- End FAQ --> 
+
+  
   </div>
 </div>

@@ -21,10 +21,10 @@
         <div class="single_footer_item">
         <div class="footer_list_items">
             <ul>
-            <li><a href="https://webqa.co/about">About Us</a></li>
-            <li><a href="https://webqa.co/tools">Tools</a></li>
-            <li><a href="https://webqa.co/features">Features</a></li>
-            <li><a href="https://webqa.co/test-archive">Previous Tests</a></li>
+            <li><a href="{{ url('/about') }}">About Us</a></li>
+            <li><a href="{{ url('/tools') }}">Tools</a></li>
+            <li><a href="{{ url('/features') }}">Features</a></li>
+            <li><a href="{{ url('/test-archive') }}">Previous Tests</a></li>
             </ul>
         </div>
         </div>
