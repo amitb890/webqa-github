@@ -5,21 +5,7 @@
 <link rel="stylesheet" href="{{ asset('new-assets/css/project.list.css') }}{{ \App\Http\Helpers::getCacheBuster() }}">
 @endsection
 @section('content')
-    <!-- Ui-Element Start -->
-    <div class="element-main-area">
-        <div class="element-cls">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="element_All">
-                <label class="form-check-label" for="element_All">
-                    Select All
-                </label>
-            </div>
-            <span><i class="fa-solid fa-xmark"></i></span>
-        </div>
-        <input type="hidden" id="projectCount" value="{{ count($projects) }}">
 
-    </div>
-    <!-- Ui-Element End -->
     <div class="project_area">
         <div class="project_top_area">
             <div class="project_title">

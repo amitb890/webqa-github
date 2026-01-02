@@ -739,6 +739,8 @@ if(isset($_COOKIE["activeProject"])){
 
   @auth
   <script>
+        let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
+        let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
       window.reportSettings = @json(
           \App\Models\ReportSettings::where('user_id', auth()->id())->first() ?? $defaultReportSettings
       );

@@ -64,7 +64,7 @@
 <p>Compressed images help:</p>
 <ul>
   <li>Pages load faster</li>
-  <li>Improves <a target"_blank" href="https://webqa.co/tool/google-core-web-vitals">Core Web Vitals</a></li>
+  <li>Improves <a target"_blank" href="{{ url('/tool/google-core-web-vitals') }}">Core Web Vitals</a></li>
   <li>Reduce web server's bandwidth usage</li>
   <li>Enhances mobile performance</li>
 </ul>

@@ -18,6 +18,22 @@ use Symfony\Component\HttpClient\HttpClient;
 Route::get('/login/google', [App\Http\Controllers\LoginController::class, 'redirectToGoogle']);
 Route::get('/login/google/callback', [App\Http\Controllers\LoginController::class, 'handleGoogleCallback']);
 
+Route::get('/logout', function() {
+    // Logout authenticated user if any
+    if (auth()->check()) {
+        auth()->logout();
+    }
+    
+    // Destroy all session data
+    session()->flush();
+    
+    // Regenerate session ID for security
+    session()->regenerate(true);
+    
+    // Redirect to home page
+    return redirect('/')->with('message', 'You have been logged out successfully.');
+})->name('logout.get');
+
 Route::get('/', [App\Http\Controllers\PagesController::class, 'index'])->name('index');
 Route::resource('blog', App\Http\Controllers\BlogsController::class);
 Route::resource('support', App\Http\Controllers\SupportController::class);

@@ -4543,9 +4543,9 @@ function getFormattedName(url) {
                           <p>Passed</p>
                           <p>Failed</p>
                         </div>
-                        <div class="pi-scale" data-passed="30" data-failed="15">
-                          <p class="pi-scale-passedNum">50</p>
-                          <p class="pi-scale-failedNum">10</p>
+                        <div class="pi-scale" data-passed="${dataPassed.length}" data-failed="${dataFailed.length}">
+                          <p class="pi-scale-passedNum">${dataPassed.length}</p>
+                          <p class="pi-scale-failedNum">${dataFailed.length}</p>
                           <div class="pi-scale-fill"></div>
                         </div>
                       </div>

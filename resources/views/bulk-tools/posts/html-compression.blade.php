@@ -19,7 +19,7 @@
     <li>HTML compression reduces bandwidth usage and helps improve performance on websites with high traffic.</li>
     <li>HTML compression usually means minifying HTML and removing inline CSS and JS. HTML compression is not about “zipping” files.</li>
     <li>It’s generally safe, but overly aggressive minification can break pages that rely on whitespace (e.g., <code>&lt;pre&gt;</code> or <code>&lt;textarea&gt;</code>).</li>
-    <li>It works best alongside <a target="_blank" href="https://webqa.co/tool/gzip-compression">Gzip compression</a>, caching, and proper CSS and JS minification techniques.</li>
+    <li>It works best alongside <a target="_blank" href="{{ url('/tool/gzip-compression') }}">Gzip compression</a>, caching, and proper CSS and JS minification techniques.</li>
   </ol>
 </div>
 
