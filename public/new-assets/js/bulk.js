@@ -858,6 +858,10 @@ function toggleTestResultAreaVisibility() {
                     tbody.appendChild(tr)
                 })
                 createDatatableElement();
+                // Set dynamic column widths only for meta-title table
+                setTimeout(function() {
+                    setDynamicColumnWidths(table, 'title');
+                }, 100);
                 break;
 
             case "description":
@@ -2579,6 +2583,204 @@ function toggleTestResultAreaVisibility() {
         });
     }
    
+    /**
+     * Function to set dynamic column widths based on visible columns
+     * @param {HTMLElement} table - The table element
+     * @param {String} tableType - Type of table (e.g., 'title', 'description', etc.)
+     */
+    function setDynamicColumnWidths(table, tableType) {
+        if (!table) return;
+        
+        // Get all header cells (th elements)
+        const thead = table.querySelector('thead');
+        if (!thead) return;
+        
+        const headerCells = thead.querySelectorAll('th');
+        const visibleColumns = [];
+        const columnTypes = [];
+        
+        // Identify visible columns and their types
+        headerCells.forEach((th, index) => {
+            const isHidden = th.classList.contains('d-none') || th.classList.contains('hidden-element');
+            if (!isHidden) {
+                visibleColumns.push(index);
+                
+                // Determine column type based on content and position
+                const thText = th.textContent.trim().toLowerCase();
+                let columnType = 'default';
+                
+                if (thText === '#' || thText.includes('si no') || index === 0) {
+                    columnType = 'rowNumber';
+                } else if (thText === 'url' || th.classList.contains('result_header')) {
+                    columnType = 'url';
+                } else if (thText === 'content') {
+                    columnType = 'content';
+                } else if (thText === 'length' || thText === 'len') {
+                    columnType = 'length';
+                } else if (thText.includes('equal') || thText.includes('h1')) {
+                    columnType = 'comparison';
+                } else if (thText === 'casing') {
+                    columnType = 'casing';
+                } else if (thText === 'result') {
+                    columnType = 'result';
+                }
+                
+                columnTypes.push(columnType);
+            }
+        });
+        
+        // Calculate widths based on number of visible columns and column types
+        const widthConfig = calculateColumnWidths(visibleColumns.length, columnTypes, tableType);
+        
+        // Apply widths to header cells
+        headerCells.forEach((th, index) => {
+            if (visibleColumns.includes(index)) {
+                const widthIndex = visibleColumns.indexOf(index);
+                const width = widthConfig[widthIndex];
+                if (width) {
+                    th.style.width = width + '%';
+                    th.style.minWidth = width + '%';
+                    th.style.maxWidth = width + '%';
+                }
+            }
+        });
+        
+        // Apply widths to data cells (td elements)
+        const tbody = table.querySelector('tbody');
+        if (tbody) {
+            const rows = tbody.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                cells.forEach((td, index) => {
+                    if (visibleColumns.includes(index)) {
+                        const widthIndex = visibleColumns.indexOf(index);
+                        const width = widthConfig[widthIndex];
+                        if (width) {
+                            td.style.width = width + '%';
+                            td.style.minWidth = width + '%';
+                            td.style.maxWidth = width + '%';
+                        }
+                    }
+                });
+            });
+        }
+    }
+    
+    /**
+     * Calculate column widths based on visible columns count and types
+     * @param {Number} visibleCount - Number of visible columns
+     * @param {Array} columnTypes - Array of column type identifiers
+     * @param {String} tableType - Type of table
+     * @returns {Array} Array of width percentages
+     */
+    function calculateColumnWidths(visibleCount, columnTypes, tableType) {
+        const widths = [];
+        
+        // Fixed widths for specific columns
+        const FIXED_COMPARISON_WIDTH = 11; // "Title Equal to H1?" column
+        const FIXED_CASING_WIDTH = 15;     // "Casing" column
+        const FIXED_ROW_NUMBER_WIDTH = 3;   // Row number column
+        
+        // Calculate total fixed width
+        let totalFixedWidth = FIXED_ROW_NUMBER_WIDTH; // Always include row number
+        const hasComparison = columnTypes.includes('comparison');
+        const hasCasing = columnTypes.includes('casing');
+        
+        if (hasComparison) {
+            totalFixedWidth += FIXED_COMPARISON_WIDTH;
+        }
+        if (hasCasing) {
+            totalFixedWidth += FIXED_CASING_WIDTH;
+        }
+        
+        // Remaining width to distribute among other columns
+        const remainingWidth = 100 - totalFixedWidth;
+        
+        // Count flexible columns (columns that need dynamic width)
+        const flexibleColumns = columnTypes.filter(type => 
+            type !== 'rowNumber' && 
+            type !== 'comparison' && 
+            type !== 'casing'
+        );
+        const flexibleCount = flexibleColumns.length;
+        
+        // Base width distribution for flexible columns
+        // Priority order: URL > Content > Length > Result
+        const baseWidths = {
+            url: 0,
+            content: 0,
+            length: 0,
+            result: 0,
+            default: 0
+        };
+        
+        // Calculate proportional widths for flexible columns
+        if (flexibleCount > 0) {
+            // Define priority weights for flexible columns
+            const weights = {
+                url: 50,        // Highest priority
+                content: 30,    // Second priority
+                length: 10,     // Third priority
+                result: 10,     // Lowest priority
+                default: 10
+            };
+            
+            // Calculate total weight
+            let totalWeight = 0;
+            flexibleColumns.forEach(type => {
+                totalWeight += weights[type] || weights.default;
+            });
+            
+            // Assign proportional widths
+            flexibleColumns.forEach(type => {
+                const weight = weights[type] || weights.default;
+                baseWidths[type] = Math.round((remainingWidth * weight) / totalWeight);
+            });
+            
+            // Adjust for rounding errors
+            const assignedWidth = Object.values(baseWidths).reduce((sum, w) => sum + w, 0);
+            const adjustment = remainingWidth - assignedWidth;
+            if (adjustment !== 0 && flexibleColumns.length > 0) {
+                // Add adjustment to URL column (highest priority)
+                const urlIndex = flexibleColumns.indexOf('url');
+                if (urlIndex !== -1) {
+                    baseWidths.url += adjustment;
+                } else {
+                    // If no URL, add to first flexible column
+                    baseWidths[flexibleColumns[0]] += adjustment;
+                }
+            }
+        }
+        
+        // Build final widths array in column order
+        columnTypes.forEach((type) => {
+            if (type === 'rowNumber') {
+                widths.push(FIXED_ROW_NUMBER_WIDTH);
+            } else if (type === 'comparison') {
+                widths.push(FIXED_COMPARISON_WIDTH);
+            } else if (type === 'casing') {
+                widths.push(FIXED_CASING_WIDTH);
+            } else {
+                // Use calculated width for flexible columns
+                widths.push(baseWidths[type] || Math.floor(remainingWidth / flexibleCount));
+            }
+        });
+        
+        // Final normalization to ensure sum is exactly 100%
+        const total = widths.reduce((sum, w) => sum + w, 0);
+        if (total !== 100 && widths.length > 0) {
+            const adjustment = 100 - total;
+            // Adjust the URL column if it exists, otherwise adjust the last column
+            const urlIndex = columnTypes.indexOf('url');
+            if (urlIndex !== -1 && urlIndex < widths.length) {
+                widths[urlIndex] += adjustment;
+            } else {
+                widths[widths.length - 1] += adjustment;
+            }
+        }
+        
+        return widths;
+    }
     
 })
 

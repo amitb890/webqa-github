@@ -23,5 +23,7 @@ Webqa - Analysis Report
 <script src="{{ asset('new-assets/js/roboto-fonts.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="{{ asset('new-assets/js/analysis.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="{{ asset('new-assets/js/export-pdf.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="/new-assets/js/exceljs.min.js"></script>
+<script src="{{ asset('new-assets/js/export-excel.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
 @endsection
