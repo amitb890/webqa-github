@@ -242,6 +242,7 @@
     <script src="{{ asset('new-assets/js/functions.js') }}"></script>
     <script src="{{ asset('new-assets/js/main.js') }}"></script>
     <script src="{{ asset('new-assets/js/register.js') }}"></script>
+    <script src="{{ asset('new-assets/js/imran.js') }}"></script>
       
 
 

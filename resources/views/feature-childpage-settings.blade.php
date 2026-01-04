@@ -46,7 +46,7 @@
         <div class="fcs3-d1">
             <h1>Customized SEO Controls</h1>
             <div class="fcs3-d1-imgdiv">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-settings/Group-1050.svg') }}" alt="">
+                <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-settings/Group-1050.svg') }}" alt="">
             </div>
         </div>
         <div class="fcs3-d2">
@@ -97,7 +97,7 @@
             <p class="fr2-d-p">
                 Our Customized Auditing Settings let you define exactly what matters for your website’s success. Choose specific metrics, focus areas, and performance goals tailored to your business. From SEO to speed optimization, our flexible settings ensure every audit delivers precise insights, empowering you to take targeted, impactful action.
             </p>
-            <img class="fr2-d-img" src="{{ asset('new-assets/assets/images/feature-childpage-settings/Group-1009-(1).svg') }}" alt="">
+            <img class="fr2-d-img zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-settings/Group-1009-(1).svg') }}" alt="">
         </div>
      </section>
     <!-- Section 4 Ends -->
@@ -352,6 +352,10 @@
    </section>
     <!-- Section 8 Ends -->
 
+    <div id="imagePreviewOverlay">
+        <span class="image-preview-close">&times;</span>
+        <img id="imagePreviewContent" src="" alt="Preview">
+    </div>
      @section("js")
 <script src="{{ asset('/new-assets/js/home.js') }}"></script>
 @endsection

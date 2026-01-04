@@ -67,6 +67,7 @@
         <!-- custom scripts -->
         <script src="{{ asset('new-assets/js/functions.js') }}"></script>
         <script src="{{ asset('new-assets/js/app.js') }}"></script>
+        <script src="{{ asset('new-assets/js/imran.js') }}"></script>
 
         @yield("js")
         <script>

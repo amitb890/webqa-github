@@ -17775,4 +17775,60 @@ textarea.auto-number.has-content {
 /* Imran css styles for order 20 Nov Ends */
 
 
+/* Imran css styles for December Order Starts */
 
+#imagePreviewOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+
+#imagePreviewOverlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+#imagePreviewContent {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 6px;
+  animation: zoomIn 0.3s ease;
+}
+
+
+.image-preview-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.zoomable-img{
+  cursor:pointer;
+}
+
+/* Imran css styles for December Order Ends */

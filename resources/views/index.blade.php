@@ -5261,11 +5261,16 @@
         id="problemAccordionImage"
         src=""
         alt="img"
+        class="zoomable-img"
       />
     </div>
   </div>
 </div>
 <!-- problems Area End -->
+<div id="imagePreviewOverlay">
+  <span class="image-preview-close">&times;</span>
+  <img id="imagePreviewContent" src="" alt="Preview">
+</div>
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -5307,7 +5312,7 @@
         <h1 class="fcat4-mainD-h">Steps for Website Auditing</h1>
         <div class="fcat4-mainD-cards">
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/home/step-1.png') }}" alt="">
+            <img class="zoomable-img" src="{{ asset('new-assets/assets/images/home/step-1.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>1</h6>
@@ -5320,7 +5325,7 @@
             </div>
           </div>
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/home/step-2.png') }}" alt="">
+            <img class="zoomable-img" src="{{ asset('new-assets/assets/images/home/step-2.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>2</h6>
@@ -5333,7 +5338,7 @@
             </div>
           </div>
           <div class="fcat4-mainD-d-card">
-            <img src="{{ asset('new-assets/assets/images/home/step-3.png') }}" alt="">
+            <img class="zoomable-img" src="{{ asset('new-assets/assets/images/home/step-3.png') }}" alt="">
             <div class="fcat4-mainD-d-card-ld">
               <div class="fcat4-mainD-d-card-d1">
                 <h6>3</h6>
@@ -5443,7 +5448,7 @@
                       </div>
                     </div>
                     <div
-                      class="home_images_tab_right"
+                      class="home_images_tab_right zoomable-img"
                       style="
                         background: url(/new-assets/assets/images/home/group-seo.png)
                           no-repeat scroll center center / cover;
@@ -5469,7 +5474,7 @@
                       </div>
                     </div>
                     <div
-                      class="home_images_tab_right"
+                      class="home_images_tab_right zoomable-img"
                       style="
                         background: url(/new-assets/assets/images/home/group-performance.png)
                           no-repeat scroll center center / cover;
@@ -5495,7 +5500,7 @@
                       </div>
                     </div>
                     <div
-                      class="home_images_tab_right"
+                      class="home_images_tab_right zoomable-img"
                       style="
                         background: url(/new-assets/assets/images/home/group-performance.png)
                           no-repeat scroll center center / cover;
@@ -5521,7 +5526,7 @@
                       </div>
                     </div>
                     <div
-                      class="home_images_tab_right"
+                      class="home_images_tab_right zoomable-img"
                       style="
                         background: url(/new-assets/assets/images/home/group-best-practices.png)
                           no-repeat scroll center center / cover;
@@ -5547,7 +5552,7 @@
                       </div>
                     </div>
                     <div
-                      class="home_images_tab_right"
+                      class="home_images_tab_right zoomable-img"
                       style="
                         background: url(/new-assets/assets/images/home/group-security.png)
                           no-repeat scroll center center / cover;
