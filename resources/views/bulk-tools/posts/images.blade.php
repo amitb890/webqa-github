@@ -4,7 +4,7 @@
 @section('og-title', 'Test Images for Alt Text and SEO Issues | Webqa')
 @section('og-description', 'Scan a page for image problems—missing or weak alt attributes, large files, and format concerns. See decisive Pass/Fail outcomes and export results to share.')
 @section('og-url', 'https://webqa.co/tool/images')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/images-test.png')
 @section('og-image-alt', 'Images test')
 
 
@@ -64,7 +64,7 @@
 <p>Compressed images help:</p>
 <ul>
   <li>Pages load faster</li>
-  <li>Improves <a target"_blank" href="{{ url('/tool/google-core-web-vitals') }}">Core Web Vitals</a></li>
+  <li>Improves <a target"_blank" href="https://webqa.co/tool/google-core-web-vitals">Core Web Vitals</a></li>
   <li>Reduce web server's bandwidth usage</li>
   <li>Enhances mobile performance</li>
 </ul>

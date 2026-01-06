@@ -4,7 +4,7 @@
 @section('og-title', 'Test HTTP Status Codes, Redirects & Errors | Webqa')
 @section('og-description', 'Audit status responses for any URL—confirm 200 OK, trace redirect chains, and spot 4xx/5xx errors. Export results to share and fix broken paths quickly.')
 @section('og-url', 'https://webqa.co/tool/http-status-code')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/http-status-code-test.png')
 @section('og-image-alt', 'HTTP status code test')
 
 

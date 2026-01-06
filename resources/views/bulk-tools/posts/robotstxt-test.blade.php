@@ -4,7 +4,7 @@
 @section('og-title', 'Test robots.txt for Crawl Directives | Webqa')
 @section('og-description', 'Audit robots.txt in seconds—verify syntax, Disallow/Allow rules, and sitemap lines, and ensure important pages aren’t blocked. Export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/robotstxt')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/robotstxt-test.png')
 @section('og-image-alt', 'robots.txt test')
 
 

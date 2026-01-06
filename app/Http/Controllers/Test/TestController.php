@@ -764,7 +764,7 @@ class TestController extends Controller
         $min = $settings->settings_sub->min_desc_length_val;
         $title = "Meta Description";
         $content = $data["content"];
-        $description = "Meta description refers to an HTML attribute that acts as a descriptor on organic search results to provide a brief summary of a web page. Usually shown directly below the title tag on search engines, the meta description is your chance to describe the page's content and give searchers a reason to click";
+        $description = "A meta description is a short summary of a web page that appears below the page title in search results and conveys what the page is all about.";
         $message = "Your webpage is using a meta description tag";
         $length = strlen($content);
         $lengthClass = "result_pass";
@@ -814,7 +814,7 @@ class TestController extends Controller
         $object->tagStatus = $tagStatus;
         $object->casingStatus = false;
         $object->lengthClass = $lengthClass;
-        $object->learnMoreURL = "https://setmore.com/";
+        $object->learnMoreURL = "https://webqa.co/support/meta-description/";
         $object->tagName = "Meta Description Tag";
         $object->settings = $settings->settings_sub;
         echo json_encode($object);

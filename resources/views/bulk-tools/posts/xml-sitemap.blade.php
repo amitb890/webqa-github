@@ -4,7 +4,7 @@
 @section('og-title', 'Test XML Sitemaps for Accuracy & Coverage | Webqa')
 @section('og-description', 'Audit XML sitemaps—confirm presence and syntax, validate index/child sitemaps, check URL responses and lastmod, and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/xml-sitemap')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/xml-sitemap-test.png')
 @section('og-image-alt', 'XML sitemap test')
 
 <div class="single-post-content-main bulk-tool-test">

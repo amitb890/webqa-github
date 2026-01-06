@@ -4,7 +4,7 @@
 @section('og-title', 'Test Twitter Card Tags for Accurate Link Previews | Webqa')
 @section('og-description', 'Audit twitter:card, twitter:title, twitter:description, and twitter:image. Find missing or invalid values and export results for quick fixes and consistent previews.')
 @section('og-url', 'https://webqa.co/tool/twitter-tags')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/twitter-tags-test.png')
 @section('og-image-alt', 'Twitter tags test')
 
 
@@ -107,7 +107,7 @@
               @foreach([
                   [
                       'q' => 'Do Twitter tags affect SEO?',
-                      'a' => 'No - Twitter tags do not impact search rankings, but they do influence social engagement metrics which indirectly support traffic and brand visibility.',
+                      'a' => 'No — Twitter tags do not impact search rankings, but they do influence social engagement metrics which indirectly support traffic and brand visibility.',
                   ],
                   [
                       'q' => 'What size should Twitter card images be?',

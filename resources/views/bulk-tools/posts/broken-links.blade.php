@@ -1,11 +1,11 @@
-@section('title', 'Broken-links Test | Webqa')
+@section('title', 'Broken links Test | Webqa')
 @section('meta-description', 'Broken-links Test')
-@section('canonical', 'https://webqa.co/tool/meta-title')
+@section('canonical', 'https://webqa.co/tool/broken-links')
 @section('og-title', 'Broken-links | Webqa')
 @section('og-description', 'Broken-links test')
-@section('og-url', 'https://webqa.co/tool/meta-title')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
-@section('og-image-alt', 'Broken-links Test')
+@section('og-url', 'https://webqa.co/tool/broken-links')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/broken-links-test.png')
+@section('og-image-alt', 'Broken links Test')
 
 <div class="single-post-content-main bulk-tool-test">
   <div class="single-post-content">

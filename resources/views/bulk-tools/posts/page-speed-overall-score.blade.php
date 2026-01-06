@@ -4,7 +4,7 @@
 @section('og-title', 'Test Google PageSpeed Scores for Mobile & Desktop | Webqa')
 @section('og-description', 'Measure how fast your page loads with PageSpeed (Lighthouse). Review score tiers, identify improvements, and export results to act quickly.')
 @section('og-url', 'https://webqa.co/tool/google-page-speed-insights')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/google-pagespeed-overall-score-test.png')
 @section('og-image-alt', 'Google PageSpeed test')
 
 <div class="single-post-content-main bulk-tool-test">

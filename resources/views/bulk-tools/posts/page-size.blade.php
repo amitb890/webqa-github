@@ -4,7 +4,7 @@
 @section('og-title', 'Test Page Size and Heavy Assets | Webqa')
 @section('og-description', 'Measure overall page weight and spot large resources—HTML, CSS, JS, and images—to improve load speed. See decisive outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/page-size')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/page-size-test.png')
 @section('og-image-alt', 'Page size test')
 
 <div class="single-post-content-main bulk-tool-test">

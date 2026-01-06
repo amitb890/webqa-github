@@ -1,10 +1,10 @@
 @section('title', 'Canonical URL Tester: Validity & Self-Referencing | Webqa')
-@section('meta-description', 'Bulk Check canonical tags in seconds. Verify presence, self-referencing, and correctness. Get clear Pass/Fail results and export findings for quick fixes.')
+@section('meta-description', 'Check canonical tags in seconds. Verify presence, self-referencing, and correctness. Get clear Pass/Fail results and export findings for quick fixes.')
 @section('canonical', 'https://webqa.co/tool/canonical-url')
 @section('og-title', 'Test Canonical Tags for Accuracy | Webqa')
-@section('og-description', 'Audit canonical URLs against your standards - find missing or multiple tags, confirm self-referencing, and export results to act quickly.')
+@section('og-description', 'Audit canonical URLs against your standards—find missing or multiple tags, confirm self-referencing, and export results to act quickly.')
 @section('og-url', 'https://webqa.co/tool/canonical-url')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/canonical-url-test.png')
 @section('og-image-alt', 'Canonical URL test')
 
 <div class="single-post-content-main bulk-tool-test">

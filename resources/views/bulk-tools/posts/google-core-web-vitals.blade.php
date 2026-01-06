@@ -4,7 +4,7 @@
 @section('og-title', 'Test Core Web Vitals: LCP, CLS & INP | Webqa')
 @section('og-description', 'Assess page experience with Core Web Vitals—Largest Contentful Paint, Cumulative Layout Shift, and Interaction to Next Paint. Identify issues and export results to act fast.')
 @section('og-url', 'https://webqa.co/tool/google-core-web-vitals')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/core-web-vitals-test.png')
 @section('og-image-alt', 'Core Web Vitals test')
 
 <div class="single-post-content-main bulk-tool-test">

@@ -4,7 +4,7 @@
 @section('og-title', 'Test Open Graph Tags for Accurate Link Previews | Webqa')
 @section('og-description', 'Audit og:title, og:description, og:image, and related OG tags. Find missing or invalid values and export results for quick fixes and consistent social previews.')
 @section('og-url', 'https://webqa.co/tool/og-tags')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/open-graph-tags-test.png')
 @section('og-image-alt', 'Open Graph tags test')
 
 <div class="single-post-content-main bulk-tool-test">

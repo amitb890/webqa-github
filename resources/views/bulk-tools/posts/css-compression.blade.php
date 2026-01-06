@@ -4,7 +4,7 @@
 @section('og-title', 'Test CSS Compression & Minification | Webqa')
 @section('og-description', 'Confirm that CSS is minified to cut payload size and improve render speed. See decisive outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/css-compression')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/css-compression-test.png')
 @section('og-image-alt', 'CSS compression test')
 
 <div class="single-post-content-main bulk-tool-test">

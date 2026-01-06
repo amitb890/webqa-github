@@ -4,7 +4,7 @@
 @section('og-title', 'Test GZIP Compression for Faster Pages | Webqa')
 @section('og-description', 'Confirm that your HTML is served with GZIP compression to reduce size and speed up delivery. See decisive outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/gzip-compression')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/gzip-compression-test.png')
 @section('og-image-alt', 'GZIP compression test')
 
 

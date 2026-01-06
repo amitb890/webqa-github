@@ -4,7 +4,7 @@
 @section('og-title', 'Test JavaScript Caching for Faster Repeat Loads | Webqa')
 @section('og-description', 'Audit JavaScript caching—confirm appropriate Cache-Control and ETag headers to speed up return visits. See decisive outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/js-caching-test')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/js-caching-test.png')
 @section('og-image-alt', 'JavaScript caching test')
 
 <!-- post page blog start -->

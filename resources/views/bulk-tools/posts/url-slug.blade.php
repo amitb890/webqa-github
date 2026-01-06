@@ -4,7 +4,7 @@
 @section('og-title', 'Test URL Slugs for SEO Best Practices | Webqa')
 @section('og-description', 'Audit slugs in seconds—verify lowercase, hyphenation, length, and characters. See decisive Pass/Fail outcomes and export results to share and act fast.')
 @section('og-url', 'https://webqa.co/tool/url-slug')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/url-slug-test.png')
 @section('og-image-alt', 'URL slug test')
 
 

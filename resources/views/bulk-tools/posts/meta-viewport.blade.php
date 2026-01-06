@@ -4,7 +4,7 @@
 @section('og-title', 'Test Meta Viewport for Responsive Setup | Webqa')
 @section('og-description', 'Audit the viewport tag—verify presence, width=device-width, and appropriate scaling to ensure mobile-friendly rendering. Export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/meta-viewport')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/meta-viewport-test.png')
 @section('og-image-alt', 'Meta viewport test')
 
 <div class="single-post-content-main bulk-tool-test">
