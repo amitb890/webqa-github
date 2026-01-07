@@ -74,57 +74,77 @@
       <h3>Conclusion</h3>
       <p>The meta title is more than just a label. It's a powerful tool that, when used effectively, can improve website visibility, engage users, and enhance branding. Proper optimization of the meta title is crucial for SEO success and providing a better user experience.</p>
 
-      <!-- Start FAQ -->
-      <div class="getting-recover-main recover-faq-area">
-          <h3>FAQs on Meta Title</h3>
-          <div class="accordion" id="accordionPanelsStayOpenExample">
-              @foreach([
-                  [
-                      'q' => 'Is the meta title the same as the H1 header?',
-                      'a' => 'No, while both are important for SEO, the meta title appears in SERPs and browser tabs, while the H1 header appears as the main heading on the page.'
-                  ],
-                  [
-                      'q' => 'Does the meta title affect SEO?',
-                      'a' => 'Yes, a relevant and well-optimized meta title can improve rankings and click-through rates from SERPs.'
-                  ],
-                  [
-                      'q' => 'What\'s the difference between a meta title and a title?',
-                      'a' => 'A meta title is an essential HTML component for optimizing your website. It may differ from the visible title on the page.'
-                  ],
-                  [
-                      'q' => 'Where is the meta title?',
-                      'a' => 'The meta title is located within the <head> section of a webpage\'s HTML code and displays on the browser tab.'
-                  ],
-                  [
-                      'q' => 'How do you write a meta title?',
-                      'a' => 'Make it clear and descriptive, align it with the page’s content, and include the main keyword within 50-60 characters.'
-                  ],
-                  [
-                      'q' => 'Is meta title required?',
-                      'a' => 'While not technically required, it’s highly recommended for SEO and better user experience.'
-                  ]
-              ] as $faq)
-              <div class="accordion-item">
-                  <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-                      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                          data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
-                          aria-expanded="false"
-                          aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-                          {{ $faq['q'] }}
-                      </button>
-                  </h2>
-                  <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
-                      class="accordion-collapse collapse"
-                      aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-                      <div class="accordion-body">
-                          <p>{{ $faq['a'] }}</p>
-                      </div>
-                  </div>
-              </div>
-              @endforeach
+     <!-- Start FAQ -->
+<div class="getting-recover-main recover-faq-area">
+  <h3>FAQs on Broken Links</h3>
+  <div class="accordion" id="accordionBrokenLinksFaq">
+    @foreach([
+      [
+        'q' => 'What are broken links?',
+        'a' => 'Broken links are links that no longer work and lead to an error page such as 404 (Not Found), 410 (Gone), or other failed responses instead of the intended destination.'
+      ],
+      [
+        'q' => 'Why do broken links happen?',
+        'a' => 'Broken links happen when a page is deleted, the URL changes, a domain expires, a redirect is removed, or the linked page is temporarily unavailable.'
+      ],
+      [
+        'q' => 'Do broken links hurt SEO?',
+        'a' => 'Broken links don’t automatically destroy rankings, but too many broken internal links can waste crawl budget, create poor user experience, and weaken internal linking signals—especially if important pages become hard to reach.'
+      ],
+      [
+        'q' => 'Are broken external links bad for my website?',
+        'a' => 'Yes. Broken outbound links can reduce trust and user experience because visitors can’t access the referenced sources. It’s best practice to regularly audit and fix them.'
+      ],
+      [
+        'q' => 'What’s the difference between a 404 and a 410 error?',
+        'a' => 'A 404 means the page was not found and may return later. A 410 means the page is intentionally gone and is less likely to return. Both can be “broken links” depending on context.'
+      ],
+      [
+        'q' => 'How do I fix broken internal links?',
+        'a' => 'Update the link to the correct URL, restore the missing page, or create a 301 redirect from the old URL to the most relevant new page.'
+      ],
+      [
+        'q' => 'Should I redirect every broken URL?',
+        'a' => 'Not always. Redirect only when there is a relevant replacement page. If there’s no meaningful match, it’s often better to serve a 404/410 and remove the internal links pointing to it.'
+      ],
+      [
+        'q' => 'How often should I check my site for broken links?',
+        'a' => 'It depends on how often your site changes, but checking monthly is a good baseline. Large or frequently updated sites may benefit from weekly checks.'
+      ],
+      [
+        'q' => 'Can broken links affect Core Web Vitals?',
+        'a' => 'Not directly, but broken links can increase bounce rate and reduce engagement, which impacts overall user experience. They can also cause unnecessary navigation attempts and wasted requests.'
+      ],
+      [
+        'q' => 'How does a broken link checker work?',
+        'a' => 'A broken link checker crawls your pages, extracts URLs, and then tests each link to see if it returns a successful HTTP status code (like 200) or an error/timeout.'
+      ]
+    ] as $faq)
+
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+            aria-expanded="false"
+            aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+            {{ $faq['q'] }}
+          </button>
+        </h2>
+
+        <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+          class="accordion-collapse collapse"
+          aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          <div class="accordion-body">
+            <p>{{ $faq['a'] }}</p>
           </div>
+        </div>
       </div>
-      <!-- End FAQ -->
+
+    @endforeach
+  </div>
+</div>
+<!-- End FAQ -->
+
 
   </div>
 </div>

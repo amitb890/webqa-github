@@ -78,7 +78,7 @@
 
       <!-- Start FAQ -->
       <div class="getting-recover-main recover-faq-area">
-          <h3>FAQs on Meta Title</h3>
+          <h3>FAQs on Safe Browsing</h3>
           <div class="accordion" id="accordionPanelsStayOpenExample">
               @foreach([
                   [
