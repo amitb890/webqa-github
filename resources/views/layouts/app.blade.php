@@ -562,8 +562,8 @@ if(isset($_COOKIE["activeProject"])){
                         <div class="element-main-area">
                           <div class="element-cls">
                             <div class="form-check">
-                              <input class="form-check-input input-check-all" type="checkbox" id="" checked>
-                              <label class="form-check-label" for="element_all">
+                              <input class="form-check-input input-check-all" type="checkbox" id="input-check-all-imran" checked>
+                              <label class="form-check-label" for="element_all" id="form-check-label-imran">
                                 Select All
                               </label>
                             </div>
@@ -692,7 +692,6 @@ if(isset($_COOKIE["activeProject"])){
     <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
     <script src="{{ asset('new-assets/js/pdf-images.js') }}"></script>
-    <script src="{{ asset('new-assets/js/imran.js') }}"></script>
 
 
   @php
@@ -739,9 +738,9 @@ if(isset($_COOKIE["activeProject"])){
   @endphp
 
   @auth
-  <script>
-        let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
-        let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
+ <script>
+    let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
+let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
       window.reportSettings = @json(
           \App\Models\ReportSettings::where('user_id', auth()->id())->first() ?? $defaultReportSettings
       );

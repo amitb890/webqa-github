@@ -5303,6 +5303,17 @@
       setImgFromButton(accordionEl.querySelector(".accordion-button"));
     }
   });
+  
+  document.addEventListener("DOMContentLoaded", function () {
+  const buttons = document.querySelectorAll(".accordion-button[data-img]");
+  buttons.forEach(btn => {
+    const src = btn.getAttribute("data-img");
+    if (!src) return;
+
+    const img = new Image();
+    img.src = src;
+  });
+});
 </script>
 
 
