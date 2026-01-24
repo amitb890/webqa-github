@@ -177,7 +177,7 @@
   <li><b><a target="_blank" href="https://www.buypass.com/products/tls-ssl-certificates/go-ssl">Buypass</a></b> – Common in Europe, especially for public sector use</li>
 </ol>
 
-<h4>How to know a CA is trusted</h4>
+<h5>How to know a CA is trusted</h5>
 <p>A CA, also known as a "Certificate authority" is considered trusted if its root certificate is included in major trust stores, such as:</p>
 <ol>
   <li>Google Chrome / Chromium</li>

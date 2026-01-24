@@ -11,132 +11,182 @@
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Protocol Relative Resource Links</h2>
 
-    <p>In the online world, how we link resources can play a significant role in the user experience and website performance. Enter Protocol Relative Resource Links - a method designed to ensure resources load seamlessly regardless of the protocol.</p>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>
+    Protocol relative resource links are URLs that omit the "Protocall" meaning, they do not include "http:" or "https:" and the URL starts with "//".
+    This system was once common, but modern HTML best practices generally recommend using explicit protocalls like "https://" URLs instead.
+  </p>
+  <ol>
+    <li>Protocol relative URLs inherit the protocol (HTTP or HTTPS) of the page they’re loaded on.</li>
+    <li>They were widely used to avoid mixed content warnings during HTTP to HTTPS migrations.</li>
+    <li>On today’s "HTTPS everywhere" web, they can create ambiguity and potential security risks if a page is accessed over HTTP.</li>
+    <li>Explicit "https://" links are clearer, more secure, and align better with modern SEO and browser expectations.</li>
+    <li>This test finds protocol relative resource links on your page so you can replace them with safer, explicit URLs.</li>
+  </ol>
+</div>
 
-    <h3>What are Protocol Relative Resource Links?</h3>
-    <p>Imagine visiting a website where everything - from images to scripts - loads harmoniously without security warnings. This is the magic of Protocol Relative Resource Links. They are URL links without the http: or https: prefix. Instead, they start with //, allowing the browser to request the resource using the same protocol as the current page.</p>
+<h3>What Are Protocol-Relative Resource Links?</h3>
+<p>
+  Protocol relative resource links are URLs that do not explicitly specify a protocol such as
+  <b>http://</b> or <b>https://</b>. Instead, they begin with <b>//</b> and automatically
+  inherit the protocol of the page on which they are loaded.
+</p>
+<p>This means that when a page is served over HTTPS, the resource will also be requested over HTTPS. If the same page is accessed over HTTP, the resource will load over HTTP as well.</p><p>Below is a simple example of a protocol-relative resource link used to load a JavaScript file:</p>
 
+<div class="code-block">
+  <code>
+    <span class="token-tag">&lt;script</span>
+    <span class="token-attr"> src</span>=<span class="token-value">"//cdn.example.com/library.js"</span>
+    <span class="token-tag">&gt;&lt;/script&gt;</span>
+  </code>
+</div>
     <img src="{{ asset('new-assets/assets/images/bulk-tool/proto_1.png') }}" alt="Nested Table HTML Example" class="img-fluid my-4">
+<p>
+  While this approach was designed to provide flexibility across different protocols, it also introduces
+  uncertainty and potential security issues on modern websites where HTTPS is the expected default.
+</p>
 
-    <h3>Why are Protocol Relative Resource Links Crucial?</h3>
-    <p>Using protocol-relative URLs ensures a consistent user experience. When a site mixes secure (https) and non-secure (http) content, browsers typically display mixed-content warnings, which can deter users and undermine trust.</p>
+<h5>Why Were Protocol-Relative URLs Used Historically?</h5>
+<p>Protocol-relative URLs became popular when many websites were transitioning from HTTP to HTTPS.During that time, it was common for websites to support both versions, and hardcoding "http://" in resource links could trigger mixed content warnings on secure pages.</p>
+<p>By using "//" instead of an explicit protocol, developers could ensure that resources such as scripts, stylesheets, and images would load using the same protocol as the page itself without maintaining two separate versions of the markup. </p>
+<div class="green-highlight-table">
+<p>They were primarily used to:</p>
+<ol>
+  <li><b>Avoid mixed content warnings</b> when HTTPS pages attempted to load HTTP resources.</li>
+  <li><b>Support both HTTP and HTTPS</b> versions of a website during migrations.</li>
+  <li><b>Reduce duplicate code</b> in templates by keeping a single protocol for flexible reference.</li>
+</ol>
+<p>While this was a practical solution in the early days of HTTPS adoption, modern "HTTPS first" standards and stronger browser security policies have made protocol relative URLs largely unnecessary today.</p>
+</div>
 
-    <h3>Benefits of Using Protocol Relative Links:</h3>
-    <ul>
-      <li><strong>Enhanced User Experience:</strong> Avoids mixed content warnings.</li>
-      <li><strong>Flexibility:</strong> Serve content over HTTP or HTTPS without changing the links.</li>
-      <li><strong>Improved Performance:</strong> No need for redirects from HTTP to HTTPS.</li>
-    </ul>
 
-    <h4>Potential Pitfalls:</h4>
-    <p>While protocol relative links have their advantages, they can have potential drawbacks when used improperly:</p>
-    <ul>
-      <li><strong>Inconsistent Content Delivery:</strong> If the external resource isn't unavailable on HTTP and HTTPS, it might not load correctly.</li>
-      <li><strong>Potential for Insecure Content:</strong> If your page is on HTTPS and the external resource is only on HTTP, it might introduce insecurities.</li>
-    </ul>
+<h3>Why Fixing Protocol-Relative Links Matters</h3>
+<p>Fixing protocol relative URLs is a small technical cleanup that can deliver meaningful improvements in security, consistency, and long term maintainability of your website. On modern websites, explicit and predictable resourceloading is the safest approach.</p>
 
-    <h3>How Protocol Relative Resource Links Work</h3>
-    <p>When a website uses protocol-relative links, the links will automatically follow its current security style.</p>
+<p>Here’s why replacing "//" links with "https://" matters:</p>
+<ol>
+  <li><b>Improves website security</b> by ensuring resources always load over HTTPS, even if a page is accessed over HTTP (intentionally or accidentally).</li>
+  <li><b>Strengthens SEO and trust signals</b> by removing ambiguity and reinforcing HTTPS consistency across your website.</li>
+  <li><b>Reduces the risk of mixed content issues</b> and related browser warnings that can break scripts, styling, or page functionality.</li>
+  <li><b>Increases reliability</b> because many content delivery networks and third party services are "HTTPS only" and may block HTTP requests.</li>
+  <li><b>Keeps your codebase in adherance to modern HTML standards</b> by removing legacy patterns that are no longer needed on today’s "HTTPS-first" web.</li>
+</ol>
 
-    <h4>For example:</h4>
-    <p>If you're on a secure website (beginning with https://), a protocol-relative link like //example-image.com will be treated as https://example-image.com.</p>
-    <p>But, if you're on a regular, non-secure website (beginning with http://), that link will be treated as http://example-image.com.</p>
-    <p>So, these links adjust based on whether your website is secure.</p>
+<p>In most cases, the best fix is simply to replace protocol relative resource links with explicit "https://" URLs so your pages load securely and consistently in every environment (production and staging).</p>
 
-    <h3>Do's and Don'ts For Protocol Relative Resource Links</h3>
-    
-    <h4>✅ Do's:</h4>
-    <ul>
-      <li>Use for embedding third-party resources supporting both HTTP and HTTPS.</li>
-      <li>Regularly verify that linked resources are accessible over both protocols.</li>
-    </ul>
+<h3>Good vs Bad Examples</h3>
+<p>
+  Reviewing real-world examples makes it easier to understand why protocol-relative URLs are discouraged
+  on modern websites. Good examples use explicit, secure protocols, while bad examples rely on outdated
+  patterns that introduce ambiguity and potential risk.
+</p>
 
-    <h4>❌ Don'ts:</h4>
-    <ul>
-      <li>Avoid your site's resources if you're certain about always using HTTPS.</li>
-      <li>Avoid if unsure about third-party resource support for both protocols.</li>
-    </ul>
+<p><b>Good Examples of Resource Linking</b></p>
+<table class="good-bad-example-table">
+  <tr>
+    <th>Example</th>
+    <th>Why this is good</th>
+  </tr>
+  <tr>
+    <td>https://cdn.example.com/app.js</td>
+    <td>Uses an explicit HTTPS protocol, ensuring secure and predictable resource loading.</td>
+  </tr>
+  <tr>
+    <td>https://fonts.googleapis.com/css?family=Roboto</td>
+    <td>Follows modern web standards and works reliably across all browsers.</td>
+  </tr>
+  <tr>
+    <td>https://images.example.com/banner.webp</td>
+    <td>Clear, secure, and optimized for performance on HTTPS pages.</td>
+  </tr>
+</table>
 
-    <h3>Conclusion</h3>
-    <p>Protocol Relative Resource Links are a versatile tool for web developers, ensuring optimal loading times and a consistent user experience. When implemented with consideration and caution, they can significantly elevate a website's performance and security.</p>
+<p><b>Bad Examples of Resource Linking</b></p>
+<table class="good-bad-example-table">
+  <tr>
+    <th>Example</th>
+    <th>Why this is bad</th>
+  </tr>
+  <tr>
+    <td>//cdn.example.com/app.js</td>
+    <td>Relies on protocol inheritance, which can lead to insecure page loading if the page is accessed over HTTP.</td>
+  </tr>
+  <tr>
+    <td>//analytics.example.com/script.js</td>
+    <td>Can expose users to security risks and may break if the service enforces "HTTPS only" access.</td>
+  </tr>
+  <tr>
+    <td>//fonts.example.com/font.css</td>
+    <td>An outdated pattern that offers no benefits over explicitly using HTTPS.</td>
+  </tr>
+</table>
 
-    <!-- Start FAQ -->
-    <div class="getting-recover-main recover-faq-area">
-      <h3>FAQs</h3>
-      <div class="accordion" id="accordionPanelsStayOpenExample">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-domain-usage">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-domain-usage"
-              aria-expanded="false"
-              aria-controls="collapse-domain-usage">
-              Can Protocol Relative Links be used for domains and sub-domains?
-            </button>
-          </h2>
-          <div id="collapse-domain-usage"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-domain-usage">
-            <div class="accordion-body">
-              <p>Yes, they can be used for any web resource on the same domain, sub-domain, or external domain.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-cdn-usage">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-cdn-usage"
-              aria-expanded="false"
-              aria-controls="collapse-cdn-usage">
-              Is it safe to use Protocol Relative Links for CDNs?
-            </button>
-          </h2>
-          <div id="collapse-cdn-usage"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-cdn-usage">
-            <div class="accordion-body">
-              <p>Yes, as long as the CDN supports both HTTP and HTTPS. Always verify the CDN's protocols before implementation.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-transition">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-transition"
-              aria-expanded="false"
-              aria-controls="collapse-transition">
-              How do I transition from absolute links to protocol relative links?
-            </button>
-          </h2>
-          <div id="collapse-transition"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-transition">
-            <div class="accordion-body">
-              <p>Transitioning requires updating the URLs in your HTML, CSS, and JS files. Remember to test thoroughly after making changes.</p>
-            </div>
-          </div>
-        </div>
+<p>When reviewing your website, aim to replace all protocol relative URLs with explicit <b>https://</b> links. This ensures better security, cleaner code, and alignment with modern SEO best practices.</p>
 
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-seo">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-seo"
-              aria-expanded="false"
-              aria-controls="collapse-seo">
-              What is the protocol relative URL for SEO?
-            </button>
-          </h2>
-          <div id="collapse-seo"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-seo">
-            <div class="accordion-body">
-              <p>A protocol-relative URL begins with "//" and adjusts to the current site's protocol (HTTP or HTTPS). For SEO, using specific protocols is advised. While root-relative URLs exclude protocol and domain, they should be avoided in canonical tags and hreflang attributes for clarity.</p>
-            </div>
-          </div>
+<!-- Start FAQ -->
+<div class="getting-recover-main recover-faq-area">
+  <h3>FAQs on Protocol-Relative Resource Links</h3>
+  <div class="accordion" id="accordionProtocolRelativeLinksFaq">
+    @foreach([
+      [
+        'q' => 'What is a protocol-relative URL?',
+        'a' => 'A protocol-relative URL starts with <code>//</code> instead of <code>http://</code> or <code>https://</code>. It inherits the protocol of the page it’s loaded on.'
+      ],
+      [
+        'q' => 'Are protocol-relative URLs still recommended?',
+        'a' => 'In most cases, no. Modern best practices recommend using explicit https:// URLs to ensure secure, predictable loading and to avoid ambiguity.'
+      ],
+      [
+        'q' => 'Can protocol-relative links cause mixed content issues?',
+        'a' => 'They can. If a page is accessed over HTTP, protocol-relative resources may load over HTTP as well. This can create mixed content problems when parts of the experience expect HTTPS.'
+      ],
+      [
+        'q' => 'Do browsers still support protocol-relative URLs?',
+        'a' => 'Yes, browsers still support them. But support doesn’t mean it’s a best practice. Explicit HTTPS is typically safer and clearer.'
+      ],
+      [
+        'q' => 'Should I replace all protocol-relative URLs with HTTPS?',
+        'a' => 'Yes, especially if your site is intended to be HTTPS-only. Replacing // with https:// improves security and reduces the risk of accidental insecure loading.'
+      ],
+      [
+        'q' => 'Are protocol-relative URLs bad for SEO?',
+        'a' => 'They are not a direct ranking penalty, but they can weaken HTTPS consistency and create avoidable technical ambiguity. Using explicit HTTPS URLs aligns better with modern SEO and security expectations.'
+      ],
+      [
+        'q' => 'What does this Protocol-Relative Resource Links Test detect?',
+        'a' => 'This test scans a page and identifies resource URLs that start with // so you can update them to explicit https:// links.'
+      ],
+      [
+        'q' => 'What is the best fix for protocol-relative links?',
+        'a' => 'The most common fix is simple: replace protocol-relative URLs with explicit https:// URLs and ensure your site enforces HTTPS site-wide.'
+      ]
+    ] as $faq)
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+          aria-expanded="false"
+          aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          {{ $faq['q'] }}
+        </button>
+      </h2>
+      <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+        class="accordion-collapse collapse"
+        aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+        <div class="accordion-body">
+          <p>{!! $faq['a'] !!}</p>
         </div>
       </div>
     </div>
-    <!-- End FAQ -->
+    @endforeach
+  </div>
+</div>
+<!-- End FAQ -->
+
+
+
+
+   
   </div>
 </div>

@@ -12,92 +12,138 @@
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Unsafe Cross Origin Links</h2>
 
-    <p>On the internet, establishing connections between different websites is common. But not all connections are safe. Unsafe cross-origin links can open the door to potential security and performance threats when navigating between websites.</p>
 
-    <h3>What are Unsafe Cross-Origin Links?</h3>
-    <p>Imagine a scenario where you inadvertently give someone potentially harmful access to your belongings. Similarly, cross-origin links connect your website to others in the digital realm. If these links aren't set up with the necessary precautions, they can be exploited, leading to security breaches or diminished site performance.</p>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>Unsafe cross origin links usually occur when an external link opens in a new tab using "target="_blank"" but does not include rel="noopener" or rel="noreferrer". This can expose your website to a security risk known as <b>reverse tabnabbing</b>.
+  </p>
+  <ol>
+    <li>Links with target="_blank" can give the new page access to "window.opener" unless protected.</li>
+    <li>This can be abused to redirect your original tab to a phishing or malicious page (also known as reverse tabnabbing).</li>
+    <li>Adding "rel="noopener" prevents the new page from controlling the original page.</li>
+    <li>rel="noreferrer" also blocks referrer data. This is helpful for privacy, but may affect analytics attribution in some cases.</li>
+    <li>This test identifies unsafe external target="_blank" links so you can fix them quickly and improve security.</li>
+  </ol>
+</div>
 
-    <h3>Why Unsafe Cross-Origin Links Pose a Threat?</h3>
-    <ul>
-      <li><strong>Security Vulnerabilities:</strong> A malicious website can use the opened link's privileges to manipulate your site.</li>
-      <li><strong>Data Breach:</strong> Without the proper attributes, links can access confidential data or redirect users to harmful pages.</li>
-      <li><strong>Performance Issues:</strong> An external site linked without precautions can hamper your website's performance if it runs extensive scripts or operations.</li>
-    </ul>
 
-    <h3>How Cross-Origin Links Work and Their Implications</h3>
-    <p>When you incorporate links to external websites that utilize the <code>target="_blank"</code> attribute, it can lead to both security and performance issues:</p>
-    <p>The linked external pages might operate on the same process as your website. If these pages run extensive JavaScript, your website's performance can take a hit.</p>
-    <p>More critically, the external page has the ability to access your website's window object through the <strong>window.opener property</strong>. This allows it to redirect your site to a malicious URL potentially.</p>
+<h3>What Are Unsafe Cross-Origin Links?</h3>
+<p>Unsafe cross-origin links are external hyperlinks that open in a new browser tab using <b>target="_blank"</b> but do not include protective rel attributes such as noopener or noreferrer.</p>
+<p>When these attributes are missing, the newly opened page can gain access to the original page through the "window.opener" object. This creates a potential security risk, especially when linking to third-party or untrusted domains.</p>
+<p>Because the hyperlink points to a different origin (in this case origin refers to the domain name), the risk is referred to as a "cross-origin" issue and can be exploited through techniques like reverse tabnabbing.</p>
 
-    <h3>Protecting Against Unsafe Cross-Origin Links</h3>
-    <p>To combat the potential threats posed by cross-origin links:</p>
-    <p><strong>Rel Attribute:</strong> Always use the <code>rel="noopener"</code> or <code>rel="noreferrer"</code> attribute when linking to an external site using <code>target="_blank"</code>. This prevents the new page from accessing the previous page's window object, adding a layer of security.</p>
-    
-    <p><strong>Example:</strong></p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/cross_1.png') }}" alt="Nested Table HTML Example" class="img-fluid my-4">
+<h5>Example of an unsafe cross-origin link:</h5>
+<div class="code-block">
+  <code>
+    <span class="token-tag">&lt;a</span>
+    <span class="token-attr"> href</span>=<span class="token-value">"https://external-site.com"</span>
+    <span class="token-attr"> target</span>=<span class="token-value">"_blank"</span>
+    <span class="token-tag">&gt;</span>
+    Visit External Site
+    <span class="token-tag">&lt;/a&gt;</span>
+  </code>
+</div>
 
-    <h3>Conclusion</h3>
-    <p>While cross-origin links enrich the web experience by seamlessly connecting diverse sites, they come with inherent risks. Understanding these potential threats and taking the necessary precautions ensure a safe and optimal user experience.</p>
+<p>In this example, the external page opens in a new tab and can potentially manipulate the original page because no rel="noopener" or rel="noreferrer" attribute is present.</p>
 
-    <!-- Start FAQ -->
-    <div class="getting-recover-main recover-faq-area">
-      <h3>FAQs</h3>
-      <div class="accordion" id="accordionPanelsStayOpenExample">
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-what-are-cross-origin-links">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-what-are-cross-origin-links"
-              aria-expanded="false"
-              aria-controls="collapse-what-are-cross-origin-links">
-              What are cross-origin links?
-            </button>
-          </h2>
-          <div id="collapse-what-are-cross-origin-links"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-what-are-cross-origin-links">
-            <div class="accordion-body">
-              <p>Cross-origin links are connections made between websites, potentially leading to security and performance issues if not managed safely.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-target-blank-issue">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-target-blank-issue"
-              aria-expanded="false"
-              aria-controls="collapse-target-blank-issue">
-              What's the issue with using target="_blank" without additional attributes?
-            </button>
-          </h2>
-          <div id="collapse-target-blank-issue"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-target-blank-issue">
-            <div class="accordion-body">
-              <p>Links with target="_blank" can expose your site to potential manipulations by external pages and can drain your site's performance if the external page runs heavy scripts.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-rel-attributes">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-rel-attributes"
-              aria-expanded="false"
-              aria-controls="collapse-rel-attributes">
-              How can rel="noopener" or rel="noreferrer" attributes help?
-            </button>
-          </h2>
-          <div id="collapse-rel-attributes"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-rel-attributes">
-            <div class="accordion-body">
-              <p>These attributes prevent the new page from accessing the linking page's window object, protecting it from potential redirects or manipulations by the external site.</p>
-            </div>
-          </div>
+<h5>Safer version of the same link:</h5>
+<div class="code-block">
+  <code>
+    <span class="token-tag">&lt;a</span>
+    <span class="token-attr"> href</span>=<span class="token-value">"https://external-site.com"</span>
+    <span class="token-attr"> target</span>=<span class="token-value">"_blank"</span>
+    <span class="token-attr"> rel</span>=<span class="token-value">"noopener"</span>
+    <span class="token-tag">&gt;</span>
+    Visit External Site
+    <span class="token-tag">&lt;/a&gt;</span>
+  </code>
+</div>
+
+<p>Adding rel="noopener" breaks the connection between the two tabs, preventing the external page from accessing or redirecting the original page.</p>
+
+
+<h3>Best Practices for External Links That Open in a New Tab</h3>
+<p>Opening external links in a new tab can be helpful in some situations, for example, when you’re sending
+  users to documentation, partner sites, or references and want them to keep your page open. However, using
+  target="_blank" without the right security attributes can expose your site to risks like reverse
+  tabnabbing. The good news: the fix is simple, and the best practices are easy to standardize.
+</p>
+
+<ul>
+  <li><b>Always pair target="_blank" with rel="noopener"</b> -  This prevents the newly opened page from accessing window.opener and protects the original tab.</li>
+  <li><b>Use rel="noopener noreferrer" when privacy matters</b> - noreferrer also blocks referrer data from being passed to the destination website, which can be useful for login, account, admin, or sensitive pages.</li>
+  <li><b>Don’t open new tabs unnecessarily</b> - Use target="_blank" only when it genuinely improves user experience. Overuse of target="_blank" can feel disruptive and annoying, especially on mobile devices.</li>
+  <li><b>Fix it in website templates and front end components (not page by page)</b> - If your website uses reusable UI components for buttons and links, update the component once so the improvement applies everywhere.</li>
+  <li><b>Be careful with user generated links</b> - If links can be posted by users (comments, forums, profiles), sanitize and automatically enforce safe rel attributes on the server side.</li>
+  <li><b>Re-test after updates</b> - After implementing changes, run this test again to ensure there are no remaining unsafe external links on the page.
+  </li>
+</ul>
+
+<p>A secure external link is still a great user experience. With a consistent approach to rel="noopener"(and noreferrer when needed), you can keep your website safer without changing how users interact with links.</p>
+
+<!-- Start FAQ -->
+<div class="getting-recover-main recover-faq-area">
+  <h3>FAQs on Unsafe Cross-Origin Links</h3>
+  <div class="accordion" id="accordionUnsafeCrossOriginLinksFaq">
+    @foreach([
+      [
+        'q' => 'What are unsafe cross-origin links?',
+        'a' => 'They are external links that open in a new tab using target="_blank" but do not include rel="noopener" (or rel="noreferrer"). Without these, the new page may access window.opener and potentially manipulate the original tab.'
+      ],
+      [
+        'q' => 'What does “cross-origin” mean in this context?',
+        'a' => 'Cross-origin means the link points to a different origin than your site—typically a different domain (and sometimes a different protocol or port). External domains are considered cross-origin.'
+      ],
+      [
+        'q' => 'What is reverse tabnabbing?',
+        'a' => 'Reverse tabnabbing is a security issue where a page opened via target="_blank" can use window.openerto redirect the original page to a phishing or malicious URL.'
+      ],
+      [
+        'q' => 'How do I fix unsafe cross-origin links?',
+        'a' => 'Add rel="noopener" to external links that use target="_blank". For example: &lt;a href="https://example.com" target="_blank" rel="noopener"&gt;Example&lt;/a&gt;.'
+      ],
+      [
+        'q' => 'Is noopener enough, or should I also use noreferrer?',
+        'a' => 'noopener is enough to prevent the main security risk by blocking access to window.opener. Add noreferrer when you also want to prevent referrer data from being sent to the destination site (privacy benefit).'
+      ],
+      [
+        'q' => 'Will adding rel="noopener" change how the link works for users?',
+        'a' => 'No. The link will still open in a new tab as expected. The change is mainly a behind-the-scenes security improvement.'
+      ],
+      [
+        'q' => 'Do I need to add noopener to internal links that open in a new tab?',
+        'a' => 'The biggest risk is with cross-origin (external) pages. However, many teams standardize rel="noopener" on all target="_blank" links for consistency.'
+      ],
+      [
+        'q' => 'Why do audit tools flag these links?',
+        'a' => 'Because unsafe target="_blank" links are a known security best practice issue. Many audits (including Lighthouse-style checks) detect missing noopener/noreferrer on cross-origin links.'
+      ]
+    ] as $faq)
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+          aria-expanded="false"
+          aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          {{ $faq['q'] }}
+        </button>
+      </h2>
+      <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+        class="accordion-collapse collapse"
+        aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+        <div class="accordion-body">
+          <p>{!! $faq['a'] !!}</p>
         </div>
       </div>
     </div>
-    <!-- End FAQ -->
+    @endforeach
+  </div>
+</div>
+<!-- End FAQ -->
+
+
+
+
+
   </div>
 </div>
