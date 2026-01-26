@@ -274,13 +274,13 @@ async function exportToExcel() {
         { width: 24 }, // Column A - increased by 20% (from 20 to 24)
         { width: 45.5 },  // Column B - increased by 30% (from 35 to 45.5)
         { width: 30 }, // Column C - Image Link (decreased by 50% from 60 to 30)
-        { width: 15 }, // Column D - Content (reduced)
+        { width: 60 }, // Column D - Content (reduced)
         { width: 18 }, // Column E - Words separated by spaces? (reduced)
-        { width: 40 }, // Column F - File Name (increased)
-        { width: 8 }, // Column G - LEN (reduced)
-        { width: 20 }, // Column H - Words separated by hyphens?
-        { width: 12 }, // Column I - Uppercase characters? (reduced)
-        { width: 12 }, // Column J - Special characters? (reduced)
+        { width: 40 }, // Column F - File Name (increased) - getCell(4) = Column D = index 3
+        { width: 20 }, // Column G - LEN (reduced) - getCell(5) = Column E = index 4
+        { width: 20 }, // Column H - Words separated by hyphens? - getCell(6) = Column F = index 5
+        { width: 25 }, // Column I - Uppercase characters? (getCell(7) = Column G = index 6, increased to prevent text cutting)
+        { width: 12 }, // Column J - Special characters? (reduced) - getCell(8) = Column H = index 7
         { width: 20 }, // Column K - File Size
         { width: 15 }  // Column L - Result
     ];
@@ -1464,12 +1464,7 @@ function addMetaTitleSection(worksheet, data, startRow) {
     addLabelBorders(contentRow.getCell(1));
     // Enable text wrapping for content cell
     contentRow.getCell(2).alignment = { wrapText: true, vertical: 'top' };
-    // Add light green background to content cell
-    contentRow.getCell(2).fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'FFD9EAD3' } // Light green
-    };
+    // No background color for content cell
     // Auto-adjust row height for wrapped content (estimate: ~100 characters per line, min 20px)
     const estimatedLines = Math.ceil((data.content.length || 0) / 100) || 1;
     contentRow.height = Math.max(20, estimatedLines * 15);
@@ -1795,7 +1790,17 @@ function addCanonicalUrlSection(worksheet, data, startRow) {
     // Actual URL row
     const actualUrlRow = worksheet.getRow(currentRow);
     actualUrlRow.getCell(1).value = "Actual URL";
-    actualUrlRow.getCell(2).value = data.actualUrl;
+    const actualUrlCell = actualUrlRow.getCell(2);
+    // Make Actual URL a clickable hyperlink if it's a valid URL
+    if (data.actualUrl && (data.actualUrl.startsWith('http://') || data.actualUrl.startsWith('https://'))) {
+        actualUrlCell.value = {
+            text: data.actualUrl,
+            hyperlink: data.actualUrl
+        };
+        actualUrlCell.font = { color: { argb: 'FF0000FF' }, underline: true }; // Blue color for links
+    } else {
+        actualUrlCell.value = data.actualUrl;
+    }
     actualUrlRow.getCell(1).fill = {
         type: 'pattern',
         pattern: 'solid',
@@ -1803,14 +1808,24 @@ function addCanonicalUrlSection(worksheet, data, startRow) {
     };
     actualUrlRow.getCell(1).font = { bold: true };
     addLabelBorders(actualUrlRow.getCell(1));
-    actualUrlRow.getCell(2).alignment = { wrapText: true, vertical: 'top' };
+    actualUrlCell.alignment = { wrapText: true, vertical: 'top' };
     // No background color for Actual URL
     currentRow++;
 
     // Canonical URL row
     const canonicalUrlRow = worksheet.getRow(currentRow);
     canonicalUrlRow.getCell(1).value = "Canonical URL";
-    canonicalUrlRow.getCell(2).value = data.canonicalUrl;
+    const canonicalUrlCell = canonicalUrlRow.getCell(2);
+    // Make Canonical URL a clickable hyperlink if it's a valid URL
+    if (data.canonicalUrl && (data.canonicalUrl.startsWith('http://') || data.canonicalUrl.startsWith('https://'))) {
+        canonicalUrlCell.value = {
+            text: data.canonicalUrl,
+            hyperlink: data.canonicalUrl
+        };
+        canonicalUrlCell.font = { color: { argb: 'FF0000FF' }, underline: true }; // Blue color for links
+    } else {
+        canonicalUrlCell.value = data.canonicalUrl;
+    }
     canonicalUrlRow.getCell(1).fill = {
         type: 'pattern',
         pattern: 'solid',
@@ -1818,7 +1833,7 @@ function addCanonicalUrlSection(worksheet, data, startRow) {
     };
     canonicalUrlRow.getCell(1).font = { bold: true };
     addLabelBorders(canonicalUrlRow.getCell(1));
-    canonicalUrlRow.getCell(2).alignment = { wrapText: true, vertical: 'top' };
+    canonicalUrlCell.alignment = { wrapText: true, vertical: 'top' };
     // No background color for Canonical URL
     currentRow++;
 
@@ -1877,6 +1892,18 @@ function addCanonicalUrlSection(worksheet, data, startRow) {
 
 function addImagesSection(worksheet, data, startRow) {
     let currentRow = startRow;
+
+    // Set column width for "Uppercase characters?" column (getCell(7) = Column G, index 6)
+    // Note: getCell() uses 1-based indexing, worksheet.columns uses 0-based
+    // getCell(7) = Column G = worksheet.columns[6]
+    if (!worksheet.columns || worksheet.columns.length < 7) {
+        worksheet.columns = worksheet.columns || [];
+        while (worksheet.columns.length < 7) {
+            worksheet.columns.push({});
+        }
+    }
+    worksheet.columns[6] = worksheet.columns[6] || {};
+    worksheet.columns[6].width = 25;
 
     // Header row with blue background - merge across all columns (A to J - 10 columns)
     const headerRow = worksheet.getRow(currentRow);
@@ -2026,7 +2053,7 @@ function addImagesSection(worksheet, data, startRow) {
         pattern: 'solid',
         fgColor: { argb: 'FFB4C6E7' } // Light cornflower blue 3
     };
-    subHeaderRow.getCell(7).alignment = { vertical: 'middle', horizontal: 'center' };
+    subHeaderRow.getCell(7).alignment = { vertical: 'middle', horizontal: 'center', wrapText: false };
     
     // Column H: Special characters? (under Image File)
     subHeaderRow.getCell(8).value = "Special characters?";
@@ -2112,6 +2139,12 @@ function addImagesSection(worksheet, data, startRow) {
                 pattern: 'solid',
                 fgColor: { argb: 'FFD9EAD3' } // Light green (overrides row color)
             };
+        } else if (item.wordsSeparatedBySpaces && item.wordsSeparatedBySpaces.toUpperCase() === "NO") {
+            wordsSpacesCell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFF8D7DA' } // Light red (overrides row color)
+            };
         } else {
             wordsSpacesCell.fill = {
                 type: 'pattern',
@@ -2150,6 +2183,7 @@ function addImagesSection(worksheet, data, startRow) {
         // Words separated by hyphens?
         const wordsHyphensCell = dataRow.getCell(6);
         wordsHyphensCell.value = item.wordsSeparatedByHyphens || "";
+        wordsHyphensCell.alignment = { vertical: 'middle', horizontal: 'center' };
         if (item.wordsSeparatedByHyphens && item.wordsSeparatedByHyphens.toUpperCase() === "YES") {
             wordsHyphensCell.fill = {
                 type: 'pattern',
@@ -2765,16 +2799,8 @@ function addCoreWebVitalsSection(worksheet, data, startRow) {
     const formatValue = (value, metricName) => {
         if (value === "N/A") return "N/A";
         if (typeof value === 'number') {
-            switch(metricName) {
-                case 'LCP': return value + " s";
-                case 'FID': return value + " ms";
-                case 'CLS': return value.toString(); // CLS is just a number
-                case 'FCP': return value + " s";
-                case 'TTI': return value + " s";
-                case 'SI': return value + " s";
-                case 'TBT': return value + " ms";
-                default: return value.toString();
-            }
+            // Return just the number without "s" or "ms" extensions
+            return value.toString();
         }
         return value.toString();
     };
@@ -4214,8 +4240,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
         titleRow.getCell(1).font = { bold: true };
         addLabelBorders(titleRow.getCell(1));
         titleRow.getCell(2).value = data.ogTitle.content;
-        titleRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        titleRow.getCell(2).wrapText = true;
+        titleRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Issues row
@@ -4230,8 +4255,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             issuesRow.getCell(1).font = { bold: true };
             addLabelBorders(issuesRow.getCell(1));
             issuesRow.getCell(2).value = data.ogTitle.issues;
-            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-            issuesRow.getCell(2).wrapText = true;
+            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             currentRow++;
         }
 
@@ -4248,7 +4272,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.ogTitle.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.ogTitle.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4282,8 +4306,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
         descRow.getCell(1).font = { bold: true };
         addLabelBorders(descRow.getCell(1));
         descRow.getCell(2).value = data.ogDescription.content;
-        descRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        descRow.getCell(2).wrapText = true;
+        descRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Issues row
@@ -4298,8 +4321,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             issuesRow.getCell(1).font = { bold: true };
             addLabelBorders(issuesRow.getCell(1));
             issuesRow.getCell(2).value = data.ogDescription.issues;
-            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-            issuesRow.getCell(2).wrapText = true;
+            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             currentRow++;
         }
 
@@ -4316,7 +4338,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.ogDescription.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.ogDescription.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4350,8 +4372,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
         urlRow.getCell(1).font = { bold: true };
         addLabelBorders(urlRow.getCell(1));
         urlRow.getCell(2).value = data.ogUrl.content;
-        urlRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        urlRow.getCell(2).wrapText = true;
+        urlRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Issues row
@@ -4366,8 +4387,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             issuesRow.getCell(1).font = { bold: true };
             addLabelBorders(issuesRow.getCell(1));
             issuesRow.getCell(2).value = data.ogUrl.issues;
-            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-            issuesRow.getCell(2).wrapText = true;
+            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             currentRow++;
         }
 
@@ -4384,7 +4404,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.ogUrl.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.ogUrl.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4418,8 +4438,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
         imageRow.getCell(1).font = { bold: true };
         addLabelBorders(imageRow.getCell(1));
         imageRow.getCell(2).value = data.ogImage.content;
-        imageRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        imageRow.getCell(2).wrapText = true;
+        imageRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Issues row
@@ -4434,8 +4453,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             issuesRow.getCell(1).font = { bold: true };
             addLabelBorders(issuesRow.getCell(1));
             issuesRow.getCell(2).value = data.ogImage.issues;
-            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-            issuesRow.getCell(2).wrapText = true;
+            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             currentRow++;
         }
 
@@ -4452,7 +4470,7 @@ function addOpenGraphSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.ogImage.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.ogImage.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4505,8 +4523,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
         titleRow.getCell(1).font = { bold: true };
         addLabelBorders(titleRow.getCell(1));
         titleRow.getCell(2).value = data.twitterTitle.content;
-        titleRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        titleRow.getCell(2).wrapText = true;
+        titleRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Issues row
@@ -4521,8 +4538,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
             issuesRow.getCell(1).font = { bold: true };
             addLabelBorders(issuesRow.getCell(1));
             issuesRow.getCell(2).value = data.twitterTitle.issues;
-            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-            issuesRow.getCell(2).wrapText = true;
+            issuesRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             currentRow++;
         }
 
@@ -4539,7 +4555,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.twitterTitle.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.twitterTitle.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4573,8 +4589,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
         imageRow.getCell(1).font = { bold: true };
         addLabelBorders(imageRow.getCell(1));
         imageRow.getCell(2).value = data.twitterImage.content;
-        imageRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        imageRow.getCell(2).wrapText = true;
+        imageRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Width row
@@ -4632,7 +4647,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.twitterImage.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.twitterImage.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4666,8 +4681,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
         imageAltRow.getCell(1).font = { bold: true };
         addLabelBorders(imageAltRow.getCell(1));
         imageAltRow.getCell(2).value = data.twitterImageAlt.content;
-        imageAltRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
-        imageAltRow.getCell(2).wrapText = true;
+        imageAltRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
         currentRow++;
 
         // Length row
@@ -4704,7 +4718,7 @@ function addTwitterTagsSection(worksheet, data, startRow) {
             addLabelBorders(resultRow.getCell(1));
             resultRow.getCell(2).value = data.twitterImageAlt.status;
             resultRow.getCell(2).font = { color: { argb: 'FF000000' }, bold: true };
-            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+            resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
             if (data.twitterImageAlt.status.toUpperCase() === "PASS") {
                 resultRow.getCell(2).fill = {
                     type: 'pattern',
@@ -4966,7 +4980,7 @@ function addRobotsTxtSection(worksheet, data, startRow) {
         pattern: 'solid',
         fgColor: { argb: isPass ? 'FFD9EAD3' : 'FFF8D7DA' } // Light green for PASS, light red for FAIL
     };
-    resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left' };
+    resultRow.getCell(2).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
     // Add borders to result cell
     resultRow.getCell(2).border = {
         top: { style: 'thin', color: { argb: 'FFD3D3D3' } },

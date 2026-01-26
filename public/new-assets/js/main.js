@@ -356,7 +356,99 @@ $("#sidebar-pin").click(function () {
 
 
 
+// Function to filter sidebar reports based on user settings
+function filterSidebarReports() {
+  // Check if reportSettings exists
+  if (typeof window.reportSettings === 'undefined' || !window.reportSettings) {
+    console.warn('reportSettings not found, showing all reports');
+    return;
+  }
+  
+  // Debug: Log the settings object to see what values are loaded
+  console.log('Report Settings loaded:', window.reportSettings);
+  console.log('Meta Title value:', window.reportSettings.meta_title, 'Type:', typeof window.reportSettings.meta_title);
+
+  // Get all report list items with data-report-setting attribute
+  const reportItems = document.querySelectorAll('[data-report-setting]');
+  
+  if (reportItems.length === 0) {
+    console.warn('No report items found with data-report-setting attribute');
+    return;
+  }
+  
+  reportItems.forEach(function(item) {
+    const settingKey = item.getAttribute('data-report-setting');
+    const settingValue = window.reportSettings[settingKey];
+    
+    // Handle different value types: 0/1, false/true, null, undefined, "0"/"1" strings
+    // Convert to a consistent check - hide if falsy (0, false, null, undefined, "0", "")
+    let shouldHide = false;
+    
+    // Check if value is explicitly falsy
+    if (settingValue === null || settingValue === undefined) {
+      shouldHide = true;
+    } else if (settingValue === 0 || settingValue === false) {
+      // Explicitly check for 0 and false
+      shouldHide = true;
+    } else if (typeof settingValue === 'string') {
+      // Handle string values like "0", "false", ""
+      shouldHide = (settingValue === '0' || settingValue === 'false' || settingValue === '');
+    } else if (typeof settingValue === 'boolean') {
+      shouldHide = !settingValue; // Hide if false
+    } else if (typeof settingValue === 'number') {
+      shouldHide = settingValue === 0; // Hide if 0
+    } else {
+      // For any other type, check if it's falsy
+      shouldHide = !Boolean(settingValue);
+    }
+    
+    // Debug log for meta_title (can be removed later)
+    if (settingKey === 'meta_title') {
+      console.log('Meta Title setting check:', {
+        key: settingKey,
+        value: settingValue,
+        type: typeof settingValue,
+        shouldHide: shouldHide
+      });
+    }
+    
+    if (shouldHide) {
+      item.style.display = 'none';
+    } else {
+      item.style.display = '';
+    }
+  });
+
+  // Hide categories if all reports are hidden
+  const categories = document.querySelectorAll('.ssbl-item');
+  categories.forEach(function(category) {
+    const categoryList = category.querySelector('ul');
+    if (!categoryList) return;
+    
+    // Count visible reports (those not hidden by inline style)
+    const allReports = categoryList.querySelectorAll('[data-report-setting]');
+    let visibleCount = 0;
+    allReports.forEach(function(report) {
+      if (report.style.display !== 'none') {
+        visibleCount++;
+      }
+    });
+    
+    // If no visible reports, hide the entire category
+    if (visibleCount === 0) {
+      category.style.display = 'none';
+    } else {
+      category.style.display = '';
+    }
+  });
+}
+
 $(document).ready(function () {
+  // Filter reports on page load - delay to ensure DOM and settings are ready
+  setTimeout(function() {
+    filterSidebarReports();
+  }, 100);
+
   $(".ssbl-item-top").click(function () {
     const clickedItem = $(this);
     const list = clickedItem.next("ul");
@@ -382,6 +474,9 @@ $(document).ready(function () {
     subSidebarLower.toggleClass("open-scroll", anyVisible);
   });
 });
+
+// Make filterSidebarReports available globally for updates after settings change
+window.filterSidebarReports = filterSidebarReports;
 
 
 

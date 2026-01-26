@@ -42,6 +42,42 @@
     line-height: 1.5;
 }
 
+/* Project URLs list auto-number gutter */
+.project-urls-numbered {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+}
+
+.project-urls-numbered__numbers {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 32px;
+    text-align: right;
+    color: #cfcfcf;
+    user-select: none;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 999;
+}
+
+.project-urls-numbered__numbers div {
+    padding-right: 6px;
+}
+
+.project-urls-numbered__textarea {
+    width: 100% !important;
+    max-width: 100%;
+    padding-left: 40px !important;
+    box-sizing: border-box;
+    resize: vertical;
+    overflow-x: hidden;
+    position: relative;
+    z-index: 1;
+}
+
+
 /* Reduce height of XML Sitemap textarea */
 #xmlSitemap {
     min-height: auto;

@@ -39,7 +39,7 @@ Route::resource('blog', App\Http\Controllers\BlogsController::class);
 Route::resource('support', App\Http\Controllers\SupportController::class);
 Route::get('/analysis-report/w/{id}', [App\Http\Controllers\PagesController::class, 'analysis'])->name('analysis');
 Route::get('/tools', [App\Http\Controllers\BulkToolsController::class, 'index'])->name('tools-landing');
-Route::get('/tool/{slug}', [App\Http\Controllers\BulkToolsController::class, 'show'])->name('tool');
+Route::get('/tools/{slug}', [App\Http\Controllers\BulkToolsController::class, 'show'])->name('tools');
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
 

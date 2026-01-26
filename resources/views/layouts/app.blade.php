@@ -457,22 +457,22 @@ if(isset($_COOKIE["activeProject"])){
                 <img src="{{asset('new-assets/assets/images/new-sidebar/plus.svg')}}" alt="">
               </div>
               <ul id="ssbl-item-top-seo" class="ssbl-item-top-seo">
-                <li><a href="/reports/meta-title"><p>Meta Title</p></a></li>
-                <li><a href="/reports/description"><p>Meta Description</p></a></li>
-                <li><a href="/reports/robots-meta"><p>Robots Meta</p></a></li>
-                <li><a href="/reports/canonical"><p>Canonical</p></a></li>
-                <li><a href="/reports/url-slug"><p>URL Slug</p></a></li>
-                <li><a href="/reports/images"><p>Images</p></a></li>
-                <li><a href="/reports/robotstxt"><p>Robots.txt</p></a></li>
-                <li><a href="/reports/headings"><p>Headings</p></a></li>
-                <li><a href="/reports/http-status-code"><p>HTTP Status code</p></a></li>
-                <li><a href="/reports/xml-sitemap"><p>XML Sitemap</p></a></li>
-                <li><a href="/reports/html-sitemap"><p>HTML Sitemap</p></a></li>
-                <li><a href="/reports/og-tags"><p>Open Graph Tags</p></a></li>
-                <li><a href="/reports/twitter-tags"><p>Twitter Tags</p></a></li>
-                <li><a href="/reports/doctype"><p>Doctype</p></a></li>
-                <li><a href="/reports/meta-viewport"><p>Viewport</p></a></li>
-                <li><a href="/reports/favicon"><p>Favicon</p></a></li>
+                <li data-report-setting="meta_title"><a href="/reports/meta-title"><p>Meta Title</p></a></li>
+                <li data-report-setting="meta_desc"><a href="/reports/description"><p>Meta Description</p></a></li>
+                <li data-report-setting="robots_meta"><a href="/reports/robots-meta"><p>Robots Meta</p></a></li>
+                <li data-report-setting="canonical_url"><a href="/reports/canonical"><p>Canonical</p></a></li>
+                <li data-report-setting="url_slug"><a href="/reports/url-slug"><p>URL Slug</p></a></li>
+                <li data-report-setting="images"><a href="/reports/images"><p>Images</p></a></li>
+                <li data-report-setting="robot_text_test"><a href="/reports/robotstxt"><p>Robots.txt</p></a></li>
+                <li data-report-setting="h1_heading_tag"><a href="/reports/headings"><p>Headings</p></a></li>
+                <li data-report-setting="http_status_code"><a href="/reports/http-status-code"><p>HTTP Status code</p></a></li>
+                <li data-report-setting="xml_sitemap"><a href="/reports/xml-sitemap"><p>XML Sitemap</p></a></li>
+                <li data-report-setting="xml_sitemap"><a href="/reports/html-sitemap"><p>HTML Sitemap</p></a></li>
+                <li data-report-setting="open_graph_tags"><a href="/reports/og-tags"><p>Open Graph Tags</p></a></li>
+                <li data-report-setting="twitter_tags"><a href="/reports/twitter-tags"><p>Twitter Tags</p></a></li>
+                <li data-report-setting="doctype"><a href="/reports/doctype"><p>Doctype</p></a></li>
+                <li data-report-setting="meta_viewport"><a href="/reports/meta-viewport"><p>Viewport</p></a></li>
+                <li data-report-setting="favicon"><a href="/reports/favicon"><p>Favicon</p></a></li>
               </ul>
             </div>
             <div class="ssbl-item">
@@ -488,10 +488,10 @@ if(isset($_COOKIE["activeProject"])){
                 <img src="{{asset('new-assets/assets/images/new-sidebar/plus.svg')}}" alt="">
               </div>
               <ul id="ssbl-item-top-perfor" class="ssbl-item-top-perfor">
-                <li><a href="/reports/google-page-speed-insights"><p>Overall Score</p></a></li>
-                <li><a href="/reports/google-page-speed-lighthouse"><p>Lighthouse Score</p></a></li>
-                <li><a href="/reports/google-page-speed-core-web-vitals"><p>Core Web Vitals</p></a></li>
-                <li><a href="/reports/mobile-friendly"><p>Mobile Friendliness</p></a></li>
+                <li data-report-setting="google_overall"><a href="/reports/google-page-speed-insights"><p>Overall Score</p></a></li>
+                <li data-report-setting="google_lighthouse"><a href="/reports/google-page-speed-lighthouse"><p>Lighthouse Score</p></a></li>
+                <li data-report-setting="core_web_vitals"><a href="/reports/google-page-speed-core-web-vitals"><p>Core Web Vitals</p></a></li>
+                <li data-report-setting="mobile_friendly"><a href="/reports/mobile-friendly"><p>Mobile Friendliness</p></a></li>
               </ul>
             </div>
             <div class="ssbl-item">
@@ -507,16 +507,16 @@ if(isset($_COOKIE["activeProject"])){
                 <img src="{{asset('new-assets/assets/images/new-sidebar/plus.svg')}}" alt="">
               </div>
               <ul id="ssbl-item-top-bestPrac" class="ssbl-item-top-bestPrac">
-                <li><a href="/reports/gzip-compression"><p>Gzip Compression</p></a></li>
-                <li><a href="/reports/html-compression"><p>HTML Compression</p></a></li>
-                <li><a href="/reports/css-compression"><p>CSS Compression</p></a></li>
-                <li><a href="/reports/js-compression"><p>JS Compression</p></a></li>
-                <li><a href="/reports/css-caching"><p>CSS caching</p></a></li>
-                <li><a href="/reports/js-caching"><p>JS caching</p></a></li>
-                <li><a href="/reports/page-size"><p>Page size</p></a></li>
-                <li><a href="/reports/nested-tables"><p>Nested Tables</p></a></li>
-                <li><a href="/reports/frameset"><p>Frameset</p></a></li>
-                <li><a href="/reports/broken-links"><p>Broken links</p></a></li>
+                <li data-report-setting="gzip_compression"><a href="/reports/gzip-compression"><p>Gzip Compression</p></a></li>
+                <li data-report-setting="html_compression"><a href="/reports/html-compression"><p>HTML Compression</p></a></li>
+                <li data-report-setting="css_compression"><a href="/reports/css-compression"><p>CSS Compression</p></a></li>
+                <li data-report-setting="js_compression"><a href="/reports/js-compression"><p>JS Compression</p></a></li>
+                <li data-report-setting="css_caching_enable"><a href="/reports/css-caching"><p>CSS caching</p></a></li>
+                <li data-report-setting="js_caching_enable"><a href="/reports/js-caching"><p>JS caching</p></a></li>
+                <li data-report-setting="page_size"><a href="/reports/page-size"><p>Page size</p></a></li>
+                <li data-report-setting="nested_tables"><a href="/reports/nested-tables"><p>Nested Tables</p></a></li>
+                <li data-report-setting="frameset"><a href="/reports/frameset"><p>Frameset</p></a></li>
+                <li data-report-setting="broken_links"><a href="/reports/broken-links"><p>Broken links</p></a></li>
               </ul>
             </div>
             <div class="ssbl-item">
@@ -532,15 +532,15 @@ if(isset($_COOKIE["activeProject"])){
                 <img src="{{asset('new-assets/assets/images/new-sidebar/plus.svg')}}" alt="">
               </div>
               <ul id="ssbl-item-top-security" class="ssbl-item-top-security">
-                <li><a href="/reports/safe-browsing"><p>Safe browsing</p></a></li>
-                <li><a href="/reports/unsafe-cross-origin-links"><p>Unsafe cross origin links</p></a></li>
-                <li><a href="/reports/protocol-relative-resource"><p>Protocol relative resource links</p></a></li>
-                <li><a href="/reports/content-security-policy-header"><p>Content Security Policy Header</p></a></li>
-                <li><a href="/reports/x-frame-options-header"><p>X Frame Option Header</p></a></li>
-                <li><a href="/reports/hsts-header"><p>HSTS Header</p></a></li>
-                <li><a href="/reports/bad-content-type"><p>Bad content Type</p></a></li>
-                <li><a href="/reports/ssl-certificate"><p>SSL Certificate</p></a></li>
-                <li><a href="/reports/directory-browsing"><p>Directory Browsing</p></a></li>
+                <li data-report-setting="is_safe_browsing"><a href="/reports/safe-browsing"><p>Safe browsing</p></a></li>
+                <li data-report-setting="cross_origin_links"><a href="/reports/unsafe-cross-origin-links"><p>Unsafe cross origin links</p></a></li>
+                <li data-report-setting="protocol_relative_resource"><a href="/reports/protocol-relative-resource"><p>Protocol relative resource links</p></a></li>
+                <li data-report-setting="content_security_policy_header"><a href="/reports/content-security-policy-header"><p>Content Security Policy Header</p></a></li>
+                <li data-report-setting="x_frame_options_header"><a href="/reports/x-frame-options-header"><p>X Frame Option Header</p></a></li>
+                <li data-report-setting="hsts_header"><a href="/reports/hsts-header"><p>HSTS Header</p></a></li>
+                <li data-report-setting="bad_content_type"><a href="/reports/bad-content-type"><p>Bad content Type</p></a></li>
+                <li data-report-setting="ssl_certificate_enable"><a href="/reports/ssl-certificate"><p>SSL Certificate</p></a></li>
+                <li data-report-setting="folder_browsing_enable"><a href="/reports/directory-browsing"><p>Directory Browsing</p></a></li>
               </ul>
             </div>
           </div>
@@ -562,7 +562,8 @@ if(isset($_COOKIE["activeProject"])){
                         <div class="element-main-area">
                           <div class="element-cls">
                             <div class="form-check">
-                              <input class="form-check-input input-check-all" type="checkbox" id="input-check-all-imran" checked>
+                               <input class="form-check-input input-check-all" type="checkbox" id="input-check-all-imran" checked>
+
                               <label class="form-check-label" for="element_all" id="form-check-label-imran">
                                 Select All
                               </label>
@@ -692,6 +693,7 @@ if(isset($_COOKIE["activeProject"])){
     <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
     <script src="{{ asset('new-assets/js/pdf-images.js') }}"></script>
+    <script src="{{ asset('new-assets/js/imran.js') }}"></script>
 
 
   @php
@@ -738,14 +740,43 @@ if(isset($_COOKIE["activeProject"])){
   @endphp
 
   @auth
- <script>
-    let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
-let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
-      window.reportSettings = @json(
-          \App\Models\ReportSettings::where('user_id', auth()->id())->first() ?? $defaultReportSettings
-      );
+  <script>
+      let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
+      let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
+      
+      // Get report settings from database
+      var userSettings = @json(\App\Models\ReportSettings::where('user_id', auth()->id())->first());
+      console.log('Database query result:', userSettings);
+      console.log('User ID:', {{ auth()->id() }});
+      
+      window.reportSettings = userSettings || @json($defaultReportSettings);
+      
+      // Debug: Log final settings
+      console.log('Final window.reportSettings:', window.reportSettings);
+      console.log('Meta Title value:', window.reportSettings.meta_title, 'Type:', typeof window.reportSettings.meta_title);
+      
+      // Verify settings are set
+      if (typeof window.reportSettings === 'undefined') {
+          console.error('ERROR: window.reportSettings is undefined!');
+      } else {
+          console.log('Success: window.reportSettings is defined');
+      }
+  </script>
+  @else
+  <script>
+      // User not authenticated - use default settings
+      console.warn('User not authenticated - using default report settings');
+      window.reportSettings = @json($defaultReportSettings);
+      
+      // Verify settings are set
+      if (typeof window.reportSettings === 'undefined') {
+          console.error('ERROR: window.reportSettings is undefined!');
+      } else {
+          console.log('Success: window.reportSettings is defined (default)');
+      }
   </script>
   @endauth
+  
 
     <script src="{{ asset('new-assets/js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 

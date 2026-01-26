@@ -5706,6 +5706,13 @@ h6 {
   flex-wrap: wrap;
   gap: 20px; */
 }
+/* Ensure loader progress items are horizontal (left-right) */
+.progress-loader .progress-items {
+  flex-direction: row !important;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
 .single-progress {
   display: flex;
   flex-direction: column;
@@ -13734,7 +13741,6 @@ nav .nav-tabs{
     height: 215px;
     object-fit: cover;
     border-radius: 6px;
-    z-index: 1;
 }
 
 

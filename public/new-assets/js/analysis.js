@@ -116,26 +116,27 @@ $( document ).ready(function() {
       document.getElementById(label.name).querySelector(".loader-item-current").textContent = "Testing..."
       
       // Open the content section when its first test starts
+      // But only if user hasn't manually closed it
       const parentType = label.parent
       if(!parentType || parentType === "seo"){
         // SEO tests (default case)
         const seoContent = document.getElementById("seo-content")
-        if(seoContent && seoContent.style.display !== "block"){
+        if(seoContent && seoContent.style.display !== "block" && !seoContent.getAttribute("data-user-closed")){
           seoContent.style.display = "block"
         }
       } else if(parentType === "performance"){
         const performanceContent = document.getElementById("performance-content")
-        if(performanceContent && performanceContent.style.display !== "block"){
+        if(performanceContent && performanceContent.style.display !== "block" && !performanceContent.getAttribute("data-user-closed")){
           performanceContent.style.display = "block"
         }
       } else if(parentType === "bestPractices"){
         const bestPracticesContent = document.getElementById("best-practices-content")
-        if(bestPracticesContent && bestPracticesContent.style.display !== "block"){
+        if(bestPracticesContent && bestPracticesContent.style.display !== "block" && !bestPracticesContent.getAttribute("data-user-closed")){
           bestPracticesContent.style.display = "block"
         }
       } else if(parentType === "security"){
         const securityContent = document.getElementById("security-content")
-        if(securityContent && securityContent.style.display !== "block"){
+        if(securityContent && securityContent.style.display !== "block" && !securityContent.getAttribute("data-user-closed")){
           securityContent.style.display = "block"
         }
       }
@@ -1786,6 +1787,8 @@ function toggleLoaderDropdown(id) {
     allContentElements.forEach(function(element) {
       if(element.id !== id && element.style.display === "block") {
         element.style.display = "none";
+        // Mark as user-closed when manually closed
+        element.setAttribute("data-user-closed", "true");
         // Update background when closing (gray if tests complete)
         UI.updateContainerBackground(element.id);
       }
@@ -1794,10 +1797,14 @@ function toggleLoaderDropdown(id) {
     // Toggle the clicked accordion
     if (isCurrentlyOpen) {
         content.style.display = "none";
+        // Mark as user-closed when manually closed
+        content.setAttribute("data-user-closed", "true");
         // Update background when closing (gray if tests complete)
         UI.updateContainerBackground(id);
     } else {
         content.style.display = "block";
+        // Remove user-closed flag when user manually opens
+        content.removeAttribute("data-user-closed");
     }
   }
 
@@ -4257,6 +4264,8 @@ function getFormattedName(url) {
         const content = document.getElementById(contentId)
         if(content){
           content.style.display = "none"
+          // Reset user-closed flag for fresh test run
+          content.removeAttribute("data-user-closed")
         }
       })
 

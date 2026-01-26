@@ -364,6 +364,13 @@ static getTableTop(label, slug){
     static toggleContent(state){
         const dispay = state == true ? "block" : "none"
         document.querySelector(".tools_body_content").style.display = dispay
+        
+        // When content becomes visible, ensure textarea shows truncated URLs
+        if(state === true && typeof window.formatTextareaDisplay === 'function'){
+            setTimeout(function() {
+                window.formatTextareaDisplay();
+            }, 50);
+        }
     }
     
 
@@ -390,12 +397,252 @@ $( document ).ready(function() {
         keyboard: false
     })
 
+    // ============================================
+    // URL TRUNCATION FOR TEXTAREA - CLEAN IMPLEMENTATION
+    // ============================================
+    
+    // Function to truncate a single URL to 100 characters
+    function truncateUrl(url, maxLength = 100) {
+        if (!url || url.length <= maxLength) {
+            return url;
+        }
+        return url.substring(0, maxLength) + '...';
+    }
+    
+    // Function to get full URLs from storage (for AJAX calls)
+    function getFullUrlsValue() {
+        const textarea = document.getElementById('urlValue');
+        if (!textarea) return '';
+        
+        // Get current textarea value (may be truncated)
+        const currentValue = textarea.value;
+        
+        // Get stored full value if it exists
+        const storedFullValue = textarea.getAttribute('data-full-value');
+        
+        // If we have a stored full value, check if current value is truncated
+        if (storedFullValue !== null && storedFullValue !== '') {
+            // Check if current value contains truncation markers
+            const hasTruncatedLines = currentValue.split('\n').some(line => line.trim() !== '' && line.endsWith('...'));
+            
+            if (hasTruncatedLines) {
+                // Current value is truncated, use stored full value
+                return storedFullValue;
+            } else {
+                // Current value appears to be full (no truncation)
+                // This means user has modified it (added/deleted URLs), so use current value
+                // Also update stored value to keep it in sync
+                textarea.setAttribute('data-full-value', currentValue);
+                return currentValue;
+            }
+        }
+        
+        // If no stored value, return current value (might be truncated, but it's all we have)
+        return currentValue;
+    }
+    
+    // Function to format textarea with truncated URLs (only called on blur)
+    window.formatTextareaDisplay = function formatTextareaDisplay() {
+        const textarea = document.getElementById('urlValue');
+        if (!textarea) return;
+        
+        // Only format when textarea is not focused (on blur)
+        if (document.activeElement === textarea) {
+            return;
+        }
+        
+        // Get current value from textarea
+        let currentValue = textarea.value;
+        
+        // Check if we have a stored full value
+        const storedFullValue = textarea.getAttribute('data-full-value');
+        
+        // If current value contains "..." it means it's truncated, so use stored full value
+        if (currentValue.includes('...') && storedFullValue !== null && storedFullValue !== '') {
+            currentValue = storedFullValue;
+        }
+        
+        // Process each line: truncate if longer than 100 characters
+        const lines = currentValue.split('\n');
+        let hasLongUrls = false;
+        const formattedLines = lines.map((line) => {
+            // Preserve empty lines
+            if (line.trim() === '') {
+                return line;
+            }
+            // Truncate if longer than 100 characters
+            const truncated = truncateUrl(line, 100);
+            if (truncated !== line) {
+                hasLongUrls = true;
+            }
+            return truncated;
+        });
+        
+        // Store full value if we truncated any URLs
+        if (hasLongUrls) {
+            textarea.setAttribute('data-full-value', currentValue);
+        } else {
+            // No truncation needed, clear stored value
+            textarea.removeAttribute('data-full-value');
+        }
+        
+        // Update textarea with truncated display
+        textarea.value = formattedLines.join('\n');
+    }
+    
+    // Debounce timer for duplicate checking
+    let duplicateCheckTimer = null;
+    
+    // Function to clear all alerts
+    function clearAllAlerts() {
+        AlertManager.clear("#urlValue");
+        const urlValueEl = document.querySelector("#urlValue");
+        if (urlValueEl && urlValueEl.parentNode) {
+            const invalidFeedbacks = urlValueEl.parentNode.querySelectorAll('.invalid-feedback');
+            invalidFeedbacks.forEach(el => el.remove());
+        }
+    }
+    
+    // Function to check for duplicate URLs
+    function checkDuplicateUrls() {
+        clearAllAlerts();
+        
+        const fullUrlsValue = getFullUrlsValue();
+        if (!fullUrlsValue || !fullUrlsValue.trim()) {
+            // No URLs, so no duplicates - warning already cleared by clearAllAlerts()
+            return;
+        }
+        
+        const urlList = fullUrlsValue.trim().split("\n")
+            .map(url => url.trim())
+            .filter(url => url);
+        
+        const seen = new Set();
+        const duplicates = [];
+        urlList.forEach(url => {
+            if (seen.has(url)) {
+                duplicates.push(url);
+            } else {
+                seen.add(url);
+            }
+        });
+        
+        // Only show warning if there are duplicates
+        // If no duplicates, clearAllAlerts() already cleared the warning
+        if (duplicates.length > 0) {
+            const duplicateCount = duplicates.length;
+            AlertManager.afterElement("#urlValue", `${duplicateCount} Duplicate URL${duplicateCount > 1 ? 's' : ''} found`, {
+                type: AlertManager.types.WARNING,
+                autoHide: false
+            });
+        }
+        // If duplicates.length === 0, the warning is already cleared by clearAllAlerts() above
+    }
+
+    // Event handlers - simple and clean
+    
+    // On paste: truncate URLs after paste completes
+    $('#urlValue').on('paste', function(e) {
+        clearAllAlerts();
+        
+        const textarea = e.target;
+        
+        // Wait for paste to complete, then truncate
+        setTimeout(function() {
+            // Get the value after paste
+            let currentValue = textarea.value;
+            
+            // Store full value before truncating
+            textarea.setAttribute('data-full-value', currentValue);
+            
+            // Get current cursor position (after paste, before truncation)
+            // This is where the browser placed the cursor after paste
+            const cursorPos = textarea.selectionStart;
+            
+            // Process each line: truncate if longer than 100 characters
+            const lines = currentValue.split('\n');
+            let hasLongUrls = false;
+            
+            const formattedLines = lines.map((line) => {
+                // Preserve empty lines
+                if (line.trim() === '') {
+                    return line;
+                }
+                // Truncate if longer than 100 characters
+                const truncated = truncateUrl(line, 100);
+                if (truncated !== line) {
+                    hasLongUrls = true;
+                }
+                return truncated;
+            });
+            
+            // Store full value if we truncated any URLs
+            if (hasLongUrls) {
+                textarea.setAttribute('data-full-value', currentValue);
+            }
+            
+            // Update textarea with truncated display
+            const newValue = formattedLines.join('\n');
+            
+            // Only update if value changed
+            if (textarea.value !== newValue) {
+                // Update the value
+                textarea.value = newValue;
+                
+                // After paste, browser typically places cursor at the end of pasted content
+                // Since we're truncating, we need to place cursor at the end of the new value
+                // This ensures that subsequent pastes will work correctly
+                const newCursorPos = newValue.length;
+                textarea.setSelectionRange(newCursorPos, newCursorPos);
+            } else {
+                // Value didn't change, but cursor might have moved - restore it
+                textarea.setSelectionRange(cursorPos, cursorPos);
+            }
+            
+            // Check for duplicates
+            checkDuplicateUrls();
+        }, 50);
+    });
+
+    // On blur: truncate URLs when user clicks away
+    $('#urlValue').on('blur', function() {
+        formatTextareaDisplay();
+        checkDuplicateUrls();
+    });
+
+    // On input: only check for duplicates, don't truncate (allows Enter to work)
+    $('#urlValue').on('input', function() {
+        // Clear alerts immediately when input changes
+        clearAllAlerts();
+        
+        if (duplicateCheckTimer) {
+            clearTimeout(duplicateCheckTimer);
+        }
+        
+        // Check duplicates after a short delay (debounce)
+        // This ensures the warning is updated/cleared when URLs are added or deleted
+        duplicateCheckTimer = setTimeout(function() {
+            checkDuplicateUrls();
+        }, 300);
+    });
+
+    // Format on initial load if textarea has content
+    if ($('#urlValue').length && $('#urlValue').val().trim()) {
+        formatTextareaDisplay();
+        checkDuplicateUrls();
+    }
+
     $("#startTestBulk").on( "click", function(e) {
+        // Get full URLs (restores if truncated)
+        const fullUrlsValue = getFullUrlsValue();
+        
         const urlInput = $("#urlValue")[0]
-        let urlInputVal = $("#urlValue")[0].value
+        let urlInputVal = fullUrlsValue
         results = [], resultsFailed = [], resultsPassed = [], resultsError = [], errorStatus = false
 
+        // Clear all alerts (including AlertManager alerts)
         clearAlerts()
+        clearAllAlerts()
         clearTables()
 
         results = []
@@ -408,23 +655,40 @@ $( document ).ready(function() {
 
         if(validateFront({
             el: $("#urlValue")[0], 
-            msgMinimumSelection: "At least one test criteria has to be selected.", 
-            msgEmpty: "Please enter urls.", 
+            msgMinimumSelection: "Please select at least one test criteria to perform the analysis.", 
+            msgEmpty: "Enter at least one URL to test", 
             msgExceed: "You can not enter more than 100 urls."
             }, "bulk")){
             // Split, trim, and remove empty lines
             let original_url_list = urlInputVal.trim().split("\n").map(url => url.trim()).filter(url => url)
             // Remove duplicates
             let unique_url_list = [...new Set(original_url_list)]
-            // If duplicates were found, update textarea and show alert
+            
+            // Store the processed full URLs (after deduplication) - this will be used in AJAX
+            const processedFullUrls = unique_url_list.join("\n");
+            // Store in a variable accessible to startTest function
+            window.bulkFullUrls = processedFullUrls;
+            
+            // IMPORTANT: Store full URLs in data attribute BEFORE updating textarea
+            // This ensures we always have the full URLs stored even if textarea shows truncated
+            $("#urlValue")[0].setAttribute('data-full-value', processedFullUrls);
+            
+            // Update textarea with full URLs (will be used for testing)
+            // But format it to show truncated for display
+            $("#urlValue")[0].value = processedFullUrls;
+            
+            // If duplicates were found, show warning (but allow test to proceed)
             if (unique_url_list.length < original_url_list.length) {
-                $("#urlValue")[0].value = unique_url_list.join("\n")
-                
-                AlertManager.afterElement("#urlValue", "Duplicate URLS were removed and were not tested.", {
-                    type: AlertManager.types.ERROR,
+                const duplicateCount = original_url_list.length - unique_url_list.length;
+                AlertManager.afterElement("#urlValue", `${duplicateCount} Duplicate URL${duplicateCount > 1 ? 's' : ''} found`, {
+                    type: AlertManager.types.WARNING,
                     autoHide: false
                 });
             }
+            
+            // Format to show truncated URLs in textarea (visual only)
+            formatTextareaDisplay();
+            
             url_list = unique_url_list
             url_list_length = url_list.length
             const inputs = document.querySelectorAll(".bulk-test-criteria input,.bulk-test-criteria textarea")
@@ -499,7 +763,8 @@ function toggleTestResultAreaVisibility() {
         const xmlSitemap = `${origin}/sitemap.xml`
 
         obj["urlValue"] = url
-        obj["bulkUrl"] = $("#urlValue").val()
+        // Use the processed full URLs stored in window.bulkFullUrls (set before startTest was called)
+        obj["bulkUrl"] = window.bulkFullUrls || getFullUrlsValue()
         obj["settingsVal"] = settingsVal
         obj["settingsVal"]["settings_sub"]["html_sitemap_val"] = htmlSitemap
         obj["settingsVal"]["settings_sub"]["xml_sitemap_val"] = xmlSitemap
@@ -762,6 +1027,12 @@ function toggleTestResultAreaVisibility() {
             UI.toggleContent(true)
             removeLoader()
         }
+        
+        // Format textarea to show truncated URLs after tests complete (for better visual display)
+        // Use setTimeout to ensure textarea is visible before formatting
+        setTimeout(function() {
+            formatTextareaDisplay();
+        }, 100);
     }
     modifyCss()
     function modifyCss(){
@@ -2664,6 +2935,94 @@ function toggleTestResultAreaVisibility() {
                 });
             });
         }
+        
+        // Truncate URLs after column widths are set
+        truncateUrlsInTable(table);
+    }
+    
+    /**
+     * Truncate URLs in table cells based on calculated column width
+     * @param {HTMLElement} table - The table element
+     */
+    function truncateUrlsInTable(table) {
+        if (!table) return;
+        
+        // Wait for layout to be calculated
+        setTimeout(function() {
+            const urlCells = table.querySelectorAll('td.result_data_url');
+            
+            urlCells.forEach(function(cell) {
+                const link = cell.querySelector('a');
+                if (!link) return;
+                
+                // Get the full URL text (extract text nodes only, ignore images)
+                const img = link.querySelector('img');
+                const hasImage = img !== null;
+                let fullUrl = '';
+                
+                // Get text content by cloning and removing images
+                const clone = link.cloneNode(true);
+                const cloneImgs = clone.querySelectorAll('img');
+                cloneImgs.forEach(img => img.remove());
+                fullUrl = clone.textContent.trim();
+                
+                // Skip if already truncated or empty
+                if (!fullUrl || fullUrl.endsWith('...')) return;
+                
+                // Get actual pixel width of the cell
+                const cellWidth = cell.offsetWidth;
+                const padding = 20; // Account for padding and margins
+                const imageWidth = hasImage ? 25 : 0; // Space for copy icon
+                const availableWidth = cellWidth - padding - imageWidth;
+                
+                // Create a temporary span to measure text width
+                const measureSpan = document.createElement('span');
+                measureSpan.style.visibility = 'hidden';
+                measureSpan.style.position = 'absolute';
+                measureSpan.style.whiteSpace = 'nowrap';
+                measureSpan.style.fontSize = window.getComputedStyle(link).fontSize;
+                measureSpan.style.fontFamily = window.getComputedStyle(link).fontFamily;
+                measureSpan.style.fontWeight = window.getComputedStyle(link).fontWeight;
+                document.body.appendChild(measureSpan);
+                
+                // Check if URL needs truncation
+                measureSpan.textContent = fullUrl;
+                const textWidth = measureSpan.offsetWidth;
+                
+                if (textWidth > availableWidth && availableWidth > 50) { // Minimum width check
+                    // Binary search for the right truncation point
+                    let left = 0;
+                    let right = fullUrl.length;
+                    let truncatedUrl = fullUrl;
+                    
+                    while (left < right) {
+                        const mid = Math.floor((left + right) / 2);
+                        const testUrl = fullUrl.substring(0, mid) + '...';
+                        measureSpan.textContent = testUrl;
+                        
+                        if (measureSpan.offsetWidth <= availableWidth) {
+                            truncatedUrl = testUrl;
+                            left = mid + 1;
+                        } else {
+                            right = mid;
+                        }
+                    }
+                    
+                    // Update the link text, keeping full URL in href
+                    if (hasImage) {
+                        link.innerHTML = truncatedUrl + '<img src="/new-assets/assets/images/copy-link.png" alt="icon">';
+                    } else {
+                        link.textContent = truncatedUrl;
+                    }
+                    
+                    // Store full URL in data attribute for reference
+                    link.setAttribute('data-full-url', fullUrl);
+                }
+                
+                // Clean up
+                document.body.removeChild(measureSpan);
+            });
+        }, 150); // Small delay to ensure layout is complete
     }
     
     /**

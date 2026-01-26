@@ -6243,6 +6243,8 @@
   $("#saveSettings").on( "click", function() {
       clearAlerts()
       const obj = getAllValues(".setting-content-area")
+      // Include report settings in the data object
+      obj.reportSettings = getReportSettings()
       saveAjax(obj)
   });
 

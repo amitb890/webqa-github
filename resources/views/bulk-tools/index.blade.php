@@ -65,7 +65,7 @@
                            <img src="/new-assets/assets/images/tools-root/title.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'meta-title'])}}">Meta Title</a>
+                          <a href="{{route('tools', ['slug'=>'meta-title'])}}">Meta Title</a>
                           <p>A meta title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage.</p>
                         </div>
                       </div>
@@ -76,7 +76,7 @@
                            <img src="/new-assets/assets/images/tools-root/descrip.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'meta-description'])}}">Meta Description</a>
+                          <a href="{{route('tools', ['slug'=>'meta-description'])}}">Meta Description</a>
                           <p>Meta Description is displayed in the SERPs under the meta title and summarizes the information on that webpage. Test your meta descriptions for accuracy.</p>
                         </div>
                       </div>
@@ -87,7 +87,7 @@
                            <img src="/new-assets/assets/images/tools-root/robots.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'robots-meta'])}}">Robots Meta</a>
+                          <a href="{{route('tools', ['slug'=>'robots-meta'])}}">Robots Meta</a>
                           <p>Robots Meta is a piece of HTML code that specifies how search engines will index a URL. Check to see if you have used the tags incorrectly, affecting your ranking.</p>
                         </div>
                       </div>
@@ -98,7 +98,7 @@
                            <img src="/new-assets/assets/images/tools-root/url.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'canonical-url'])}}">Canonical URL</a>
+                          <a href="{{route('tools', ['slug'=>'canonical-url'])}}">Canonical URL</a>
                           <p>A canonical URL is used to control issues of content duplicity. Use this test to check for Use this test to look for discrepancies and irregularities in canonical URLs.</p>
                         </div>
                       </div>
@@ -109,7 +109,7 @@
                            <img src="/new-assets/assets/images/tools-root/images.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'images'])}}">Images</a>
+                          <a href="{{route('tools', ['slug'=>'images'])}}">Images</a>
                           <p>Alt text is inserted as an attribute in an HTML document to tell viewers the gist of an image that cannot be rendered. Check whether your website has proper alt attributes.</p>
                         </div>
                       </div>
@@ -121,7 +121,7 @@
                            <img src="/new-assets/assets/images/tools-root/url-slug.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'url-slug'])}}">URL Slug</a>
+                          <a href="{{route('tools', ['slug'=>'url-slug'])}}">URL Slug</a>
                           <p>A URL slug is the human-readable, SEO-friendly segment of a URL that uniquely identifies a page. Use this test to look for discrepancies and irregularities in URL slugs.</p>
                         </div>
                       </div>
@@ -132,7 +132,7 @@
                           <img src="/new-assets/assets/images/tools-root/robots_txt.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'robotstxt-test'])}}">Robots.txt</a>
+                          <a href="{{route('tools', ['slug'=>'robotstxt-test'])}}">Robots.txt</a>
                           <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
                         </div>
                       </div>
@@ -144,7 +144,7 @@
                            <img src="/new-assets/assets/images/tools-root/headings.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'headings'])}}">Headings</a>
+                          <a href="{{route('tools', ['slug'=>'headings'])}}">Headings</a>
                           <p>Headings structure the content of a webpage and help search engines and users understand the hierarchy of information.Use this test to look for discrepancies and irregularities in headings.</p>
                         </div>
                       </div>
@@ -155,7 +155,7 @@
                            <img src="/new-assets/assets/images/tools-root/graph.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'og-tags'])}}">Open Graph Tags</a>
+                          <a href="{{route('tools', ['slug'=>'og-tags'])}}">Open Graph Tags</a>
                           <p>Open Graph Tags are parts of code that control how URLs are displayed when shared on Facebook. You can find them in the <span><</span>head> section of a webpage.</p>
                         </div>
                       </div>
@@ -166,7 +166,7 @@
                            <img src="/new-assets/assets/images/tools-root/twiter.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'twitter-tags'])}}">Twitter Tags</a>
+                          <a href="{{route('tools', ['slug'=>'twitter-tags'])}}">Twitter Tags</a>
                           <p>The metadata values that Twitter uses to show text, images, and videos when you post links. Check to see if you're presenting your content effectively.</p>
                         </div>
                       </div>
@@ -177,7 +177,7 @@
                            <img src="/new-assets/assets/images/tools-root/meta_view.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'meta-viewport'])}}">Meta viewport</a>
+                          <a href="{{route('tools', ['slug'=>'meta-viewport'])}}">Meta viewport</a>
                           <p>Meta Viewport is the visible portion of a web page that people can see on their screens. Incorrect viewports will force viewers to side-scroll while browsing the site.</p>
                         </div>
                       </div>
@@ -188,7 +188,7 @@
                            <img src="/new-assets/assets/images/tools-root/doctype.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'doctype'])}}">Doctype declaration</a>
+                          <a href="{{route('tools', ['slug'=>'doctype'])}}">Doctype declaration</a>
                           <p>Every HTML document must begin with <span><</span>!DOCTYPE> declaration. It is not an HTML tag. It informs the browser about the HTML version used in the document.</p>
                         </div>
                       </div>
@@ -199,7 +199,7 @@
                            <img src="/new-assets/assets/images/tools-root/favicon.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'favicon'])}}">Favicon Test</a>
+                          <a href="{{route('tools', ['slug'=>'favicon'])}}">Favicon Test</a>
                           <p>Check to see if your site is using a favicon properly. Favicons are tiny icons that show up in the URL navigation bar of your browser.</p>
                         </div>
                       </div>
@@ -221,7 +221,7 @@
                           <img src="/new-assets/assets/images/tools-root/xml-sitemap.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'xml-sitemap'])}}">XML Sitemap</a>
+                          <a href="{{route('tools', ['slug'=>'xml-sitemap'])}}">XML Sitemap</a>
                           <p>HTML sitemaps are purportedly useful for website visitors. An HTML sitemap is simply a clickable list of a website's pages.</p>
                         </div>
                       </div>
@@ -233,7 +233,7 @@
                           <img src="/new-assets/assets/images/tools-root/html-sitemap.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'html-sitemap'])}}">HTML Sitemap</a>
+                          <a href="{{route('tools', ['slug'=>'html-sitemap'])}}">HTML Sitemap</a>
                           <p>An XML sitemap displays all of the pages on your website that are crawlable along with other helpful details like crawling priority and last updated times.</p>
                         </div>
                       </div>
@@ -382,7 +382,7 @@
                           <img src="/new-assets/assets/images/tools-root/secure_referrer.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'content-security-policy-header-test'])}}">Secure Referrer Policy Header</a>
+                          <a href="{{route('tools', ['slug'=>'content-security-policy-header-test'])}}">Secure Referrer Policy Header</a>
                           <p>Secure Referrer is a security header used in communication from the server to a client. When a link takes a user to another page or website, the browser is instructed on how to handle it.</p>
                         </div>
                       </div>
@@ -410,7 +410,7 @@
                           <img src="/new-assets/assets/images/tools-root/headings.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'headings'])}}">Headings</a>
+                          <a href="{{route('tools', ['slug'=>'headings'])}}">Headings</a>
                           <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
                         </div>
                       </div>  
@@ -433,7 +433,7 @@
                            <img src="/new-assets/assets/images/tools-root/gzip_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'gzip-compression'])}}">Gzip compression</a>
+                          <a href="{{route('tools', ['slug'=>'gzip-compression'])}}">Gzip compression</a>
                           <p>GZIP is a compression method that is widely used to transfer data over the internet rapidly. Javascript, CSS, and HTML are reduced in size.</p>
                         </div>
                       </div>
@@ -443,7 +443,7 @@
                           <img src="/new-assets/assets/images/tools-root/html_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'html-compression'])}}">HTML Compression</a>
+                          <a href="{{route('tools', ['slug'=>'html-compression'])}}">HTML Compression</a>
                           <p>By detecting similar strings within a text file and temporarily replacing them to decrease overall file size, HTML compression significantly enhances website speed.</p>
                         </div>
                       </div>
@@ -453,7 +453,7 @@
                            <img src="/new-assets/assets/images/tools-root/css_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'css-compression'])}}">CSS Compression</a>
+                          <a href="{{route('tools', ['slug'=>'css-compression'])}}">CSS Compression</a>
                           <p>Reduce the size of the CSS code on your website by using our CSS compressor tool. It is quick and easy.</p>
                         </div>
                       </div>
@@ -463,7 +463,7 @@
                            <img src="/new-assets/assets/images/tools-root/js_compression.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'js-compression'])}}">JS Compression</a>
+                          <a href="{{route('tools', ['slug'=>'js-compression'])}}">JS Compression</a>
                           <p>To make your website load faster, use our JavaScript compressor tool to reduce the size of JavaScript code.</p>
                         </div>
                       </div>
@@ -520,7 +520,7 @@
                           <img src="/new-assets/assets/images/tools-root/frameset.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'frameset'])}}">Frameset</a>
+                          <a href="{{route('tools', ['slug'=>'frameset'])}}">Frameset</a>
                           <p>Frames divide your browser window into several portions, each of which can load a different HTML document. Users and search engine robots both have problems with frames.</p>
                         </div>
                       </div>
@@ -531,7 +531,7 @@
                           <img src="/new-assets/assets/images/tools-root/broken-links.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'broken-links'])}}">Broken Links</a>
+                          <a href="{{route('tools', ['slug'=>'broken-links'])}}">Broken Links</a>
                           <p>Frames divide your browser window into several portions, each of which can load a different HTML document. Users and search engine robots both have problems with frames.</p>
                         </div>
                       </div>
@@ -555,7 +555,7 @@
                           <img src="/new-assets/assets/images/tools-root/unsafe-cross-origin-links.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'unsafe-cross-origin-links-test'])}}">Unsafe Cross Origin Links</a>
+                          <a href="{{route('tools', ['slug'=>'unsafe-cross-origin-links-test'])}}">Unsafe Cross Origin Links</a>
                           <p>This tool will check whether all links to external pages that have the rel="noopener" or rel="noreferrer" attribute are also rel="noopener" or rel="noreferrer" links.</p>
                         </div>
                       </div>
@@ -567,7 +567,7 @@
                           <img src="/new-assets/assets/images/tools-root/protocol-relative-resource-links.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'protocall-relative-resource-links-test'])}}">Protocal Relative Resource Links</a>
+                          <a href="{{route('tools', ['slug'=>'protocall-relative-resource-links-test'])}}">Protocal Relative Resource Links</a>
                           <p>Use this test to look for discrepancies and irregularities in resource linking that could cause mixed content issues, insecure connections, or inconsistent behavior across HTTP and HTTPS versions of the site.</p>
                         </div>
                       </div>
@@ -578,7 +578,7 @@
                           <img src="/new-assets/assets/images/tools-root/content_security.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'content-security'])}}">Content Security Policy Header</a>
+                          <a href="{{route('tools', ['slug'=>'content-security'])}}">Content Security Policy Header</a>
                           <p>Modern browsers employ an HTTP response header called Content-Security-Policy to strengthen the security of a web page.</p>
                         </div>
                       </div>
@@ -589,7 +589,7 @@
                           <img src="/new-assets/assets/images/tools-root/x_frame_options.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'x-frame-options-header-test'])}}">X Frame Options Header</a>
+                          <a href="{{route('tools', ['slug'=>'x-frame-options-header-test'])}}">X Frame Options Header</a>
                           <p>The X-Frame Options HTTP response header can be used to prevent click-jacking attacks by making sure that their content is not included on other sites.</p>
                         </div>
                       </div>
@@ -600,7 +600,7 @@
                           <img src="/new-assets/assets/images/tools-root/hsts_header.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'hsts-header'])}}">HSTS header</a>
+                          <a href="{{route('tools', ['slug'=>'hsts-header'])}}">HSTS header</a>
                           <p>Check if the HSTS header is used on your website. HTTP Strict Transport Security pushes browsers to use secure connections when a site is accessible only over HTTPS.</p>
                         </div>
                       </div>
@@ -611,7 +611,7 @@
                           <img src="/new-assets/assets/images/tools-root/bad_content_type.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'bad-content-type-test'])}}">Bad Content Type</a>
+                          <a href="{{route('tools', ['slug'=>'bad-content-type-test'])}}">Bad Content Type</a>
                           <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
                         </div>
                       </div>
@@ -622,7 +622,7 @@
                           <img src="/new-assets/assets/images/tools-root/ssl_https.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'ssl-certificate-test'])}}">SSL and HTTPs</a>
+                          <a href="{{route('tools', ['slug'=>'ssl-certificate-test'])}}">SSL and HTTPs</a>
                           <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
                         </div>
                       </div>
@@ -634,7 +634,7 @@
                           <img src="/new-assets/assets/images/tools-root/safe_brouwsing.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'safe-browsing-test'])}}">Safe Browsing</a>
+                          <a href="{{route('tools', ['slug'=>'safe-browsing-test'])}}">Safe Browsing</a>
                           <p>Check to see if Google's safe browsing API has classified your website as hosting malware or engaging in phishing behaviour.</p>
                         </div>
                       </div>
@@ -645,7 +645,7 @@
                           <img src="/new-assets/assets/images/tools-root/directory_browsing.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'safe-browsing-test'])}}">Directory Browsing</a>
+                          <a href="{{route('tools', ['slug'=>'safe-browsing-test'])}}">Directory Browsing</a>
                           <p>See if your server supports directory browsing. Visitors won't be able to directly access your directory and browse if it is off. This safeguards your files from public view.</p>
                         </div>
                       </div>
@@ -668,7 +668,7 @@
                           <img src="/new-assets/assets/images/tools-root/google_page speed.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'google-page-speed-insights'])}}">Google Page Speed</a>
+                          <a href="{{route('tools', ['slug'=>'google-page-speed-insights'])}}">Google Page Speed</a>
                           <p>Examine the Google page speed of each of your web pages. With the aid of our tips, make your web pages fast on all devices.</p>
                         </div>
                       </div>
@@ -679,7 +679,7 @@
                           <img src="/new-assets/assets/images/tools-root/lighthouse.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'google-lighthouse'])}}">Lighthouse</a>
+                          <a href="{{route('tools', ['slug'=>'google-lighthouse'])}}">Lighthouse</a>
                           <p>Lighthouse is an open-source, automated tool for enhancing web page quality . It includes audits for SEO, performance, and more.</p>
                         </div>
                       </div>
@@ -690,7 +690,7 @@
                           <img src="/new-assets/assets/images/tools-root/core_web_vitals.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'google-core-web-vitals'])}}">Core Web Vitals</a>
+                          <a href="{{route('tools', ['slug'=>'google-core-web-vitals'])}}">Core Web Vitals</a>
                           <p>Core Web Vitals are user experience metrics that are part of Google's Page Experience signals. It assesses interactivity with FID, visual stability with CLS, and visual load with LCP.</p>
                         </div>
                       </div>
@@ -701,7 +701,7 @@
                           <img src="/new-assets/assets/images/tools-root/mobile_friendly.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tool', ['slug'=>'mobile-friendliness'])}}">Mobile Friendliness</a>
+                          <a href="{{route('tools', ['slug'=>'mobile-friendliness'])}}">Mobile Friendliness</a>
                           <p>Mobile friendliness test evaluates how easily users can navigate a webpage on mobile devices. Use this test to look for discrepancies and irregularities in mobile usability and overall responsive design.</p>
                         </div>
                       </div>

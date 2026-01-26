@@ -254,7 +254,8 @@ function drawSection1(doc, title, content, length, casing, result, yPosition, sh
 
     // === 1. Draw Section Title ===
     doc.setFont(font, "medium").setFontSize(12);
-    doc.text(title, x, yPosition + 10);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x, yPosition + 10);
 
     // === 2. Draw Status Badge (PASS/FAIL) on right of title ===
     const resultUpper = result.toUpperCase();
@@ -447,7 +448,8 @@ function drawSection(doc, title, content, length, casing, result, yPosition, sho
 
     // === 4. Title ===
     doc.setFont(font, "medium").setFontSize(12).setTextColor(34, 34, 34);
-    doc.text(title, x + 5, yPosition + 10.2);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2);
 
     // === 5. PASS/FAIL badge ===
     // const resultUpper = result.toUpperCase();
@@ -552,17 +554,18 @@ doc.text(resultUpper, badgeTextX, badgeTextY);
                     doc.text(label, x + padding, textY);
 
                     if (value) {
-                        const labelWidth = doc.getTextWidth(label);
-                        const maxValueWidth = Math.max(availableTextWidth - labelWidth - 4, 10);
+                        // Use same spacing as Length and Casing (x + 28)
+                        const valueStartX = x + 28;
+                        const maxValueWidth = Math.max(availableTextWidth - (28 - padding), 10);
                         const valueLines = doc.splitTextToSize(value, maxValueWidth);
 
                         doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
                         valueLines.forEach((lineText, idx) => {
                             if (idx === 0) {
-                                doc.text(lineText, x + padding + labelWidth + 2, textY);
+                                doc.text(lineText, valueStartX, textY);
                             } else {
                                 textY += 5;
-                                doc.text(lineText, x + padding + labelWidth + 2, textY);
+                                doc.text(lineText, valueStartX, textY);
                             }
                         });
                     }
@@ -610,6 +613,12 @@ doc.text(resultUpper, badgeTextX, badgeTextY);
 // === Rounded rectangle helper ===
 function roundedRect(doc, x, y, width, height, radius, style = "S") {
     doc.roundedRect(x, y, width, height, radius, radius, style);
+}
+
+// Remove trailing " Test" from section titles for cleaner headers
+function sanitizeTestTitle(title) {
+    if (typeof title !== "string") return title;
+    return title.replace(/\s+Test\b$/, "").trim();
 }
 
 // === Manual justification fallback ===
@@ -692,7 +701,8 @@ function drawSectionNoLength_2(doc, title, content, result, yPosition) {
     // === 2. Title Alignment ===
     doc.setFont(font, "medium").setFontSize(12).setTextColor(34, 34, 34);
     
-    doc.text(title, x + 5, yPosition + 10.2); // Matches check icon vertical position
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2); // Matches check icon vertical position
 
     // === 3. PASS Badge (perfectly aligned) ===
     const resultUpper = result.toUpperCase();
@@ -861,8 +871,9 @@ function drawSectionNoLength(doc, title, content, result, yPosition) {
     }
 
     // === 2. Title Alignment ===
-    doc.setFont(font, "normal").setFontSize(12).setTextColor(34, 34, 34);
-    doc.text(title, x + 5, yPosition + 10.2);
+    doc.setFont(font, "medium").setFontSize(12).setTextColor(34, 34, 34);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2);
 
     // === 3. PASS Badge ===
     const resultUpper = result.toUpperCase();
@@ -1065,28 +1076,28 @@ function renderCoverPage_1(doc, url, date, time) {
 
 // === Helper: Draw a rotated rounded rectangle ===
 function drawRotatedRoundedRect(ctx, cx, cy, angleDeg, width, height, radius, fillStyle) {
-	const rad = (Math.PI / 180) * angleDeg;
-	ctx.save();
-	ctx.translate(cx, cy);
-	ctx.rotate(rad);
-	ctx.fillStyle = fillStyle;
-	drawRoundedRectPath(ctx, -width / 2, -height / 2, width, height, radius);
-	ctx.fill();
-	ctx.restore();
+    const rad = (Math.PI / 180) * angleDeg;
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.rotate(rad);
+    ctx.fillStyle = fillStyle;
+    drawRoundedRectPath(ctx, -width / 2, -height / 2, width, height, radius);
+    ctx.fill();
+    ctx.restore();
 }
 
 function drawRoundedRectPath(ctx, x, y, width, height, radius) {
-	const r = Math.min(radius, width / 2, height / 2);
-	ctx.beginPath();
-	ctx.moveTo(x + r, y);
-	ctx.lineTo(x + width - r, y);
-	ctx.quadraticCurveTo(x + width, y, x + width, y + r);
-	ctx.lineTo(x + width, y + height - r);
-	ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
-	ctx.lineTo(x + r, y + height);
-	ctx.quadraticCurveTo(x, y + height, x, y + height - r);
-	ctx.lineTo(x, y + r);
-	ctx.quadraticCurveTo(x, y, x + r, y);
+    const r = Math.min(radius, width / 2, height / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctx.lineTo(x + r, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
 }
 
 /* ---------- Header ---------- */
@@ -1309,7 +1320,7 @@ function addBrokenLinksTableToPDF(doc, y) {
     }
 
     // Headers for broken links table
-    const headers = ["Sr. No.", "URL", "HTTP Status Code"];
+    const headers = ["#", "URL", "HTTP Status Code"];
     
     // Get all data from the table
     let allData = [];
@@ -1467,7 +1478,8 @@ function drawSectionNoLengthHeadings(doc, title, content, result, yPosition) {
 
     // === 2. Title Alignment ===
     doc.setFont(font, "medium").setFontSize(12).setTextColor(34, 34, 34);
-    doc.text(title, x + 5, yPosition + 10.2);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2);
 
     // === 3. PASS Badge ===
     const resultUpper = result.toUpperCase();
@@ -1519,9 +1531,10 @@ function drawSectionNoLengthHeadings(doc, title, content, result, yPosition) {
     roundedRect(doc, x, boxY, width, boxHeight, 1.2, "F");
 
     // === 5. Properly Positioned Content Text ===
-    // Calculate starting Y position for proper text placement within dynamic box
+    // Calculate starting Y position to center text vertically within the box
     const totalContentHeight = numberOfLines * lineSpacing;
-    const startY = boxY + (boxVerticalPadding / 2) + 2; // Position text with minimal top padding
+    const baselineOffset = 3.5; // Align baseline so text appears vertically centered
+    const startY = boxY + (boxHeight - totalContentHeight) / 2 + baselineOffset;
     
     let textY = startY;
     
@@ -1628,7 +1641,7 @@ function renderHeadingsTable(doc, y) {
             fontSize: 9, 
             cellPadding: 2, 
             valign: "middle", 
-            halign: "left",
+            halign: "center",
             lineColor: [232, 232, 232],
             lineWidth: 0.1
         },
@@ -1762,8 +1775,9 @@ function drawTwitterSection(doc, title, contentData, result, yPosition) {
     }
 
     // === 2. Title ===
-    doc.setFont(font, "normal").setFontSize(11).setTextColor(34, 34, 34);
-    doc.text(title, x + 5, yPosition + 10.2);
+    doc.setFont(font, "medium").setFontSize(11).setTextColor(34, 34, 34);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2);
 
     // === 3. PASS/FAIL Badge ===
     const resultUpper = result.toUpperCase();
@@ -1912,8 +1926,9 @@ function drawTwitterSection_1(doc, title, contentData, result, yPosition) {
     }
 
     // === 2. Title (Normal weight, not bold) ===
-    doc.setFont(font, "normal").setFontSize(11).setTextColor(34, 34, 34);
-    doc.text(title, x + 5, yPosition + 10.2);
+    doc.setFont(font, "medium").setFontSize(11).setTextColor(34, 34, 34);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2);
 
     // === 3. PASS Badge ===
     const resultUpper = result.toUpperCase();
@@ -2045,8 +2060,9 @@ function drawOpenGraphSection(doc, title, contentData, result, yPosition) {
     }
 
     // === 2. Title (Normal weight, not bold) ===
-    doc.setFont(font, "normal").setFontSize(11).setTextColor(34, 34, 34);
-    doc.text(title, x + 5, yPosition + 10.2);
+    doc.setFont(font, "medium").setFontSize(11).setTextColor(34, 34, 34);
+    const titleText = sanitizeTestTitle(title);
+    doc.text(titleText, x + 5, yPosition + 10.2);
 
     // === 3. PASS Badge ===
     const resultUpper = result.toUpperCase();
@@ -2632,7 +2648,7 @@ function renderGoogleMobileFriendlyTest(doc, y) {
     const content = mobileFriendlyContent;
     
     // Use drawSectionNoLength without length display
-    return drawSectionNoLength(doc, "Google Mobile Friendly Test", content, status, y);
+    return drawSectionNoLength(doc, "Mobile Friendliness Test", content, status, y);
 }
 
 function renderCoreWebVitalsTable(doc, y) {

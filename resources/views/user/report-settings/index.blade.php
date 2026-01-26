@@ -1484,6 +1484,67 @@ document.addEventListener('DOMContentLoaded', function() {
                     status: 1,
                     msg: 'Report settings saved successfully!'
                 };
+                
+                // Update window.reportSettings with new values
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    let fieldName = checkbox.id.replace('switch', '');
+                    fieldName = fieldName.replace(/([A-Z])/g, '_$1').toLowerCase();
+                    if (fieldName.startsWith('_')) {
+                        fieldName = fieldName.substring(1);
+                    }
+                    
+                    const fieldMapping = {
+                        'meta_title': 'meta_title',
+                        'meta_desc': 'meta_desc',
+                        'robots_meta': 'robots_meta',
+                        'canonical_url': 'canonical_url',
+                        'images': 'images',
+                        'url_slug': 'url_slug',
+                        'robot_text_test': 'robot_text_test',
+                        'h1_heading_tag': 'h1_heading_tag',
+                        'xml_sitemap': 'xml_sitemap',
+                        'open_graph_tags': 'open_graph_tags',
+                        'twitter_tags': 'twitter_tags',
+                        'favicon': 'favicon',
+                        'meta_viewport': 'meta_viewport',
+                        'doctype': 'doctype',
+                        'http_status_code': 'http_status_code',
+                        'google_overall': 'google_overall',
+                        'google_lighthouse': 'google_lighthouse',
+                        'core_web_vitals': 'core_web_vitals',
+                        'mobile_friendly': 'mobile_friendly',
+                        'html_compression': 'html_compression',
+                        'css_compression': 'css_compression',
+                        'js_compression': 'js_compression',
+                        'gzip_compression': 'gzip_compression',
+                        'css_caching': 'css_caching_enable',
+                        'js_caching': 'js_caching_enable',
+                        'page_size': 'page_size',
+                        'nested_tables': 'nested_tables',
+                        'frameset': 'frameset',
+                        'broken_links': 'broken_links',
+                        'safe_browsing': 'is_safe_browsing',
+                        'cross_origin_links': 'cross_origin_links',
+                        'protocol_relative_resource': 'protocol_relative_resource',
+                        'content_security_policy': 'content_security_policy_header',
+                        'x_frame_options': 'x_frame_options_header',
+                        'hsts_header': 'hsts_header',
+                        'bad_content_type': 'bad_content_type',
+                        'ssl_certificate': 'ssl_certificate_enable',
+                        'folder_browsing': 'folder_browsing_enable'
+                    };
+                    
+                    const dbFieldName = fieldMapping[fieldName] || fieldName;
+                    if (window.reportSettings && dbFieldName) {
+                        window.reportSettings[dbFieldName] = checkbox.checked ? 1 : 0;
+                    }
+                });
+                
+                // Refresh sidebar filtering
+                if (typeof window.filterSidebarReports === 'function') {
+                    window.filterSidebarReports();
+                }
             } else {
                 alertData = {
                     status: 0,
