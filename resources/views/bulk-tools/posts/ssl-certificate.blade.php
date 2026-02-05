@@ -4,7 +4,7 @@
 @section('og-title', 'Test SSL Certificates for Validity & Domain Match | Webqa')
 @section('og-description', 'Check certificate validity, expiry, and domain match to ensure secure HTTPS. Detect issues that erode trust and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/ssl-certificate-test')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/ssl-certificate-test.png')
 @section('og-image-alt', 'SSL certificate test')
 
 <div class="single-post-content-main bulk-tool-test">

@@ -12,41 +12,152 @@
     <div class="single-post-content">
         <h2 class="tools_des_fastheading">URL Slug</h2>
 
-        <p>Deciding on a URL slug is like giving your webpage a name. It’s the name internet users use to identify and
-            find your content. Here’s how to choose the right slug for your content:</p>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>A URL slug is a unique string comes after the domain. For example,  in https://www.example.com/travel-guide, the slug is "travel-guide". A URL Slug identifies a specific page and explains what the page is all about by providing a concise, descriptive summary of a page's content.</p>
+  <ol>
+    <li>The URL slug appears after the domain name and helps both users and search engines understand the page's content.</li>
+    <li>Clean, descriptive slugs improve readability, trust, and click through rates in search results.</li>
+    <li>Search engines use keywords in the URL slug as a ranking signal to better interpret page relevance.</li>
+    <li>Good URL slugs are short, meaningful, lowercase, and use hyphens to separate words.</li>
+    <li>Poor URL slugs are often long, auto-generated, stuffed with keywords, or filled with unnecessary characters.</li>
+  </ol>
+</div>
 
-        <h3>What Is a URL Slug?</h3>
-        <p>A URL slug is a part of a web address that tells you what the page is about. Imagine looking at a link in
-            your browser. That whole link is the URL. Inside that URL, the slug is a short, easy-to-understand piece
-            that gives you a hint about the page’s content.</p>
+<h3>What Is a URL Slug?</h3>
+<p>A URL slug is the portion of a URL that uniquely identifies a specific page in a clear and human readable way.</p>
 
-        <p>Let’s consider the example of a web address like:</p>
+<p><b>Example:</b>
+<p><b>Full URL:</b> https://www.example.com.co/gadgets/buying-guide<br>
+<b>URL Slug:</b> gadgets/buying-guide
+</p>
 
-        <p><b>https://example.com/blog/digital-marketing-trends</b></p>
+<p>The slug appears after the domain name and any directory paths. A well-written URL slug helps users instantly understand what a page is about, even before they click on it.</p>
 
-        <p>In this case, “digital-marketing-trends” is referred to as the slug. The slug isn’t just a random combination
-            of words; it serves as an indication of what the content is about. This makes it crucial to make the slug
-            descriptive and relevant.</p>
+<p>URL slugs are often automatically generated from page titles by content management systems, but these default slugs are not always SEO friendly. Optimizing your website's URL slug ensures better readability, improved search visibility, and a more trustworthy appearance in search results.</p>
 
-        <img src="{{ asset('new-assets/assets/images/bulk-tool/url_slug_image_1.png') }}" alt="Example of URL Slug"
+<img src="{{ asset('new-assets/assets/images/bulk-tool/url_slug_image_1.png') }}" alt="Example of URL Slug"
             class="img-fluid my-4">
 
-        <h3>The Importance of the URL Slug in SEO</h3>
-        <p>While you might be tempted to think that a URL slug is just a part of the web address, it plays a more
-            significant role than you might imagine. Google Search Advocate, John Mueller, shed some light on this by
-            confirming that words in a URL do impact rankings.</p>
+<h5>Where Does a URL Slug Appear?</h5>
+<p>A URL slug is highly visible across the web, which is why it impacts both user trust and SEO performance.</p>
+<p>You’ll commonly see a URL slug in the following places:</p>
 
-        <p>A URL slug doesn’t just guide human users—it plays a pivotal role for search engines too. When constructing a
-            webpage, every element counts and the URL slug is no exception. It might appear like a minor detail, but its
-            SEO implications are vast. Here’s an in-depth examination of its importance:</p>
+<ul>
+  <li><b>Browser address bar:</b> Visitors can read the slug directly in the URL while browsing your website.</li>
+  <li><b>Search engine result pages (SERPs):</b> Search engines often show the page URL slug under the title, and a clean slug looks more trustworthy and clickable.</li>
+  <li><b>Social shares and apps:</b> When someone shares a link, the slug becomes part of what others see and judge before clicking.</li>
+  <li><b>Email links and newsletters:</b> Clean URLs build confidence and reduce the chance of being treated as suspicious or spammy.</li>
+  <li><b>Analytics and reports:</b> Slugs help you and your team quickly identify pages inside tools like Google Analytics, Google Search Console, or internal dashboards.</li>
+</ul>
 
-        <img src="{{ asset('new-assets/assets/images/bulk-tool/url_slug_image_2.png') }}" alt="Slug Best Practices Table"
-            class="img-fluid my-4">
-        <h3>How to Choose the Right URL Slug?</h3>
-        <p>Deciding on a URL slug is like giving your webpage a name. It's the name internet users use to identify and
-            find your content. Here's how to choose the right slug for your content:</p>
+<p>Because the URL slug is so visible, keeping it short, descriptive, and readable helps users understand your website pages instantly and helps search engines interpret it more accurately.</p>
 
-        <ul>
+<h3>Do’s and Don’ts of URL Slugs</h3>
+<p>A good URL slug should be easy to read and clearly connected to the page's topic. Below are practical best practices to follow and common mistakes to avoid when writing URL slugs.</p>
+
+<div class="list green-list">
+  <h3>Do’s</h3>
+  <ul>
+    <li><b>Keep it short and simple:</b>&nbsp;Aim for 3 - 6 meaningful words whenever possible.</li>
+    <li><b>Use lowercase letters:</b>&nbsp;Lowercase URLs look cleaner and help avoid duplicate URL issues.</li>
+    <li><b>Use hyphens between words:</b>&nbsp;Hyphens improve readability and are preferred over underscores.</li>
+    <li><b>Include the primary keyword naturally:</b>&nbsp;Include your main keywords naturally, don't stuff keywords unnecessarily.</li>
+    <li><b>Make it user friendly:</b>&nbsp;Write slugs for real users first, then optimize for search engines.</li>
+    <li><b>Follow a consistent structure:</b>&nbsp;Stick to a standard format of URL slugs across your website for better organization.</li>
+    <li><b>Keep it aligned with page's intent:</b>&nbsp;Ensure the slug clearly matches what users will find on the page.</li>
+  </ul>
+</div>
+
+<div class="list red-list">
+  <h3>Don’ts</h3>
+  <ul>
+    <li><b>Don’t stuff keywords:</b>&nbsp;Adding excessive keywords or repeating keywords makes the URL look spammy and reduces trust.</li>
+    <li><b>Don’t use unnecessary stop words:</b>&nbsp;Words like “and”, “the”, “of” often add length without adding any value.</li>
+    <li><b>Don’t use special characters:</b>&nbsp;Avoid symbols like ?, &amp;, %, #, or ! in URL Slugs.</li>
+    <li><b>Don’t use underscores:</b>&nbsp;Underscores reduce readability and are not ideal for SEO compared to hyphens.</li>
+    <li><b>Don’t create long, auto-generated slugs:</b>&nbsp;Default CMS slugs can be bloated and unclear. Trim them down.</li>
+    <li><b>Don’t change slugs without redirects:</b>&nbsp;If you update a URL, use a 301 redirect to prevent broken links and SEO loss.</li>
+    <li><b>Don’t make it vague:</b>&nbsp;Avoid generic slugs like "page", "post", or "article" that provide no context.</li>
+  </ul>
+</div>
+
+
+<h3>Good vs Bad URL Slug Examples</h3>
+<p>Let's look at some real examples of what makes a good URL slug and what makes a bad one.</p>
+
+<p><b>Examples of Good URL Slugs</b></p>
+<table class="good-bad-example-table">
+  <tr>
+    <th>URL Slug</th>
+    <th>Why this is good</th>
+  </tr>
+  <tr>
+    <td>/how-to-write-meta-titles</td>
+    <td>Clear, descriptive, and keyword focused. It tells users exactly what the page is all about.</td>
+  </tr>
+  <tr>
+    <td>/best-budget-smartphones-2026</td>
+    <td>Includes intent and freshness (year), making it relevant and compelling for searchers.</td>
+  </tr>
+  <tr>
+    <td>/beginner-yoga-poses</td>
+    <td>Short, readable, and specific to the audience (beginners).</td>
+  </tr>
+  <tr>
+    <td>/seo-audit-checklist</td>
+    <td>Simple and aligned with search intent - users know they’ll get a checklist.</td>
+  </tr>
+  <tr>
+    <td>/email-marketing-tips</td>
+    <td>Clean and easy to remember, while still describing the page content accurately.</td>
+  </tr>
+</table>
+
+<p><b>Examples of Bad URL Slugs</b></p>
+<table class="good-bad-example-table">
+  <tr>
+    <th>URL Slug</th>
+    <th>Why this is bad</th>
+  </tr>
+  <tr>
+    <td>/page?id=12345</td>
+    <td>This URL Slug provides no context to users and search engines. It looks auto generated and provides zero meaning.</td>
+  </tr>
+  <tr>
+    <td>/best-seo-tools-software-tools</td>
+    <td>Keyword stuffing that looks spammy and reduces trust.</td>
+  </tr>
+  <tr>
+    <td>/How_To_Write_A_Good_URL!!!</td>
+    <td>This URL slug uses underscores, uppercase letters, and special characters that hurt readability and consistency.</td>
+  </tr>
+  <tr>
+    <td>/this-is-the-best-page-for-learning-everything-about-seo-basics</td>
+    <td>This URL slug is too long and unfocused. Long slugs are harder to read, share, and scan in search results.</td>
+  </tr>
+  <tr>
+    <td>/post-2023-final-v2-new</td>
+    <td>This URL slug is meaningless and confusing. Users can’t tell what the page is about from the slug.</td>
+  </tr>
+</table>
+
+<p>When creating URL slugs, aim to be clear, concise, and accurate. The goal is to help users and search engines understand your page instantly - without clutter or confusion.</p>
+
+<h3>Are URL Slugs a Google Ranking Factor?</h3>
+<p>Yes, URL slugs can influence SEO and act as a lightweight ranking factor when optimized correctly.</p>
+
+<p>Search engines like Google use words in a URL slug to help understand what a page is all about about. In fact, Google’s John Mueller has confirmed that <a target="_blank" href="https://www.semrush.com/blog/what-is-a-url-slug/" target="_blank">words in a URL can be used as a ranking factor</a>, though he emphasizes this impact is relatively minor compared to other factors.</p>
+
+<p>Search engines also consider URL slugs part of overall URL structure and crawlability — with Google recommending <a target="_blank" href="https://developers.google.com/search/docs/crawling-indexing/url-structure" target="_blank">descriptive, easy-to-understand URLs</a> that improve indexing and relevance signals.</p>
+
+<p>However, it’s important to know that URL slugs are a small factor compared to things like content quality, backlinks, and page performance. Even Google characterizes keyword relevance in URLs as a “very lightweight” signal, but one that still provides useful context.</p>
+
+<h3>How to Choose the Right URL Slug?</h3>
+<p>Deciding on a URL slug is like giving your webpage a name. It's the name internet users use to identify and
+find your content. Here's how to choose the right slug for your content:</p>
+
+<ul>
             <li><b>Understand Your Content:</b> Before you decide on a slug, understand the essence of your content.
                 What's the main topic? What's the primary keyword?</li>
             <li><b>Keep It Relevant:</b> The slug should be relevant to the content of the page. If your article is
@@ -65,71 +176,6 @@
 
 
 
-        <h3>Best Practices When Crafting a URL Slug</h3>
-
-        <p><b>Try to Be Descriptive:</b><br>
-            The purpose of a URL slug is to convey the page's content swiftly and succinctly.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /top-laptops-2023<br>
-            ❌ /item3456</p>
-
-        <p>Incorporating the primary keyword, which encapsulates the gist of the page, is a proven strategy.</p>
-
-        <p><b>Keep It Short and Sweet:</b><br>
-            Overly elongated slugs might deter users and often don't display fully in search results.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /vegan-recipes<br>
-            ❌ /ultimate-guide-to-vegan-recipes-for-beginners</p>
-
-        <p><b>Separate Words Clearly:</b><br>
-            Distinctly separated words in a slug enhance its clarity and accessibility.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /home-cleaning-tips<br>
-            ❌ /homecleaninghints</p>
-
-        <p><b>Use Hyphens Over Other Separators:</b><br>
-            Hyphens are the gold standard for word separation in slugs, as they're most universally recognized by search
-            engines.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /chocolate-chip-cookies<br>
-            ❌ /chocolate_chip_cookies</p>
-
-        <p><b>Stick to Lowercase:</b><br>
-            Consistency is key. Use lowercase letters to prevent potential URL errors and confusion.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /paris-travel-guide<br>
-            ❌ /Paris-Travel-Guide</p>
-
-        <p><b>Avoid Peculiar Characters:</b><br>
-            Steer clear from characters that aren't universally understood or can lead to errors.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /sign-language<br>
-            ❌ /sign✋language</p>
-
-        <p><b>Ensure It’s Timeless:</b><br>
-            Avoid transient details like the current year or counts that might change. Remember: If you change the URL
-            slug, always set up a redirect from the previous URL to the updated one.</p>
-
-        <p><b>Example:</b><br>
-            ✅ /seo-strategies<br>
-            ❌ /12-seo-strategies-2023</p>
-
-
-        <h3>In Conclusion: The Power of a Good URL Slug</h3>
-        <p>URL slugs do more than just point visitors to the right page on your site. They serve as a direct line of
-            communication, providing a preview of the content that awaits readers. However, their significance extends
-            beyond this initial introduction. Search engines greatly value URL slugs as they assist in effectively
-            categorizing, ranking, and displaying your content.</p>
-
-        <p>By investing time in crafting clear and descriptive slugs, and integrating them into a solid URL strategy,
-            you’re setting your site up for better SEO success. Don’t overlook them; these small segments in your URLs
-            can make a big difference.</p>
 
         <!-- Start FAQ -->
         <div class="getting-recover-main recover-faq-area">
@@ -137,28 +183,24 @@
             <div class="accordion" id="accordionPanelsStayOpenExample">
                 @foreach ([
         [
-            'q' => 'What is the maximum length of a URL slug?',
+            'q' => 'What should be the maximum length of a URL slug?',
             'a' => 'While there isn\'t a strict maximum length for a URL slug, it\'s advisable to keep it under 45 characters for readability. Search engines can handle much longer URLs, but a concise slug is user-friendly and more likely to be remembered.',
         ],
         [
             'q' => 'What happens if I change the URL slug of the page?',
-            'a' => 'When you alter a URL slug, you\'re essentially changing the web address of that specific page. This can lead to broken links—any previous links directed towards that page will hit a dead end, showing the dreaded 404 error. But, fret not! This mishap can be avoided by setting up a redirect and guiding users from the old URL directly to the new one.',
-        ],
-        [
-            'q' => 'What is a URL slug example?',
-            'a' => 'A URL slug is the portion of a web address that follows the domain name and describes the page\'s content. For example, in https://example.com/blog/tasty-pizza-recipes, "tasty-pizza-recipes" serves as the slug.',
+            'a' => 'When you alter a URL slug, you\'re essentially changing the web address of that specific page. This can lead to broken links. Any previous links directed towards that page will hit a dead end, showing the dreaded 404 error. This mishap can be avoided by setting up a 301 redirect and guiding users from the old URL directly to the new one.',
         ],
         [
             'q' => 'What is the difference between a URL and URL slug?',
             'a' => 'Not quite! The URL is the entire web address you see in your browser, like https://example.com/blog/tasty-pizza-recipes. On the other hand, the slug is just a segment of this address, specifically tasty-pizza-recipes in our example.',
         ],
         [
+        'q' => 'Should the URL slug match the page title exactly?',
+        'a' => 'Not necessarily. Slugs should be shorter and cleaner than titles while keeping the same intent. Remove unnecessary words and keep it focused on the main topic.'
+      ],
+        [
             'q' => 'Why is it called a slug?',
             'a' => 'The term "slug" originates from the world of print journalism. In the days of manual typesetting, a slug referred to a piece of type metal cast as a single line of characters. In the digital realm, it\'s been borrowed to describe a string of words forming a simple, clean URL segment.',
-        ],
-        [
-            'q' => 'Does changing the slug change the URL?',
-            'a' => 'Yes, indeed! The slug is a portion of the URL. When you modify the slug, you are altering that part of the URL. Hence, the entire web address of the page changes.',
         ],
     ] as $faq)
                     <div class="accordion-item">

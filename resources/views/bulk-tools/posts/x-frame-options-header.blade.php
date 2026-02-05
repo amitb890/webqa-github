@@ -4,7 +4,7 @@
 @section('og-title', 'Test X-Frame-Options Headers for Clickjacking Protection | Webqa')
 @section('og-description', 'Audit X-Frame-Options to ensure pages cannot be framed by untrusted sites. Detect missing or unsafe values and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/x-frame-options-header-test')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/x-frame-options-header-test.png')
 @section('og-image-alt', 'X-Frame-Options header test')
 
 

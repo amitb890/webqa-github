@@ -4,7 +4,7 @@
 @section('og-title', 'Test Content-Type Headers for Correct MIME Types | Webqa')
 @section('og-description', 'Audit pages and files for missing or incorrect Content-Type headers that can break loading and reduce security. Export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/bad-content-type-test')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/bad-content-type.png')
 @section('og-image-alt', 'Content-Type header test')
 
 <!-- post page blog start -->

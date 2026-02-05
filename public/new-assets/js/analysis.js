@@ -244,13 +244,13 @@ static collapsePreviousParent(data){
         }
       }
       
-      // Add table header
+        // Add table header
       html += `<table class="broken-links-table">
         <thead>
           <tr>
-            <th>URL</th>
-            <th>HTTP Status Code</th>
-            <th>
+            <th class="blt-header">URL</th>
+            <th class="blt-header">HTTP Status Code</th>
+            <th class="blt-3header">
               <a href="#" class="ignore-all-link" data-urls='${JSON.stringify(brokenUrls.map(item => item.url))}'>Ignore All</a>
             </th>
           </tr>
@@ -3493,18 +3493,13 @@ function buildLoaderDetailSingleElement(label, idVal){
 
 
 
-                              <div class="modal fade meta-list-brokenBody" aria-labelledby="exampleModalToggleLabel" tabindex="1" id="broken-links-modal" aria-hidden="true" style="display: none;">
-                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <div>
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                                          List of broken links
-                                        </h1>
-                                        <button id="downloadCSVBrokenLinks"><img src="/new-assets/assets/images/xl.png" alt="xl-img"> Download CSV</button>
-                                      </div>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
+                              <div class="modal meta-list-brokenBody" aria-labelledby="exampleModalToggleLabel" tabindex="1" id="broken-links-modal" aria-hidden="true" style="display: none;">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-crossolm">
+                                  <div class="modal-content modal-content-crossolm">
+                                    <div class="modal-header modal-header-blm">
+                                      <span class="modal-title">Broken Links</span>
+                                      <span class="close modal-close close-crossolm" data-bs-dismiss="modal">×</span>
+                                     </div>
                                     <div class="modal-body">
                                       <div class="card-body">
                                         <div class="meta-list-single">
@@ -3538,7 +3533,7 @@ function buildLoaderDetailSingleElement(label, idVal){
                                 <div class="modal-table-div">
                                   <table>
 
-                                  <tbody>       
+                                  <>       
                                   
                                   ${data.secondaryBots.map((item, index) => `
                                         <tr>
@@ -3546,9 +3541,9 @@ function buildLoaderDetailSingleElement(label, idVal){
                                           <td>
                                           <span>${item}</span>
                                           </td>
-                                      </tr>
+                                      </tr>tbody
                                       `).join('')}   
-                                            </tbody> 
+                                            </> 
                                   </table>
                                   </div>   
                                 </div>
@@ -3641,12 +3636,12 @@ function buildLoaderDetailSingleElement(label, idVal){
                                   <div class="modal-table-div">
                                   <table>
           
-                           <tbody>          
+                            <tbody>          
                                   ${data.protocolRelativeResourceData.map((item, index) => `
                                         <tr>
                                           <td>${index + 1}</td>
                                           <td>
-                                          <span><a href="${item}" target="_blank"><i class="fas fa-external-link-alt" style="color:#c3c9d1"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
+                                          <span><a href="${item}" target="_blank"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
                                           </td>
                                       </tr>
                                       `).join('')}   
@@ -3913,49 +3908,56 @@ function buildLoaderDetailSingleElement(label, idVal){
                         
                         : "" 
                     }
+                    
                     ${
                       data.title === 'Unsafe Cross Origin Links' ? `
                       ${data.crossOriginLinksData.length > 0 ? 
                         `<div class="card-inner-content">
                           <div class="card mb-2">
-                              <div class="card-body">
+                              <div class="card-body card-body-crossolm">
                               ${data.content}
                               <div class="card-actual-url">
-                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crossOriginLinksModal">
-                                 Click here to see list of Cross Origin Links List
-                                  </button>
+                              <span data-bs-toggle="modal" data-bs-target="#crossOriginLinksModal" 
+                                style="border-bottom: 1px solid #7f6e6e; cursor: pointer;">Click here to see list of Cross Origin Links List</span>
                         
                       <div class="modal" id="crossOriginLinksModal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                        <div class="modal-dialog modal-dialog-crossolm">
+                            <div class="modal-content modal-content-crossolm">
                                 <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Cross Origin Links</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                                <div class="modal-header modal-header-crossolm">
+                                    <h4 class="modal-title modal-title-crossolm">Cross Origin Links</h4>
+                                    <button type="button" class="close close-crossolm" data-bs-dismiss="modal">&times;</button>
                                 </div>
                                 <!-- Modal Body -->
-                                <div class="modal-body">
+                                <div class="modal-body modal-table-div-crossolm">
                                 <table>
                                     <tr>
-                                    <th>URL</th>
+                                    <th style="text-align: left;
+                                        padding-right: 20px; padding-bottom: 10px; font-size: 14px !important;
+                                        font-weight: 400 !important;
+                                        line-height: 18px !important;
+                                        color: rgba(110, 110, 110, 1) !important;
+                                        font-family: Circular Std !important;">URL</th>
                                     </tr>         
-                            ${data.crossOriginLinksData.map(item => `
-                                              <tr>
-                                                  <td>${item}</td>
-                                              </tr>
-                                            `).join('')}     
-                                 </table></div>
-                                <!-- Modal Footer -->
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
+                            ${data.crossOriginLinksData.map((item, index) => `
+                                        <tr>
+                                          <td>${index + 1}</td>
+                                          <td>
+                                          <span>${item}</span>
+                                          </td>
+                                      </tr>
+                                      `).join('')}      
+                                 </table>
+                                 </div>
                             </div>
                         </div>
-                        </div></div>
-                          </div>
+                        </div>
+                        </div>
+                        </div>
                       </div>`: ''}
                       ` : "" 
                   }
+                          
                           
 
                           ${data.problems ? 

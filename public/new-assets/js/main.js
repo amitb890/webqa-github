@@ -1527,6 +1527,22 @@ document.querySelectorAll('.dropdown-toggle').forEach(link => {
   if($("#select_option").length > 0){
     $('#select_option').niceSelect();
   }
+
+  const tabImages = [
+  '/new-assets/assets/images/home/group-seo.png',
+  '/new-assets/assets/images/home/group-performance.png',
+  '/new-assets/assets/images/home/group-best-practices.png',
+  '/new-assets/assets/images/home/group-security.png',
+];
+
+tabImages.forEach(src => {
+  const img = new Image();
+  img.src = src;
+});
+
+
+
+
 });
 // Tracker Page Tooltip
 const tooltipTriggerList = document.querySelectorAll(

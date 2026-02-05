@@ -162,9 +162,9 @@ if(isset($_COOKIE["activeProject"])){
               <a
                 class="dropdown-toggle p-2"
                 href="#"
-                role="button"
+                {{-- role="button"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
+                aria-expanded="false" --}}
               >
                 <span class="icon">
                   @if($activeProjectFavicon == "default" || $activeProjectFavicon == "")
@@ -211,11 +211,11 @@ if(isset($_COOKIE["activeProject"])){
             </div>
             <div class="dropdown">
               <a
-                class="dropdown-toggle-two-2"
+                class="dropdown-toggle-two-2 dropdown-toggle"
                 href="#"
-                role="button"
+                {{-- role="button"
                 data-bs-toggle="dropdown"
-                aria-expanded="false"
+                aria-expanded="false" --}}
               >
                <?php
                   $words = array(auth()->user()->name); 
@@ -552,7 +552,7 @@ if(isset($_COOKIE["activeProject"])){
     
 
 
-         <!-- MODAL CUSTOMIZER -->
+        <!-- MODAL CUSTOMIZER -->
           <div class="modal fade" id="modalCustomizer" aria-hidden="true" aria-labelledby="modalCustomizerLabel" tabindex="-1">
               <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content">
@@ -562,9 +562,8 @@ if(isset($_COOKIE["activeProject"])){
                         <div class="element-main-area">
                           <div class="element-cls">
                             <div class="form-check">
-                               <input class="form-check-input input-check-all" type="checkbox" id="input-check-all-imran" checked>
-
-                              <label class="form-check-label" for="element_all" id="form-check-label-imran">
+                              <input class="form-check-input input-check-all" id="input-check-all-imran" type="checkbox" id="" checked>
+                              <label class="form-check-label" id="form-check-label-imran" for="element_all">
                                 Select All
                               </label>
                             </div>
@@ -576,7 +575,7 @@ if(isset($_COOKIE["activeProject"])){
                             <div class="single-element-content" id="accordianMetaTags">
                               <div class="element-check-title">
                                 <div class="form-check">
-                                    <input class="form-check-input input-check-all" type="checkbox" id="metaTagsCheckAll" checked>
+                                    <input class="form-check-input input-check-all"  type="checkbox" id="metaTagsCheckAll" checked>
                                     <label class="form-check-label" for="metaTagsCheckAll">
                                     SEO
                                     </label>
@@ -584,7 +583,6 @@ if(isset($_COOKIE["activeProject"])){
                               </div>
                               <div class="inner-element-content"></div>
                             </div>
-
 
 
                             <div class="single-element-content" id="accordianPerformance">
@@ -915,53 +913,6 @@ if(isset($_COOKIE["activeProject"])){
         });
       });
 
-      const dropdownContainer = document.querySelector('.project-toggle-container');
-const dropdownToggle = dropdownContainer.querySelector('.dropdown-toggle');
-const dropdownMenu = dropdownContainer.querySelector('.header-dropdown-imran');
-const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(dropdownToggle);
-
-let hideTimeout;
-
-// Show dropdown smoothly on hover
-dropdownContainer.addEventListener('mouseenter', () => {
-  clearTimeout(hideTimeout);
-  dropdownInstance.show();
-  dropdownMenu.classList.add('show');
-});
-
-// Hide dropdown with slight delay for smoother experience
-dropdownContainer.addEventListener('mouseleave', () => {
-  hideTimeout = setTimeout(() => {
-    dropdownInstance.hide();
-    dropdownMenu.classList.remove('show');
-  }, 150);
-});
-
-const userDropdownContainer = document.querySelector('.dropdown'); // your profile dropdown wrapper
-const userDropdownToggle = userDropdownContainer.querySelector('.dropdown-toggle-two-2');
-const userDropdownMenu = userDropdownContainer.querySelector('.user-dropdown-imran');
-const userDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(userDropdownToggle);
-
-let userHideTimeout;
-
-// Show dropdown smoothly on hover
-userDropdownContainer.addEventListener('mouseenter', () => {
-  clearTimeout(userHideTimeout);
-  userDropdownInstance.show();
-  userDropdownMenu.classList.add('show');
-});
-
-// Hide dropdown with delay
-userDropdownContainer.addEventListener('mouseleave', () => {
-  userHideTimeout = setTimeout(() => {
-    userDropdownInstance.hide();
-    userDropdownMenu.classList.remove('show');
-  }, 150);
-});
-
-
-    
-    
 
       document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.querySelector(".ssbt-search input");

@@ -4,7 +4,7 @@
 @section('og-title', 'Test HSTS (Strict-Transport-Security) Headers | Webqa')
 @section('og-description', 'Audit HSTS headers to ensure browsers always use HTTPS for your site, improving security and preventing protocol downgrades. Export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/hsts-header-test')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/hsts-header-test.png')
 @section('og-image-alt', 'HSTS header test')
 
 <div class="single-post-content-main bulk-tool-test">
