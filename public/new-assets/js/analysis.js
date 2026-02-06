@@ -3555,17 +3555,21 @@ function buildLoaderDetailSingleElement(label, idVal){
                             `
                             <div class="card-inner-content">
                            
-                                <div class="card mb-2" style="width:50%">
-                                    <div class="card-body">
+                                <div class="card mb-2 robotsTxt-card">
+                                
+                                    <div class="card-body robotsTxt-scroll-wrapper">
+                                    <div class="robotsTxt-scroll-content">
+                                    
                                     ${data.content}
-                                    <div class="card-actual-url">
+                                    </div>
+                                    <div class="card-actual-url robotsTxt-card-actual-url">
                                     <table style="font-family: 'Courier Prime';">
                                     ${data.robotTextResponseData.map((item, index) => {
                                         if (item.trim() !== '') {
                                             return `
                                                 <tr>
-                                                    <td style="padding-right:30px">${index + 1}</td> <!-- Auto-incrementing value -->
-                                                    <td>${item}</td>
+                                                    <td style="padding-right:0px; color:#8f8f8f;">${index + 1}</td> <!-- Auto-incrementing value -->
+                                                    <td class="robotsTxt-card-td" style="color:#555555;">${item}</td>
                                                 </tr>
                                             `;
                                         } else {
@@ -3573,8 +3577,7 @@ function buildLoaderDetailSingleElement(label, idVal){
                                         }
                                     }).join('')}
                                 </table>
-                                
-                                        </div>
+                                      </div>
                                     </div>
                                 </div>
                             </div>`

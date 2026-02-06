@@ -844,6 +844,9 @@ function drawSectionNoLength(doc, title, content, result, yPosition) {
     const width = 190;
     const padding = 6;
     const font = window.PDF_FONT_FAMILY || "Roboto";
+    
+    // Use very conservative text width - 85% of available width to prevent overflow
+    const TEXT_WIDTH_PERCENTAGE = 0.85;
 
     // === 1. Status Icon with Data Image ===
     const isPass = result.toUpperCase() === "PASS";
@@ -905,10 +908,15 @@ function drawSectionNoLength(doc, title, content, result, yPosition) {
     doc.setTextColor(0, 0, 0);
 
     // === 4. Content Box with Reduced Height ===
-    const contentLines = doc.splitTextToSize(content, width - 2 * padding);
-    
     // Fixed values for consistent spacing
     const lineSpacing = 6; // Space between lines
+    
+    // Pre-calculate text wrapping to get accurate line count
+    // Use percentage-based width calculation for maximum safety
+    // Calculate available width and apply percentage reduction
+    const baseAvailableWidth = width - 2 * padding;
+    const availableTextWidth = baseAvailableWidth * TEXT_WIDTH_PERCENTAGE;
+    const contentLines = doc.splitTextToSize(content, availableTextWidth);
     const numberOfLines = contentLines.length;
     
     // Calculate total text height
@@ -969,23 +977,45 @@ function drawSectionNoLength(doc, title, content, result, yPosition) {
                 // Draw value with normal font weight at consistent position
                 if (value) {
                     doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
-                    // Wrap value text to respect right margin
-                    const maxValueWidth = width - valueStartX - rightMargin;
+                    // Wrap value text to respect right margin (use percentage-based width)
+                    const baseValueWidth = width - valueStartX - rightMargin;
+                    const maxValueWidth = baseValueWidth * TEXT_WIDTH_PERCENTAGE;
                     const valueLines = doc.splitTextToSize(value, maxValueWidth);
                     valueLines.forEach((valueLine, lineIndex) => {
+                        // Ensure text doesn't go beyond box boundaries
                         doc.text(valueLine, valueStartX, textY + (lineIndex * lineSpacing));
                     });
                     // Adjust textY for multi-line values
                     textY += (valueLines.length - 1) * lineSpacing;
                 }
             } else {
-                // Regular text with normal font weight
+                // Regular text with normal font weight (this is the path for robots.txt content)
                 doc.setFont(font, "normal").setFontSize(10).setTextColor(34, 34, 34);
-                // Wrap regular text to respect right margin
-                const maxTextWidth = width - x - padding - rightMargin;
+                // Use percentage-based width for regular text to prevent overflow
+                // This ensures text never exceeds 85% of available width
+                const baseTextWidth = width - 2 * padding;
+                const maxTextWidth = baseTextWidth * TEXT_WIDTH_PERCENTAGE;
                 const textLines = doc.splitTextToSize(line, maxTextWidth);
+                
                 textLines.forEach((textLine, lineIndex) => {
-                    doc.text(textLine, x + padding, textY + (lineIndex * lineSpacing));
+                    // Verify each line fits before rendering
+                    doc.setFont(font, "normal").setFontSize(10);
+                    let finalText = textLine;
+                    let actualWidth = doc.getTextWidth(finalText);
+                    
+                    // If text is still too wide, keep reducing until it fits
+                    let attempts = 0;
+                    while (actualWidth > maxTextWidth && attempts < 5) {
+                        const reductionFactor = 0.95; // Reduce by 5% each attempt
+                        const newWidth = maxTextWidth * Math.pow(reductionFactor, attempts + 1);
+                        const reSplit = doc.splitTextToSize(finalText, newWidth);
+                        finalText = reSplit[0] || finalText;
+                        actualWidth = doc.getTextWidth(finalText);
+                        attempts++;
+                    }
+                    
+                    // Render the text
+                    doc.text(finalText, x + padding, textY + (lineIndex * lineSpacing));
                 });
                 // Adjust textY for multi-line text
                 textY += (textLines.length - 1) * lineSpacing;
@@ -1018,11 +1048,27 @@ function renderCoverPage(doc, url, date, time) {
     doc.setFont(font, "normal");
     doc.setFontSize(12);
     doc.setTextColor(0, 0, 0);
-    doc.text(`URL: ${url}`, pageWidth / 2, 120, { align: "center" });
+    
+    // Handle long URLs by wrapping them
+    const urlText = url;
+    const maxUrlWidth = pageWidth - 40; // Leave 20px margin on each side
+    const urlLines = doc.splitTextToSize(urlText, maxUrlWidth);
+    
+    // Calculate starting Y position for URL (centered vertically around 120)
+    const urlLineHeight = 7; // Line spacing for URL
+    const totalUrlHeight = urlLines.length * urlLineHeight;
+    let urlY = 120 - (totalUrlHeight / 2) + (urlLineHeight / 2);
+    
+    // Render each line of the URL, centered
+    urlLines.forEach((line, index) => {
+        doc.text(line, pageWidth / 2, urlY + (index * urlLineHeight), { align: "center" });
+    });
 
     // === 4. Generated Date ===
+    // Position date below URL, accounting for multi-line URLs
+    const dateY = urlY + (urlLines.length * urlLineHeight) + 15; // 15px spacing after URL
     doc.setFontSize(10);
-    doc.text(`Generated on ${date}`, pageWidth / 2, 140, { align: "center" });
+    doc.text(`Generated on ${date}`, pageWidth / 2, dateY, { align: "center" });
 
     // === 5. Logo ===
     const logoY = pageHeight - 51; // Moved down by 40% total (from original 80 to 51)
@@ -1076,28 +1122,28 @@ function renderCoverPage_1(doc, url, date, time) {
 
 // === Helper: Draw a rotated rounded rectangle ===
 function drawRotatedRoundedRect(ctx, cx, cy, angleDeg, width, height, radius, fillStyle) {
-    const rad = (Math.PI / 180) * angleDeg;
-    ctx.save();
-    ctx.translate(cx, cy);
-    ctx.rotate(rad);
-    ctx.fillStyle = fillStyle;
-    drawRoundedRectPath(ctx, -width / 2, -height / 2, width, height, radius);
-    ctx.fill();
-    ctx.restore();
+	const rad = (Math.PI / 180) * angleDeg;
+	ctx.save();
+	ctx.translate(cx, cy);
+	ctx.rotate(rad);
+	ctx.fillStyle = fillStyle;
+	drawRoundedRectPath(ctx, -width / 2, -height / 2, width, height, radius);
+	ctx.fill();
+	ctx.restore();
 }
 
 function drawRoundedRectPath(ctx, x, y, width, height, radius) {
-    const r = Math.min(radius, width / 2, height / 2);
-    ctx.beginPath();
-    ctx.moveTo(x + r, y);
-    ctx.lineTo(x + width - r, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
-    ctx.lineTo(x + width, y + height - r);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
-    ctx.lineTo(x + r, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
-    ctx.lineTo(x, y + r);
-    ctx.quadraticCurveTo(x, y, x + r, y);
+	const r = Math.min(radius, width / 2, height / 2);
+	ctx.beginPath();
+	ctx.moveTo(x + r, y);
+	ctx.lineTo(x + width - r, y);
+	ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+	ctx.lineTo(x + width, y + height - r);
+	ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+	ctx.lineTo(x + r, y + height);
+	ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+	ctx.lineTo(x, y + r);
+	ctx.quadraticCurveTo(x, y, x + r, y);
 }
 
 /* ---------- Header ---------- */
@@ -1617,6 +1663,9 @@ function renderHeadingsTable(doc, y) {
     const headerRow = tableElement.querySelector('thead tr') || tableElement.querySelector('tr');
     const headers = Array.from(headerRow.querySelectorAll('th, td')).map(cell => cell.textContent.trim());
     
+    // Find the index of the "Content" column (case-insensitive)
+    const contentColumnIndex = headers.findIndex(header => header.toLowerCase().includes('content'));
+    
     // Get table data from all rows
     const tableRows = tableElement.querySelectorAll('tbody tr');
     const data = Array.from(tableRows).map(row => {
@@ -1631,6 +1680,12 @@ function renderHeadingsTable(doc, y) {
             return cellClone.textContent.trim();
         });
     });
+
+    // Prepare column styles - left-align content column if found
+    const columnStyles = {};
+    if (contentColumnIndex !== -1) {
+        columnStyles[contentColumnIndex] = { halign: 'left' };
+    }
 
     doc.autoTable({
         startY: y - 5,
@@ -1653,6 +1708,13 @@ function renderHeadingsTable(doc, y) {
             lineHeight: 1.0,
             halign: 'center'
         },
+        didParseCell: function(data) {
+            // Left-align header and cells for content column
+            if (contentColumnIndex !== -1 && data.column.index === contentColumnIndex) {
+                data.cell.styles.halign = 'left';
+            }
+        },
+        columnStyles: columnStyles,
         margin: { left: 10, right: 10 }
     });
 

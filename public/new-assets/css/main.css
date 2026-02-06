@@ -18086,21 +18086,21 @@ right: -50px !important;
 }
 .modal-header-priv-pol{
   margin-bottom: 0;
-    line-height: var(--bs-modal-title-line-height);
-    color: #fff;
-font-weight: 300;
-    font-size: 24px;
+  line-height: var(--bs-modal-title-line-height);
+  color: #fff;
+  font-weight: 300;
+  font-size: 24px;
 }
 
 .modal-body-priv-pol{
   text-align: left;
-padding-right: 20px;
-font-size: 14px !important;
-    font-weight: 400 !important;
-    line-height: 18px !important;
-    color: rgba(110, 110, 110, 1) !important;
-    font-family: Circular Std !important;
-    margin-bottom: 0px !important;
+  padding-right: 20px;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  color: rgba(110, 110, 110, 1) !important;
+  font-family: Circular Std !important;
+  margin-bottom: 0px !important;
 }
 
 .modalBodyContent-priv-pol{
@@ -18209,6 +18209,53 @@ font-size: 14px !important;
 
 
 
+.robotsTxt-card {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.robotsTxt-card table {
+  font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+}
+.robotsTxt-card{
+  overflow:hidden;
+}
+.robotsTxt-card .card-body{
+  max-height: 300px;
+    overflow: auto;
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 10px;  
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+.robotsTxt-card .card-body {
+  scrollbar-width: thin;
+  scrollbar-color: #999 transparent;
+}
 
 
+.robotsTxt-card-td{
+  font-family:"Courier Prime";
+}
+
+.robotsTxt-card-actual-url table tr td{
+  padding-bottom:3px !important;
+  padding-top:3px !important;
+}
 /* Imran css styles for December Order Ends */
+
+
+
