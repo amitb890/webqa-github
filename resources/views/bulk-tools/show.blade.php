@@ -2848,7 +2848,7 @@
             @elseif($d['slug'] === 'html-sitemap')
                 @include("bulk-tools.posts.html-sitemap")
             @elseif($d['slug'] === 'headings')
-                @include("bulk-tools.posts.html-sitemap")
+                @include("bulk-tools.posts.headings-test")
                 
             @elseif($d['slug'] === 'meta-viewport')
                 @include("bulk-tools.posts.meta-viewport")
