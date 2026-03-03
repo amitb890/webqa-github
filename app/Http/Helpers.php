@@ -105,11 +105,34 @@ class Helpers{
     }
 
     function isLinkSameAsOrigin($url, $origin){
-        if(str_contains($url, $origin)){
-            return true;
+        // Normalize and compare hosts (accept www and non-www variants)
+        try {
+            $urlHost = parse_url($url, PHP_URL_HOST);
+            if (!$urlHost) {
+                // if $url is not a full URL, try to extract host-like string
+                $urlHost = $url;
+            }
+        } catch (\Throwable $e) {
+            $urlHost = $url;
         }
 
-        return false;
+        try {
+            $originHost = parse_url($origin, PHP_URL_HOST);
+            if (!$originHost) {
+                $originHost = $origin;
+            }
+        } catch (\Throwable $e) {
+            $originHost = $origin;
+        }
+
+        $normalize = function($h){
+            $h = strtolower(trim($h));
+            // strip leading www.
+            $h = preg_replace('/^www\./', '', $h);
+            return $h;
+        };
+
+        return $normalize($urlHost) === $normalize($originHost);
     }
 
     function getAllHTTPCodes(){
@@ -1592,6 +1615,18 @@ public function getContentType($response)
                 'results_heading' => 'Results',
                 'results_para' => 'Results'
             ],
+            [
+                'displayName' => 'Schema',
+                'name' => 'schema',
+                'dbName' => 'schema',
+                'url' => '/test/schema',
+                'slug' => 'schema',
+                'route' => 'tools/schema',
+                'main_heading' => 'Schema Test',
+                'main_para' => 'Bulk check JSON-LD structured data across multiple URLs. Detect schema types, validate markup, and find missing or invalid structured data.',
+                'results_heading' => 'Results',
+                'results_para' => 'Results'
+            ],
             // Right column items
             [
                 'displayName' => 'Open Graph tags',
@@ -1703,18 +1738,6 @@ public function getContentType($response)
                 'main_para' => 'Validate your HTML sitemap — crawlable links, valid URLs, and coverage of key pages for reliable navigation and discovery.',
                 'results_heading' => 'Results',
                 'results_para' => 'Results',
-            ],
-            [
-                'displayName' => 'Headings',
-                'name' => 'headings-test',
-                'dbName' => 'h1_heading_tag',
-                'url' => '/test/headings',
-                'slug' => 'headings',
-                'route' => 'tools/headings',
-                'main_heading' => 'Headings Test',
-                'main_para' => 'Test your website headings.',
-                'results_heading' => 'Results',
-                'results_para' => 'Results'
             ]
         ];
         

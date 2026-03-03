@@ -1267,6 +1267,10 @@ function toggleTestResultAreaVisibility() {
                     tbody.appendChild(tr)
                 })
                 createDatatableElement();
+                // Set dynamic column widths for URL Slug table
+                setTimeout(function() {
+                    setDynamicColumnWidths(table, 'url');
+                }, 100);
                 break;
             case "og:title":
                 thead = `<thead class="result_data_header">
@@ -1511,6 +1515,86 @@ function toggleTestResultAreaVisibility() {
                     })
                     createDatatableElement();
                     break;
+                case "schema":
+                    table.classList.add("dataTable")
+                    table.classList.add("custom-dataTable")
+                    thead = `<thead class="result_data_header">
+                    <tr>
+                        <th>#</th>
+                        <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
+                        <th class="align-left">Types</th>
+                        <th class="align-left">Problems</th>
+                        <th>Result</th>
+                    </tr>
+                    </thead>`
+                    // Store schema results for popup (by row index)
+                    window.schemaResultsData = results.slice()
+                    // Ensure schema content modal exists
+                    let schemaContentModal = document.getElementById("schemaContentModal")
+                    if(!schemaContentModal){
+                        schemaContentModal = document.createElement("div")
+                        schemaContentModal.className = "modal fade meta-list-brokenBody"
+                        schemaContentModal.id = "schemaContentModal"
+                        schemaContentModal.setAttribute("aria-labelledby", "schemaContentModalLabel")
+                        schemaContentModal.setAttribute("tabindex", "-1")
+                        schemaContentModal.setAttribute("aria-hidden", "true")
+                        schemaContentModal.innerHTML = `
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title schema-content-heading" id="schemaContentModalLabel">Schema (JSON-LD)</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body" style="overflow-x: auto;">
+                                        <pre id="schemaContentModalBody" class="schema-json-pre" style="white-space: pre-wrap; word-break: break-word; margin: 0; font-size: 13px;"></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        `
+                        document.body.appendChild(schemaContentModal)
+                    }
+                    results.forEach((result, i)=>{
+                        const problemsStr = (result.problems && result.problems.length) ? result.problems.join('; ') : 'None'
+                        const typesArr = (result.types && result.types.length) ? result.types : []
+                        const typesHtml = typesArr.length
+                            ? typesArr.map(t => {
+                                const esc = (s) => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+                                return `<span class="schema-type-link" data-result-index="${i}" data-type="${esc(t)}" style="cursor: pointer; color: #3A7CEC; text-decoration: underline;">${esc(t)}</span>`
+                            }).join(', ')
+                            : 'None'
+                        const tr = document.createElement("tr")
+                        tr.innerHTML = `
+                        <td class="text-center">${i+1}</td>
+                        <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                        <td class="align-left content-td">${typesHtml}</td>
+                        <td class="align-left content-td">${problemsStr}</td>
+                        <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
+                        `
+                        tbody.appendChild(tr)
+                    })
+                    $(document).off('click', '.schema-type-link').on('click', '.schema-type-link', function(e){
+                        e.preventDefault()
+                        e.stopPropagation()
+                        const rowIndex = parseInt($(this).data('result-index'), 10)
+                        const typeName = $(this).data('type')
+                        const rowData = window.schemaResultsData && window.schemaResultsData[rowIndex]
+                        if(!rowData || !rowData.blocks){ return }
+                        const blocks = rowData.blocks
+                        const matching = blocks.filter(b => b.types && b.types.indexOf(typeName) !== -1)
+                        const snippets = matching.length ? matching.map((b, idx) => (matching.length > 1 ? `/* Block ${idx + 1} */\n` : '') + (b.snippet || '')).join('\n\n') : 'No content for this type.'
+                        const titleEl = document.querySelector('#schemaContentModalLabel')
+                        if(titleEl) titleEl.textContent = `Schema content for "${typeName}"`
+                        const bodyEl = document.getElementById('schemaContentModalBody')
+                        if(bodyEl){ bodyEl.textContent = snippets }
+                        const modalEl = document.getElementById('schemaContentModal')
+                        if(modalEl){
+                            let inst = bootstrap.Modal.getInstance(modalEl)
+                            if(!inst) inst = new bootstrap.Modal(modalEl, { keyboard: false })
+                            inst.show()
+                        }
+                    })
+                    createDatatableElement();
+                    break;
                     case "img":
                         let colspanAlt = 0,colspanName = 1
                         table.classList.add("dataTable")
@@ -1650,141 +1734,178 @@ function toggleTestResultAreaVisibility() {
                 case "page_speed_google_lighthouse":
                     table.classList.add("dataTable")
                     table.classList.add("custom-dataTable")
-                    thead = `<thead class="result_data_header">
-                    <tr>
-                        <th>#</th>
-                        <th>URL</th>
-                        <th colspan="2" class="text-center">Performance</th>
-                        <th colspan="2" class="text-center">Accessibility</th>
-                        <th colspan="2" class="text-center">Best Practices</th>
-                        <th colspan="2" class="text-center">SEO</th>
-                        <th>Result</th>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th>Desktop</th>
-                        <th>Mobile</th>
-                        <th>Desktop</th>
-                        <th>Mobile</th>
-                        <th>Desktop</th>
-                        <th>Mobile</th>
-                        <th>Desktop</th>
-                        <th>Mobile</th>
-                        <th></th>
-                    </tr>
-                    </thead>`
+                table.classList.add("bulk-table-lighthouse")
+                    // Determine which Lighthouse sub-checks are enabled in settings
+                    const showPerfDesktop = !!settings.google_performance_desktop;
+                    const showPerfMobile = !!settings.google_performance_mobile;
+                    const showAccDesktop = !!settings.google_accessibility_desktop;
+                    const showAccMobile = !!settings.google_accessibility_mobile;
+                    const showBestDesktop = !!settings.google_best_practices_desktop;
+                    const showBestMobile = !!settings.google_best_practices_mobile;
+                    const showSeoDesktop = !!settings.google_seo_desktop;
+                    const showSeoMobile = !!settings.google_seo_mobile;
 
-                results.forEach((result, i)=>{
-                    const tr1 = document.createElement("tr")
-                    tr1.innerHTML = `
-                        <tr>
+                    const perfCount = (showPerfDesktop ? 1 : 0) + (showPerfMobile ? 1 : 0);
+                    const accCount = (showAccDesktop ? 1 : 0) + (showAccMobile ? 1 : 0);
+                    const bestCount = (showBestDesktop ? 1 : 0) + (showBestMobile ? 1 : 0);
+                    const seoCount = (showSeoDesktop ? 1 : 0) + (showSeoMobile ? 1 : 0);
+
+                    // Build header rows conditionally based on enabled checks
+                    let firstRow = `<tr><th>#</th><th>URL</th>`;
+                    if (perfCount > 0) firstRow += `<th colspan="${perfCount}" class="text-center">Performance</th>`;
+                    if (accCount > 0) firstRow += `<th colspan="${accCount}" class="text-center">Accessibility</th>`;
+                    if (bestCount > 0) firstRow += `<th colspan="${bestCount}" class="text-center">Best Practices</th>`;
+                    if (seoCount > 0) firstRow += `<th colspan="${seoCount}" class="text-center">SEO</th>`;
+                    firstRow += `<th>Result</th></tr>`;
+
+                    let secondRow = `<tr><th></th><th></th>`;
+                    if (showPerfDesktop) secondRow += `<th>Desktop</th>`;
+                    if (showPerfMobile) secondRow += `<th>Mobile</th>`;
+                    if (showAccDesktop) secondRow += `<th>Desktop</th>`;
+                    if (showAccMobile) secondRow += `<th>Mobile</th>`;
+                    if (showBestDesktop) secondRow += `<th>Desktop</th>`;
+                    if (showBestMobile) secondRow += `<th>Mobile</th>`;
+                    if (showSeoDesktop) secondRow += `<th>Desktop</th>`;
+                    if (showSeoMobile) secondRow += `<th>Mobile</th>`;
+                    secondRow += `<th></th></tr>`;
+
+                    thead = `<thead class="result_data_header">${firstRow}${secondRow}</thead>`;
+
+                    results.forEach((result, i)=>{
+                        const tr1 = document.createElement("tr")
+                        let rowHtml = `<tr>
                             <td>${i+1}</td>
-                            <td class="align-left">${result.tested_url}</td>
-                            <td class="${result.statusPerformanceDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreDesktop)}</td>
-                            <td class="${result.statusPerformanceMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreMobile)}</td>
-                            
-                            <td class="${result.statusAccessibilityDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityDesktop)}</td>
-                            <td class="${result.statusAccessibilityMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityMobile)}</td>
+                            <td class="align-left">${result.tested_url}</td>`;
 
-                            <td class="${result.statusBestPracticesDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesDesktop)}</td>
-                            <td class="${result.statusBestPracticesMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesMobile)}</td>
+                        if (showPerfDesktop) rowHtml += `<td class="${result.statusPerformanceDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreDesktop)}</td>`;
+                        if (showPerfMobile)  rowHtml += `<td class="${result.statusPerformanceMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreMobile)}</td>`;
 
-                            <td class="${result.statusSeoDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoDesktop)}</td>
-                            <td class="${result.statusSeoMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoMobile)}</td>               
+                        if (showAccDesktop)  rowHtml += `<td class="${result.statusAccessibilityDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityDesktop)}</td>`;
+                        if (showAccMobile)   rowHtml += `<td class="${result.statusAccessibilityMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityMobile)}</td>`;
 
-                            <td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>
-                        </tr>`
-                    tbody.appendChild(tr1)
+                        if (showBestDesktop) rowHtml += `<td class="${result.statusBestPracticesDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesDesktop)}</td>`;
+                        if (showBestMobile)  rowHtml += `<td class="${result.statusBestPracticesMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesMobile)}</td>`;
 
-                    const tr2 = document.createElement("tr")
-                  
-                })
-                createDatatableElement();
+                        if (showSeoDesktop)  rowHtml += `<td class="${result.statusSeoDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoDesktop)}</td>`;
+                        if (showSeoMobile)   rowHtml += `<td class="${result.statusSeoMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoMobile)}</td>`;
+
+                        rowHtml += `<td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>`;
+                        rowHtml += `</tr>`;
+
+                        tr1.innerHTML = rowHtml;
+                        tbody.appendChild(tr1)
+                    })
+                    createDatatableElement();
+                    // Set dynamic column widths for Lighthouse table
+                    setTimeout(function() {
+                        setDynamicColumnWidths(table, 'lighthouse');
+                    }, 100);
                 break;
             case "page_speed_google_core":
                 table.classList.add("dataTable")
                 table.classList.add("custom-dataTable")
-                thead = `<thead class="result_data_header">
-                <tr>
-                    <th>#</th>
-                    <th>URL</th>
-                    <th colspan="2" class="text-center">LCP</th>
-                    <th colspan="2" class="text-center">FID</th>
-                    <th colspan="2" class="text-center">CLS</th>
-                    <th colspan="2" class="text-center">FCP</th>
-                    <th colspan="2" class="text-center">TTI</th>
-                    <th colspan="2" class="text-center">SI</th>
-                    <th colspan="2" class="text-center">TBT</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th colspan="2" class="text-center">(seconds)</th>
-                    <th colspan="2" class="text-center">(seconds)</th>
-                    <th colspan="2" class="text-center">(seconds)</th>
-                    <th colspan="2" class="text-center">(milliseconds)</th>
-                    <th colspan="2" class="text-center">(milliseconds)</th>
-                    <th colspan="2" class="text-center">(seconds)</th>
-                    <th colspan="2" class="text-center">(seconds)</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th></th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Result</th>
-                </tr>
-                </thead>`
+                table.classList.add("bulk-table-core")
+                // Determine which Core Web Vitals sub-checks are enabled in settings
+                const showLcpDesktop = !!settings.google_lcp_desktop;
+                const showLcpMobile = !!settings.google_lcp_mobile;
+                const showFidDesktop = !!settings.google_fid_desktop;
+                const showFidMobile = !!settings.google_fid_mobile;
+                const showClsDesktop = !!settings.google_cls_desktop;
+                const showClsMobile = !!settings.google_cls_mobile;
+                const showFcpDesktop = !!settings.google_fcp_desktop;
+                const showFcpMobile = !!settings.google_fcp_mobile;
+                const showTtiDesktop = !!settings.google_tti_desktop;
+                const showTtiMobile = !!settings.google_tti_mobile;
+                const showSiDesktop = !!settings.google_speed_index_desktop;
+                const showSiMobile = !!settings.google_speed_index_mobile;
+                const showTbtDesktop = !!settings.google_tbt_desktop;
+                const showTbtMobile = !!settings.google_tbt_mobile;
+
+                const lcpCount = (showLcpDesktop ? 1 : 0) + (showLcpMobile ? 1 : 0);
+                const fidCount = (showFidDesktop ? 1 : 0) + (showFidMobile ? 1 : 0);
+                const clsCount = (showClsDesktop ? 1 : 0) + (showClsMobile ? 1 : 0);
+                const fcpCount = (showFcpDesktop ? 1 : 0) + (showFcpMobile ? 1 : 0);
+                const ttiCount = (showTtiDesktop ? 1 : 0) + (showTtiMobile ? 1 : 0);
+                const siCount = (showSiDesktop ? 1 : 0) + (showSiMobile ? 1 : 0);
+                const tbtCount = (showTbtDesktop ? 1 : 0) + (showTbtMobile ? 1 : 0);
+
+                let firstRowCore = `<tr><th>#</th><th>URL</th>`;
+                if (lcpCount > 0) firstRowCore += `<th colspan="${lcpCount}" class="text-center">LCP</th>`;
+                if (fidCount > 0) firstRowCore += `<th colspan="${fidCount}" class="text-center">FID</th>`;
+                if (clsCount > 0) firstRowCore += `<th colspan="${clsCount}" class="text-center">CLS</th>`;
+                if (fcpCount > 0) firstRowCore += `<th colspan="${fcpCount}" class="text-center">FCP</th>`;
+                if (ttiCount > 0) firstRowCore += `<th colspan="${ttiCount}" class="text-center">TTI</th>`;
+                if (siCount > 0) firstRowCore += `<th colspan="${siCount}" class="text-center">SI</th>`;
+                if (tbtCount > 0) firstRowCore += `<th colspan="${tbtCount}" class="text-center">TBT</th>`;
+                firstRowCore += `<th></th></tr>`;
+
+                let secondRowCore = `<tr><th></th><th></th>`;
+                if (lcpCount > 0) secondRowCore += `<th colspan="${lcpCount}" class="text-center">(seconds)</th>`;
+                if (fidCount > 0) secondRowCore += `<th colspan="${fidCount}" class="text-center">(milliseconds)</th>`;
+                if (clsCount > 0) secondRowCore += `<th colspan="${clsCount}" class="text-center">(seconds)</th>`;
+                if (fcpCount > 0) secondRowCore += `<th colspan="${fcpCount}" class="text-center">(milliseconds)</th>`;
+                if (ttiCount > 0) secondRowCore += `<th colspan="${ttiCount}" class="text-center">(milliseconds)</th>`;
+                if (siCount > 0) secondRowCore += `<th colspan="${siCount}" class="text-center">(seconds)</th>`;
+                if (tbtCount > 0) secondRowCore += `<th colspan="${tbtCount}" class="text-center">(seconds)</th>`;
+                secondRowCore += `<th></th></tr>`;
+
+                let thirdRowCore = `<tr><th></th><th></th>`;
+                if (showLcpDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showLcpMobile) thirdRowCore += `<th>Mobile</th>`;
+                if (showFidDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showFidMobile) thirdRowCore += `<th>Mobile</th>`;
+                if (showClsDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showClsMobile) thirdRowCore += `<th>Mobile</th>`;
+                if (showFcpDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showFcpMobile) thirdRowCore += `<th>Mobile</th>`;
+                if (showTtiDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showTtiMobile) thirdRowCore += `<th>Mobile</th>`;
+                if (showSiDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showSiMobile) thirdRowCore += `<th>Mobile</th>`;
+                if (showTbtDesktop) thirdRowCore += `<th>Desktop</th>`;
+                if (showTbtMobile) thirdRowCore += `<th>Mobile</th>`;
+                thirdRowCore += `<th>Result</th></tr>`;
+
+                thead = `<thead class="result_data_header">${firstRowCore}${secondRowCore}${thirdRowCore}</thead>`;
 
                 results.forEach((result, i)=>{
                     const tr1 = document.createElement("tr")
-                    tr1.innerHTML = `
-                        <tr>
-                            <td>${i+1}</td>
-                            <td class="align-left">${result.tested_url}</td>
-                            <td class="${result.statusLCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpDesktop)}</td>
-                            <td class="${result.statusLCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpMobile)}</td>
-                           
-                            <td class="${result.statusFIDDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidDesktop)}</td>
-                            <td class="${result.statusFIDMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidMobile)}</td>
-                            
-                            <td class="${result.statusCLSDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsDesktop)}</td>
-                            <td class="${result.statusCLSMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsMobile)}</td>
-                            
-                            <td class="${result.statusFCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpDesktop)}</td>
-                            <td class="${result.statusFCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpMobile)}</td>
-                            
-                            <td class="${result.statusTTIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiDesktop)}</td>
-                            <td class="${result.statusTTIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiMobile)}</td>
-                           
-                            <td class="${result.statusSIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siDesktop)}</td>
-                            <td class="${result.statusSIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siMobile)}</td>
-                           
-                            <td class="${result.statusTBTDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtDesktop)}</td>
-                            <td class="${result.statusTBTMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtMobile)}</td>      
-                           
-                            <td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>
-                        </tr>`
-                    tbody.appendChild(tr1)
+                    let rowHtml = `<tr>
+                        <td>${i+1}</td>
+                        <td class="align-left">${result.tested_url}</td>`;
 
-                    
+                    if (showLcpDesktop) rowHtml += `<td class="${result.statusLCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpDesktop)}</td>`;
+                    if (showLcpMobile)  rowHtml += `<td class="${result.statusLCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpMobile)}</td>`;
+
+                    if (showFidDesktop) rowHtml += `<td class="${result.statusFIDDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidDesktop)}</td>`;
+                    if (showFidMobile)  rowHtml += `<td class="${result.statusFIDMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidMobile)}</td>`;
+
+                    if (showClsDesktop) rowHtml += `<td class="${result.statusCLSDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsDesktop)}</td>`;
+                    if (showClsMobile)  rowHtml += `<td class="${result.statusCLSMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsMobile)}</td>`;
+
+                    if (showFcpDesktop) rowHtml += `<td class="${result.statusFCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpDesktop)}</td>`;
+                    if (showFcpMobile)  rowHtml += `<td class="${result.statusFCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpMobile)}</td>`;
+
+                    if (showTtiDesktop) rowHtml += `<td class="${result.statusTTIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiDesktop)}</td>`;
+                    if (showTtiMobile)  rowHtml += `<td class="${result.statusTTIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiMobile)}</td>`;
+
+                    if (showSiDesktop) rowHtml += `<td class="${result.statusSIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siDesktop)}</td>`;
+                    if (showSiMobile)  rowHtml += `<td class="${result.statusSIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siMobile)}</td>`;
+
+                    if (showTbtDesktop) rowHtml += `<td class="${result.statusTBTDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtDesktop)}</td>`;
+                    if (showTbtMobile)  rowHtml += `<td class="${result.statusTBTMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtMobile)}</td>`;
+
+                    rowHtml += `<td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>`;
+                    rowHtml += `</tr>`;
+
+                    tr1.innerHTML = rowHtml;
+                    tbody.appendChild(tr1)
                 })
                 createDatatableElement();
+                // Set dynamic column widths for Core Web Vitals table
+                setTimeout(function() {
+                    setDynamicColumnWidths(table, 'core');
+                }, 100);
                 break;
             /*case "content-security": 
             thead = `<thead class="result_data_header">
@@ -2477,6 +2598,12 @@ function toggleTestResultAreaVisibility() {
                     tbody.appendChild(tr)
                 })
                 createDatatableElement();
+                // Set dynamic column widths for headings detail tables
+                setTimeout(function() {
+                    document.querySelectorAll(".table-headings-collapse").forEach(function(subTable) {
+                        setDynamicColumnWidths(subTable, 'headings');
+                    });
+                }, 100);
                 break;
                 
 
@@ -2630,6 +2757,13 @@ function toggleTestResultAreaVisibility() {
             $(".test_result_area .table-responsive").append(tableOgDesc)
             $(".test_result_area .table-responsive").append(tableOgImage)
             $(".test_result_area .table-responsive").append(tableOgURL)
+            // Set dynamic column widths for OG tables
+            setTimeout(function() {
+                setDynamicColumnWidths(table, 'og');
+                setDynamicColumnWidths(tableOgDesc, 'og');
+                setDynamicColumnWidths(tableOgImage, 'og');
+                setDynamicColumnWidths(tableOgURL, 'og');
+            }, 100);
         }
 
         if(label.name === "twitter:title"){
@@ -2657,6 +2791,12 @@ function toggleTestResultAreaVisibility() {
 
             $(".test_result_area .table-responsive").append(tableTwitterImage)
             $(".test_result_area .table-responsive").append(tableTwitterImageAlt)
+            // Set dynamic column widths for Twitter tables
+            setTimeout(function() {
+                setDynamicColumnWidths(table, 'twitter');
+                setDynamicColumnWidths(tableTwitterImage, 'twitter');
+                setDynamicColumnWidths(tableTwitterImageAlt, 'twitter');
+            }, 100);
         }
     }
 
@@ -2866,7 +3006,9 @@ function toggleTestResultAreaVisibility() {
         const thead = table.querySelector('thead');
         if (!thead) return;
         
-        const headerCells = thead.querySelectorAll('th');
+        const headerCells = (tableType === 'lighthouse' || tableType === 'core')
+            ? thead.querySelectorAll('tr:last-child th')
+            : thead.querySelectorAll('th');
         const visibleColumns = [];
         const columnTypes = [];
         
@@ -2882,9 +3024,21 @@ function toggleTestResultAreaVisibility() {
                 
                 if (thText === '#' || thText.includes('si no') || index === 0) {
                     columnType = 'rowNumber';
+                } else if ((tableType === 'lighthouse' || tableType === 'core') && index === 1) {
+                    columnType = 'url';
+                } else if ((tableType === 'lighthouse' || tableType === 'core') && index === headerCells.length - 1) {
+                    columnType = 'result';
                 } else if (thText === 'url' || th.classList.contains('result_header')) {
                     columnType = 'url';
-                } else if (thText === 'content') {
+                } else if (tableType === 'headings' && thText === 'heading') {
+                    columnType = 'heading';
+                } else if (tableType === 'headings' && thText === 'quantity') {
+                    columnType = 'quantity';
+                } else if ((tableType === 'og' || tableType === 'twitter') && (thText.startsWith('og:') || thText.startsWith('twitter:'))) {
+                    columnType = 'content';
+                } else if ((tableType === 'lighthouse' || tableType === 'core') && (thText === 'desktop' || thText === 'mobile')) {
+                    columnType = 'metric';
+                } else if (thText === 'content' || (tableType === 'url' && thText === 'slug')) {
                     columnType = 'content';
                 } else if (thText === 'length' || thText === 'len') {
                     columnType = 'length';
@@ -3034,12 +3188,137 @@ function toggleTestResultAreaVisibility() {
      */
     function calculateColumnWidths(visibleCount, columnTypes, tableType) {
         const widths = [];
-        
-        // Fixed widths for specific columns
-        const FIXED_COMPARISON_WIDTH = 11; // "Title Equal to H1?" column
-        const FIXED_CASING_WIDTH = 15;     // "Casing" column
-        const FIXED_ROW_NUMBER_WIDTH = 3;   // Row number column
-        
+
+        if (tableType === 'lighthouse' || tableType === 'core') {
+            const hasRow = columnTypes.includes('rowNumber');
+            const hasUrl = columnTypes.includes('url');
+            const hasResult = columnTypes.includes('result');
+            const metricCount = columnTypes.filter(type => type === 'metric').length;
+
+            const fixedRow = hasRow ? 3 : 0;
+            const fixedUrl = hasUrl ? 30 : 0;
+            const fixedResult = hasResult ? 10 : 0;
+
+            let remaining = 100 - fixedRow - fixedUrl - fixedResult;
+            if (remaining < 0) remaining = 0;
+
+            const metricBase = metricCount > 0 ? Math.floor(remaining / metricCount) : 0;
+            let remainder = metricCount > 0 ? remaining - metricBase * metricCount : 0;
+
+            columnTypes.forEach((type) => {
+                if (type === 'rowNumber') {
+                    widths.push(fixedRow);
+                } else if (type === 'url') {
+                    widths.push(fixedUrl);
+                } else if (type === 'result') {
+                    widths.push(fixedResult);
+                } else if (type === 'metric') {
+                    const width = metricBase + (remainder > 0 ? 1 : 0);
+                    if (remainder > 0) remainder -= 1;
+                    widths.push(width);
+                } else {
+                    widths.push(0);
+                }
+            });
+
+            return widths;
+        }
+
+        function getWidthRules(type) {
+            const fixed = {
+                rowNumber: 3,
+                comparison: 11,
+                casing: 15
+            };
+
+            switch (type) {
+                case 'url':
+                    return {
+                        fixed,
+                        weights: {
+                            url: 50,
+                            content: 30,
+                            slug: 30,
+                            length: 10,
+                            result: 10,
+                            default: 10
+                        }
+                    };
+                case 'headings':
+                    return {
+                        fixed,
+                        weights: {
+                            heading: 15,
+                            quantity: 10,
+                            content: 30,
+                            result: 10,
+                            default: 10
+                        }
+                    };
+                case 'og':
+                    return {
+                        fixed,
+                        weights: {
+                            url: 50,
+                            content: 30,
+                            length: 10,
+                            result: 10,
+                            default: 10
+                        }
+                    };
+                case 'twitter':
+                    return {
+                        fixed,
+                        weights: {
+                            url: 50,
+                            content: 30,
+                            length: 10,
+                            result: 10,
+                            default: 10
+                        }
+                    };
+                case 'lighthouse':
+                    return {
+                        fixed,
+                        weights: {
+                            url: 20,
+                            metric: 8,
+                            result: 12,
+                            default: 10
+                        }
+                    };
+                case 'core':
+                    return {
+                        fixed,
+                        weights: {
+                            url: 20,
+                            metric: 8,
+                            result: 12,
+                            default: 10
+                        }
+                    };
+                case 'title':
+                default:
+                    return {
+                        fixed,
+                        weights: {
+                            url: 50,
+                            content: 30,
+                            length: 10,
+                            result: 10,
+                            default: 10
+                        }
+                    };
+            }
+        }
+
+        const rules = getWidthRules(tableType);
+        const fixed = rules.fixed;
+        const weights = rules.weights;
+        const FIXED_COMPARISON_WIDTH = fixed.comparison;
+        const FIXED_CASING_WIDTH = fixed.casing;
+        const FIXED_ROW_NUMBER_WIDTH = fixed.rowNumber;
+
         // Calculate total fixed width
         let totalFixedWidth = FIXED_ROW_NUMBER_WIDTH; // Always include row number
         const hasComparison = columnTypes.includes('comparison');
@@ -3063,26 +3342,12 @@ function toggleTestResultAreaVisibility() {
         );
         const flexibleCount = flexibleColumns.length;
         
-        // Base width distribution for flexible columns
-        // Priority order: URL > Content > Length > Result
-        const baseWidths = {
-            url: 0,
-            content: 0,
-            length: 0,
-            result: 0,
-            default: 0
-        };
-        
         // Calculate proportional widths for flexible columns
         if (flexibleCount > 0) {
-            // Define priority weights for flexible columns
-            const weights = {
-                url: 50,        // Highest priority
-                content: 30,    // Second priority
-                length: 10,     // Third priority
-                result: 10,     // Lowest priority
-                default: 10
-            };
+            const baseWidths = {};
+            Object.keys(weights).forEach(key => {
+                baseWidths[key] = 0;
+            });
             
             // Calculate total weight
             let totalWeight = 0;
@@ -3109,21 +3374,32 @@ function toggleTestResultAreaVisibility() {
                     baseWidths[flexibleColumns[0]] += adjustment;
                 }
             }
+            // Build final widths array in column order
+            columnTypes.forEach((type) => {
+                if (type === 'rowNumber') {
+                    widths.push(FIXED_ROW_NUMBER_WIDTH);
+                } else if (type === 'comparison') {
+                    widths.push(FIXED_COMPARISON_WIDTH);
+                } else if (type === 'casing') {
+                    widths.push(FIXED_CASING_WIDTH);
+                } else {
+                    widths.push(baseWidths[type] || Math.floor(remainingWidth / flexibleCount));
+                }
+            });
+        } else {
+            // No flexible columns, only fixed widths
+            columnTypes.forEach((type) => {
+                if (type === 'rowNumber') {
+                    widths.push(FIXED_ROW_NUMBER_WIDTH);
+                } else if (type === 'comparison') {
+                    widths.push(FIXED_COMPARISON_WIDTH);
+                } else if (type === 'casing') {
+                    widths.push(FIXED_CASING_WIDTH);
+                } else {
+                    widths.push(0);
+                }
+            });
         }
-        
-        // Build final widths array in column order
-        columnTypes.forEach((type) => {
-            if (type === 'rowNumber') {
-                widths.push(FIXED_ROW_NUMBER_WIDTH);
-            } else if (type === 'comparison') {
-                widths.push(FIXED_COMPARISON_WIDTH);
-            } else if (type === 'casing') {
-                widths.push(FIXED_CASING_WIDTH);
-            } else {
-                // Use calculated width for flexible columns
-                widths.push(baseWidths[type] || Math.floor(remainingWidth / flexibleCount));
-            }
-        });
         
         // Final normalization to ensure sum is exactly 100%
         const total = widths.reduce((sum, w) => sum + w, 0);

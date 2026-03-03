@@ -112,6 +112,29 @@ class SettingsController extends Controller
         }
     }
 
+    public function saveSchema(Request $request, $id)
+    {
+        $user = Auth::user();
+        $project = Projects::find($id);
+        if(!$project){
+            return abort(404);
+        }
+        $schemaString = $request->input('schemaString');
+        $settingsSub = SettingsSub::where("project_settings_id", $id)->get()->first();
+        if(!$settingsSub){
+            return response()->json(['status'=>0,'msg'=>'Settings not found.']);
+        }
+        $settingsSub->schema_val = $schemaString;
+
+        $settingsSubState = $settingsSub->save();
+
+        if($settingsSubState){
+            return response()->json(['status'=>1,'msg'=>'Schema URLs updated successfully']);
+        }else{
+            return response()->json(['status'=>0,'msg'=>'There was an error while updating schema URLs, please try again later.']);
+        }
+    }
+
     /**
      * Update the specified resource in storage.
      *
@@ -126,7 +149,7 @@ class SettingsController extends Controller
         $project = Projects::find($projectId);
         $projectUrl = $project->homepage;
         $projectUrlParse = parse_url($projectUrl);
-        $projectUrlOrigin = explode('.', $projectUrlParse["host"])[1];
+        $projectUrlOrigin = isset($projectUrlParse["host"]) ? $projectUrlParse["host"] : $projectUrl;
 
         $data = $request->input('data');
 
@@ -188,6 +211,8 @@ class SettingsController extends Controller
 
             'xmlSitemapVal'=>'required_if:isXmlSitemapCustom,1',
             'htmlSitemapVal'=>'required_if:isHtmlSitemapCustom,1',
+            // schema settings
+            'schemaVal'=>'required_if:isSchemaTestCustom,1',
         ],[
             'googleInsightsDesktopVal.required_if'=>'Please enter a value.',
             'googleInsightsMobileVal.required_if'=>'Please enter a value.',
@@ -216,6 +241,7 @@ class SettingsController extends Controller
 
             'xmlSitemapVal.required_if'=>'Please enter address to the xml sitemap file.',
             'htmlSitemapVal.required_if'=>'Please enter address to the html sitemap.',
+            'schemaVal.required_if'=>'Please enter at least one URL where schema should be tested.',
 
 
             'ogTitleMaxVal.required_if'=>'Please enter a value for maximum length of OG Title.',
@@ -478,6 +504,23 @@ class SettingsController extends Controller
         }], function ($input) {
             return $input->isHtmlSitemap == true;
         });
+        
+        // schema URLs validation - only when schema testing is enabled and custom URLs are provided
+        $validator->sometimes('schemaVal', ['string', function($attribute, $value, $fail) use($data, $projectUrl, $projectUrlOrigin, $helpers){
+            if(isset($data['isSchemaTestCustom']) && $data['isSchemaTestCustom']){
+                $cleaned = preg_replace('/\s+/', '', $value);
+                $lines = explode(",", $cleaned);
+                foreach($lines as $line){
+                    if(empty($line)) continue;
+                    if(!$helpers->isLinkSameAsOrigin($line, $projectUrlOrigin)){
+                        $msg = "This URL does not exist in the website address - "  . $projectUrl;
+                        return $fail(__($msg));
+                    }
+                }
+            }
+        }], function ($input) {
+            return isset($input->isSchemaTest) && $input->isSchemaTest == true && isset($input->isSchemaTestCustom) && $input->isSchemaTestCustom == true;
+        });
       
 
         // images
@@ -502,6 +545,8 @@ class SettingsController extends Controller
             $settings->twitter_tags = $data["switchTwitterTitle"];
             $settings->favicon = $data["switchFavicon"];
             $settings->xml_sitemap = $data["switchXML"];
+            // schema top-level switch (store in project_settings)
+            $settings->schema = isset($data["switchSchema"]) ? $data["switchSchema"] : 0;
             $settings->html_sitemap = $data["switchHTML"];
             $settings->images = $data["switchImages"];
             $settings->html_compression = $data["switchHTMLCompression"];
@@ -663,6 +708,17 @@ class SettingsController extends Controller
             $settingsSub->xml_sitemap = $data["isXmlSitemap"];
             if($data["isXmlSitemapCustom"]){
                 $settingsSub->xml_sitemap_val = $data["xmlSitemapVal"];
+            }
+            
+            // schema settings
+            $settingsSub->schema_test = isset($data["isSchemaTest"]) ? $data["isSchemaTest"] : 0;
+            $settingsSub->schema_test_custom = isset($data["isSchemaTestCustom"]) ? $data["isSchemaTestCustom"] : 0;
+            if(isset($data["isSchemaTestCustom"]) && $data["isSchemaTestCustom"]){
+                // normalize schema_val: split by commas, trim, remove empties and duplicates, then rejoin
+                $schemaValRaw = isset($data["schemaVal"]) ? $data["schemaVal"] : "";
+                $parts = array_filter(array_map('trim', preg_split('/[,\\r\\n]+/', $schemaValRaw)));
+                $parts = array_values(array_unique($parts));
+                $settingsSub->schema_val = implode(',', $parts);
             }
 
             // html sitemap

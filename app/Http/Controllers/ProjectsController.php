@@ -22,6 +22,7 @@ use AllLabels;
 use Illuminate\Support\Facades\Http;
 use Yajra\DataTables\DataTables; // Import the DataTables class
 use GuzzleHttp\Client;
+use GuzzleHttp\Promise\Utils;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\File;
 
@@ -931,7 +932,7 @@ class ProjectsController extends Controller
 
     public function checkValidUrl(Request $request)
     {
-        set_time_limit(15); // Fail if the whole process takes longer than 15 seconds
+        set_time_limit(30); // Fail if the whole process takes longer than 15 seconds
         $url = trim($request->input('url'));
         if (!preg_match('/^https?:\/\//i', $url)) {
             $url = 'https://' . ltrim($url, '/');
@@ -988,6 +989,119 @@ class ProjectsController extends Controller
         }
     }
 
+    /**
+     * Lightweight URL checker: ensures URL is syntactically valid and returns HTTP 200.
+     * Does not attempt sitemap discovery or heavy parsing.
+     */
+    public function checkUrlSimple(Request $request)
+    {
+        set_time_limit(10);
+        $url = trim($request->input('url'));
+        if (!$url) {
+            return response()->json(['valid' => false, 'message' => 'Empty URL']);
+        }
+        if (!preg_match('/^https?:\/\//i', $url)) {
+            $url = 'https://' . ltrim($url, '/');
+        }
+
+        try {
+            $client = new Client([
+                'allow_redirects' => true,
+                'http_errors' => false,
+                'timeout' => 6,
+            ]);
+
+            // Try a HEAD request first (lightweight). If it returns 405 or fails, fallback to GET.
+            try {
+                $response = $client->head($url, [
+                    'headers' => [
+                        'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0)',
+                        'Accept' => '*/*',
+                    ],
+                ]);
+                $statusCode = $response->getStatusCode();
+            } catch (\Exception $e) {
+                // fallback to GET
+                $response = $client->get($url, [
+                    'headers' => [
+                        'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0)',
+                        'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                    ],
+                ]);
+                $statusCode = $response->getStatusCode();
+            }
+
+            $valid = ($statusCode === 200);
+            return response()->json([
+                'valid' => $valid,
+                'status' => $statusCode,
+                'message' => $valid ? 'OK' : 'Non-200 response'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['valid' => false, 'message' => 'Request failed']);
+        }
+    }
+
+    /**
+     * Check multiple URLs in a single request. Returns array of { url, valid, status }.
+     */
+    public function checkUrlsSimple(Request $request)
+    {
+        set_time_limit(20);
+        $urls = $request->input('urls', []);
+        if (!is_array($urls) || count($urls) === 0) {
+            return response()->json(['results' => []]);
+        }
+
+        $client = new Client([
+            'allow_redirects' => ['max' => 5],
+            'http_errors' => false,
+            'timeout' => 8,
+        ]);
+
+        $promises = [];
+        foreach ($urls as $u) {
+            $raw = trim($u);
+            if (!$raw) {
+                $promises[$raw] = \GuzzleHttp\Promise\rejection_for(new \Exception('Empty URL'));
+                continue;
+            }
+            if (!preg_match('/^https?:\/\//i', $raw)) {
+                $raw = 'https://' . ltrim($raw, '/');
+            }
+            // headAsync and fallback to get on error handled in then/catch
+            $promises[$raw] = $client->headAsync($raw)
+                ->then(function ($res) use ($raw) {
+                    $code = $res->getStatusCode();
+                    return ['url' => $raw, 'valid' => $code === 200, 'status' => $code];
+                })
+                ->otherwise(function ($e) use ($client, $raw) {
+                    // fallback to GET if HEAD failed
+                    try {
+                        $r = $client->get($raw);
+                        $code = $r->getStatusCode();
+                        return ['url' => $raw, 'valid' => $code === 200, 'status' => $code];
+                    } catch (\Exception $ex) {
+                        return ['url' => $raw, 'valid' => false, 'status' => 0];
+                    }
+                });
+        }
+
+        $settled = Utils::settle($promises)->wait();
+        $results = [];
+        foreach ($settled as $key => $item) {
+            if (isset($item['state']) && $item['state'] === 'fulfilled') {
+                $value = $item['value'];
+                // value should already be array with url, valid, status
+                $results[] = $value;
+            } else {
+                // rejected
+                $results[] = ['url' => $key, 'valid' => false, 'status' => 0];
+            }
+        }
+
+        return response()->json(['results' => $results]);
+    }
    
     public function getAllSitemaps_1($url)
     {

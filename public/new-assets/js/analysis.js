@@ -654,7 +654,7 @@ static collapsePreviousParent(data){
       }
     }
 
-    static updateSnippetElement(title, description){   
+    static updateSnippetElement(title, description){  
       $(".snippet-title").html(truncateString(title, titleTruncateLength))
       $(".snippet-description").html(truncateString(description, descriptionTruncateLength))
     }
@@ -1429,17 +1429,47 @@ static collapsePreviousParent(data){
 
     static updatePageTitleDesc(results){
       results.forEach(el=>{
-        if(el.name === "title" && pageTitleStatus){
-           pageTitle = el.content 
+      if(el.name === "title" && pageTitleStatus && typeof el.content === "string"){
+         pageTitle = el.content 
            pageTitleStatus = false
         }
 
-        if(el.name === "description" && pageDescStatus){
-          pageDesc = el.content 
+      if(el.name === "description" && pageDescStatus && typeof el.content === "string"){
+        pageDesc = el.content 
           pageDescStatus = false
         }
       })
     }
+
+  static updatePageTitleDescFromMap(resultsMap){
+    if(!resultsMap || typeof resultsMap !== "object"){
+      return
+    }
+
+    const normalizeResult = (result) => {
+      if (!result) return null
+      if (typeof result === "string") {
+        try {
+          return JSON.parse(result)
+        } catch (e) {
+          return null
+        }
+      }
+      return result
+    }
+
+    const titleResult = normalizeResult(resultsMap["title"])
+    if(titleResult && pageTitleStatus && typeof titleResult.content === "string"){
+      pageTitle = titleResult.content
+      pageTitleStatus = false
+    }
+
+    const descResult = normalizeResult(resultsMap["description"])
+    if(descResult && pageDescStatus && typeof descResult.content === "string"){
+      pageDesc = descResult.content
+      pageDescStatus = false
+    }
+  }
   }
 
 
@@ -1456,6 +1486,7 @@ static collapsePreviousParent(data){
     if (data.result) {
       const labels = JSON.parse(data.test_labels)
       projectUrl = data.projectUrl; // restore projectUrl
+      Controls.updatePageTitleDescFromMap(data.result)
     
       labels.forEach(label => {
         const result = data.result[label.name]
@@ -3197,6 +3228,32 @@ function buildLoaderDetailSingleElement(label, idVal){
           buildElementGoogle(data)
       }else if(data.name === "og_tags" || data.name === "twitter_tags"){
           buildElementWithTable(testLabels, data)
+      }else if(data.name === "schema"){
+      // If server explicitly excluded schema content for this URL, skip rendering entirely.
+      if (typeof data.showContent !== 'undefined' && data.showContent === false) {
+        return;
+      }
+      // Render Schema using the same card layout as other tests for consistent UI.
+          const schemaStatus = (typeof data.status !== 'undefined') ? data.status : (!data.problems || data.problems.length === 0) && (typeof data.httpStatus === 'undefined' || data.httpStatus === 200);
+          const schemaData = {
+            status: schemaStatus,
+            title: data.title || "Schema",
+            content: (data.types && data.types.length) ? `Types found: ${data.types.join(', ')}` : "No types detected",
+            problems: data.problems || [],
+            message: (data.types && data.types.length) ? `${data.types.length} schema type${data.types.length>1?'s':''} found` : "No schema types found",
+            description: data.description || "Schema.org structured data analysis",
+            showContent: (typeof data.showContent !== 'undefined') ? data.showContent : true,
+            // For Schema we render per-block snippets inside subcards; prevent global side snippet
+            showSnippet: false,
+            snippetContent: "",
+            sampleSnippet: "",
+            tagName: "Schema",
+            label: data.label,
+            blocks: data.blocks || [],
+            casingStatus: false,
+            learnMoreURL: data.learnMoreURL || ""
+          };
+          buildElement1(schemaData, false)
       }else{
           buildElement1(data, false)
       }
@@ -3238,6 +3295,260 @@ function buildLoaderDetailSingleElement(label, idVal){
           document.getElementById("tbodyImages").appendChild(tr)
       })
   }
+
+  // Schema panel: pretty-print JSON-LD sample, list types and problems
+  function buildSchemaPanel(data){
+    const div = document.createElement("div")
+    div.classList.add("analysis-card")
+    div.setAttribute("data-name", data.label.name)
+    // Defensive status: if backend didn't return boolean, compute from problems/httpStatus
+    const status = (typeof data.status !== 'undefined') ? data.status : (!data.problems || data.problems.length === 0) && (typeof data.httpStatus === 'undefined' || data.httpStatus === 200);
+    status ? div.classList.add("card__pass") : div.classList.add("card__failed")
+
+    const badge = `<span class="badge bagde-single-view ${status ? "text-success-custom" : "text-danger-custom"}">${status ? "PASS" : "FAIL"}</span>`
+
+    // If backend provided blocks, render accordion grouped by type; otherwise fall back to single snippet
+    if (data.blocks && data.blocks.length) {
+      // build map: type -> array of blocks
+      const map = {};
+      data.blocks.forEach((blk, i) => {
+        const types = blk.types && blk.types.length ? blk.types : ['(unknown)'];
+        types.forEach(t => {
+          if(!map[t]) map[t] = [];
+          map[t].push(Object.assign({}, blk, { index: i+1 }));
+        });
+      });
+
+      let accordionHtml = '';
+      let idx = 0;
+      for(const t in map){
+        idx++;
+        const blocksForType = map[t];
+        const errors = blocksForType.reduce((acc, b) => acc + (b.problems && b.problems.length ? b.problems.length : 0), 0);
+        const warnings = 0;
+        const items = blocksForType.length;
+
+        let inner = '';
+        blocksForType.forEach(b=>{
+          const snippet = b.snippet ? `<pre style="white-space:pre-wrap; background:#f8f9fa; padding:8px; border-radius:4px; max-height:220px; overflow:auto;">${escapeHtml(b.snippet)}</pre>` : '';
+          const probs = (b.problems && b.problems.length) ? UI.getProblemsElement(b.problems) : '<div class="no-problems">No problems</div>';
+          inner += `<div class="schema-block"><div style="margin-bottom:6px;"><strong>Block ${b.index}</strong></div>${snippet}${probs}</div>`;
+        });
+
+        accordionHtml += `
+          <div class="schema-type-row" style="border:1px solid #eee; margin-bottom:8px; border-radius:6px; padding:10px;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div><strong>${t}</strong></div>
+              <div style="font-size:12px; color:#666">${errors} ERRORS &nbsp;&nbsp; ${warnings} WARNINGS &nbsp;&nbsp; ${items} ITEM${items>1?'S':''}</div>
+            </div>
+            <div style="margin-top:8px; display:none;" class="schema-type-content" id="schema-type-content-${idx}">
+              ${inner}
+            </div>
+            <div style="text-align:right; margin-top:8px;">
+              <a href="javascript:void(0)" class="schema-toggle-icon" data-target="#schema-type-content-${idx}">
+                <svg width="12" height="8" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        `;
+      }
+
+      div.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              <div class="card-header-left">
+                <h4>${data.title}</h4>
+              </div>
+              ${badge}
+            </div>
+          </div>
+          <div class="card-body">
+            ${accordionHtml}
+          </div>
+        </div>
+      `;
+      // style badge for visibility
+      setTimeout(()=> {
+        try {
+          const b = div.querySelector('.bagde-single-view');
+          if(b){
+            b.style.backgroundColor = status ? '#80AE35' : '#FA5457';
+            b.style.color = '#fff';
+            b.style.padding = '4px 8px';
+            b.style.borderRadius = '12px';
+            b.style.fontSize = '12px';
+            b.style.marginLeft = '8px';
+            b.style.display = 'inline-block';
+          }
+        }catch(e){}
+      }, 10);
+      // attach click handlers for toggle icons
+      setTimeout(()=> {
+        const toggles = div.querySelectorAll('.schema-toggle-icon');
+        toggles.forEach(btn=>{
+          btn.addEventListener('click', function(){
+            const target = document.querySelector(this.getAttribute('data-target'));
+            if(!target) return;
+            const svg = this.querySelector('svg');
+            if(target.style.display === 'block') {
+              target.style.display = 'none';
+              if(svg) svg.style.transform = '';
+            } else {
+              target.style.display = 'block';
+              if(svg) svg.style.transform = 'rotate(180deg)';
+            }
+          })
+        })
+      }, 10);
+
+    } else {
+      const typesHtml = (data.types && data.types.length) ? `<div style="margin-bottom:8px;"><strong>Types:</strong> ${data.types.join(', ')}</div>` : `<div style="margin-bottom:8px;"><strong>Types:</strong> None detected</div>`;
+      const snippetHtml = data.sampleSnippet ? `<pre class="schema-snippet" style="white-space:pre-wrap; max-height:320px; overflow:auto; background:#f8f9fa; padding:10px; border-radius:4px;">${escapeHtml(data.sampleSnippet)}</pre>` : `<div class="no-snippet">No JSON-LD sample available.</div>`;
+      const problemsHtml = (data.problems && data.problems.length) ? UI.getProblemsElement(data.problems) : `<div class="no-problems">No problems detected.</div>`;
+      div.innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <div class="card-header-title">
+              <div class="card-header-left">
+                <h4>${data.title}</h4>
+              </div>
+              ${badge}
+            </div>
+          </div>
+          <div class="card-body collapse show">
+            <div class="row">
+              <div class="content-element col-md-6">
+                ${typesHtml}
+                <div style="margin-top:10px;"><strong>Sample JSON-LD</strong></div>
+                ${snippetHtml}
+              </div>
+              <div class="content-element col-md-6">
+                <div style="margin-bottom:10px;"><strong>Problems / Warnings</strong></div>
+                ${problemsHtml}
+              </div>
+            </div>
+          </div>
+        </div>
+      `
+      // style badge for visibility (fallback)
+      setTimeout(()=> {
+        try {
+          const b = div.querySelector('.bagde-single-view');
+          if(b){
+            b.style.backgroundColor = (data.status || (data.problems && data.problems.length===0 && data.httpStatus===200)) ? '#80AE35' : '#FA5457';
+            b.style.color = '#fff';
+            b.style.padding = '4px 8px';
+            b.style.borderRadius = '12px';
+            b.style.fontSize = '12px';
+            b.style.marginLeft = '8px';
+            b.style.display = 'inline-block';
+          }
+        }catch(e){}
+      }, 10);
+    }
+alert(data.showContent)
+    // If Schema test is excluded (server signals showContent=false) do not render the schema card
+    if(data && data.label && data.label.name === 'schema' && data.showContent === false){
+      return;
+    }
+
+    // Append into the SEO card container (same place other SEO tests use)
+    const target = document.getElementById("cardMetaTitle") || document.querySelector(".card-custom-container");
+    if(target){
+      target.appendChild(div)
+    }else{
+      document.body.appendChild(div)
+    }
+
+    // Attach global delegated click handler for schema subcard toggles (only once)
+    try {
+      if (!window._schemaSubToggleBound) {
+        document.addEventListener('click', function(ev){
+        const btn = (ev.target.closest && (ev.target.closest('.schema-sub-toggle') || ev.target.closest('.schema-sub-header')));
+          if(!btn) return;
+          const selector = btn.getAttribute('data-target') || (btn.querySelector && btn.querySelector('.schema-sub-toggle') && btn.querySelector('.schema-sub-toggle').getAttribute('data-target'));
+          if(!selector) return;
+          // Prefer to find target within the same card ancestor for isolation
+          const card = btn.closest('.analysis-card');
+          let target = null;
+          if(card){
+            target = card.querySelector(selector);
+          }
+          if(!target){
+            target = document.querySelector(selector);
+          }
+          if(!target) {
+            console.debug('Schema toggle: target not found', selector, btn);
+            return;
+          }
+
+          // determine current computed display
+          const comp = window.getComputedStyle(target).display;
+          console.debug('Schema toggle click', { selector, comp, target, btn });
+          try {
+            if(comp === 'none'){
+              target.style.display = 'block';
+              const svg = btn.querySelector('svg');
+              if(svg) svg.style.transform = 'rotate(180deg)';
+            } else {
+              target.style.display = 'none';
+              const svg = btn.querySelector('svg');
+              if(svg) svg.style.transform = '';
+            }
+          } catch (e) {
+            console.error('Schema toggle error', e);
+          }
+        });
+        window._schemaSubToggleBound = true;
+      }
+    } catch(e){}
+  }
+
+  // helper to escape HTML for safe display
+  function escapeHtml(unsafe) {
+    if(!unsafe) return "";
+    return String(unsafe)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+// Exposed helper to toggle schema subcards (used by inline onclick attributes)
+window.toggleSchemaSubBySelector = function(selector, btn){
+  try{
+    const elBtn = btn || document.querySelector(`[data-target="${selector}"]`);
+    const card = elBtn && elBtn.closest ? elBtn.closest('.analysis-card') : null;
+    let target = null;
+    if(card){
+      target = card.querySelector(selector);
+    }
+    if(!target){
+      target = document.querySelector(selector);
+    }
+    if(!target){
+      console.debug('toggleSchemaSubBySelector: target not found', selector, btn);
+      return;
+    }
+    const comp = window.getComputedStyle(target).display;
+    console.debug('toggleSchemaSubBySelector click', { selector, comp, target, btn });
+    if(comp === 'none'){
+      target.style.display = 'block';
+      const svg = (elBtn && elBtn.querySelector) ? elBtn.querySelector('svg') : null;
+      if(svg) svg.style.transform = 'rotate(180deg)';
+    } else {
+      target.style.display = 'none';
+      const svg = (elBtn && elBtn.querySelector) ? elBtn.querySelector('svg') : null;
+      if(svg) svg.style.transform = '';
+    }
+  }catch(e){
+    console.error('toggleSchemaSubBySelector error', e);
+  }
+}
 
   function buildElementWithTable(testLabels, data){
     let div = document.createElement("div")
@@ -3303,6 +3614,32 @@ function buildLoaderDetailSingleElement(label, idVal){
       let ul
       if(data.tagName != "Images"){
         ul = UI.getProblemsElement(data.problems)
+      }
+      
+      // Prepare schema subcards HTML if this is Schema test
+      let schemaBlocksHtml = '';
+      if((data.title === 'Schema' || data.tagName === 'Schema') && Array.isArray(data.blocks) && data.blocks.length){
+        schemaBlocksHtml += '<div class="card-inner-content schema-blocks-container">';
+        data.blocks.forEach((b, idx) => {
+          const typesText = (b.types && b.types.length) ? b.types.join(', ') : '(unknown)';
+          const snippet = b.snippet ? `<pre style="white-space:pre-wrap; background:#f8f9fa; padding:8px; border-radius:4px; max-height:220px; overflow:auto;">${escapeHtml(b.snippet)}</pre>` : '';
+          const probsHtml = (b.problems && b.problems.length) ? UI.getProblemsElement(b.problems) : '<div class="no-problems">No problems</div>';
+          // Make header clickable by adding schema-sub-header with data-target
+          schemaBlocksHtml += `<div class="card mb-2 schema-subcard">
+              <div class="card-body">
+                <div class="schema-sub-header d-flex justify-content-between align-items-center" data-target="#schema-sub-${idx}" role="button" tabindex="0" style="cursor:pointer;"
+                     onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">
+                  <div><strong>${typesText}</strong></div>
+                  <div><a href="javascript:void(0)" class="schema-sub-toggle" data-target="#schema-sub-${idx}" onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">▾</a></div>
+                </div>
+                <div id="schema-sub-${idx}" style="display:none; margin-top:8px;">
+                  ${snippet}
+                  ${probsHtml}
+                </div>
+              </div>
+            </div>`;
+        });
+        schemaBlocksHtml += '</div>';
       }
       
 
@@ -3473,6 +3810,8 @@ function buildLoaderDetailSingleElement(label, idVal){
                             </div>`
                             : ''}` : "" 
                         }
+                        
+                        ${schemaBlocksHtml ? schemaBlocksHtml : ''}
 
                         ${
                           data.title === 'Broken Links' ? `
@@ -4150,7 +4489,6 @@ function buildLoaderDetailSingleElement(label, idVal){
                 }else{
                   document.getElementById(parentID).appendChild(div)
                 }
-
                 // Fetch favicon via AJAX if snippet preview exists
                 if(data.showSnippet && projectUrl){
                   const faviconImg = div.querySelector('#activeFavicon');
@@ -4368,15 +4706,15 @@ function getFormattedName(url) {
       }
     });
 
-      $("#hidePassed").click(function () {
-          $(this).toggleClass("active");
-          $(".card__failed").show();
-          if ($(this).hasClass("active")) {
-            $(".card__pass").hide();
-          } else {
-            $(".card__pass").show();
-          }
-      });
+    $(document).on("click", ".hidePassedBtn", function () {
+        $(this).toggleClass("active");
+        $(".card__failed").show();
+        if ($(this).hasClass("active")) {
+          $(".card__pass").hide();
+        } else {
+          $(".card__pass").show();
+        }
+    });
 
       $(".fix-btn").on( "click", function(e) {
         const val = e.target.parentElement.getAttribute("data-test-name")
@@ -4502,7 +4840,7 @@ function getFormattedName(url) {
 
                   <div class="control-hide-show" id="chs-analysisProgress">
                     <div class="control-hide ${dataFailed.length == 0 ? "d-none": ""}"  >
-                      <button id="hidePassed" class="btn_toggle_show rounded-pill">
+                      <button class="btn_toggle_show rounded-pill hidePassedBtn">
                         <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <path
                               d="M150.7 92.77C195 58.27 251.8 32 320 32C400.8 32 465.5 68.84 512.6 112.6C559.4 156 590.7 207.1 605.5 243.7C608.8 251.6 608.8 260.4 605.5 268.3C592.1 300.6 565.2 346.1 525.6 386.7L630.8 469.1C641.2 477.3 643.1 492.4 634.9 502.8C626.7 513.2 611.6 515.1 601.2 506.9L9.196 42.89C-1.236 34.71-3.065 19.63 5.112 9.196C13.29-1.236 28.37-3.065 38.81 5.112L150.7 92.77zM189.8 123.5L235.8 159.5C258.3 139.9 287.8 128 320 128C390.7 128 448 185.3 448 256C448 277.2 442.9 297.1 433.8 314.7L487.6 356.9C521.1 322.8 545.9 283.1 558.6 256C544.1 225.1 518.4 183.5 479.9 147.7C438.8 109.6 385.2 79.1 320 79.1C269.5 79.1 225.1 97.73 189.8 123.5L189.8 123.5zM394.9 284.2C398.2 275.4 400 265.9 400 255.1C400 211.8 364.2 175.1 320 175.1C319.3 175.1 318.7 176 317.1 176C319.3 181.1 320 186.5 320 191.1C320 202.2 317.6 211.8 313.4 220.3L394.9 284.2zM404.3 414.5L446.2 447.5C409.9 467.1 367.8 480 320 480C239.2 480 174.5 443.2 127.4 399.4C80.62 355.1 49.34 304 34.46 268.3C31.18 260.4 31.18 251.6 34.46 243.7C44 220.8 60.29 191.2 83.09 161.5L120.8 191.2C102.1 214.5 89.76 237.6 81.45 255.1C95.02 286 121.6 328.5 160.1 364.3C201.2 402.4 254.8 432 320 432C350.7 432 378.8 425.4 404.3 414.5H404.3zM192 255.1C192 253.1 192.1 250.3 192.3 247.5L248.4 291.7C258.9 312.8 278.5 328.6 302 333.1L358.2 378.2C346.1 381.1 333.3 384 319.1 384C249.3 384 191.1 326.7 191.1 255.1H192z" />
@@ -4664,7 +5002,7 @@ function getFormattedName(url) {
                   
                   <div class="control-hide-show" id="chs-healthScore">
                     <div class="control-hide ${dataFailed.length == 0 ? "d-none": ""}"  >
-                      <button id="hidePassed" class="btn_toggle_show rounded-pill">
+                      <button class="btn_toggle_show rounded-pill hidePassedBtn">
                         <span class="icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
                             <path
                               d="M150.7 92.77C195 58.27 251.8 32 320 32C400.8 32 465.5 68.84 512.6 112.6C559.4 156 590.7 207.1 605.5 243.7C608.8 251.6 608.8 260.4 605.5 268.3C592.1 300.6 565.2 346.1 525.6 386.7L630.8 469.1C641.2 477.3 643.1 492.4 634.9 502.8C626.7 513.2 611.6 515.1 601.2 506.9L9.196 42.89C-1.236 34.71-3.065 19.63 5.112 9.196C13.29-1.236 28.37-3.065 38.81 5.112L150.7 92.77zM189.8 123.5L235.8 159.5C258.3 139.9 287.8 128 320 128C390.7 128 448 185.3 448 256C448 277.2 442.9 297.1 433.8 314.7L487.6 356.9C521.1 322.8 545.9 283.1 558.6 256C544.1 225.1 518.4 183.5 479.9 147.7C438.8 109.6 385.2 79.1 320 79.1C269.5 79.1 225.1 97.73 189.8 123.5L189.8 123.5zM394.9 284.2C398.2 275.4 400 265.9 400 255.1C400 211.8 364.2 175.1 320 175.1C319.3 175.1 318.7 176 317.1 176C319.3 181.1 320 186.5 320 191.1C320 202.2 317.6 211.8 313.4 220.3L394.9 284.2zM404.3 414.5L446.2 447.5C409.9 467.1 367.8 480 320 480C239.2 480 174.5 443.2 127.4 399.4C80.62 355.1 49.34 304 34.46 268.3C31.18 260.4 31.18 251.6 34.46 243.7C44 220.8 60.29 191.2 83.09 161.5L120.8 191.2C102.1 214.5 89.76 237.6 81.45 255.1C95.02 286 121.6 328.5 160.1 364.3C201.2 402.4 254.8 432 320 432C350.7 432 378.8 425.4 404.3 414.5H404.3zM192 255.1C192 253.1 192.1 250.3 192.3 247.5L248.4 291.7C258.9 312.8 278.5 328.6 302 333.1L358.2 378.2C346.1 381.1 333.3 384 319.1 384C249.3 384 191.1 326.7 191.1 255.1H192z" />

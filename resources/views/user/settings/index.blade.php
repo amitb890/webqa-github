@@ -361,13 +361,74 @@
                                         </label>
                                     </div>
                                 </div>
-                                <div class="accor-content-button">
+        <div class="accor-content-button">
                                     <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsCanonical" />
                                 </div>
                             </div>
                         </div>
                     </div>
 
+                    <!-- Schema accordion start -->
+                    <div class="accor-single-item">
+                        <div class="accor-head">
+                            <div class="accor-title-btn">
+                                <button>
+                                    <img src="/new-assets/assets/images/setting/menu-content-arrow.svg" alt="btn" />
+                                </button>
+                                <span>Schema</span>
+                            </div>
+                            <div class="accor-head-switch">
+                                <div class="toggle-button-cover">
+                                    <div class="button-cover">
+                                        <div class="button r" id="button-9">
+                                            <input type="checkbox" class="checkbox" {{ $settings->schema ? 'checked' : '' }} id="switchSchema" name="switchSchema" />
+                                            <div class="knobs">
+                                                <span></span>
+                                            </div>
+                                            <div class="layer"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accor-body">
+                            <div class="meta-content">
+                                <div class="accor-content">
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="schemaChoice" id="isSchemaTest" value="1" {{ $settings->settingsSub->schema_test ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isSchemaTest">
+                                            All the webpages of the project should be tested for Schema.
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input casing-check-input" type="radio" name="schemaChoice" id="isSchemaTestCustom" value="1" {{ $settings->settingsSub->schema_test_custom ? "checked" : "" }} />
+                                        <label class="form-check-label" for="isSchemaTestCustom">
+                                            Only specific pages of the project should be tested for Schema
+                                        </label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="schemaVal">Add the urls of your project where schema should be tested</label>
+                                        <?php
+                                            $cleanedSchema = preg_replace('/\s+/', '', $settings->settingsSub->schema_val ?? '');
+                                            $schemaLines = explode(",", $cleanedSchema);
+                                            $schemaFormatted = implode("\n", $schemaLines);
+                                        ?>
+                                        <div class="project-urls-numbered schema-urls-numbered">
+                                            <div class="project-urls-numbered__numbers" id="schemaNumbers"></div>
+                                            <textarea class="form-control project-urls-numbered__textarea" id="schemaVal" rows="12" placeholder="Enter each url in a new line">{{ htmlspecialchars($schemaFormatted) }}</textarea>
+                                        </div>
+                                        <div style="margin-top:8px;">
+                                            <small class="text-muted">Edit URLs inline and click "Save Settings" to persist.</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="accor-content-button">
+                                    <input class="reset-default btn btn_primary rounded-pill" type="submit" value="Reset" id="defaultSettingsSchema" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Schema accordion end -->
 
                     <!-- single accordion item -->
                     <div class="accor-single-item">
@@ -5336,6 +5397,7 @@
     var addBrokenLinksExcludedModal = new bootstrap.Modal(document.getElementById('addBrokenLinksExcludedModal'), {
       keyboard: false
     })
+    
     const settings = {!! $settings->toJson() !!};
     const project = {!! $project->toJson() !!};
 
@@ -5475,6 +5537,12 @@
         "isHtmlSitemap": 0,
         "isHtmlSitemapCustom": 1,
         "htmlSitemapVal": `${project.homepage}/sitemap`,
+    }
+    const defaultSchema = {
+        "switchSchema": 0,
+        "isSchemaTest": 0,
+        "isSchemaTestCustom": 1,
+        "schemaVal": "",
     }
     const defaultViewport = {
         "switchViewport": 1,
@@ -5687,6 +5755,7 @@
             "switchTwitterTitle": 1,
             "switchFavicon": 1,
             "switchXML": 1,
+            "switchSchema": 0,
             "switchHTML": 0,
             "switchViewport": 1,
             "switchFrameset": 1,
@@ -5821,6 +5890,9 @@
 
 
             "isXmlSitemap": 1,
+            "isSchemaTest": 0,
+            "isSchemaTestCustom": 1,
+            "schemaVal": "",
             "isXmlSitemapCustom": 1,
             "xmlSitemapVal": `${project.homepage}/xml.sitemap`,
 
@@ -6054,6 +6126,12 @@
                     updateValues(defaultXMLSitemap, prop)
                 }
                 break;
+            case "defaultSettingsSchema":
+                for (const prop in defaultSchema) {
+                    obj[prop] = defaultSchema[prop]
+                    updateValues(defaultSchema, prop)
+                }
+                break;
             case "defaultSettingsHTML":
                 for (const prop in defaultHTMLSitemap) {
                     obj[prop] = defaultHTMLSitemap[prop]
@@ -6240,11 +6318,118 @@
     })
 
     
-  $("#saveSettings").on( "click", function() {
+  $("#saveSettings").on( "click", async function() {
       clearAlerts()
       const obj = getAllValues(".setting-content-area")
       // Include report settings in the data object
       obj.reportSettings = getReportSettings()
+
+      // Schema validations when custom pages selected — collect errors instead of failing fast
+      const clientErrors = [];
+      // clear previous schema field error UI (textarea + label)
+      $("#schemaVal").removeClass('is-invalid');
+      $("#schemaVal").next('.invalid-feedback').remove();
+      $("#schemaVal").closest('.form-group').find('label[for=\"schemaVal\"]').removeClass('text-danger');
+
+      try {
+        const isCustom = obj["isSchemaTestCustom"] == 1 || obj["isSchemaTestCustom"] === true || obj["isSchemaTestCustom"] === "1";
+        if(isCustom){
+          let val = obj["schemaVal"] || "";
+          // Normalize into array: split on newline and commas as safety, trim, filter empties
+          let lines = val.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+          // Ensure no line contains more than one URL (comma or multiple http occurrences)
+          const multiPerLine = lines.filter(l => (l.match(/https?:\/\//g) || []).length > 1 || l.includes(','));
+          if(multiPerLine.length > 0){
+            clientErrors.push("Please put only one URL per line for Schema list.");
+          }
+          // Remove duplicates preserving order
+          const seen = new Set();
+          lines = lines.filter(x => {
+            const k = x;
+            if(seen.has(k)) return false;
+            seen.add(k);
+            return true;
+          });
+
+          if(lines.length === 0){
+            clientErrors.push("Please enter at least one URL when 'Only specific pages' is selected for Schema.");
+          }
+
+          // Domain validation (normalize hosts to accept www and non-www)
+          let rootDomain = project.homepage;
+          if (rootDomain) {
+            try {
+              rootDomain = new URL(rootDomain).host;
+            } catch (e) {
+              rootDomain = rootDomain.replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+            }
+            const normalizeHost = (h) => (h || '').replace(/^www\./i, '').toLowerCase();
+            let invalidUrls = [];
+            lines.forEach(function(url) {
+              if (url) {
+                let urlHost = '';
+                try {
+                  urlHost = new URL(url).host;
+                } catch (e) {
+                  urlHost = url.replace(/^https?:\/\//, '').replace(/\/$/, '').split('/')[0];
+                }
+                if (normalizeHost(urlHost) !== normalizeHost(rootDomain)) {
+                  invalidUrls.push(url);
+                }
+              }
+            });
+            if (invalidUrls.length > 0) {
+              clientErrors.push(`The following Schema URLs do not match the project domain (${rootDomain}): ${invalidUrls.join(', ')}`);
+            }
+          }
+
+          // Check all URLs in a single request to the server endpoint /check-simple-urls
+          let results = [];
+          try {
+            const resp = await $.ajax({
+              url: '/check-simple-urls',
+              method: 'POST',
+              data: { urls: lines, _token: $('meta[name="csrf-token"]').attr('content') }
+            });
+            results = resp.results || [];
+          } catch (err) {
+            clientErrors.push("Error validating one or more Schema URLs. Please try again.");
+          }
+
+          const badUrls = results.filter(r => !r || !r.valid).map(r => r && r.url ? r.url : '');
+          if (badUrls.length > 0) {
+            clientErrors.push(`The following Schema URLs are not reachable or returned non-200 responses: ${badUrls.join(', ')}`);
+          }
+
+          // If any client errors: store for merge with server errors; highlight schema; still call saveAjax so all errors show together
+          if(clientErrors.length > 0){
+            window._clientValidationErrors = clientErrors.slice();
+            $("#schemaVal").addClass('is-invalid');
+            $("#schemaVal").closest('.form-group').find('label[for=\"schemaVal\"]').addClass('text-danger');
+            const firstErr = clientErrors[0];
+            if($("#schemaVal").next('.invalid-feedback').length === 0){
+              $("#schemaVal").after(`<div class="invalid-feedback" style="display:block;">${firstErr}</div>`);
+            } else {
+              $("#schemaVal").next('.invalid-feedback').html(firstErr).show();
+            }
+            const accorItem = $("#schemaVal").closest('.accor-single-item');
+            if(accorItem.length){
+              accorItem.css({ 'border': '1px solid red', 'border-radius': '4px' });
+              accorItem.find('.accor-head .accor-title-btn span').css({ 'color': 'rgba(194, 40, 44, 1)' });
+            }
+          } else {
+            window._clientValidationErrors = [];
+          }
+
+          obj["schemaVal"] = lines.join(',');
+          $("#schemaVal").val(lines.join('\n'));
+        }
+      } catch (e) {
+        displayAlertNoHide(".setting-alert-area", { status: 0, msg: "Unexpected error validating Schema URLs."});
+        return;
+      }
+
+      if(!window._clientValidationErrors) window._clientValidationErrors = [];
       saveAjax(obj)
   });
 
@@ -6271,35 +6456,56 @@ function saveAjax(obj){
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             },       
             success : function(data) {
-                let alertData = data
-                if(data.status === 0){
-                    validate(data)
-                    const errors = []
-                    for(const key in data.msg){
-                        const messages = data.msg[key]
-                        if(Array.isArray(messages)){
-                            messages.forEach(m=>errors.push(m))
-                        }else if(typeof messages === 'string'){
-                            errors.push(messages)
+                const clientErrs = Array.isArray(window._clientValidationErrors) ? window._clientValidationErrors : [];
+                let alertData = data;
+
+                if(data.status === 0 || (data.status === 1 && clientErrs.length > 0)){
+                    if(data.status === 0) validate(data);
+                    const errors = [];
+                    clientErrs.forEach(m => errors.push(m));
+                    if(data.status === 0 && data.msg){
+                        for(const key in data.msg){
+                            const messages = data.msg[key];
+                            if(Array.isArray(messages)){
+                                messages.forEach(m=>errors.push(m));
+                            }else if(typeof messages === 'string'){
+                                errors.push(messages);
+                            }
                         }
                     }
-                    let listMsg
-                    if(errors.length > 1){
-                        const numbered = errors.map((m,i)=>`<div style="padding-bottom: 5px;">${i+1}. ${m}</div>`).join('')
-                        listMsg = `Please fix the following errors before saving the settings:<div style="padding-top: 10px;">${numbered}</div>`
-                    }else if(errors.length === 1){
-                        listMsg = errors[0]
-                    }else{
-                        listMsg = "There were some errors, please fix them before saving."
+                    const seen = new Set();
+                    const deduped = [];
+                    errors.forEach(m => {
+                        if(!m) return;
+                        const normalized = String(m).trim();
+                        if(!seen.has(normalized)){
+                            seen.add(normalized);
+                            deduped.push(normalized);
+                        }
+                    });
+                    const listMsg = deduped.length > 1
+                        ? `Please fix the following errors before saving the settings:<div style="padding-top: 10px;">${deduped.map((m,i)=>`<div style="padding-bottom: 5px;">${i+1}. ${m}</div>`).join('')}</div>`
+                        : (deduped.length === 1 ? deduped[0] : "There were some errors, please fix them before saving.");
+                    alertData = { status: 0, msg: listMsg };
+
+                    if(clientErrs.length > 0){
+                        $("#schemaVal").addClass('is-invalid');
+                        $("#schemaVal").closest('.form-group').find('label[for=\"schemaVal\"]').addClass('text-danger');
+                        if($("#schemaVal").next('.invalid-feedback').length === 0){
+                            $("#schemaVal").after(`<div class="invalid-feedback" style="display:block;">${clientErrs[0]}</div>`);
+                        } else {
+                            $("#schemaVal").next('.invalid-feedback').html(clientErrs[0]).show();
+                        }
+                        const accorItem = $("#schemaVal").closest('.accor-single-item');
+                        if(accorItem.length > 0){
+                            accorItem.css({ 'border': '1px solid red', 'border-radius': '4px' });
+                            accorItem.find('.accor-head .accor-title-btn span').css({'color': 'rgba(194, 40, 44, 1)'});
+                        }
                     }
-                    alertData = {
-                        status: 0,
-                        msg: listMsg
-                        // notHide: true
-                    }
+                    window._clientValidationErrors = [];
                 }
-                displayAlertNoHide(".setting-alert-area", alertData)
-                scrollToTop()
+                displayAlertNoHide(".setting-alert-area", alertData);
+                scrollToTop();
             },
             error: function(data){
                 if(!checkIfAuthenticated(data.responseJSON)){
@@ -6396,6 +6602,21 @@ function saveAjax(obj){
   $(".casing-check-input").on("change", function(){
     updateCasingInput(this)
   })
+  // Show/hide schema textarea based on radio selection
+  $(".casing-check-input#isSchemaTestCustom, .casing-check-input#isSchemaTest").on("change", function(){
+    const isCustom = document.getElementById('isSchemaTestCustom').checked;
+    if(isCustom){
+      $("#schemaVal").closest('.form-group').show();
+    }else{
+      $("#schemaVal").closest('.form-group').hide();
+    }
+  })
+  // Ensure correct initial visibility on page load
+  $(".casing-check-input#isSchemaTestCustom, .casing-check-input#isSchemaTest").trigger('change');
+  // Initialize schema textarea line numbers (and again after layout so height is correct)
+  updateSchemaNumbers();
+  setTimeout(updateSchemaNumbers, 100);
+  $(window).on('load', updateSchemaNumbers);
 
   $(".http-checkbox").on("change", function(){
     updateHTTPInput(this)
@@ -6429,6 +6650,37 @@ function saveAjax(obj){
       updateSitemapNumbers();
     }, 0);
   });
+
+  // Schema textarea handlers
+  $("#schemaVal").on('input keydown', function(e) {
+    if (e.key === 'Enter') {
+      setTimeout(() => { updateSchemaNumbers(); }, 0);
+    } else {
+      updateSchemaNumbers();
+    }
+  });
+
+  $("#schemaVal").on('paste', function() {
+    setTimeout(() => { updateSchemaNumbers(); }, 0);
+  });
+
+  // Sync scroll for schema textarea (and keep numbers height in sync so they stay inside)
+  $("#schemaVal").on('scroll', function() {
+    const numbersDiv = document.getElementById('schemaNumbers');
+    const ta = this;
+    if (numbersDiv) {
+      numbersDiv.style.height = ta.clientHeight + 'px';
+      numbersDiv.scrollTop = ta.scrollTop;
+    }
+  });
+
+  // Resize: keep schema numbers column height in sync with textarea
+  var schemaTextareaEl = document.getElementById('schemaVal');
+  if (schemaTextareaEl && window.ResizeObserver) {
+    new ResizeObserver(function() {
+      updateSchemaNumbers();
+    }).observe(schemaTextareaEl);
+  }
 
   // Sync scroll between textarea and numbers
   $("#addSitemapVal").on('scroll', function() {
@@ -6663,6 +6915,31 @@ function saveAjax(obj){
     numbersDiv.scrollTop = textarea.scrollTop;
   }
 
+  // Schema textarea line numbers – fixed line-height so numbers and URLs align
+  function updateSchemaNumbers() {
+    const textarea = document.getElementById('schemaVal');
+    const numbersDiv = document.getElementById('schemaNumbers');
+    
+    if (!textarea || !numbersDiv) return;
+    
+    numbersDiv.style.height = textarea.clientHeight + 'px';
+    numbersDiv.style.overflow = 'hidden';
+    
+    const lineCount = Math.max(1, textarea.value.split('\n').length);
+    let html = '';
+    for (let i = 1; i <= lineCount; i++) {
+      html += '<div>' + i + '.</div>';
+    }
+    numbersDiv.innerHTML = html;
+    numbersDiv.scrollTop = textarea.scrollTop;
+    
+    // Use same values as CSS so each number line lines up with one textarea line
+    numbersDiv.style.fontSize = '14px';
+    numbersDiv.style.lineHeight = '21px';
+    numbersDiv.style.paddingTop = '17px';
+    numbersDiv.style.paddingBottom = '10px';
+  }
+
   function addMoreBrokenLinksExcluded(element){
     addBrokenLinksExcludedModal.toggle()
   }
@@ -6713,6 +6990,8 @@ function saveAjax(obj){
           }
     });
   }
+
+  
 
   function updateHTTPInput(){
     let val = ""

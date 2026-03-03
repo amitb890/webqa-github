@@ -2124,10 +2124,14 @@ function getModalFixContent(testName){
 
 
 function truncateString(str, num) {
-    if (str.length <= num) {
-      return str
+    if (str === undefined || str === null) {
+      return ""
     }
-    return str.slice(0, num) + '...'
+    const safeStr = String(str)
+    if (safeStr.length <= num) {
+      return safeStr
+    }
+    return safeStr.slice(0, num) + '...'
 }
 
 
@@ -2792,6 +2796,15 @@ function getAllTestLabels(type, label = "default"){
             url: "/test/xml-sitemap",
             urlDetails: "/test-details/xml-sitemap",
             reportsUrl: "/reports/xml-sitemap",
+            parent: "seo",
+        },
+        {
+            displayName: "Schema",
+            name: "schema",
+            dbName: "schema",
+            url: "/test/schema",
+            urlDetails: "/test-details/schema",
+            reportsUrl: "/reports/schema",
             parent: "seo",
         },
         {

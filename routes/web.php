@@ -143,6 +143,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('profile', App\Http\Controllers\ProfileController::class);
         Route::resource('settings', App\Http\Controllers\SettingsController::class);
         Route::put('settings/save-sitemap/{id}', [App\Http\Controllers\SettingsController::class, 'saveSitemap'])->name('saveSitemap');
+        Route::put('settings/save-schema/{id}', [App\Http\Controllers\SettingsController::class, 'saveSchema'])->name('saveSchema');
         Route::put('settings/save-broken-links-excluded/{id}', [App\Http\Controllers\SettingsController::class, 'saveBrokenLinksExcluded'])->name('saveBrokenLinksExcluded'); 
         Route::get('report-settings', [App\Http\Controllers\ReportSettingsController::class, 'edit'])->name('report-settings.edit');
         Route::put('report-settings', [App\Http\Controllers\ReportSettingsController::class, 'update'])->name('report-settings.update');
@@ -172,6 +173,9 @@ Route::middleware('auth')->group(function () {
 
     });
     Route::post('check-valid-url', [App\Http\Controllers\ProjectsController::class, 'checkValidUrl'])->name('checkValidUrl');
+    // Simple URL check (only existence + 200 response) for lightweight validations
+    Route::post('check-simple-url', [App\Http\Controllers\ProjectsController::class, 'checkUrlSimple'])->name('checkUrlSimple');
+    Route::post('check-simple-urls', [App\Http\Controllers\ProjectsController::class, 'checkUrlsSimple'])->name('checkUrlsSimple');
     Route::post('check-sitemap-urls', [App\Http\Controllers\ProjectsController::class, 'checkSitemapUrls'])->name('checkSitemapUrls');
        
     Route::post('createProject', [App\Http\Controllers\ProjectsController::class, 'createProject'])->name('createProject');
@@ -246,6 +250,8 @@ Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/cross-origin-links', [App\Http\Controllers\Test\TestController::class, 'crossOriginLinks'])->name('test.cross-origin-links');
     Route::post('/protocol-relative-resource', [App\Http\Controllers\Test\TestController::class, 'protocolRelativeResource'])->name('test.protocol-relative-resource');
     Route::post('/h1-heading-tag', [App\Http\Controllers\Test\TestController::class, 'h1HeadindTag'])->name('test.h1-heading-tag');
+    // Alias route for bulk tool compatibility
+    Route::post('/headings', [App\Http\Controllers\Test\TestController::class, 'h1HeadindTag'])->name('test.headings');
     Route::post('/robot-text-test', [App\Http\Controllers\Test\TestController::class, 'robotTextTtest'])->name('test.robot-text-test');    
     Route::post('/broken-links', [App\Http\Controllers\Test\TestController::class, 'brokenLinks'])->name('test.broken-links');
     
@@ -257,9 +263,11 @@ Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/og-tags', [App\Http\Controllers\Test\TestController::class, 'ogTags'])->name('test.og-tags');
     Route::post('/twitter-tags', [App\Http\Controllers\Test\TestController::class, 'twitterTags'])->name('test.twitter-tags');
     Route::post('/favicon', [App\Http\Controllers\Test\TestController::class, 'favicon'])->name('test.favicon');
+    Route::post('/get-favicon-url', [App\Http\Controllers\Test\TestController::class, 'getFaviconUrl'])->name('test.get-favicon-url');
     Route::post('/xml-sitemap', [App\Http\Controllers\Test\TestController::class, 'xmlSitemap'])->name('test.xml-sitemap');
     Route::post('/xml-sitemap-multiple', [App\Http\Controllers\Test\TestController::class, 'xmlSitemapMultiple'])->name('test.xml-sitemap-multiple');
     Route::post('/html-sitemap', [App\Http\Controllers\Test\TestController::class, 'htmlSitemap'])->name('test.html-sitemap');
+    Route::post('/schema', [App\Http\Controllers\Test\TestController::class, 'schema'])->name('test.schema');
     Route::post('/images', [App\Http\Controllers\Test\TestController::class, 'images'])->name('test.images');
     Route::post('/html-compression', [App\Http\Controllers\Test\TestController::class, 'htmlCompression'])->name('test.html-compression');
     Route::post('/css-compression', [App\Http\Controllers\Test\TestController::class, 'cssCompression'])->name('test.css-compression');

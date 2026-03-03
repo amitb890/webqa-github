@@ -745,7 +745,16 @@
                         </div>
                         @endif
 
-
+                        @if($d['slug'] === 'schema')
+                        <div class="form-check">
+                            <input class="form-check-input" checked type="checkbox" id="schema_require_json_ld">
+                            <label class="form-check-label" for="schema_require_json_ld">Page must have at least one JSON-LD block</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" checked type="checkbox" id="schema_no_errors">
+                            <label class="form-check-label" for="schema_no_errors">JSON-LD blocks must have no parse errors and must define @type</label>
+                        </div>
+                        @endif
 
                         @if($d['slug'] === 'images')
                         <div class="form-check">
@@ -2845,6 +2854,8 @@
                 @include("bulk-tools.posts.favicon")
             @elseif($d['slug'] === 'xml-sitemap')
                 @include("bulk-tools.posts.xml-sitemap")
+            @elseif($d['slug'] === 'schema')
+                @include("bulk-tools.posts.schema")
             @elseif($d['slug'] === 'html-sitemap')
                 @include("bulk-tools.posts.html-sitemap")
             @elseif($d['slug'] === 'headings')
