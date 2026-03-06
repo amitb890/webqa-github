@@ -1,3 +1,19 @@
+/**
+ * Normalize favicon URL to use current origin (fixes 127.0.0.1/localhost when deployed to VPS).
+ */
+function normalizeFaviconUrl(url) {
+  if (!url || typeof url !== 'string') return url;
+  try {
+    const parsed = new URL(url, window.location.origin);
+    if (parsed.hostname === '127.0.0.1' || parsed.hostname === 'localhost') {
+      return window.location.origin + parsed.pathname + (parsed.search || '');
+    }
+    return url;
+  } catch (_) {
+    return url;
+  }
+}
+
 $(document).ready(function () {
 
   if(document.getElementById('modalCustomizer')){
@@ -5,6 +21,32 @@ $(document).ready(function () {
       keyboard: false
     })
   }
+
+  // Normalize favicon URLs on load (fix 127.0.0.1 when deployed to VPS)
+  var $activeFavicon = $('#activeFavicon');
+  var $activeProject = $('#activeProject');
+  if ($activeFavicon.length && $activeProject.length) {
+    var initialFavicon = $activeProject.attr('data-favicon');
+    if (initialFavicon) {
+      var normalized = normalizeFaviconUrl(initialFavicon);
+      if (normalized !== initialFavicon) {
+        $activeProject.attr('data-favicon', normalized);
+        $activeFavicon.attr('src', normalized);
+        setCookie('activeProjectFavicon', normalized, 7);
+      }
+    }
+  }
+  document.querySelectorAll('.select-project[data-favicon]').forEach(function (el) {
+    var fav = el.getAttribute('data-favicon');
+    if (fav) {
+      var norm = normalizeFaviconUrl(fav);
+      if (norm !== fav) {
+        el.setAttribute('data-favicon', norm);
+        var img = el.querySelector('img');
+        if (img) img.setAttribute('src', norm);
+      }
+    }
+  });
   
   // new
   updateSidebarSettingsLink()
@@ -54,11 +96,11 @@ $(document).ready(function () {
   const active = $("#activeProject");
   const activeVal = active.attr("data-val");
   const activeName = active.attr("data-name");
-  const activeFavicon = active.attr("data-favicon");
+  const activeFavicon = normalizeFaviconUrl(active.attr("data-favicon"));
 
   const projectVal = $(_this).attr("data-val")
   const projectName = $(_this).attr("data-name")
-  const projectFavicon = $(_this).attr("data-favicon")
+  const projectFavicon = normalizeFaviconUrl($(_this).attr("data-favicon"))
 
   const a = document.createElement("a")
   a.classList.add("dropdown-item")

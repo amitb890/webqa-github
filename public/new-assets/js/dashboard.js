@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 1, recheckGoogle = 2, recheckSingleMax = 10, urlsGoogleFinal = 0
+  var recheckMax = 10, recheckGoogle = 2, recheckSingleMax = 10, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -2435,16 +2435,16 @@ $(document).ready(function () {
     static getGoogleCurrentProgress(results, refreshState){
       let resultsTotal, total
 
+      // refreshState true = recheck flow (recheckGoogle URLs), false = initial load (googleUrlsToCheck URLs)
       if(refreshState){
-        total = googleUrlsToCheck
-      }else{
         total = recheckGoogle
+      }else{
+        total = googleUrlsToCheck
       }
-      total = total * 2
-      
+      total = total * 2  // each URL has 2 results (desktop + mobile)
 
       if(results){
-        resultsTotal = Object.keys(results).length
+        resultsTotal = Array.isArray(results) ? results.length : Object.keys(results).length
       }else{
         resultsTotal = 0
       }
@@ -3162,32 +3162,39 @@ $(document).ready(function () {
       }
       UI.buildRefreshTileLoader(dbName, target, name)
       urls = originalUrls.slice(0, recheckSingleMax)
-      Controls.startTest(urls, "single_recheck", dbName)
 
-    
       async function checkStatusDashboard() {
         let controller;
-    
+
         while (true) {
-            // Cancel any previous ongoing request
             if (controller) controller.abort();
             controller = new AbortController();
-    
+
             try {
                 const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
                     signal: controller.signal
                 });
-    
-                const { status, results } = await response.json();
-    
-                // Update UI for single tile progress
-                UI.updateSingleTileProgress(target, results, dbName, urls.length);
-    
-                // When completed
+
+                // Only use JSON body when response is OK (avoid treating 404/500 as valid data)
+                if (!response.ok) {
+                    await new Promise(res => setTimeout(res, 1000));
+                    continue;
+                }
+
+                let data;
+                try {
+                    data = await response.json();
+                } catch (_) {
+                    await new Promise(res => setTimeout(res, 1000));
+                    continue;
+                }
+
+                const { status, results } = data;
+
+                UI.updateSingleTileProgress(target, results || {}, dbName, urls.length);
+
                 if (status === 'completed') {
-    
                     if (recheckSingleIntervalStatus) {
-    
                         let obj = Controls.updateTestDataForm(results);
                         Controls.manageSingleCard(
                             obj[dbName],
@@ -3196,40 +3203,51 @@ $(document).ready(function () {
                             false,
                             false
                         );
-    
-                        // Re-enable recheck button after completion
+
                         UI.updateRecheckButtonState(false);
-    
+
                         displayAlert(".analysis-content-body-message", {
                             status: 1,
                             msg: "Recheck for the selected tile has been completed successfully.",
                             notHide: true
                         });
-    
+
                         $('.analysis-content-body-message').show();
-    
-                        // Enable refresh again
+
                         refreshTileDisabled = false;
-    
-                        // Reset status flag
                         recheckSingleIntervalStatus = false;
-    
-                        break; // stop the loop completely
+
+                        break;
                     }
                 }
-    
             } catch (e) {
-                // Ignore fetch abort errors
                 if (e.name !== "AbortError") console.error(e);
             }
-    
-            // Wait 1 second before next check
+
             await new Promise(res => setTimeout(res, 1000));
         }
       }
-    
-      checkStatusDashboard();
-    
+
+      (async function runRefreshTile() {
+        try {
+          await Controls.startTest(urls, "single_recheck", dbName);
+          checkStatusDashboard();
+        } catch (err) {
+          console.error('Refresh tile start failed:', err);
+          refreshTileDisabled = false;
+          recheckSingleIntervalStatus = false;
+          UI.updateRecheckButtonState(false);
+          if (document.querySelector(`.single_dashboard_card_main[data-label='${dbName}'] .dashboard-loader`)) {
+            document.querySelector(`.single_dashboard_card_main[data-label='${dbName}'] .dashboard-loader`).remove();
+          }
+          displayAlert(".analysis-content-body-message", {
+            status: 0,
+            msg: "Could not start tile recheck. Please try again or run a full dashboard test first.",
+            notHide: true
+          });
+          $('.analysis-content-body-message').show();
+        }
+      })();
     }
 
     static removeTile(dbName, target){
@@ -3447,24 +3465,28 @@ $(document).ready(function () {
 
   
     static startTest(urlsUpdated, type, recheck_label = "na"){
-      $.ajax({
-        url : `/test/start-dashboard-test`,
-        type : 'POST',
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        },
-        data: {
-            "urls": urlsUpdated,
-            "project_id": projectId,
-            "test_type": type,
-            "recheck_label": recheck_label,
-            "_method": 'POST',
-        },       
-        success : function(data) {
-        },
-        error: function(data){
-        }
-      })
+      return new Promise((resolve, reject) => {
+        $.ajax({
+          url : `/test/start-dashboard-test`,
+          type : 'POST',
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+          },
+          data: {
+              "urls": urlsUpdated,
+              "project_id": projectId,
+              "test_type": type,
+              "recheck_label": recheck_label,
+              "_method": 'POST',
+          },
+          success: function(data) {
+            resolve(data);
+          },
+          error: function(xhr, status, err) {
+            reject(new Error(err || status || 'Start test failed'));
+          }
+        });
+      });
     }
 
 

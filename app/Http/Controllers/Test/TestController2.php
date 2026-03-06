@@ -93,18 +93,39 @@ class TestController2 extends Controller
         $dashboardTest = null;
         if ($type === "single_recheck") {
             $dashboardTest = DashboardTests::where("project_id", $project_id)->latest()->first();
-            $dashboardTest->update([
-                'status' => 'recheck',
-            ]);
-            DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
-            ->update(['status' => 'pending']);
+            if ($dashboardTest) {
+                $dashboardTest->update([
+                    'status' => 'recheck',
+                ]);
+                DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
+                    ->update(['status' => 'pending']);
+            } else {
+                // No existing test (e.g. first run on VPS): create one like initial run
+                $dashboardTest = DashboardTests::create([
+                    'test_id' => $testId,
+                    'user_id' => Auth::id(),
+                    'project_id' => $project_id,
+                    'urls' => json_encode($urls),
+                    'status' => 'in_progress'
+                ]);
+            }
         } else if($type === "recheck"){
             $dashboardTest = DashboardTests::where("project_id", $project_id)->latest()->first();
-            $dashboardTest->update([
-                'status' => 'recheck',
-            ]);
-            DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
-            ->update(['status' => 'pending']);
+            if ($dashboardTest) {
+                $dashboardTest->update([
+                    'status' => 'recheck',
+                ]);
+                DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
+                    ->update(['status' => 'pending']);
+            } else {
+                $dashboardTest = DashboardTests::create([
+                    'test_id' => $testId,
+                    'user_id' => Auth::id(),
+                    'project_id' => $project_id,
+                    'urls' => json_encode($urls),
+                    'status' => 'in_progress'
+                ]);
+            }
         }else{
             $dashboardTest = DashboardTests::create([
                 'test_id' => $testId,

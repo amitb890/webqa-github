@@ -549,7 +549,7 @@ function buildAlertNewSuccess(txt){
 }
 
 function clearAlerts(){
-    $(`.alert`).remove()
+    $(`.alert`).not('.alert-custom').remove()
     $(`.invalid-feedback`).remove()
     $(`.success-feedback`).remove()
     // Remove red border from accor-single-item elements (only if they exist)
@@ -568,7 +568,7 @@ function clearAlerts(){
 }
 
 function clearAlertsNew(){
-    $(`.alert`).remove()
+    $(`.alert`).not('.alert-custom').remove()
     $(`.invalid-feedback`).remove()
     $(`.success-feedback`).remove()
     // Remove red border from accor-single-item elements (only if they exist)
