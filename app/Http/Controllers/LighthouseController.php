@@ -76,7 +76,8 @@ class LighthouseController extends Controller
     {
 
 
-        $lighthouseTest = LighthouseTest::where('project_id', $projectId)->first();
+        // Always use the latest Lighthouse test for this project
+        $lighthouseTest = LighthouseTest::where('project_id', $projectId)->latest()->first();
 
         if (!$lighthouseTest) {
             return response()->json(['error' => 'Test ID not found.'], 404);

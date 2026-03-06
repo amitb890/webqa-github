@@ -2610,16 +2610,11 @@ $(document).ready(function () {
                 mobile_friendly: [],
               }
               UI.recheckStartedAlert()
-              Controls.startTest(urls, "recheck")
-
-
 
               async function checkStatusDashboard() {
                 let controller;
             
                 while (true) {
-            
-                    // Cancel any previous unfinished request
                     if (controller) controller.abort();
                     controller = new AbortController();
             
@@ -2627,32 +2622,57 @@ $(document).ready(function () {
                         const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
                             signal: controller.signal
                         });
+
+                        // Ignore non-OK responses (e.g. 404 while test is spinning up)
+                        if (!response.ok) {
+                          await new Promise(res => setTimeout(res, 1000));
+                          continue;
+                        }
             
-                        const { status, results } = await response.json();
-                        Controls.updateProgressRecheck(results);
+                        let data;
+                        try {
+                          data = await response.json();
+                        } catch (_) {
+                          await new Promise(res => setTimeout(res, 1000));
+                          continue;
+                        }
+
+                        const { status, results } = data;
+                        Controls.updateProgressRecheck(results || {});
             
                         if (status === 'completed') {
-            
                             Controls.endTest();
-            
                             setTimeout(() => {
                                 recheckAllowed = true;
                                 UI.updateRecheckButtonState(false); // re-enable button
                             }, 100);
-            
                             break; // stop loop
                         }
                     } catch (e) {
-                        // ignore abort errors
                         if (e.name !== "AbortError") console.error(e);
                     }
             
-                    // wait 1 second before next request
                     await new Promise(res => setTimeout(res, 1000));
                 }
               }
-            
-              checkStatusDashboard();
+
+              (async function runRecheck() {
+                try {
+                  await Controls.startTest(urls, "recheck");
+                  checkStatusDashboard();
+                } catch (err) {
+                  console.error('Recheck start failed:', err);
+                  recheckAllowed = true;
+                  UI.updateRecheckButtonState(false);
+                  // Leave loader visible but show error so user knows something went wrong
+                  displayAlert(".analysis-content-body-message", {
+                    status: 0,
+                    msg: "Could not start dashboard recheck. Please try again.",
+                    notHide: true
+                  });
+                  $('.analysis-content-body-message').show();
+                }
+              })();
             
 
 

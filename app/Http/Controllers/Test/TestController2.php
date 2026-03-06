@@ -191,7 +191,8 @@ class TestController2 extends Controller
 
     public function checkStatus($projectId)
     {
-        $dashboardTest = DashboardTests::where('project_id', $projectId)->first();
+        // Always use the latest dashboard test for this project
+        $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
     
         if (!$dashboardTest) {
             return response()->json(['error' => 'Test ID not found.'], 404);
