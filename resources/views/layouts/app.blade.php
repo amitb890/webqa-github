@@ -691,7 +691,8 @@ if(isset($_COOKIE["activeProject"])){
     <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
-    <script src="{{ asset('new-assets/js/pdf-images.js') }}"></script>
+    <script src="{{ asset('new-assets/js/pdf-images.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/imran.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
 
   @php

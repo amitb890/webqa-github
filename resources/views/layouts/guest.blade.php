@@ -65,8 +65,10 @@
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.all.min.js"></script>
 
         <!-- custom scripts -->
-        <script src="{{ asset('new-assets/js/functions.js') }}"></script>
-        <script src="{{ asset('new-assets/js/app.js') }}"></script>
+        <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+        <script src="{{ asset('new-assets/js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+        <script src="{{ asset('new-assets/js/imran.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+
 
         @yield("js")
         <script>

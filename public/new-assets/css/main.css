@@ -17777,3 +17777,481 @@ textarea.auto-number.has-content {
 
 
 
+/* Imran css styles for December Order Starts */
+
+#imagePreviewOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
+}
+
+
+#imagePreviewOverlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+
+#imagePreviewContent {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 6px;
+  animation: zoomIn 0.3s ease;
+}
+
+
+.image-preview-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 40px;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
+}
+
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.zoomable-img{
+  cursor:pointer;
+}
+
+/* Task 3 Code Starts */
+.form-check-input.input-check-all{
+  margin-left:-15px;
+}
+.element-check-title label {
+  margin-left: 5px;
+  font-size: 16px;
+}
+
+.element-main-single {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px 10px;
+    flex-wrap: wrap;
+}
+
+
+.setting-area{
+padding-bottom:0px;
+}
+.setting-menu-area {
+margin-left: -20px;
+margin-top: -20px;
+}
+
+.menu-title{
+  margin-top:30px;
+}
+
+#form-check-label-imran{
+  margin-left:5px;
+}
+
+
+.header-dropdown-imran{
+right: -35px !important;
+}
+.user-dropdown-imran{
+right: -50px !important;
+}
+
+
+.header-dropdown-list{
+  margin-bottom:20px;
+}
+.drop-header-but{
+  position:relative;
+}
+.drop-header-but::after{
+  position:absolute;
+  content:"";
+  height:1px;
+  width:100%;
+  top:-10px;
+  right:0;
+  background:#e0e8f4;
+}
+
+.drop-header-but button{
+  border:none;
+  background:none;
+}
+.drop-header-but button {
+    border-radius: 5px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    font-size: 14px;
+    font-weight: lighter;
+    padding: 11px 6px !important;
+}
+.drop-header-but button a{
+  color:#444444;
+}
+
+.drop-header-but button:hover,
+.drop-header-but button:hover a{
+  background-color: #f5f8ff;
+  color: #417cec !important;
+}
+
+
+.customisable_tab_content{
+  min-height:550px !important;
+}
+
+.custom-modal .modal-content{
+  border-bottom-left-radius:0px;
+  border-bottom-right-radius:0px;
+  border-top-right-radius:0px;
+  border-top-left-radius:0px;
+  border-radius:10px;
+}
+
+.custom-modal .modal-header {
+    border-bottom: none;
+    padding: 15px 30px;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #3264b8;
+    position: relative;
+    color: rgba(34, 34, 34, 1);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.custom-modal .modal-dialog {
+    max-width: 850px !important;
+}
+.modal-title {
+    margin-bottom: 0;
+    line-height: var(--bs-modal-title-line-height);
+    color: #fff;
+}
+.custom-modal .close {
+    position: absolute;
+    top: 2px;
+    right: 15px;
+    font-size: 2.5rem;
+    color: #fff !important;
+    cursor: pointer;
+    background: none;
+    border-width: initial;
+    border-style: none;
+    border-color: none;
+    border-image: none;
+    padding: 0px;
+}
+.custom-modal .close:hover{
+  color:#fff !important;
+}
+
+.modal .modal-content-crossolm{
+  border-bottom-left-radius:0px;
+  border-bottom-right-radius:0px;
+  border-top-right-radius:0px;
+  border-top-left-radius:0px;
+  border-radius:10px;
+  border-top:none !important;
+  border-left:none!important;
+  border-right:none!important;
+  border-bottom:none!important;
+}
+
+.modal .modal-header-crossolm {
+    border-bottom: none;
+    padding: 15px 30px;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #3264b8;
+    position: relative;
+    color: rgba(34, 34, 34, 1);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.modal .modal-dialog-crossolm{
+    max-width: 850px !important;
+}
+
+.modal-title-crossolm {
+    margin-bottom: 0 !important;
+    line-height: var(--bs-modal-title-line-height)!important;
+    color: #fff!important;
+    text-align: left!important;
+    padding-right: 20px!important;
+    font-size: 24px!important;
+    font-weight: 300!important;
+    margin-bottom: 0!important;
+    line-height: var(--bs-modal-title-line-height)!important;
+    color: #fff!important;
+}
+
+.modal .close-crossolm:hover{
+  color:#fff !important;
+}
+
+.modal .close-crossolm {
+    position: absolute;
+    top: 2px;
+    right: 15px;
+    font-size: 1.8rem;
+    color: #fff !important;
+    cursor: pointer;
+    background: none;
+    border-width: initial;
+    border-style: none;
+    border-color: none;
+    border-image: none;
+    padding: 0px;
+    font-weight: bold;
+}
+
+.modal-table-div-crossolm{
+  background: transparent !important;
+    border-radius: 15px !important;
+    padding: 15px !important;
+    padding-left: 32px !important;
+}
+
+
+.modal-body.modal-table-div-crossolm td{
+    padding: 5px 8px 5px 8px !important;
+}
+
+
+.card-body-crossolm{
+  background-color:#fff !important;
+}
+
+.modal-header-blm{
+    border-bottom: none;
+    padding: 15px 30px;
+    font-size: 24px;
+    font-weight: bold;
+    background-color: #3264b8;
+    position: relative;
+    color: rgba(34, 34, 34, 1);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+#broken-links-modal .card-body {
+    background: #fff;
+}
+
+.meta-list-brokenBody .modal-content {
+    overflow: auto;
+    height: auto;
+}
+.broken-links-table thead tr a{
+   color: var(--primary) !important;
+    text-decoration: none;
+}
+
+.blt-header,
+.blt-header-3{
+  font-size: 14px !important;
+    font-weight: 400 !important;
+    line-height: 18px !important;
+    color: rgba(110, 110, 110, 1) !important;
+    font-family: Circular Std !important;
+}
+.meta-list-brokenHeader{
+  font-size:16px ;
+}
+.custom-modal .modal-dialog-privacy-policy{
+     overflow: hidden !important;
+}
+.modal-header-priv-pol{
+  margin-bottom: 0;
+  line-height: var(--bs-modal-title-line-height);
+  color: #fff;
+  font-weight: 300;
+  font-size: 24px;
+}
+
+.modal-body-priv-pol{
+  text-align: left;
+  padding-right: 20px;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 18px !important;
+  color: rgba(110, 110, 110, 1) !important;
+  font-family: Circular Std !important;
+  margin-bottom: 0px !important;
+}
+
+.modalBodyContent-priv-pol{
+    text-decoration: none;
+    color: inherit;
+    text-align: left;
+    padding-right: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #4a4a4a;
+    font-family:  var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    padding-top:25px !important;
+}
+
+.analysis_sidebar_main .offcanvas.offcanvas-start {
+    max-width: 372px;
+    width: 100%;
+    top: 60px;
+}
+
+.btn-close-feat-req:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  border:none !important;
+}
+
+.analysis_sidebar_main .offcanvas-title {
+  font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  font-size:16px !important;
+  color:#fff;
+}
+.analysis_sidebar_main .form-label {
+  font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  color:#6e6e6e !important;
+}
+.analysis_sidebar_main .form-control {
+  font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  font-weight:100;
+}
+.analysis_sidebar_main .input_file:hover{
+  border: 2px dashed #417cec !important;
+}
+
+.div-5-attachments svg,
+.div-5-attachments span{
+  font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+  font-weight:100;
+  color: #212529;
+}
+
+.div-5-attachments:hover svg path,
+.div-5-attachments:hover span{
+  color: #417cec;
+}
+
+#important_check .btn-check:checked + .btn {
+  border-color: #417cec;
+  color: #417cec;
+}
+
+.analysis_sidebar_main .offcanvas-header {
+  background-color:#417cec;
+  color:#fff;
+  padding: 12px 17px !important;
+  padding-right:6px !important;
+}
+
+.offcanvas-header .btn-close{
+  padding: 12px 20px;
+  background: transparent url(../assets/images/setting/white-close-btn.png) center / 1em auto no-repeat !important;
+  background-size: inherit;
+}
+
+
+.meta-tag-items.single-view 
+.tab-content-area 
+.results-container:first-child
+.analysis-card:first-child 
+.card {
+  border-top-left-radius: 10px;
+  border-top-right-radius:10px;
+}
+
+.meta-tag-items.single-view 
+.tab-content-area 
+.results-container:last-child
+.analysis-card:last-child 
+.card {
+  outline:none;
+  border: none;
+  /* border: 1px solid #e2e0f4; */
+  outline: 1px solid #e2e0f4;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+
+
+.analysis-card,
+.results-container,
+.tab-content-area,
+.meta-tag-items.single-view{
+  overflow: visible !important;
+}
+
+
+
+.robotsTxt-card {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.robotsTxt-card table {
+  font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif !important;
+}
+.robotsTxt-card{
+  overflow:hidden;
+}
+.robotsTxt-card .card-body{
+  max-height: 300px;
+    overflow: auto;
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar-thumb {
+  background-color: #999;
+  border-radius: 10px;  
+}
+
+.robotsTxt-card .card-body::-webkit-scrollbar-thumb:hover {
+  background-color: #666;
+}
+.robotsTxt-card .card-body {
+  scrollbar-width: thin;
+  scrollbar-color: #999 transparent;
+}
+
+
+.robotsTxt-card-td{
+  font-family:"Courier Prime";
+}
+
+.robotsTxt-card-actual-url table tr td{
+  padding-bottom:3px !important;
+  padding-top:3px !important;
+}
+/* Imran css styles for December Order Ends */
+

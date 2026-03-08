@@ -24,7 +24,7 @@
             </div>
         </div>
         <div class="fcwt1-d2">
-            <img 
+            <img class="zoomable-img"
             src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1044.svg') }}" alt="Webqa website tracker interface">
         </div>
      </section>
@@ -45,10 +45,10 @@
                 </p> 
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="One table for every URL">
+                <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="One table for every URL">
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="Customize the view to your workflow">
+                <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="Customize the view to your workflow">
             </div>
             <div class="fcwt2-d2-card-d">
                 <h3>
@@ -70,10 +70,10 @@
                 <p>Re-check all URLs or just a subset in a click, so template changes and hotfixes are verified immediately.</p>
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="Re-check with recency you can trust">
+                <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1045.svg') }}" alt="Re-check with recency you can trust">
             </div>
             <div class="fcwt2-d2-card">
-                <img src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="Visual status + easy exports">
+                <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-webtracker/Group-1046.svg') }}" alt="Visual status + easy exports">
             </div>
             <div class="fcwt2-d2-card-d">
                 <h3>
@@ -192,6 +192,10 @@
     <!-- Section 6 Ends -->
 
 
+    <div id="imagePreviewOverlay">
+  <span class="image-preview-close">&times;</span>
+  <img id="imagePreviewContent" src="" alt="Preview">
+</div>
 
      @section("js")
 <script src="{{ asset('/new-assets/js/home.js') }}"></script>

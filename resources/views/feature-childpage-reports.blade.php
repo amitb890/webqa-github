@@ -28,7 +28,7 @@
   </div>
   <div class="fcr1-d2" style="flex: 3;">
     <!-- HERO IMAGE UPDATED -->
-    <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/reports-hero.png') }}" alt="">
+    <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/reports-hero.png') }}" alt="">
   </div>
 </section>
 <!-- Section 1 Ends -->
@@ -49,13 +49,13 @@
         <div class="fcr2-carousel" data-carousel aria-label="SEO report images">
           <div class="fcr2-track">
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/seo-report-1.png') }}" alt="SEO report image 1">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/seo-report-1.png') }}" alt="SEO report image 1">
             </div>
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/seo-report-2.png') }}" alt="SEO report image 2">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/seo-report-2.png') }}" alt="SEO report image 2">
             </div>
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/seo-report-3.png') }}" alt="SEO report image 3">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/seo-report-3.png') }}" alt="SEO report image 3">
             </div>
           </div>
         </div>
@@ -93,13 +93,13 @@
         <div class="fcr2-carousel" data-carousel aria-label="Performance report images">
           <div class="fcr2-track">
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/performance-report-1.png') }}" alt="Performance report image 1">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/performance-report-1.png') }}" alt="Performance report image 1">
             </div>
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/performance-report-2.png') }}" alt="Performance report image 2">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/performance-report-2.png') }}" alt="Performance report image 2">
             </div>
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/performance-report-3.png') }}" alt="Performance report image 3">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/performance-report-3.png') }}" alt="Performance report image 3">
             </div>
           </div>
         </div>
@@ -135,10 +135,10 @@ Identify outdated patterns, structural problems, and risky implementations—org
         <div class="fcr2-carousel" data-carousel aria-label="Best practices report images">
           <div class="fcr2-track">
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/best-practices-report-1.png') }}" alt="Best practices report image 1">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/best-practices-report-1.png') }}" alt="Best practices report image 1">
             </div>
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/best-practices-report-2.png') }}" alt="Best practices report image 2">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/best-practices-report-2.png') }}" alt="Best practices report image 2">
             </div>
           </div>
         </div>
@@ -175,10 +175,10 @@ Understand where your site may be at risk and what needs attention - without dig
         <div class="fcr2-carousel" data-carousel aria-label="Security report images">
           <div class="fcr2-track">
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/security-report-1.png') }}" alt="Security report image 1">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/security-report-1.png') }}" alt="Security report image 1">
             </div>
             <div class="fcr2-slide">
-              <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/security-report-2.png') }}" alt="Security report image 2">
+              <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/security-report-2.png') }}" alt="Security report image 2">
             </div>
           </div>
         </div>
@@ -266,12 +266,16 @@ Understand where your site may be at risk and what needs attention - without dig
       </div>
     </div>
     <div class="fr4-d2" id="fr4-d2-reports">
-      <img src="{{ asset('new-assets/assets/images/feature-childpage-reports/image-71-(1).svg') }}" alt="">
+      <img class="zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-reports/image-71-(1).svg') }}" alt="">
     </div>
   </div>
 </section>
 <!-- Last Section Ends -->
 
+<div id="imagePreviewOverlay">
+  <span class="image-preview-close">&times;</span>
+  <img id="imagePreviewContent" src="" alt="Preview">
+</div>
 
 <!-- ===================== -->
 <!-- CSS + JS AT PAGE END  -->
@@ -418,8 +422,17 @@ Understand where your site may be at risk and what needs attention - without dig
 
       setInterval(() => {
         index += 1;
-        goTo(index, true);
+        if (index <= total) {
+          goTo(index, true);
+        } else {
+          index = 1;
+          goTo(0, false);
+          requestAnimationFrame(() => {
+            goTo(index, true);
+          });
+        }
       }, intervalMs);
+
 
       track.addEventListener("transitionend", () => {
         if (index === total) {
