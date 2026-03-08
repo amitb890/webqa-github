@@ -4,6 +4,164 @@ $( document ).ready(function() {
 
 
     init()
+    
+    // ============================================
+    // URL TRUNCATION FOR TEXTAREA - HOME PAGE
+    // ============================================
+    
+    // Function to truncate a single URL to 85 characters
+    function truncateUrl(url, maxLength = 85) {
+        if (!url || url.length <= maxLength) {
+            return url;
+        }
+        return url.substring(0, maxLength) + '...';
+    }
+    
+    // Function to get full URLs from storage (for AJAX calls)
+    function getFullUrlsValue() {
+        const input = document.getElementById('urlValue');
+        if (!input) return '';
+        
+        // Get current input value (may be truncated)
+        const currentValue = input.value;
+        
+        // Get stored full value if it exists
+        const storedFullValue = input.getAttribute('data-full-value');
+        
+        // If we have a stored full value, check if current value is truncated
+        if (storedFullValue !== null && storedFullValue !== '') {
+            // Check if current value contains truncation markers
+            if (currentValue.endsWith('...')) {
+                // Current value is truncated, use stored full value
+                return storedFullValue;
+            } else {
+                // Current value appears to be full (no truncation)
+                // This means user has modified it, so use current value
+                // Also update stored value to keep it in sync
+                input.setAttribute('data-full-value', currentValue);
+                return currentValue;
+            }
+        }
+        
+        // If no stored value, return current value (might be truncated, but it's all we have)
+        return currentValue;
+    }
+    
+    // Function to format input with truncated URL
+    function formatInputDisplay(forceFormat = false) {
+        const input = document.getElementById('urlValue');
+        if (!input) return;
+        
+        // Only format when input is not focused (on blur), unless forceFormat is true
+        if (!forceFormat && document.activeElement === input) {
+            return;
+        }
+        
+        // Get current value from input
+        let currentValue = input.value;
+        
+        // Check if we have a stored full value
+        const storedFullValue = input.getAttribute('data-full-value');
+        
+        // If current value contains "..." it means it's truncated, so use stored full value
+        if (currentValue.endsWith('...') && storedFullValue !== null && storedFullValue !== '') {
+            currentValue = storedFullValue;
+        }
+        
+        // Truncate if longer than 85 characters
+        const truncated = truncateUrl(currentValue, 85);
+        
+        // Store full value if we truncated
+        if (truncated !== currentValue) {
+            input.setAttribute('data-full-value', currentValue);
+        } else {
+            // No truncation needed, clear stored value
+            input.removeAttribute('data-full-value');
+        }
+        
+        // Update input with truncated display
+        input.value = truncated;
+    }
+    
+    // Debounce timer for input truncation
+    let inputFormatTimer = null;
+    
+    // On paste: truncate URL after paste completes
+    $('#urlValue').on('paste', function(e) {
+        const input = e.target;
+        
+        // Wait for paste to complete, then truncate
+        setTimeout(function() {
+            // Get the value after paste
+            let currentValue = input.value;
+            
+            // Store full value before truncating
+            input.setAttribute('data-full-value', currentValue);
+            
+            // Get current cursor position (after paste, before truncation)
+            const cursorPos = input.selectionStart;
+            
+            // Truncate if longer than 90 characters
+            const truncated = truncateUrl(currentValue, 90);
+            
+            // Store full value if we truncated
+            if (truncated !== currentValue) {
+                input.setAttribute('data-full-value', currentValue);
+            }
+            
+            // Update input with truncated display
+            const newValue = truncated;
+            
+            // Only update if value changed
+            if (input.value !== newValue) {
+                // Update the value
+                input.value = newValue;
+                
+                // After paste, browser typically places cursor at the end of pasted content
+                // Since we're truncating, we need to place cursor at the end of the new value
+                const newCursorPos = newValue.length;
+                input.setSelectionRange(newCursorPos, newCursorPos);
+            } else {
+                // Value didn't change, but cursor might have moved - restore it
+                input.setSelectionRange(cursorPos, cursorPos);
+            }
+        }, 50);
+    });
+    
+    // On blur: truncate URL when user clicks away
+    $('#urlValue').on('blur', function() {
+        formatInputDisplay();
+    });
+    
+    // On input: store full value and truncate after user stops typing
+    $('#urlValue').on('input', function(e) {
+        const input = e.target;
+        const currentValue = input.value;
+        
+        // If current value doesn't end with "...", it means user is typing the full value
+        // Store it so we can retrieve it later for AJAX calls
+        if (!currentValue.endsWith('...')) {
+            input.setAttribute('data-full-value', currentValue);
+        }
+        
+        // Clear any existing timer
+        if (inputFormatTimer) {
+            clearTimeout(inputFormatTimer);
+        }
+        
+        // Truncate after user stops typing (500ms delay)
+        // Only if value exceeds 85 characters
+        if (currentValue.length > 85) {
+            inputFormatTimer = setTimeout(function() {
+                formatInputDisplay(true); // Force format even if focused
+            }, 500);
+        }
+    });
+    
+    // Format on initial load if input has content
+    if ($('#urlValue').length && $('#urlValue').val().trim()) {
+        formatInputDisplay();
+    }
 
     function updateHTTPInput(){
         let val = ""
@@ -86,9 +244,24 @@ $( document ).ready(function() {
 
         if(testLabels.length > 0){
             const urlField = $("#urlValue")[0]
-            if(validateFront({el: urlField, msgEmpty: "Please enter a URL to conduct a test."}, "analysis")){
+            
+            // Get full URL for validation and AJAX (not truncated)
+            const fullUrl = getFullUrlsValue()
+            
+            // Temporarily set the full URL value for validation
+            const originalValue = urlField.value
+            urlField.value = fullUrl
+            
+            // Validate with full URL
+            const isValid = validateFront({el: urlField, msgEmpty: "Please enter a URL to conduct a test."}, "analysis")
+            
+            // Restore truncated value for display
+            urlField.value = originalValue
+            
+            if(isValid){
                 buildLoader(obj, testLabels)
-                runTest(testLabels, urlField.value, "analysis")
+                // Use full URL for AJAX call
+                runTest(testLabels, fullUrl, "analysis")
             }
         }else{
             displayAlertSimple(".footer_search_item", {
@@ -120,6 +293,7 @@ $( document ).ready(function() {
                 }
                 testLabels.push(labelObj)
             })
+            // Note: #urlValueFooter doesn't have truncation, so use value directly
             runTest(testLabels, urlField.value, "default")
         }
 

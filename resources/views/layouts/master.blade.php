@@ -36,7 +36,6 @@
         <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('new-assets/assets/images/android-chrome-192x192.png') }}">
 
         @include('schemas.schema-loader')
-
         
         <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -132,55 +131,55 @@
                       <div class="dropdown-menu2">
                         <li class="dropdown-menu2-item">
                           <div class="dm2i-div">
-                            <a href="{{ route('tool', 'meta-title') }}">
+                            <a href="{{ route('tools', 'meta-title') }}">
                               <img src="{{ asset('new-assets/assets/images/new-header-images/meta-tags.svg') }}" alt="">
                             </a>
-                            <a href="{{ route('tool', 'meta-title') }}">Meta title</a>
+                            <a href="{{ route('tools', 'meta-title') }}">Meta title</a>
                           </div>
                           
                         </li>
                         <li class="dropdown-menu2-item">
                           <div class="dm2i-div">
-                            <a href="{{ route('tool', 'broken-links') }}">
+                            <a href="{{ route('tools', 'broken-links') }}">
                               <img src="{{ asset('new-assets/assets/images/new-header-images/security.svg') }}" alt="">
                             </a>
-                            <a href="{{ route('tool', 'broken-links') }}">Security</a>
+                            <a href="{{ route('tools', 'broken-links') }}">Security</a>
                           </div>
                           
                         </li>
                         <li class="dropdown-menu2-item">
                           <div class="dm2i-div">
-                            <a href="{{ route('tool', 'images') }}">
+                            <a href="{{ route('tools', 'images') }}">
                               <img src="{{ asset('new-assets/assets/images/new-header-images/images.svg') }}" alt="">
                             </a>
-                            <a href="{{ route('tool', 'images') }}">Images</a>
+                            <a href="{{ route('tools', 'images') }}">Images</a>
                           </div>
                           
                         </li>
                         <li class="dropdown-menu2-item">
                           <div class="dm2i-div">
-                            <a href="{{ route('tool', 'google-page-speed-insights') }}">
+                            <a href="{{ route('tools', 'google-page-speed-insights') }}">
                               <img src="{{ asset('new-assets/assets/images/new-header-images/performances.svg') }}" alt="">
                             </a>
-                            <a href="{{ route('tool', 'google-page-speed-insights') }}">Page Speed</a>
+                            <a href="{{ route('tools', 'google-page-speed-insights') }}">Page Speed</a>
                           </div>
                           
                         </li>
                         <li class="dropdown-menu2-item">
                           <div class="dm2i-div">
-                            <a href="{{ route('tool', 'http-status-code') }}">
+                            <a href="{{ route('tools', 'http-status-code') }}">
                               <img src="{{ asset('new-assets/assets/images/new-header-images/on-page-elements.svg') }}" alt="">
                             </a>
-                            <a href="{{ route('tool', 'http-status-code') }}">HTTP Status Code</a>
+                            <a href="{{ route('tools', 'http-status-code') }}">HTTP Status Code</a>
                           </div>
                           
                         </li>
                         <li class="dropdown-menu2-item">
                           <div class="dm2i-div">
-                            <a href="{{ route('tool', 'google-core-web-vitals') }}">
+                            <a href="{{ route('tools', 'google-core-web-vitals') }}">
                               <img src="{{ asset('new-assets/assets/images/new-header-images/html-best-practices.svg') }}" alt="">
                             </a>
-                            <a href="{{ route('tool', 'google-core-web-vitals') }}">Core web vitals</a>
+                            <a href="{{ route('tools', 'google-core-web-vitals') }}">Core web vitals</a>
                           </div>
                           
                         </li>
@@ -243,10 +242,10 @@
     <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}"></script>
 
     <!-- custom scripts -->
-    <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
-    <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
-    <script src="{{ asset('new-assets/js/register.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
-    <script src="{{ asset('new-assets/js/imran.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/functions.js') }}"></script>
+    <script src="{{ asset('new-assets/js/main.js') }}"></script>
+    <script src="{{ asset('new-assets/js/register.js') }}"></script>
+    <script src="{{ asset('new-assets/js/imran.js') }}"></script>
       
 
 

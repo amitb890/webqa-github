@@ -39,7 +39,10 @@
                                 <label for="name" class="form-label" style="margin-bottom: 0;">List of urls</label>
                                 <span class="total_url" style="display: none; color: green; font-weight: 500;"></span>
                             </div>
-                            <textarea name="" rows="3" id="urlsList" class="form-control" placeholder="Enter each url in new line"></textarea>
+                            <div class="project-urls-numbered">
+                                <div class="project-urls-numbered__numbers"></div>
+                                <textarea name="" rows="3" id="urlsList" class="form-control project-urls-numbered__textarea" placeholder="Enter each url in new line"></textarea>
+                            </div>
                             <div id="noUrlsDetectedMessage" style="display: none; margin-top: 10px; color: #6c757d; font-size: 14px; font-style: italic;">
                                 We could not auto-detect any urls on your website, please enter URLs manually.
                             </div>
@@ -50,10 +53,10 @@
                         </div>
                         <div class="main_sitemap_area">
                             <div class="sitemap_area">
-                                <ol class="sitemap_input">
-                                    <span class="xml_sitemap_li sitemap_li"></span>
-                                </ol>
-                            </div>
+                            <ol class="sitemap_input">
+                                <span class="xml_sitemap_li sitemap_li"></span>
+                            </ol>
+                        </div>
                         </div>
 
                         <button type="button" id="createProjectButton" class="btn btn_primary rounded-pill">Add Project</button>

@@ -126,13 +126,25 @@ class AlertManager {
     }
 
     /**
-     * Clear all alerts from a target
+     * Clear all alerts from a target (including sibling alerts)
      */
     static clear(target) {
         const targetElement = typeof target === 'string' ? document.querySelector(target) : target;
         if (targetElement) {
-            const alerts = targetElement.querySelectorAll('.alert');
-            alerts.forEach(alert => alert.remove());
+            // Clear alerts inside the element
+            const alertsInside = targetElement.querySelectorAll('.alert');
+            alertsInside.forEach(alert => alert.remove());
+            
+            // Clear sibling alerts (alerts placed after/before the element)
+            if (targetElement.parentNode) {
+                const siblingAlerts = targetElement.parentNode.querySelectorAll('.alert');
+                siblingAlerts.forEach(alert => {
+                    // Only remove if it's a sibling (not a descendant)
+                    if (alert.parentNode === targetElement.parentNode) {
+                        alert.remove();
+                    }
+                });
+            }
         }
     }
 
@@ -549,7 +561,7 @@ function buildAlertNewSuccess(txt){
 }
 
 function clearAlerts(){
-    $(`.alert`).not('.alert-custom').remove()
+    $(`.alert`).remove()
     $(`.invalid-feedback`).remove()
     $(`.success-feedback`).remove()
     // Remove red border from accor-single-item elements (only if they exist)
@@ -568,7 +580,7 @@ function clearAlerts(){
 }
 
 function clearAlertsNew(){
-    $(`.alert`).not('.alert-custom').remove()
+    $(`.alert`).remove()
     $(`.invalid-feedback`).remove()
     $(`.success-feedback`).remove()
     // Remove red border from accor-single-item elements (only if they exist)
@@ -824,14 +836,34 @@ function validateFront(data, type){
     const value = data.el.value.trim()
     if(value === ""){
         const alert = buildAlertNew(data.msgEmpty)
-        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
+        // For bulk type, show error at bottom of textarea using AlertManager
+        if(type === "bulk"){
+            AlertManager.afterElement(data.el, data.msgEmpty, {
+                type: AlertManager.types.ERROR,
+                autoHide: false
+            });
+        } else {
+            const container = data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container");
+            if(container) {
+                container.prepend(alert);
+            } else {
+                // Fallback: use AlertManager
+                AlertManager.afterElement(data.el, data.msgEmpty, {
+                    type: AlertManager.types.ERROR,
+                    autoHide: false
+                });
+            }
+        }
         return false
     }
 
     if(type === "bulk"){
         if(checkedBoxes.length < 1){
-            const alert = buildAlertNew("At least one test criteria must be selected.")
-            data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
+            // For bulk type, show error at bottom of textarea using AlertManager
+            AlertManager.afterElement(data.el, data.msgMinimumSelection || "Please select at least one test criteria to perform the analysis.", {
+                type: AlertManager.types.ERROR,
+                autoHide: false
+            });
             return false
         }
         var list = value.split("\n")
@@ -839,8 +871,11 @@ function validateFront(data, type){
             var domain = constructTestURL(list[i])
             if(!isValidURL(domain)){
                 let msgInvalid = `${domain} is an incorrect URL format, please enter the URL in the correct format and try again.`
-                const alert = buildAlertNew(msgInvalid)
-                data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
+                // For bulk type, show error at bottom of textarea using AlertManager
+                AlertManager.afterElement(data.el, msgInvalid, {
+                    type: AlertManager.types.ERROR,
+                    autoHide: false
+                });
                 return false
             }
         }
@@ -2089,10 +2124,14 @@ function getModalFixContent(testName){
 
 
 function truncateString(str, num) {
-    if (str.length <= num) {
-      return str
+    if (str === undefined || str === null) {
+      return ""
     }
-    return str.slice(0, num) + '...'
+    const safeStr = String(str)
+    if (safeStr.length <= num) {
+      return safeStr
+    }
+    return safeStr.slice(0, num) + '...'
 }
 
 
@@ -2757,6 +2796,15 @@ function getAllTestLabels(type, label = "default"){
             url: "/test/xml-sitemap",
             urlDetails: "/test-details/xml-sitemap",
             reportsUrl: "/reports/xml-sitemap",
+            parent: "seo",
+        },
+        {
+            displayName: "Schema",
+            name: "schema",
+            dbName: "schema",
+            url: "/test/schema",
+            urlDetails: "/test-details/schema",
+            reportsUrl: "/reports/schema",
             parent: "seo",
         },
         {

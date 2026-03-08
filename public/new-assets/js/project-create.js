@@ -7,6 +7,95 @@ $(document).ready(function() {
     // Track last processed homepage URL to prevent duplicate sitemap detection
     // Initialize with current homepage value on edit page (if exists)
     let lastProcessedHomepage = $('#homepage').val() ? $('#homepage').val().trim() : '';
+
+    // Add auto line numbers to URLs list (project create/edit only)
+    function initUrlsListAutoNumbers() {
+        const textarea = document.getElementById('urlsList');
+        if (!textarea) return;
+
+        const wrapper = textarea.closest('.project-urls-numbered');
+        if (!wrapper) return;
+
+        const numbers = wrapper.querySelector('.project-urls-numbered__numbers');
+        if (!numbers) return;
+
+        function getLineHeightPx() {
+            const cs = getComputedStyle(textarea);
+            if (cs.lineHeight === 'normal') {
+                return parseFloat(cs.fontSize) * 1.2;
+            }
+            return parseFloat(cs.lineHeight);
+        }
+
+        function syncStyles() {
+            const cs = getComputedStyle(textarea);
+            numbers.style.fontSize = cs.fontSize;
+            numbers.style.lineHeight = `${getLineHeightPx()}px`;
+            numbers.style.paddingTop = cs.paddingTop;
+            numbers.style.paddingBottom = cs.paddingBottom;
+        }
+
+        function renderNumbers() {
+            const value = textarea.value.trim();
+            if (value === '') {
+                numbers.innerHTML = '';
+                return;
+            }
+
+            const lines = textarea.value.split('\n').length;
+            let html = '';
+            for (let i = 1; i <= lines; i++) {
+                html += `<div>${i}.</div>`;
+            }
+            numbers.innerHTML = html;
+        }
+
+        function syncScroll() {
+            numbers.style.height = textarea.clientHeight + 'px';
+            numbers.scrollTop = textarea.scrollTop;
+        }
+
+        function refreshNumbers() {
+            syncStyles();
+            renderNumbers();
+            syncScroll();
+        }
+
+        refreshNumbers();
+        // Repaint after layout/fonts settle (DevTools triggers this too)
+        setTimeout(refreshNumbers, 0);
+        setTimeout(refreshNumbers, 100);
+        window.addEventListener('load', refreshNumbers);
+
+        textarea.addEventListener('input', refreshNumbers);
+
+        textarea.addEventListener('scroll', syncScroll);
+        window.addEventListener('resize', () => {
+            syncStyles();
+            renderNumbers();
+            syncScroll();
+        });
+
+        if (window.ResizeObserver) {
+            const ro = new ResizeObserver(() => {
+                syncStyles();
+                renderNumbers();
+                syncScroll();
+            });
+            ro.observe(textarea);
+        }
+    }
+
+    initUrlsListAutoNumbers();
+
+    function setUrlsListValue(value) {
+        const urlsList = $("#urlsList");
+        urlsList.val(value);
+        const el = urlsList[0];
+        if (el) {
+            el.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+    }
     
     // URL validation function (same as onboarding isValidUrl method)
     function isValidURLForHomepage(string) {
@@ -98,7 +187,7 @@ $(document).ready(function() {
     // Fetch URLs from sitemaps function (same as onboarding detectUrls)
     async function fetchUrls(selectedSitemaps) {
         // Clear existing URLs list and hide messages
-        $("#urlsList").val("");
+        setUrlsListValue("");
         $('#noUrlsDetectedMessage').hide();
         $('.total_url').hide();
         
@@ -106,7 +195,7 @@ $(document).ready(function() {
         if (!selectedSitemaps || selectedSitemaps.length === 0) {
             const rootUrl = $('#homepage').val().trim();
             if (rootUrl) {
-                $("#urlsList").val("1. " + rootUrl);
+                setUrlsListValue(rootUrl);
                 $('.total_url').text('Total 1 URL found.').show();
             }
             $('#noUrlsDetectedMessage').show();
@@ -136,17 +225,15 @@ $(document).ready(function() {
             // Process URLs and populate urlsList textarea
             if (data.urls && data.urls.length > 0) {
                 let list = "";
-                // Add serial numbers for both create and edit pages
                 data.urls.forEach((url, i) => {
                     const trimmedUrl = url.trim();
-                    // Add serial number: "1. https://example.com"
-                    list += (i + 1) + ". " + trimmedUrl;
+                    list += trimmedUrl;
                     // Add newline if not the last item
                     if (i < data.urls.length - 1) {
                         list += "\n";
                     }
                 });
-                $("#urlsList").val(list);
+                setUrlsListValue(list);
                 
                 // Show total URL count and hide no URLs message
                 const urlCount = data.count || data.urls.length;
@@ -156,7 +243,7 @@ $(document).ready(function() {
                 // No URLs detected - add homepage and show message
                 const rootUrl = $('#homepage').val().trim();
                 if (rootUrl) {
-                    $("#urlsList").val("1. " + rootUrl);
+                    setUrlsListValue(rootUrl);
                     $('.total_url').text('Total 1 URL found.').show();
                 }
                 $('#noUrlsDetectedMessage').show();
@@ -167,7 +254,7 @@ $(document).ready(function() {
             // On error, add homepage and show message
             const rootUrl = $('#homepage').val().trim();
             if (rootUrl) {
-                $("#urlsList").val("1. " + rootUrl);
+                setUrlsListValue(rootUrl);
                 $('.total_url').text('Total 1 URL found.').show();
             }
             $('#noUrlsDetectedMessage').show();
@@ -406,7 +493,7 @@ $(document).ready(function() {
         $('#unique_homepage_project_valid').val(1); // Reset uniqueness flag
         $('#sitemap-loader').hide(); // Hide loader if user starts typing again
         $('#xmlSitemap').val(''); // Clear sitemap field on new input
-        $('#urlsList').val(''); // Clear URLs list on new input
+        setUrlsListValue(''); // Clear URLs list on new input
         $('.total_url').hide().empty(); // Hide and clear total URL count
         $('#noUrlsDetectedMessage').hide(); // Hide no URLs message
         lastProcessedHomepage = ''; // Reset tracking when user types

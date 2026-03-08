@@ -1,19 +1,3 @@
-/**
- * Normalize favicon URL to use current origin (fixes 127.0.0.1/localhost when deployed to VPS).
- */
-function normalizeFaviconUrl(url) {
-  if (!url || typeof url !== 'string') return url;
-  try {
-    const parsed = new URL(url, window.location.origin);
-    if (parsed.hostname === '127.0.0.1' || parsed.hostname === 'localhost') {
-      return window.location.origin + parsed.pathname + (parsed.search || '');
-    }
-    return url;
-  } catch (_) {
-    return url;
-  }
-}
-
 $(document).ready(function () {
 
   if(document.getElementById('modalCustomizer')){
@@ -21,32 +5,6 @@ $(document).ready(function () {
       keyboard: false
     })
   }
-
-  // Normalize favicon URLs on load (fix 127.0.0.1 when deployed to VPS)
-  var $activeFavicon = $('#activeFavicon');
-  var $activeProject = $('#activeProject');
-  if ($activeFavicon.length && $activeProject.length) {
-    var initialFavicon = $activeProject.attr('data-favicon');
-    if (initialFavicon) {
-      var normalized = normalizeFaviconUrl(initialFavicon);
-      if (normalized !== initialFavicon) {
-        $activeProject.attr('data-favicon', normalized);
-        $activeFavicon.attr('src', normalized);
-        setCookie('activeProjectFavicon', normalized, 7);
-      }
-    }
-  }
-  document.querySelectorAll('.select-project[data-favicon]').forEach(function (el) {
-    var fav = el.getAttribute('data-favicon');
-    if (fav) {
-      var norm = normalizeFaviconUrl(fav);
-      if (norm !== fav) {
-        el.setAttribute('data-favicon', norm);
-        var img = el.querySelector('img');
-        if (img) img.setAttribute('src', norm);
-      }
-    }
-  });
   
   // new
   updateSidebarSettingsLink()
@@ -96,11 +54,11 @@ $(document).ready(function () {
   const active = $("#activeProject");
   const activeVal = active.attr("data-val");
   const activeName = active.attr("data-name");
-  const activeFavicon = normalizeFaviconUrl(active.attr("data-favicon"));
+  const activeFavicon = active.attr("data-favicon");
 
   const projectVal = $(_this).attr("data-val")
   const projectName = $(_this).attr("data-name")
-  const projectFavicon = normalizeFaviconUrl($(_this).attr("data-favicon"))
+  const projectFavicon = $(_this).attr("data-favicon")
 
   const a = document.createElement("a")
   a.classList.add("dropdown-item")
@@ -398,7 +356,99 @@ $("#sidebar-pin").click(function () {
 
 
 
+// Function to filter sidebar reports based on user settings
+function filterSidebarReports() {
+  // Check if reportSettings exists
+  if (typeof window.reportSettings === 'undefined' || !window.reportSettings) {
+    console.warn('reportSettings not found, showing all reports');
+    return;
+  }
+  
+  // Debug: Log the settings object to see what values are loaded
+  console.log('Report Settings loaded:', window.reportSettings);
+  console.log('Meta Title value:', window.reportSettings.meta_title, 'Type:', typeof window.reportSettings.meta_title);
+
+  // Get all report list items with data-report-setting attribute
+  const reportItems = document.querySelectorAll('[data-report-setting]');
+  
+  if (reportItems.length === 0) {
+    console.warn('No report items found with data-report-setting attribute');
+    return;
+  }
+  
+  reportItems.forEach(function(item) {
+    const settingKey = item.getAttribute('data-report-setting');
+    const settingValue = window.reportSettings[settingKey];
+    
+    // Handle different value types: 0/1, false/true, null, undefined, "0"/"1" strings
+    // Convert to a consistent check - hide if falsy (0, false, null, undefined, "0", "")
+    let shouldHide = false;
+    
+    // Check if value is explicitly falsy
+    if (settingValue === null || settingValue === undefined) {
+      shouldHide = true;
+    } else if (settingValue === 0 || settingValue === false) {
+      // Explicitly check for 0 and false
+      shouldHide = true;
+    } else if (typeof settingValue === 'string') {
+      // Handle string values like "0", "false", ""
+      shouldHide = (settingValue === '0' || settingValue === 'false' || settingValue === '');
+    } else if (typeof settingValue === 'boolean') {
+      shouldHide = !settingValue; // Hide if false
+    } else if (typeof settingValue === 'number') {
+      shouldHide = settingValue === 0; // Hide if 0
+    } else {
+      // For any other type, check if it's falsy
+      shouldHide = !Boolean(settingValue);
+    }
+    
+    // Debug log for meta_title (can be removed later)
+    if (settingKey === 'meta_title') {
+      console.log('Meta Title setting check:', {
+        key: settingKey,
+        value: settingValue,
+        type: typeof settingValue,
+        shouldHide: shouldHide
+      });
+    }
+    
+    if (shouldHide) {
+      item.style.display = 'none';
+    } else {
+      item.style.display = '';
+    }
+  });
+
+  // Hide categories if all reports are hidden
+  const categories = document.querySelectorAll('.ssbl-item');
+  categories.forEach(function(category) {
+    const categoryList = category.querySelector('ul');
+    if (!categoryList) return;
+    
+    // Count visible reports (those not hidden by inline style)
+    const allReports = categoryList.querySelectorAll('[data-report-setting]');
+    let visibleCount = 0;
+    allReports.forEach(function(report) {
+      if (report.style.display !== 'none') {
+        visibleCount++;
+      }
+    });
+    
+    // If no visible reports, hide the entire category
+    if (visibleCount === 0) {
+      category.style.display = 'none';
+    } else {
+      category.style.display = '';
+    }
+  });
+}
+
 $(document).ready(function () {
+  // Filter reports on page load - delay to ensure DOM and settings are ready
+  setTimeout(function() {
+    filterSidebarReports();
+  }, 100);
+
   $(".ssbl-item-top").click(function () {
     const clickedItem = $(this);
     const list = clickedItem.next("ul");
@@ -424,6 +474,9 @@ $(document).ready(function () {
     subSidebarLower.toggleClass("open-scroll", anyVisible);
   });
 });
+
+// Make filterSidebarReports available globally for updates after settings change
+window.filterSidebarReports = filterSidebarReports;
 
 
 
@@ -1474,6 +1527,22 @@ document.querySelectorAll('.dropdown-toggle').forEach(link => {
   if($("#select_option").length > 0){
     $('#select_option').niceSelect();
   }
+
+  const tabImages = [
+  '/new-assets/assets/images/home/group-seo.png',
+  '/new-assets/assets/images/home/group-performance.png',
+  '/new-assets/assets/images/home/group-best-practices.png',
+  '/new-assets/assets/images/home/group-security.png',
+];
+
+tabImages.forEach(src => {
+  const img = new Image();
+  img.src = src;
+});
+
+
+
+
 });
 // Tracker Page Tooltip
 const tooltipTriggerList = document.querySelectorAll(

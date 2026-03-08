@@ -43,29 +43,32 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                                 <label for="name" class="form-label" style="margin-bottom: 0;">List of urls</label>
                                 <span class="total_url" style="display: none; color: green; font-weight: 500;"></span>
+                        </div>
+                            <div class="project-urls-numbered">
+                                <div class="project-urls-numbered__numbers"></div>
+                                <textarea name="" id="urlsList" class="form-control project-urls-numbered__textarea" rows="3" placeholder="Enter each url in new line">@foreach ($project->urls as $item){{ $item->url }}&#10;@endforeach</textarea>
                             </div>
-                            <textarea name="" id="urlsList" class="form-control" rows="3" placeholder="Enter each url in new line">@foreach ($project->urls as $index => $item){{ $index + 1 }}. {{ $item->url }}&#10;@endforeach</textarea>
                             <div id="noUrlsDetectedMessage" style="display: none; margin-top: 10px; color: #6c757d; font-size: 14px; font-style: italic;">
                                 We could not auto-detect any urls on your website, please enter URLs manually.
+                                </div>
                             </div>
-                        </div>
                         <div class="col-md-12 project-single-input">
                             <label for="name" class="form-label">XML Sitemaps</label>
                             <textarea class="form-control" id="xmlSitemap" rows="2" placeholder="Enter XML sitemap URLs (one per line)">@if(isset($xmlSitemap) && count($xmlSitemap) > 0)
-@foreach ($xmlSitemap as $itemXml)
+                                @foreach ($xmlSitemap as $itemXml)
 @if ($itemXml != ''){{ $itemXml }}
-@endif
-@endforeach
+                                    @endif
+                                @endforeach
 @endif</textarea>
                         </div>
                         <div class="main_sitemap_area">
                             <div class="sitemap_area">
-                                <ol class="sitemap_input">
+                            <ol class="sitemap_input">
                                     <span class="xml_sitemap_li sitemap_li"></span>
-                                </ol>
-                            </div>
+                            </ol>
                         </div>
-
+                            </div>
+                           
                         <button type="button" id="editProjectButton" class="btn btn_primary rounded-pill">Save Project</button>
                     </form>
                 </div>

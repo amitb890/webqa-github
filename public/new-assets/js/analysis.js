@@ -116,26 +116,27 @@ $( document ).ready(function() {
       document.getElementById(label.name).querySelector(".loader-item-current").textContent = "Testing..."
       
       // Open the content section when its first test starts
+      // But only if user hasn't manually closed it
       const parentType = label.parent
       if(!parentType || parentType === "seo"){
         // SEO tests (default case)
         const seoContent = document.getElementById("seo-content")
-        if(seoContent && seoContent.style.display !== "block"){
+        if(seoContent && seoContent.style.display !== "block" && !seoContent.getAttribute("data-user-closed")){
           seoContent.style.display = "block"
         }
       } else if(parentType === "performance"){
         const performanceContent = document.getElementById("performance-content")
-        if(performanceContent && performanceContent.style.display !== "block"){
+        if(performanceContent && performanceContent.style.display !== "block" && !performanceContent.getAttribute("data-user-closed")){
           performanceContent.style.display = "block"
         }
       } else if(parentType === "bestPractices"){
         const bestPracticesContent = document.getElementById("best-practices-content")
-        if(bestPracticesContent && bestPracticesContent.style.display !== "block"){
+        if(bestPracticesContent && bestPracticesContent.style.display !== "block" && !bestPracticesContent.getAttribute("data-user-closed")){
           bestPracticesContent.style.display = "block"
         }
       } else if(parentType === "security"){
         const securityContent = document.getElementById("security-content")
-        if(securityContent && securityContent.style.display !== "block"){
+        if(securityContent && securityContent.style.display !== "block" && !securityContent.getAttribute("data-user-closed")){
           securityContent.style.display = "block"
         }
       }
@@ -243,18 +244,18 @@ static collapsePreviousParent(data){
         }
       }
       
-      // Add table header
-      html += `<table class="broken-links-table">
-        <thead>
-          <tr>
-            <th>URL</th>
-            <th>HTTP Status Code</th>
-            <th>
-              <a href="#" class="ignore-all-link" data-urls='${JSON.stringify(brokenUrls.map(item => item.url))}'>Ignore All</a>
-            </th>
-          </tr>
-        </thead>
-        <tbody>`
+          // Add table header
+          html += `<table class="broken-links-table">
+          <thead>
+            <tr>
+              <th class="blt-header">URL</th>
+              <th class="blt-header">HTTP Status Code</th>
+              <th class="blt-3header">
+                <a href="#" class="ignore-all-link" data-urls='${JSON.stringify(brokenUrls.map(item => item.url))}'>Ignore All</a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>`
       
       // Display broken links
       brokenUrls.forEach((item, index) => {
@@ -1775,7 +1776,7 @@ static collapsePreviousParent(data){
 
   }   
 
-function toggleLoaderDropdown(id) {
+  function toggleLoaderDropdown(id) {
 
     var content = document.getElementById(id);
     const isCurrentlyOpen = content.style.display === "block";   
@@ -1786,6 +1787,8 @@ function toggleLoaderDropdown(id) {
     allContentElements.forEach(function(element) {
       if(element.id !== id && element.style.display === "block") {
         element.style.display = "none";
+        // Mark as user-closed when manually closed
+        element.setAttribute("data-user-closed", "true");
         // Update background when closing (gray if tests complete)
         UI.updateContainerBackground(element.id);
       }
@@ -1794,10 +1797,14 @@ function toggleLoaderDropdown(id) {
     // Toggle the clicked accordion
     if (isCurrentlyOpen) {
         content.style.display = "none";
+        // Mark as user-closed when manually closed
+        content.setAttribute("data-user-closed", "true");
         // Update background when closing (gray if tests complete)
         UI.updateContainerBackground(id);
     } else {
         content.style.display = "block";
+        // Remove user-closed flag when user manually opens
+        content.removeAttribute("data-user-closed");
     }
   }
 
@@ -3263,6 +3270,7 @@ function buildLoaderDetailSingleElement(label, idVal){
   }
 
 
+ 
   function buildElement1(data, intentionalState){
     let brokenLinksCount = 0
     if(data.title === 'Broken Links'){
@@ -3296,6 +3304,32 @@ function buildLoaderDetailSingleElement(label, idVal){
       let ul
       if(data.tagName != "Images"){
         ul = UI.getProblemsElement(data.problems)
+      }
+      
+      // Prepare schema subcards HTML if this is Schema test
+      let schemaBlocksHtml = '';
+      if((data.title === 'Schema' || data.tagName === 'Schema') && Array.isArray(data.blocks) && data.blocks.length){
+        schemaBlocksHtml += '<div class="card-inner-content schema-blocks-container">';
+        data.blocks.forEach((b, idx) => {
+          const typesText = (b.types && b.types.length) ? b.types.join(', ') : '(unknown)';
+          const snippet = b.snippet ? `<pre style="white-space:pre-wrap; background:#f8f9fa; padding:8px; border-radius:4px; max-height:220px; overflow:auto;">${escapeHtml(b.snippet)}</pre>` : '';
+          const probsHtml = (b.problems && b.problems.length) ? UI.getProblemsElement(b.problems) : '<div class="no-problems">No problems</div>';
+          // Make header clickable by adding schema-sub-header with data-target
+          schemaBlocksHtml += `<div class="card mb-2 schema-subcard">
+              <div class="card-body">
+                <div class="schema-sub-header d-flex justify-content-between align-items-center" data-target="#schema-sub-${idx}" role="button" tabindex="0" style="cursor:pointer;"
+                     onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">
+                  <div><strong>${typesText}</strong></div>
+                  <div><a href="javascript:void(0)" class="schema-sub-toggle" data-target="#schema-sub-${idx}" onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">▾</a></div>
+                </div>
+                <div id="schema-sub-${idx}" style="display:none; margin-top:8px;">
+                  ${snippet}
+                  ${probsHtml}
+                </div>
+              </div>
+            </div>`;
+        });
+        schemaBlocksHtml += '</div>';
       }
       
 
@@ -3466,6 +3500,8 @@ function buildLoaderDetailSingleElement(label, idVal){
                             </div>`
                             : ''}` : "" 
                         }
+                        
+                        ${schemaBlocksHtml ? schemaBlocksHtml : ''}
 
                         ${
                           data.title === 'Broken Links' ? `
@@ -3486,18 +3522,13 @@ function buildLoaderDetailSingleElement(label, idVal){
 
 
 
-                              <div class="modal fade meta-list-brokenBody" aria-labelledby="exampleModalToggleLabel" tabindex="1" id="broken-links-modal" aria-hidden="true" style="display: none;">
-                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <div>
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                                          List of broken links
-                                        </h1>
-                                        <button id="downloadCSVBrokenLinks"><img src="/new-assets/assets/images/xl.png" alt="xl-img"> Download CSV</button>
-                                      </div>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
+                              <div class="modal meta-list-brokenBody" aria-labelledby="exampleModalToggleLabel" tabindex="1" id="broken-links-modal" aria-hidden="true" style="display: none;">
+                                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-dialog-crossolm">
+                                  <div class="modal-content modal-content-crossolm">
+                                    <div class="modal-header modal-header-blm">
+                                      <span class="modal-title">Broken Links</span>
+                                      <span class="close modal-close close-crossolm" data-bs-dismiss="modal">×</span>
+                                     </div>
                                     <div class="modal-body">
                                       <div class="card-body">
                                         <div class="meta-list-single">
@@ -3531,7 +3562,7 @@ function buildLoaderDetailSingleElement(label, idVal){
                                 <div class="modal-table-div">
                                   <table>
 
-                                  <tbody>       
+                                  <>       
                                   
                                   ${data.secondaryBots.map((item, index) => `
                                         <tr>
@@ -3539,9 +3570,9 @@ function buildLoaderDetailSingleElement(label, idVal){
                                           <td>
                                           <span>${item}</span>
                                           </td>
-                                      </tr>
+                                      </tr>tbody
                                       `).join('')}   
-                                            </tbody> 
+                                            </> 
                                   </table>
                                   </div>   
                                 </div>
@@ -3553,17 +3584,21 @@ function buildLoaderDetailSingleElement(label, idVal){
                             `
                             <div class="card-inner-content">
                            
-                                <div class="card mb-2" style="width:50%">
-                                    <div class="card-body">
+                                <div class="card mb-2 robotsTxt-card">
+                                
+                                    <div class="card-body robotsTxt-scroll-wrapper">
+                                    <div class="robotsTxt-scroll-content">
+                                    
                                     ${data.content}
-                                    <div class="card-actual-url">
+                                    </div>
+                                    <div class="card-actual-url robotsTxt-card-actual-url">
                                     <table style="font-family: 'Courier Prime';">
                                     ${data.robotTextResponseData.map((item, index) => {
                                         if (item.trim() !== '') {
                                             return `
                                                 <tr>
-                                                    <td style="padding-right:30px">${index + 1}</td> <!-- Auto-incrementing value -->
-                                                    <td>${item}</td>
+                                                    <td style="padding-right:0px; color:#8f8f8f;">${index + 1}</td> <!-- Auto-incrementing value -->
+                                                    <td class="robotsTxt-card-td" style="color:#555555;">${item}</td>
                                                 </tr>
                                             `;
                                         } else {
@@ -3571,8 +3606,7 @@ function buildLoaderDetailSingleElement(label, idVal){
                                         }
                                     }).join('')}
                                 </table>
-                                
-                                        </div>
+                                      </div>
                                     </div>
                                 </div>
                             </div>`
@@ -3634,12 +3668,12 @@ function buildLoaderDetailSingleElement(label, idVal){
                                   <div class="modal-table-div">
                                   <table>
           
-                           <tbody>          
+                            <tbody>          
                                   ${data.protocolRelativeResourceData.map((item, index) => `
                                         <tr>
                                           <td>${index + 1}</td>
                                           <td>
-                                          <span><a href="${item}" target="_blank"><i class="fas fa-external-link-alt" style="color:#c3c9d1"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
+                                          <span><a href="${item}" target="_blank"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
                                           </td>
                                       </tr>
                                       `).join('')}   
@@ -3906,49 +3940,56 @@ function buildLoaderDetailSingleElement(label, idVal){
                         
                         : "" 
                     }
+                    
                     ${
                       data.title === 'Unsafe Cross Origin Links' ? `
                       ${data.crossOriginLinksData.length > 0 ? 
                         `<div class="card-inner-content">
                           <div class="card mb-2">
-                              <div class="card-body">
+                              <div class="card-body card-body-crossolm">
                               ${data.content}
                               <div class="card-actual-url">
-                              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crossOriginLinksModal">
-                                 Click here to see list of Cross Origin Links List
-                                  </button>
+                              <span data-bs-toggle="modal" data-bs-target="#crossOriginLinksModal" 
+                                style="border-bottom: 1px solid #7f6e6e; cursor: pointer;">Click here to see list of Cross Origin Links List</span>
                         
                       <div class="modal" id="crossOriginLinksModal">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
+                        <div class="modal-dialog modal-dialog-crossolm">
+                            <div class="modal-content modal-content-crossolm">
                                 <!-- Modal Header -->
-                                <div class="modal-header">
-                                    <h4 class="modal-title">Cross Origin Links</h4>
-                                    <button type="button" class="close" data-bs-dismiss="modal">&times;</button>
+                                <div class="modal-header modal-header-crossolm">
+                                    <h4 class="modal-title modal-title-crossolm">Cross Origin Links</h4>
+                                    <button type="button" class="close close-crossolm" data-bs-dismiss="modal">&times;</button>
                                 </div>
                                 <!-- Modal Body -->
-                                <div class="modal-body">
+                                <div class="modal-body modal-table-div-crossolm">
                                 <table>
                                     <tr>
-                                    <th>URL</th>
+                                    <th style="text-align: left;
+                                        padding-right: 20px; padding-bottom: 10px; font-size: 14px !important;
+                                        font-weight: 400 !important;
+                                        line-height: 18px !important;
+                                        color: rgba(110, 110, 110, 1) !important;
+                                        font-family: Circular Std !important;">URL</th>
                                     </tr>         
-                            ${data.crossOriginLinksData.map(item => `
-                                              <tr>
-                                                  <td>${item}</td>
-                                              </tr>
-                                            `).join('')}     
-                                 </table></div>
-                                <!-- Modal Footer -->
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
+                            ${data.crossOriginLinksData.map((item, index) => `
+                                        <tr>
+                                          <td>${index + 1}</td>
+                                          <td>
+                                          <span>${item}</span>
+                                          </td>
+                                      </tr>
+                                      `).join('')}      
+                                 </table>
+                                 </div>
                             </div>
                         </div>
-                        </div></div>
-                          </div>
+                        </div>
+                        </div>
+                        </div>
                       </div>`: ''}
                       ` : "" 
                   }
+                          
                           
 
                           ${data.problems ? 
@@ -4138,7 +4179,6 @@ function buildLoaderDetailSingleElement(label, idVal){
                 }else{
                   document.getElementById(parentID).appendChild(div)
                 }
-
                 // Fetch favicon via AJAX if snippet preview exists
                 if(data.showSnippet && projectUrl){
                   const faviconImg = div.querySelector('#activeFavicon');
@@ -4165,6 +4205,9 @@ function buildLoaderDetailSingleElement(label, idVal){
                   }
                 }
   }
+
+
+  
 function getFormattedName(url) {
     // Remove 'https://', 'http://', 'www.', and trailing slashes
     let domain = url.replace(/https?:\/\/(www\.)?/, '').replace(/\/.*/, '');
@@ -4230,46 +4273,48 @@ function getFormattedName(url) {
 
   function endTest(testLabels){
     
-      buildNavTabs(testLabels)
-      buildAnalysisArea(testLabels)
-      updateCircularProgress()
-      updateSliders()
-      disableSliderRange()
-      UI.updateEmailModal()
-      UI.toggleTiles(extendedTiles)
-      buildDatatable()
+    buildNavTabs(testLabels)
+    buildAnalysisArea(testLabels)
+    updateCircularProgress()
+    updateSliders()
+    disableSliderRange()
+    UI.updateEmailModal()
+    UI.toggleTiles(extendedTiles)
+    buildDatatable()
 
-      // updating snippet element title and description
-      UI.updateSnippetElement(pageTitle, pageDesc)
+    // updating snippet element title and description
+    UI.updateSnippetElement(pageTitle, pageDesc)
 
-      document.querySelector(".control-hide-show").style.display = "flex"
-      document.querySelector(".meta-tag-items").style.display = "block"
+    document.querySelector(".control-hide-show").style.display = "flex"
+    document.querySelector(".meta-tag-items").style.display = "block"
 
-      Controls.collapseCard()
-      $('.single-view .results-container .analysis-card:last-child > .card').css({
-        'border-bottom-right-radius': '0 !important',
-        'border-bottom-left-radius': '0 !important'
-      });
-      
-      // Close all content sections when all tests are finished
-      const contentSections = ["seo-content", "performance-content", "best-practices-content", "security-content"]
-      contentSections.forEach(contentId => {
-        const content = document.getElementById(contentId)
-        if(content){
-          content.style.display = "none"
-        }
-      })
+    Controls.collapseCard()
+    $('.single-view .results-container .analysis-card:last-child > .card').css({
+      'border-bottom-right-radius': '0 !important',
+      'border-bottom-left-radius': '0 !important'
+    });
+    
+    // Close all content sections when all tests are finished
+    const contentSections = ["seo-content", "performance-content", "best-practices-content", "security-content"]
+    contentSections.forEach(contentId => {
+      const content = document.getElementById(contentId)
+      if(content){
+        content.style.display = "none"
+        // Reset user-closed flag for fresh test run
+        content.removeAttribute("data-user-closed")
+      }
+    })
 
 
-      // firstTest = false
+    // firstTest = false
 
-      updateEvents()
-      $('#metaTagsUl').removeClass("show")
-      // update health score
-      const healthScore = getReportProgress(dataPassed.length, resultsData.length, false)
-      UI.setNeedleByValue(healthScore)
-      removeLoader()
-  }
+    updateEvents()
+    $('#metaTagsUl').removeClass("show")
+    // update health score
+    const healthScore = getReportProgress(dataPassed.length, resultsData.length, false)
+    UI.setNeedleByValue(healthScore)
+    removeLoader()
+}
 
 
   function disableSliderRange(){
