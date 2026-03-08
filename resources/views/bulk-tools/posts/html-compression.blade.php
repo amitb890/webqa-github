@@ -4,7 +4,7 @@
 @section('og-title', 'Test HTML Compression & Minification | Webqa')
 @section('og-description', 'Confirm that HTML is minified to cut payload size and improve load times. See decisive outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/html-compression')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/html-compression-test.png')
 @section('og-image-alt', 'HTML compression test')
 
 <div class="single-post-content-main bulk-tool-test">
@@ -19,7 +19,7 @@
     <li>HTML compression reduces bandwidth usage and helps improve performance on websites with high traffic.</li>
     <li>HTML compression usually means minifying HTML and removing inline CSS and JS. HTML compression is not about “zipping” files.</li>
     <li>It’s generally safe, but overly aggressive minification can break pages that rely on whitespace (e.g., <code>&lt;pre&gt;</code> or <code>&lt;textarea&gt;</code>).</li>
-    <li>It works best alongside <a target="_blank" href="{{ url('/tool/gzip-compression') }}">Gzip compression</a>, caching, and proper CSS and JS minification techniques.</li>
+    <li>It works best alongside <a target="_blank" href="https://webqa.co/tool/gzip-compression">Gzip compression</a>, caching, and proper CSS and JS minification techniques.</li>
   </ol>
 </div>
 

@@ -4,7 +4,7 @@
 @section('og-title', 'Test for Nested HTML Tables on a Page | Webqa')
 @section('og-description', 'Scan pages for nested table structures that complicate layout and impair accessibility. See decisive outcomes and export results to clean up markup.')
 @section('og-url', 'https://webqa.co/tool/nested-tables')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/nested-tables-test.png')
 @section('og-image-alt', 'Nested tables test')
 
 

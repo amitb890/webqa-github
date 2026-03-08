@@ -4,7 +4,7 @@
 @section('og-title', 'Test SSL Certificates for Validity & Domain Match | Webqa')
 @section('og-description', 'Check certificate validity, expiry, and domain match to ensure secure HTTPS. Detect issues that erode trust and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/ssl-certificate-test')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/ssl-certificate-test.png')
 @section('og-image-alt', 'SSL certificate test')
 
 <div class="single-post-content-main bulk-tool-test">
@@ -177,7 +177,7 @@
   <li><b><a target="_blank" href="https://www.buypass.com/products/tls-ssl-certificates/go-ssl">Buypass</a></b> – Common in Europe, especially for public sector use</li>
 </ol>
 
-<h4>How to know a CA is trusted</h4>
+<h5>How to know a CA is trusted</h5>
 <p>A CA, also known as a "Certificate authority" is considered trusted if its root certificate is included in major trust stores, such as:</p>
 <ol>
   <li>Google Chrome / Chromium</li>

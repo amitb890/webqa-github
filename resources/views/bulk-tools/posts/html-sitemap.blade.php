@@ -4,7 +4,7 @@
 @section('og-title', 'Test HTML Sitemap for Coverage & Link Validity | Webqa')
 @section('og-description', 'Audit your HTML sitemap—confirm it exists, links are crawlable and valid, and important pages are included. Export results for quick fixes and better discoverability.')
 @section('og-url', 'https://webqa.co/tool/html-sitemap')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/html-sitemap-test.png')
 @section('og-image-alt', 'HTML sitemap test')
 
 <div class="single-post-content-main bulk-tool-test">

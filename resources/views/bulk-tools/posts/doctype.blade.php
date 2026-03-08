@@ -4,7 +4,7 @@
 @section('og-title', 'Test Doctype for HTML5 Standards Mode | Webqa')
 @section('og-description', 'Check that DOCTYPE html is present and correctly placed to avoid quirks mode. See decisive Pass/Fail outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/doctype')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/doctype-test.png')
 @section('og-image-alt', 'Doctype test')
 
 <div class="single-post-content-main bulk-tool-test">

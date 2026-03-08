@@ -4,7 +4,7 @@
 @section('og-title', 'Test robots.txt for Crawl Directives | Webqa')
 @section('og-description', 'Audit robots.txt in seconds—verify syntax, Disallow/Allow rules, and sitemap lines, and ensure important pages aren’t blocked. Export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/robotstxt')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/robotstxt-test.png')
 @section('og-image-alt', 'robots.txt test')
 
 
@@ -12,148 +12,272 @@
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Robots.txt</h2>
 
-    <p>Your website is a bustling hub of information, but not all corners of your website are meant for every visitor or, more specifically, search engine robots. The Robots.txt file is a gentle but firm doorman, guiding these bots on where they can and can't go.</p>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>A robots.txt file tells search engine crawlers which parts of your website they can access and which parts they should avoid. </p>
+  <ol>
+    <li>Robots.txt is a plain text file placed at the root of your domain (for example: https://example.com/robots.txt).</li>
+    <li>It uses rules like "User-agent", Disallow, and Allow to guide how bots crawls your website pages.</li>
+    <li>Proper robots.txt setup improves crawl efficiency by keeping bots focused on your most important pages.</li>
+    <li>A misconfigured robots.txt can accidentally block critical pages or resources from getting crawled and hurt the website's SEO performance.</li>
+    <li>Robots.txt controls crawling, not indexing - blocked URLs can still appear in search results if they’re linked elsewhere or are already indexed.</li>
+  </ol>
+</div>
 
-    <h3>What is Robots.txt?</h3>
-    <p>Imagine your website as a grand mansion with numerous rooms. The Robots.txt is like the guidelines given to guests on which rooms they can visit and which they should avoid. In digital terms, this file tells search engine robots which pages or sections of your site they should not index.</p>
+<h3>What is Robots.txt?</h3>
+<p>A robots.txt file is a simple text file that gives instructions to search engine crawlers about which parts of your website they are allowed to crawl and which parts they should not be crawling.</p>
 
-    <p>A sample of the Robots.txt file looks like the below:</p>
+<p>It follows the Robots Exclusion Protocol, a widely supported standard that major search engines use to guide crawling behavior.</p>
+
+<p>A sample of the Robots.txt file looks like the below:</p>
     <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_1.png') }}" class="img-fluid my-4" alt="Sample Robots.txt example">
 
+<p><b>Where is Robots.txt Located?</b></p>
+<p>Your website's robots.txt file must be placed in the root directory of your website. That means it should be accessible at:</p>
+
+<div class="code-block">
+  <code>
+    https://example.com/robots.txt
+  </code>
+</div>
+
+<p>Search engines look for robots.txt in this exact location before crawling your site. If the file is missing or placed elsewhere most crawlers will ignore it.</p>
+
+<p><b>Example of a basic robots.txt rule:</b></p>
+<div class="code-block">
+  <code>
+    User-agent: *<br>
+    Disallow: /admin/
+  </code>
+</div>
+
+<p>This instructs all bots not to crawl the /admin/ section of the website.</p>
+
+<h3>Robots.txt Best Practices</h3>
+<p>A well-configured robots.txt> file helps search engines crawl your website efficiently without wasting time on low value or sensitive areas. But one wrong rule or incorrect syntax in Robots.txt can block critical pages and harm visibility in search engine result pages. Use these best practices to keep your robots.txt clean, safe, and SEO friendly.</p>
+
+<div class="list green-list">
+  <h3>Do’s</h3>
+  <ul>
+    <li><b>Place it at the root of your domain:</b>&nbsp;The Robots.txt file of your website must be accessible at https://www.domain.com/robots.txt to be recognized by crawlers. If you place the Robots.txt in any other location, and the crawlers will ignore it.</li>
+    <li><b>Use User-agent rules correctly:</b>&nbsp;Target specific bots (like Googlebot) only when needed; otherwise use <b>*</b> for all user-agents and bots.</li>
+    <li><b>Block only low-value or private sections of your website:</b>&nbsp;Robots.txt should be used to block unnecessary sections and URLs of your website from crawling. For example, admin areas, internal search pages, staging paths, or faceted filter URLs.</li>
+    <li><b>Use Allow for important exceptions:</b>&nbsp;If you disallow a folder but want one file or URL crawled inside it, use an Allow rule to add the required exception.</li>
+    <li><b>Add your XML sitemap URL:</b>&nbsp;Including Sitemap: helps search engines discover your XML sitemap faster which in turn helps discovering, crawling and indexing your website easier for search engines.</li>
+    <li><b>Keep rules simple and readable:</b>&nbsp;Shorter, clearer Robots.txt files are easier to manage and reduces mistakes.</li>
+  </ul>
+</div>
+
+<div class="list red-list">
+  <h3>Don’ts</h3>
+  <ul>
+    <li><b>Don’t block your entire website:</b>&nbsp;Avoid Disallow: / unless you intentionally want all bots not to crawl your website.</li>
+    <li><b>Don’t use robots.txt to hide sensitive data:</b>&nbsp;Robots.txt is public file and not a security feature. Protect sensitive areas with authentication instead.</li>
+    <li><b>Don’t block critical resources:</b>&nbsp;Blocking CSS/JS files can prevent Google from rendering pages correctly and may hurt SEO in some scenarios. It is indeed a good idea not to block CSS, JS and other resources which are required to render the page properly at the user's end.</li>
+    <li><b>Don’t rely on robots.txt to prevent indexing:</b>&nbsp;Robots.txt controls crawling, not indexing. Use the 
+      <a target="_blank" href="{{ url('/tools/robots-meta') }}">noindex robots meta tag</a> when you want to control which pages on your website should not be indexed.</li>
+    <li><b>Don’t create overly complex patterns:</b>&nbsp;Unnecessary wildcards and long rules can lead to unexpected blocking of URLs or entire directories.</li>
+    <li><b>Don’t forget to update it:</b>&nbsp;As your website grows, review robots.txt from time to time to ensure new sections aren’t accidentally blocked.</li>
+  </ul>
+</div>
+
+<h3>Good vs Bad Robots.txt Examples</h3>
+<p>
+  Let's see some real examples of good robots.txt implementation and bad robots.txt implementation. Good rules in Robots.txt keeps your website content crawlable while Bad rules in Robots.txt often blocks important sections or even the entire website
+  and can cause serious SEO issues.
+</p>
+
+<h5>Examples of Good robots.txt implementation</h5>
+<table class="good-bad-example-table">
+  <tr>
+    <th>Example</th>
+    <th>Why this is good</th>
+  </tr>
+  <tr>
+    <td>
+      <div class="code-block">
+        <code>
+          User-agent: *<br>
+          Disallow: /wp-admin/<br>
+          Allow: /wp-admin/admin-ajax.php
+        </code>
+      </div>
+    </td>
+    <td>
+      Blocks unnecessary admin pages while still allowing a commonly needed endpoint. This keeps crawling efficient without
+      breaking important site functionality.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="code-block">
+        <code>
+          User-agent: *<br>
+          Disallow: /search/<br>
+          Disallow: /filter/
+        </code>
+      </div>
+    </td>
+    <td>
+      Prevents crawling of internal search and filtered pages, which are often low-value and can create lots of duplicate URLs.
+      Helps conserve crawl budget on large sites.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="code-block">
+        <code>
+          User-agent: *<br>
+          Disallow: /checkout/<br>
+          Disallow: /cart/<br>
+          Disallow: /my-account/
+        </code>
+      </div>
+    </td>
+    <td>
+      Stops crawlers from wasting time on transactional or user-specific pages that typically don’t need to appear in search results.
+    </td>
+  </tr>
+</table>
+
+<h5>Examples of Bad robots.txt implementation</h5>
+<table class="good-bad-example-table">
+  <tr>
+    <th>Example</th>
+    <th>Why this is bad</th>
+  </tr>
+  <tr>
+    <td>
+      <div class="code-block">
+        <code>
+          User-agent: *<br>
+          Disallow: /
+        </code>
+      </div>
+    </td>
+    <td>
+      Blocks the entire website for all crawlers. This can cause pages to stop being crawled and may severely impact organic visibility.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="code-block">
+        <code>
+          User-agent: *<br>
+          Disallow: /blog/
+        </code>
+      </div>
+    </td>
+    <td>
+      Accidentally blocks a high-value content section that is often meant to drive SEO traffic. A common mistake during site changes or migrations.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <div class="code-block">
+        <code>
+          Disallow: /private-data/
+        </code>
+      </div>
+    </td>
+    <td>
+      Missing the <b>User-agent</b> directive, so the rule may be ignored by crawlers. Also, please note that robots.txt is not a security tool so sensitive areas of your website should be protected with authentication instead.
+    </td>
+  </tr>
+</table>
+
+<p>Whenever you are modifying the content of the Robots.txt file, remember to always test changes before deploying them to avoid accidental site-wide crawling issues. A good idea is to ensure at least two pair of eyes have validated and agreed to the changes, before it's made live on the server.
+</p>
 
 
+<h3>What Robots.txt Can and Cannot Do</h3>
+<p>Robots.txt is a crawl-directive file.</p>
+<p>It helps you guide search engine bots, but it has it's limits. Understanding what a Robots.txt can and cannot do will prevent common SEO mistakes.</p>
 
+<div class="list green-list">
+  <h3>What Robots.txt CAN Do</h3>
+  <ol>
+    <li><b>Control crawling behavior:</b> Robots.txt tells bots which sections of your website they should or should not crawl.</li>
+    <li><b>Reduces unnecessary server load:</b> Robots.txt limits bot hits on pages that don’t add value, especially on large websites.</li>
+    <li><b>Improves crawl efficiency:</b> Robots.txt guides bots towards important pages by blocking low-value or repetitive URL paths.</li>
+    <li><b>Manages crawl budget:</b> Robots.txt helps search engines spend their crawl resources on pages that matter the most.</li>
+    <li><b>Blocks crawling of utility areas:</b> Robots.txt can prevent crawling of admin pages, carts, checkout flows, and internal search results if you have properly defined user-agent and disallow rules.</li>
+  </ol>
+</div>
 
-    <h3>How Robots.txt Works:</h3>
-    <p>When a search engine robot tries to visit a page on your site, it checks for the Robots.txt file first. This file provides instructions, allowing or disallowing the robot from accessing certain parts. If the file or the specific directive doesn't exist, the robot assumes it's free to explore everywhere.</p>
-    
+<div class="list red-list">
+  <h3>What Robots.txt CANNOT Do</h3>
+  <ol>
+    <li><b>Guarantee a page won’t be indexed:</b> A URL can still appear in search results if it’s linked from elsewhere, even if crawling is blocked through Robots.txt.</li>
+    <li><b>Secure private content:</b> Robots.txt is public and not a security feature. Sensitive pages should be protected with login or authentication methods.</li>
+    <li><b>Remove pages already indexed:</b> If a page is already in Google, blocking it through robots.txt alone won’t remove it from Google's index.</li>
+    <li><b>Force search engines to forget a URL:</b> Robots.txt cannot be used to force search engines from forgetting a URL. Instead, Use noindex meta tag, proper HTTP status codes or removal tools in Google search console for de-indexing URLs of your website.</li>
+    <li><b>Stop all bots on the internet:</b> Major search engines obey robots.txt, but malicious scrapers may ignore it. So simply defining a Disallow statement in Robots.txt may or may not be sufficient to block all bots.</li>
+  </ul>
+</div>
 
-    <h3>Why is Robots.txt Important?</h3>
+<p>
+  <b>Important:</b> If your goal is to keep a page out of search results, don’t rely on robots.txt alone. Use a meta robots noindex tag or restrict access behind authentication.
+</p>
 
-    <h4>Precise Control Over Crawlers:</h4>
-    <p>The primary advantage of Robots.txt is the control it offers. By deploying a well-crafted Robots.txt file, you can instruct search engines about which parts of your site should remain inaccessible, ensuring that sensitive, irrelevant, or non-public pages remain out of the public search domain.</p>
-    <p><b>Example:</b> Imagine having a website with a public storefront and a private admin dashboard. Using Robots.txt allows search engines to access and index the storefront while keeping the dashboard confidential.</p>
-
-    <h4>Efficient Resource Allocation:</h4>
-    <p>While essential for indexing, web crawlers consume server resources every time they access your website. By directing these crawlers away from irrelevant or less important pages, you conserve server resources, ensuring a smoother experience for your visitors.</p>
-
-    <h4>Avoidance of Duplicate Content:</h4>
-    <p>Duplicate content can confuse search engines and may impact your SEO negatively. With Robots.txt, you can guide search engines to focus on the original or most relevant content, steering clear of redundant or duplicate pages.</p>
-
-    <h4>Optimize Crawl Budget:</h4>
-    <p>The term "crawl budget" refers to the number of pages a search engine will crawl on your website within a specific timeframe. If you've got a sprawling website with thousands of pages, it's essential to ensure that search engines focus on the most valuable pages. Using Robots.txt, you can help guide Googlebot and other search engine crawlers to allocate their crawl budget more effectively, ensuring priority pages get indexed.</p>
-
-
-    <h4>Protection of Non-Public and Duplicate Pages:</h4>
-    <p>Not all web pages are created for public viewing. Some, like admin logins, internal search results, staging sites, or even certain landing pages, might be better left out of search engine results. Thankfully, with Robots.txt, you can specify these preferences, ensuring only the most relevant pages appear in search results.</p>
-
-    <h4>Safeguarding Vital Resources:</h4>
-    <p>Sometimes, resources like PDFs, proprietary images, or exclusive videos might be intended for something other than broad public distribution. Robots.txt can help ensure such resources aren't indexed, keeping them exclusive to your website's visitors.</p>
-
-    <h3>Setting Up Robots.txt :</h3>
-    <ul>
-      <li><b>Create a Text File:</b> Create a new text file named "Robots.txt".</li>
-      <li><b>Instructions:</b> Add your rules, specifying the user agent (like Googlebot) and the pages you want to disallow or allow.</li>
-      <li><b>Place in Root Directory:</b> Ensure the Robots.txt file is in the root directory of your website (e.g., https://www.yourwebsite.com/Robots.txt).</li>
-    </ul>
-    <p><b>Example:</b></p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_2.png') }}" class="img-fluid my-4" alt="How robots.txt works diagram">
-    <p>In this example, all robots (denoted by *) are instructed not to access anything in the "private" and "test" directories of the website.</p>
-
-    <h3>Understanding Robots.txt Syntax</h3>
-    <p>The Robots.txt syntax is straightforward. At its core, it consists of directives instructing search engines on what to do when they encounter specified paths on your site. Each directive has a specific purpose, and combining them effectively helps optimize your site's visibility and accessibility.</p>
-
-    <h4>User-agent:</h4>
-    <p>This specifies the search engine robot to which the rule applies. If you want the rule to apply to all robots, use an asterisk (*).</p>
-    <p><b>Example:</b></p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_3.png') }}" class="img-fluid my-4" alt="How robots.txt works diagram">
-    <h4>Disallow:</h4>
-    <p>Used to instruct search engine robots not to crawl or index specific pages or directories.</p>
-
-    <p><b>To block a specific folder:</b></p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_4.png') }}" class="img-fluid my-4" alt="Block folder example">
-
-    <p><b>To block a specific webpage:</b></p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_5.png') }}" class="img-fluid my-4" alt="Block page example">
-
-    <h4>Allow (used mainly by Google):</h4>
-    <p>This is the opposite of Disallow. Search engine robots can access a page or folder, even inside a disallowed directory.</p>
-    <pre><code>Allow: /private/public-page.html</code></pre>
-
-    <h4>Sitemap:</h4>
-    <p>You can point search engines to your XML sitemap using this directive. This helps search engines discover all crawlable URLs.</p>
-    <p><b>Example:</b></p>
-
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_7.png') }}" class="img-fluid my-4" alt="Block page example">
-    <h4>Crawl-delay:</h4>
-    <p>This instructs robots to wait a specified number of seconds between successive crawls, reducing the load on the server. Note: Not all search engines respect this directive.</p>
-    <pre><code>Crawl-delay: 10</code></pre>
-    <p><b>Example:</b></p>
-    <p>To instruct a robot to wait 10 seconds between requests:</p>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_robots_8.png') }}" class="img-fluid my-4" alt="Crawl delay visual">
-    <p>Using the above directives effectively, website administrators can guide search engine robots in navigating their sites. By understanding and applying these directives, you can optimize your site's visibility in search engines while keeping private content hidden. Always test your Robots.txt  file to ensure it works as intended.</p>
-    <h3>Do's and Don'ts For Robots.txt</h3>
-
-    <b>✅ Do's:</b>
-    <ul>
-      <li>Be Clear: Ensure instructions are clear to prevent essential pages from being excluded from search engines.</li>
-      <li>Update: If your site evolves, update the Robots.txt to reflect these changes.</li>
-    </ul>
-
-    <b>❌ Don'ts:</b>
-    <ul>
-      <li>Over-Exclude: Be cautious not to block important pages or directories that you want to be indexed.</li>
-      <li>Rely Solely for Privacy: If you want to keep pages completely private, use other methods alongside, like password protection.</li>
-    </ul>
-
-
-    <h3>Conclusion</h3>
-    <p>Think of Robots.txt as the first point of interaction between your website and search engine robots. It's not just about exclusion but intelligent guidance to ensure your site appears in searches the way you desire. By mastering the usage of this simple file, you can significantly improve your website's relationship with search engines and, by extension, with your potential audience.</p>
-  
-
-    <!-- Start FAQ -->
-    <div class="getting-recover-main recover-faq-area">
-      <h3>FAQs</h3>
-      <div class="accordion" id="accordionPanelsStayOpenExample">
-        @foreach([
-       ['q' => 'What is the primary purpose of Robots.txt?', 'a' => 'Robots.txt  provides guidelines to search engines about which parts of a website they can crawl and index.'],
-
-['q' => 'Where should the Robots.txt  file be placed?', 'a' => 'It should be placed in the root directory of your website, e.g., https://www.yourwebsite.com/Robots.txt .'],
-
-['q' => 'Can I block all search engines from indexing my site with Robots.txt ?', 'a' => 'Yes, by using the instruction:<br><pre><code>User-agent: *<br>Disallow: /</code></pre><img src="' . asset('new-assets/assets/images/bulk-tool/bulk_robots_9.png') . '" class="img-fluid my-4" alt="Block all robots example">'],
-
-['q' => 'What is Robots.txt  used for?', 'a' => 'Robots.txt  is a file websites use to guide web crawlers and search engine bots about which pages or files the crawler should or shouldn\'t request from the site. It provides directives on what can be accessed and indexed.'],
-
-['q' => 'Do I need a Robots.txt  file?', 'a' => 'While not mandatory, having a Robots.txt  file is recommended. It helps you control how search engines index your website. Without it, search engines will crawl and index all parts of your website, which might not be ideal, especially if you have sensitive or redundant information.'],
-
-['q' => 'Is Robots.txt  a vulnerability?', 'a' => 'By itself, Robots.txt  is not a vulnerability. However, it can inadvertently reveal sensitive directories or files if configured incorrectly. It\'s crucial to ensure that any confidential parts of your site are protected by more than just a disallow directive in Robots.txt.'],
-
-['q' => 'Does robot.txt help SEO?', 'a' => 'Yes, when used correctly, Robots.txt  can be beneficial for SEO. By guiding search engines to the most relevant content and preventing them from indexing duplicate or non-essential pages, you can ensure that your website is more efficiently crawled and indexed.'],
-
-['q' => 'Where is the Robots.txt  file located?', 'a' => 'The Robots.txt  file is typically located in the root directory of your domain. You can access it by appending "/Robots.txt " to the end of your domain URL: https://www.example.com/robots.txt.'],
-
-       ] as $faq)
-        <div class="accordion-item">
-          <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-              data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
-              aria-expanded="false"
-              aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-              {{ $faq['q'] }}
-            </button>
-          </h2>
-          <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
-            class="accordion-collapse collapse"
-            aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-            <div class="accordion-body">
-              {!! $faq['a'] !!}
-            </div>
+<!-- Start FAQ -->
+<div class="getting-recover-main recover-faq-area">
+  <h3>FAQs on Robots.txt</h3>
+  <div class="accordion" id="accordionPanelsStayOpenExample">
+    @foreach([
+      [
+        'q' => 'Is robots.txt required for a website?',
+        'a' => 'No, it’s not required. But it’s highly recommended because it gives you control over what search engine bots crawl and helps you manage crawl budget—especially on larger sites.'
+      ],
+      [
+        'q' => 'Does robots.txt block indexing?',
+        'a' => 'Not necessarily. Robots.txt mainly controls crawling, not indexing. If a blocked URL is linked from other pages, it may still show up in search results without a full snippet.'
+      ],
+      [
+        'q' => 'How do I remove a page from Google search?',
+        'a' => 'Use a meta robots <b>noindex</b> tag (and allow crawling so Google can see it), return a 404/410 status code for removed pages, or use Google’s removal tools in Search Console if needed.'
+      ],
+      [
+        'q' => 'Where should the robots.txt file be placed?',
+        'a' => 'Robots.txt must be placed at the root of your domain, like: <code>https://yourdomain.com/robots.txt</code>. Search engines won’t look for it in subfolders.'
+      ],
+      [
+        'q' => 'Can I have multiple robots.txt files on one domain?',
+        'a' => 'No. Each domain (and subdomain) can only have one robots.txt file. If you have subdomains like <code>blog.example.com</code>, they need their own separate robots.txt file.'
+      ],
+      [
+        'q' => 'Does Google always follow robots.txt rules?',
+        'a' => 'Google and other major search engines generally respect robots.txt rules. However, robots.txt is not a security feature and malicious bots or scrapers may ignore it.'
+      ],
+      [
+        'q' => 'Should I block CSS and JavaScript files through robots.txt?',
+        'a' => 'Usually, no. Blocking CSS/JS can prevent Google from rendering your pages properly, which may hurt SEO. Only block assets if you have a specific reason and have tested the impact.'
+      ],
+      [
+        'q' => 'What’s the difference between robots.txt and a sitemap?',
+        'a' => 'Robots.txt tells bots where they can or cannot crawl. A sitemap helps bots discover important URLs you want crawled and indexed. Many sites use both together for best results.'
+      ]
+    ] as $faq)
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+            data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}" aria-expanded="false"
+            aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+            {{ $faq['q'] }}
+          </button>
+        </h2>
+        <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}" class="accordion-collapse collapse"
+          aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          <div class="accordion-body">
+            <p>{!! $faq['a'] !!}</p>
           </div>
         </div>
-        @endforeach
-        
       </div>
-    </div>
-    <!-- End FAQ -->
+    @endforeach
+  </div>
+</div>
+<!-- End FAQ -->
+
+ 
   </div>
 </div>

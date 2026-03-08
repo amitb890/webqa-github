@@ -4,78 +4,88 @@
 @section('og-title', 'Test XML Sitemaps for Accuracy & Coverage | Webqa')
 @section('og-description', 'Audit XML sitemaps—confirm presence and syntax, validate index/child sitemaps, check URL responses and lastmod, and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/xml-sitemap')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/xml-sitemap-test.png')
 @section('og-image-alt', 'XML sitemap test')
 
 <div class="single-post-content-main bulk-tool-test">
     <div class="single-post-content">
         <h2 class="tools_des_fastheading">XML Sitemap</h2>
 
-        <p>An XML Sitemap is like the blueprint of a building, guiding search engines through every nook and cranny of
-            your website. It ensures that search engines understand your website’s structure, helping them find and
-            index content efficiently.</p>
 
-        <h3>What is an XML Sitemap?</h3>
-        <p>Think of an XML (Extensible Markup Language) Sitemap as the roadmap for search engines. It lists all the
-            important pages on your website, providing information on how they are structured and interconnected. This
-            roadmap allows search engines like Google to crawl and index your site more intelligently, ensuring your
-            content gets the visibility it deserves.</p>
-
-        <h3>Why is an XML Sitemap Important?</h3>
-        <p>Without an XML Sitemap, search engines might miss out on crucial pages on your site, affecting your online
-            visibility. An XML Sitemap is particularly crucial for large websites, websites with a lot of content, or
-            websites with many pages that are not linked together. It aids search engines in understanding your site’s
-            structure and content, ensuring accurate indexing and better search rankings.</p>
-
-        <h3>Seeing XML Sitemap in Action</h3>
-        <p>When a search engine's crawler visits your site, it checks for the existence of an XML Sitemap. Upon finding
-            it, the crawler uses this guide to efficiently navigate your pages, understanding the hierarchy and
-            relevance of your content. This ensures that the search engine indexes your site’s content accurately,
-            helping to improve your site’s visibility in search engine results.</p>
-            <img src="{{ asset('new-assets\assets\images\bulk-tool\sitemap_image_1.png') }}" alt="Submit XML Sitemap Example"
-            class="img-fluid my-4">
-        <h3>How to Find Your XML Sitemap</h3>
-        <p>Locating your XML Sitemap is like going on a mini treasure hunt. By default, the sitemap .xml file usually
-            resides in the root directory of your domain, for instance, https://www.websitedomain.com/sitemap.xml.
-            However, the naming and location of this file aren't set in stone, as webmasters can define the filename and
-            choose any publicly accessible location on the website’s domain. Sometimes, to prevent competitors from
-            easily uncovering all the URLs on the domain, the sitemap might be strategically placed in a sub-folder,
-            adding an extra layer of mystery to its whereabouts.</p>
-
-        <h3>Creating an XML Sitemap: Steps for Optimal Indexing</h3>
-        <ul>
-            <li><b>Identify the Content</b>: List all the URLs on your website that you want search engines to crawl and
-                index.</li>
-            <li><b>Generate the Sitemap</b>: Use online tools or plugins to create an XML Sitemap. Most Content
-                Management Systems have plugins or built-in features to generate sitemaps.</li>
-            <li><b>Validate Your Sitemap</b>: Ensure that the sitemap is error-free using sitemap validation tools.</li>
-            <li><b>Submit Your Sitemap</b>: Once validated, submit it to search engines via their respective webmaster
-                tools, like Google Search Console.</li>
-        </ul>
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p>An XML sitemap is an XML file that lists important URLs on your website so search engines can discover, crawl, and index them more efficiently.</p>
+  <ol>
+    <li>XML sitemaps help search engines find important pages on your wewbsite, especially on large, new, or poorly interlinked websites.</li>
+    <li>An XML sitemap does not guarantee rankings in search results, but it improves crawling, discovery and indexing signals for search engines.</li>
+    <li>XML sitemaps can include helpful metadata like "lastmod" (last updated date), and can also support images,videos,news.</li>
+    <li>Sitemap index files are used when you have multiple sitemaps, this is common for big websites.</li>
+    <li>A broken or messy sitemap which contains 404s, redirects and blocked URLs can waste crawl budget and slow down crawling or indexing.</li>
+  </ol>
+</div>
 
 
-        <h3>Do's and Don'ts for XML Sitemap</h3>
+<h3>What Is an XML Sitemap?</h3>
+<p>An XML sitemap is a machine readable file usually named as sitemap.xml that lists the important pages of your website so search engines can crawl and index them more efficiently.</p>
+<p>Think of it as a map for search engine crawlers. An XML Sitemap helps search engines discover and prioritize key URLs especially when they might otherwise be missed.</p>
 
-        <b>✅ Do's</b>
-        <ul>
-            <li>Include Important Pages: Include all significant pages of your site that you want to be indexed.</li>
-            <li>Keep it Updated: Regularly update the sitemap as you add or remove pages.</li>
-            <li>Validate Before Submission: Always validate your sitemap before submitting it to avoid errors.</li>
-        </ul>
+<p>XML sitemaps are particularly useful when:</p>
+<ul>
+  <li>Your website is fairly new and has few external backlinks which search engines can use to effectively crawl all the content on the website.</li>
+  <li>Your website is large and contains thousands of URLs</li>
+  <li>Important pages are deeply nested or poorly interlinked, and they are not getting crawled by Google or other search engines.</li>
+  <li>You publish or update content frequently (blogs, news, ecommerce listings) and it takes considerable time for search engines to crawl and index fresh content.</li>
+</ul>
 
-        <b>❌ Don'ts</b>
-        <ul>
-            <li>Ignore Frequency: Do not overlook the importance of updating the sitemap regularly, especially when the
-                site’s content changes.</li>
-            <li>Include Noindex Pages: Avoid adding pages marked as ‘noindex’ in your sitemap.</li>
-            <li>Neglecting Structure: Do not create a disorganized sitemap; maintaining a clear hierarchy is crucial.
-            </li>
-        </ul>
+<p>Most websites host their XML sitemap at common locations in the root directoty such as:</p>
+<ol>
+  <li>/sitemap.xml</li>
+  <li>/sitemap_index.xml</li>
+</ol>
 
-        <h3>Conclusion</h3>
-        <p>An XML Sitemap navigates search engines, guiding them through your website’s content. It is paramount for
-            ensuring accurate indexing and improving your site’s visibility in search results, acting as a conduit
-            between your content and search engine crawlers.</p>
+<p>While search engines can sometimes discover sitemaps automatically, submitting them through Google Search Console gives you better visibility and control over how your website is crawled.</p>
+
+<h3>Types of XML Sitemap</h3>
+<p>Not all XML sitemaps are the same. Depending on the size and nature of your website, you may use one or more types of XML sitemaps to help search engines crawl your content efficiently.</p>
+
+<h5>URL Sitemap</h5>
+<p>This is the most common and standard XML sitemap that lists regular web pages such as website pages, blog posts, product pages, category pages, and landing pages.</p>
+<ol>
+  <li>Used by most small to medium sized websites</li>
+  <li>Contains canonical, indexable URLs</li>
+  <li>Typically named sitemap.xml</li>
+</ol>
+
+<h5>Index Sitemap</h5>
+<p>A sitemap index is a file that contains links to multiple individual sitemaps. It’s commonly used when a website is large or when URLs are grouped by content type.</p>
+<ol>
+  <li>Ideal for large websites with thousands or millions of URLs</li>
+  <li>Allows separation of sitemaps by content types - website pages, blogs, products, categories etc.</li>
+  <li>Helps keep each sitemap within size and URL limits</li>
+</ol>
+
+<h5>Image Sitemaps</h5>
+<p>Image sitemaps help search engines discover images that may not be easily found through normal crawling of individual webpages, especially on image heavy websites which contains thousands of images.</p>
+<ol>
+  <li>Useful for photography, ecommerce, and media websites.</li>
+  <li>Improves image discovery in search results.</li>
+</ol>
+
+<h5>Video Sitemaps</h5>
+<p>Video sitemaps provide additional information about video content, such as duration, description, and thumbnail URLs.</p>
+<ol>
+  <li>Recommended for websites with embedded or hosted videos</li>
+  <li>Helps videos appear in video search results</li>
+</ol>
+
+<h5>News Sitemap</h5>
+<p>News sitemaps are designed for news publishers and help search engines quickly discover fresh content.</p>
+<ol>
+  <li>Used by Google News approved publishers</li>
+  <li>Focuses on recently published articles</li>
+</ol>
+
+<p>Most websites only need a standard URL sitemap. Specialized sitemaps should be used only when they genuinely add value and apply to your specific content type.</p>
 
         <!-- Start FAQ -->
         <div class="getting-recover-main recover-faq-area">
@@ -83,20 +93,24 @@
             <div class="accordion" id="accordionPanelsStayOpenExample">
                 @foreach ([
         [
-            'q' => 'What does an XML Sitemap do?',
-            'a' => 'An XML Sitemap aids search engines in efficiently crawling, understanding, and indexing the content of your website, ensuring that it gains the visibility it deserves in search results.',
+            'q' => 'Does having an XML sitemap improve rankings?',
+            'a' => 'Not directly. But it helps discovery and indexing, which can improve how reliably pages appear in search.',
         ],
         [
-            'q' => 'How do I create an XML Sitemap?',
-            'a' => 'Creating an XML Sitemap typically involves listing out the URLs of your website and using online tools, plugins, or built-in CMS features to generate the sitemap. Once created and validated, it needs to be submitted to search engines via their webmaster tools.',
+            'q' => 'Should I include every URL on my websites XML Sitemap?',
+            'a' => 'No. You should include those webpages that should be indexed and shown in search engine result pages. You can skip those pages which you do not want to be indexed.',
         ],
         [
-            'q' => 'Is an XML Sitemap necessary?',
-            'a' => 'While not mandatory, having an XML Sitemap is highly recommended, especially for sites with numerous pages, complex structures, or frequent content updates. It ensures that search engines can efficiently index your site, improving your online visibility.',
+            'q' => 'How often should an XML Sitemap be updated?',
+            'a' => 'Whenever important pages are added, removed or changed on the website, the XML Sitemap should be updated to reflect the URLs of the website.',
+        ],
+        [
+            'q' => 'What is the difference between HTML sitemap and XML sitemap?',
+            'a' => 'XML sitemaps are mainly for search engines. HTML sitemaps are user facing navigation pages.',
         ],
         [
             'q' => 'Can I have more than one XML Sitemap?',
-            'a' => 'Yes, especially for larger websites, it\'s common to have multiple XML Sitemaps, organized by content type or site section, and then have a Sitemap index file listing all the individual sitemaps.',
+            'a' => 'It is totally okay to have more than one XML Sitemap, especially if your website is large enough and has thousands of urls. For larger websites, it is common to have multiple XML Sitemaps, organized by content type or website section, and then have a Sitemap index file listing all the individual sitemaps.',
         ],
     ] as $faq)
                     <div class="accordion-item">

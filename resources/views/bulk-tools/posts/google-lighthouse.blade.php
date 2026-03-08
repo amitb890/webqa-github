@@ -4,7 +4,7 @@
 @section('og-title', 'Test Google Lighthouse: Performance, Accessibility, Best Practices & SEO | Webqa')
 @section('og-description', 'Audit pages with Lighthouse for mobile and desktop—view category scores, identify issues, and export results to coordinate faster fixes.')
 @section('og-url', 'https://webqa.co/tool/google-lighthouse')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/google-lighthouse-test.png')
 @section('og-image-alt', 'Google Lighthouse test')
 
 
@@ -12,6 +12,25 @@
   <div class="single-post-content">
     <h2 class="tools_des_fastheading">Google Page Speed Lighthouse Score</h2>
 
+
+<div class="list yellow-content summary-block">
+  <span class="summary-heading">Quick Summary</span>
+  <p><a target="_blank" href="https://developer.chrome.com/docs/lighthouse/overview">Google Lighthouse</a> is an open source tool from Google that audits webpages across key quality areas -
+    Performance, Accessibility, Best Practices, SEO, and PWA.</p>
+  <ol>
+    <li>It helps you spot issues that hurt real users: slow load, layout shifts, heavy JavaScript, and unoptimized assets.</li>
+    <li>It highlights accessibility problems (contrast, labels, ARIA usage) that impact usability and compliance.</li>
+    <li>You get actionable recommendations with clear “what to fix” guidance and supporting details.</li>
+    <li>Scores are useful for benchmarking, but the real value is in the audit findings and opportunities list.</li>
+    <li>Results can vary by device settings, network throttling, and page state.</li>
+  </ol>
+</div>
+
+
+
+
+
+<!-- Old content -->
     <p>Navigating the web today, we often judge websites by their speed and responsiveness. In this context, the Google Page Speed Lighthouse Score emerges as a crucial metric, functioning much like a fitness tracker for websites, gauging their health and vitality regarding speed.</p>
 
     <h3>What is Google Page Speed Lighthouse Score?</h3>

@@ -4,7 +4,7 @@
 @section('og-title', 'Test Meta Titles with Custom Rules | Webqa')
 @section('og-description', 'Audit meta titles with your standards—length, casing, and H1 difference. See decisive Pass/Fail outcomes and export results for quick fixes.')
 @section('og-url', 'https://webqa.co/tool/meta-title')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools-meta-title.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/meta-title-test.png')
 @section('og-image-alt', 'Meta title test')
 
 <div class="single-post-content-main bulk-tool-test">

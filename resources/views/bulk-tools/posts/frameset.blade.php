@@ -4,7 +4,7 @@
 @section('og-title', 'Test for Deprecated Frames (frameset/frame) | Webqa')
 @section('og-description', 'Scan a page for frameset/frame usage—now obsolete and harmful to accessibility, indexing, and UX. See decisive outcomes and export results to modernize layout.')
 @section('og-url', 'https://webqa.co/tool/frameset')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/frameset-test.png')
 @section('og-image-alt', 'Frameset test')
 
 

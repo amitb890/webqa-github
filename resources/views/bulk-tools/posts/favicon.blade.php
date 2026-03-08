@@ -4,7 +4,7 @@
 @section('og-title', 'Test Favicon Presence and Validity | Webqa')
 @section('og-description', 'Audit favicon configuration—confirm icons are present, properly linked, and use supported formats/sizes for reliable display across browsers and devices.')
 @section('og-url', 'https://webqa.co/tool/favicon')
-@section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
+@section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/favicon-test.png')
 @section('og-image-alt', 'Favicon test')
 
 
