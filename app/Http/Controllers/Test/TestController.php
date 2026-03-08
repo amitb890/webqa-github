@@ -112,7 +112,12 @@ class TestController extends Controller
             }else{
                 $data = $request->input('data');
                  $parsedUrl = parse_url($data["urlValue"]);
-                 $normalizeUrl = strtolower($parsedUrl['host']); 
+                 // Normalize host and remove common www prefix to ensure matching against stored homepage URLs
+                 $normalizeUrl = '';
+                 if (isset($parsedUrl['host'])) {
+                     $normalizeUrl = strtolower($parsedUrl['host']);
+                     $normalizeUrl = preg_replace('/^www\\./', '', $normalizeUrl);
+                 }
                  
                  $cookies = Cookie::get();
                 if (!isset($_COOKIE["remember_cookie_".Auth::id()]) && !isset($_COOKIE["test_cookie_".Auth::id()])) { 
@@ -819,7 +824,6 @@ class TestController extends Controller
         $object->settings = $settings->settings_sub;
         echo json_encode($object);
     }
-
 
 
     public function canonical(Request $request){
@@ -1763,6 +1767,43 @@ class TestController extends Controller
         echo json_encode($object);
     }
 
+    public function getFaviconUrl(Request $request)
+    {
+        $helpers = new Helper();
+        $rawInput = $request->input('url', '');
+
+        if (!$rawInput || !is_string($rawInput)) {
+            return response()->json(['favicon' => '']);
+        }
+
+        $rawInput = preg_replace('/[\x00-\x1F\x7F\xA0]/u', '', trim($rawInput));
+
+        if (!preg_match('#^https?://#i', $rawInput)) {
+            $rawInput = 'https://' . $rawInput;
+        }
+
+        $parsed = parse_url($rawInput);
+        $scheme = $parsed['scheme'] ?? 'https';
+        $host = $parsed['host'] ?? '';
+        $host = preg_replace('/^www\./i', '', $host);
+
+        if ($host === '') {
+            return response()->json(['favicon' => '']);
+        }
+
+        $homepage = $scheme . '://' . $host;
+        $favicon = $helpers->getFavicon($homepage);
+
+        if ($favicon === "" || $favicon === null) {
+            return response()->json(['favicon' => '']);
+        }
+
+        $favicon = $helpers->normalizeFaviconUrl($favicon, $homepage);
+        $favicon = $helpers->getAbsolutePath($favicon, $homepage);
+
+        return response()->json(['favicon' => $favicon]);
+    }
+
 
     public function xmlSitemap(Request $request){
         $helpers = new Helper();
@@ -1941,6 +1982,212 @@ class TestController extends Controller
         echo json_encode($object);
     }
 
+    /**
+     * Minimal Schema test: fetch page, extract JSON-LD blocks and report types & parse errors.
+     */
+    public function schema(Request $request){
+        $data = $request->input('data');
+        $helpers = new Helper();
+        $urlValue = isset($data['urlValue']) ? $data['urlValue'] : '';
+        $object = new \stdClass();
+        $object->title = "Schema";
+        $object->name = "schema";
+        $object->status = true;
+        $object->problems = [];
+        $object->types = [];
+        $object->sampleSnippet = "";
+        $object->httpStatus = 0;
+
+        if(!$urlValue){
+            $object->status = false;
+            $object->problems[] = "No URL provided";
+            echo json_encode($object);
+            return;
+        }
+        // Normalize input URL for later comparison (ensure scheme present)
+        if (!preg_match('/^https?:\/\//i', $urlValue)) {
+            $urlValue = 'https://' . ltrim($urlValue, '/');
+        }
+
+        // When "Only specific pages" is selected: apply allowed list only to URLs that belong to the project (same domain as homepage).
+        // If URL does not belong to project (e.g. setmore.com vs project lexreception.com), skip list check and run schema test.
+        // Bulk tool (no project/session): this block is skipped and test runs for the given URL.
+        try {
+            $settings = json_decode(\Session::get('settings'));
+            $project = json_decode(\Session::get('project'));
+            $urlBelongsToProject = false;
+            if($project && isset($project->homepage) && $project->homepage){
+                $urlHost = strtolower(preg_replace('/^www\\./i', '', parse_url($urlValue, PHP_URL_HOST) ?: ''));
+                $homepageHost = strtolower(preg_replace('/^www\\./i', '', parse_url($project->homepage, PHP_URL_HOST) ?: ''));
+                $urlBelongsToProject = ($urlHost !== '' && $homepageHost !== '' && $urlHost === $homepageHost);
+            }
+
+            if($urlBelongsToProject && $settings && isset($settings->settings_sub) && isset($settings->settings_sub->schema_test_custom) && (int)$settings->settings_sub->schema_test_custom === 1){
+                $schemaVal = isset($settings->settings_sub->schema_val) ? $settings->settings_sub->schema_val : '';
+
+                // build allowed normalized list
+                $normalize = function($u){
+                    $u = trim($u);
+                    if($u === '') return '';
+                    if(!preg_match('/^https?:\\/\\//i', $u)){
+                        $u = 'https://' . ltrim($u, '/');
+                    }
+                    $p = parse_url($u);
+                    if(!$p) return '';
+                    $host = isset($p['host']) ? preg_replace('/^www\\./i','', strtolower($p['host'])) : '';
+                    $path = isset($p['path']) ? rtrim($p['path'], '/') : '';
+                    $query = isset($p['query']) ? '?'.$p['query'] : '';
+                    return $host . ($path !== '' ? $path : '') . ($query !== '' ? $query : '');
+                };
+
+                $allowed = [];
+                if($schemaVal !== ''){
+                    $parts = preg_split('/[,\\r\\n]+/', $schemaVal);
+                    foreach($parts as $p){
+                        $p = trim($p);
+                        if($p === '') continue;
+                        $n = $normalize($p);
+                        if($n !== '') $allowed[] = $n;
+                    }
+                }
+
+                if(count($allowed) > 0){
+                    $normUrl = $normalize($urlValue);
+                    $found = false;
+                    foreach($allowed as $a){
+                        if($a === $normUrl){
+                            $found = true;
+                            break;
+                        }
+                    }
+
+                    if(!$found){
+                        $object->status = true;
+                        $object->problems = [];
+                        $object->message = "Schema check excluded for this page.";
+                        $object->showContent = false;
+                        echo json_encode($object);
+                        return;
+                    }
+                }
+            }
+        } catch(\Exception $e){
+            // fail-open: proceed to run the test if any error occurs while checking settings
+        }
+
+        try {
+            $response = Http::withHeaders([
+                'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0)'
+            ])->timeout(10)->get($urlValue);
+            $status = $response->status();
+            $object->httpStatus = $status;
+            if($status !== 200){
+                $object->status = false;
+                $object->problems[] = "URL returned status {$status}";
+            }
+            $html = $response->body();
+        } catch (\Exception $e){
+            $object->status = false;
+            $object->problems[] = "Request failed: " . $e->getMessage();
+            echo json_encode($object);
+            return;
+        }
+
+        // Bulk criteria from settings (when Session has settings from collect)
+        $requireJsonLd = true;
+        $requireNoErrors = true;
+        try {
+            $settings = json_decode(\Session::get('settings'));
+            if($settings && isset($settings->settings_sub)){
+                $requireJsonLd = isset($settings->settings_sub->schema_require_json_ld) ? (int)$settings->settings_sub->schema_require_json_ld === 1 : true;
+                $requireNoErrors = isset($settings->settings_sub->schema_no_errors) ? (int)$settings->settings_sub->schema_no_errors === 1 : true;
+            }
+        } catch (\Exception $e) { /* use defaults */ }
+
+        // extract JSON-LD blocks
+        $matches = [];
+        preg_match_all('/<script[^>]*type=[\'"]application\\/ld\\+json[\'"][^>]*>([\\s\\S]*?)<\\/script>/i', $html, $matches);
+        $rawBlocks = $matches[1] ?? [];
+
+        $blocksInfo = [];
+        if(count($rawBlocks) === 0){
+            if($requireJsonLd){
+                $object->status = false;
+                $object->problems[] = "No JSON-LD structured data found on the page";
+            }
+        } else {
+            foreach($rawBlocks as $idx => $blk){
+                $trimmed = trim($blk);
+                $blockProblems = [];
+                $decoded = json_decode($trimmed, true);
+                if($decoded === null){
+                    // try to clean up common issues (strip HTML comments etc)
+                    $clean = preg_replace('/<!--(.*?)-->/s','',$trimmed);
+                    $decoded = json_decode($clean, true);
+                }
+                if($decoded === null){
+                    $blockProblems[] = "JSON-LD parse error in block " . ($idx+1);
+                    $blocksInfo[] = [
+                        'types' => [],
+                        'snippet' => $trimmed,
+                        'problems' => $blockProblems
+                    ];
+                    if($requireNoErrors){
+                        $object->status = false;
+                        $object->problems[] = "JSON-LD parse error in block " . ($idx+1);
+                    }
+                    continue;
+                }
+
+                // determine types for this block
+                $blockTypes = [];
+                if(isset($decoded['@type'])){
+                    if(is_array($decoded['@type'])){
+                        $blockTypes = array_merge($blockTypes, $decoded['@type']);
+                    } else {
+                        $blockTypes[] = $decoded['@type'];
+                    }
+                } else if (isset($decoded[0]) && isset($decoded[0]['@type'])) {
+                    foreach($decoded as $objItem){
+                        if(isset($objItem['@type'])){
+                            if(is_array($objItem['@type'])){
+                                $blockTypes = array_merge($blockTypes, $objItem['@type']);
+                            } else {
+                                $blockTypes[] = $objItem['@type'];
+                            }
+                        }
+                    }
+                }
+
+                // pretty snippet
+                $pretty = is_array($decoded) ? json_encode($decoded, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : $trimmed;
+
+                $blocksInfo[] = [
+                    'types' => array_values(array_unique($blockTypes)),
+                    'snippet' => $pretty,
+                    'problems' => $blockProblems
+                ];
+
+                // aggregate types
+                if(!empty($blockTypes)){
+                    $object->types = array_merge($object->types, $blockTypes);
+                }
+                if(empty($object->sampleSnippet)){
+                    $object->sampleSnippet = $pretty;
+                }
+            }
+
+            $object->types = array_values(array_unique($object->types));
+            if($requireNoErrors && count($object->types) === 0 && count($object->problems) === 0){
+                $object->status = false;
+                $object->problems[] = "No @type found in JSON-LD blocks";
+            }
+        }
+
+        $object->blocks = $blocksInfo;
+
+        echo json_encode($object);
+    }
     public function htmlSitemap(Request $request){
         $helpers = new Helper();
         $status = true;

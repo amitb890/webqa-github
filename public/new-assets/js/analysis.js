@@ -186,36 +186,36 @@ $( document ).ready(function() {
     }, frameRate);
   }
 
-static collapsePreviousParent(data){
-      let parentCard = data.parent
+  static collapsePreviousParent(data){
+    let parentCard = data.parent
 
-      // collapse elements parent div after all elements are testing
-      if(parentCard === "performance"){
-        if(document.getElementById("seo-content")){
-          document.getElementById("seo-content").style.display = "none"
-          // Update background after closing
-          UI.updateAllContainerBackgrounds()
-        }        
-      }
-
-      if(parentCard === "bestPractices"){
-        if(document.getElementById("performance-content")){
-          document.getElementById("performance-content").style.display = "none"
-          // Update background after closing
-          UI.updateAllContainerBackgrounds()
-        }
-      }
-
-      if(parentCard === "security"){
-        if(document.getElementById("best-practices-content")){
-          document.getElementById("best-practices-content").style.display = "none"
-          // Update background after closing
-          UI.updateAllContainerBackgrounds()
-        }
-      }
-
-      // end collapse
+    // collapse elements parent div after all elements are testing
+    if(parentCard === "performance"){
+      if(document.getElementById("seo-content")){
+        document.getElementById("seo-content").style.display = "none"
+        // Update background after closing
+        UI.updateAllContainerBackgrounds()
+      }        
     }
+
+    if(parentCard === "bestPractices"){
+      if(document.getElementById("performance-content")){
+        document.getElementById("performance-content").style.display = "none"
+        // Update background after closing
+        UI.updateAllContainerBackgrounds()
+      }
+    }
+
+    if(parentCard === "security"){
+      if(document.getElementById("best-practices-content")){
+        document.getElementById("best-practices-content").style.display = "none"
+        // Update background after closing
+        UI.updateAllContainerBackgrounds()
+      }
+    }
+
+    // end collapse
+  }
 
 
 
@@ -654,7 +654,7 @@ static collapsePreviousParent(data){
       }
     }
 
-    static updateSnippetElement(title, description){   
+    static updateSnippetElement(title, description){  
       $(".snippet-title").html(truncateString(title, titleTruncateLength))
       $(".snippet-description").html(truncateString(description, descriptionTruncateLength))
     }
@@ -1429,16 +1429,46 @@ static collapsePreviousParent(data){
 
     static updatePageTitleDesc(results){
       results.forEach(el=>{
-        if(el.name === "title" && pageTitleStatus){
-           pageTitle = el.content 
+      if(el.name === "title" && pageTitleStatus && typeof el.content === "string"){
+         pageTitle = el.content 
            pageTitleStatus = false
         }
 
-        if(el.name === "description" && pageDescStatus){
-          pageDesc = el.content 
+      if(el.name === "description" && pageDescStatus && typeof el.content === "string"){
+        pageDesc = el.content 
           pageDescStatus = false
         }
       })
+    }
+
+    static updatePageTitleDescFromMap(resultsMap){
+      if(!resultsMap || typeof resultsMap !== "object"){
+        return
+      }
+  
+      const normalizeResult = (result) => {
+        if (!result) return null
+        if (typeof result === "string") {
+          try {
+            return JSON.parse(result)
+          } catch (e) {
+            return null
+          }
+        }
+        return result
+      }
+  
+      const titleResult = normalizeResult(resultsMap["title"])
+      if(titleResult && pageTitleStatus && typeof titleResult.content === "string"){
+        pageTitle = titleResult.content
+        pageTitleStatus = false
+      }
+  
+      const descResult = normalizeResult(resultsMap["description"])
+      if(descResult && pageDescStatus && typeof descResult.content === "string"){
+        pageDesc = descResult.content
+        pageDescStatus = false
+      }
     }
   }
 
@@ -1808,26 +1838,26 @@ static collapsePreviousParent(data){
     }
   }
 
-function buildLoaderDetailSingleElement(label, idVal){
-      const div = document.createElement("div")
-      div.classList.add("loader-single-item-container")
-      div.innerHTML = `
-      <div class="loader-single-item">
-        <b>${label}</b> 
-        <span class="success"><span class="details-passed">0</span> Test Passed</span> 
-        <span class="fail"><span class="details-failed">0</span> Test Failed</span>
-        <span>
-          <a class="dropdown-toggle loader-dropdown-toggle-analysis" data-id="${idVal}" href="javascript:void()"></a>
-        </span>
-      </div>
-      <div id="${idVal}" class="content">
-          <table class="status-table">
-              <tr><td>Test</td><td>Status</td><td>Result</td></tr>
-          </table>
-      </div>
-      `
-      return div
-  }
+  function buildLoaderDetailSingleElement(label, idVal){
+    const div = document.createElement("div")
+    div.classList.add("loader-single-item-container")
+    div.innerHTML = `
+    <div class="loader-single-item">
+      <b>${label}</b> 
+      <span class="success"><span class="details-passed">0</span> Test Passed</span> 
+      <span class="fail"><span class="details-failed">0</span> Test Failed</span>
+      <span>
+        <a class="dropdown-toggle loader-dropdown-toggle-analysis" data-id="${idVal}" href="javascript:void()"></a>
+      </span>
+    </div>
+    <div id="${idVal}" class="content">
+        <table class="status-table">
+            <tr><td>Test</td><td>Status</td><td>Result</td></tr>
+        </table>
+    </div>
+    `
+    return div
+}
 
 
 
@@ -3239,6 +3269,261 @@ function buildLoaderDetailSingleElement(label, idVal){
       })
   }
 
+
+    // Schema panel: pretty-print JSON-LD sample, list types and problems
+    function buildSchemaPanel(data){
+      const div = document.createElement("div")
+      div.classList.add("analysis-card")
+      div.setAttribute("data-name", data.label.name)
+      // Defensive status: if backend didn't return boolean, compute from problems/httpStatus
+      const status = (typeof data.status !== 'undefined') ? data.status : (!data.problems || data.problems.length === 0) && (typeof data.httpStatus === 'undefined' || data.httpStatus === 200);
+      status ? div.classList.add("card__pass") : div.classList.add("card__failed")
+  
+      const badge = `<span class="badge bagde-single-view ${status ? "text-success-custom" : "text-danger-custom"}">${status ? "PASS" : "FAIL"}</span>`
+  
+      // If backend provided blocks, render accordion grouped by type; otherwise fall back to single snippet
+      if (data.blocks && data.blocks.length) {
+        // build map: type -> array of blocks
+        const map = {};
+        data.blocks.forEach((blk, i) => {
+          const types = blk.types && blk.types.length ? blk.types : ['(unknown)'];
+          types.forEach(t => {
+            if(!map[t]) map[t] = [];
+            map[t].push(Object.assign({}, blk, { index: i+1 }));
+          });
+        });
+  
+        let accordionHtml = '';
+        let idx = 0;
+        for(const t in map){
+          idx++;
+          const blocksForType = map[t];
+          const errors = blocksForType.reduce((acc, b) => acc + (b.problems && b.problems.length ? b.problems.length : 0), 0);
+          const warnings = 0;
+          const items = blocksForType.length;
+  
+          let inner = '';
+          blocksForType.forEach(b=>{
+            const snippet = b.snippet ? `<pre style="white-space:pre-wrap; background:#f8f9fa; padding:8px; border-radius:4px; max-height:220px; overflow:auto;">${escapeHtml(b.snippet)}</pre>` : '';
+            const probs = (b.problems && b.problems.length) ? UI.getProblemsElement(b.problems) : '<div class="no-problems">No problems</div>';
+            inner += `<div class="schema-block"><div style="margin-bottom:6px;"><strong>Block ${b.index}</strong></div>${snippet}${probs}</div>`;
+          });
+  
+          accordionHtml += `
+            <div class="schema-type-row" style="border:1px solid #eee; margin-bottom:8px; border-radius:6px; padding:10px;">
+              <div class="d-flex justify-content-between align-items-center">
+                <div><strong>${t}</strong></div>
+                <div style="font-size:12px; color:#666">${errors} ERRORS &nbsp;&nbsp; ${warnings} WARNINGS &nbsp;&nbsp; ${items} ITEM${items>1?'S':''}</div>
+              </div>
+              <div style="margin-top:8px; display:none;" class="schema-type-content" id="schema-type-content-${idx}">
+                ${inner}
+              </div>
+              <div style="text-align:right; margin-top:8px;">
+                <a href="javascript:void(0)" class="schema-toggle-icon" data-target="#schema-type-content-${idx}">
+                  <svg width="12" height="8" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M7 4L4 1L1 4" stroke="#B7B7B7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          `;
+        }
+  
+        div.innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-title">
+                <div class="card-header-left">
+                  <h4>${data.title}</h4>
+                </div>
+                ${badge}
+              </div>
+            </div>
+            <div class="card-body">
+              ${accordionHtml}
+            </div>
+          </div>
+        `;
+        // style badge for visibility
+        setTimeout(()=> {
+          try {
+            const b = div.querySelector('.bagde-single-view');
+            if(b){
+              b.style.backgroundColor = status ? '#80AE35' : '#FA5457';
+              b.style.color = '#fff';
+              b.style.padding = '4px 8px';
+              b.style.borderRadius = '12px';
+              b.style.fontSize = '12px';
+              b.style.marginLeft = '8px';
+              b.style.display = 'inline-block';
+            }
+          }catch(e){}
+        }, 10);
+        // attach click handlers for toggle icons
+        setTimeout(()=> {
+          const toggles = div.querySelectorAll('.schema-toggle-icon');
+          toggles.forEach(btn=>{
+            btn.addEventListener('click', function(){
+              const target = document.querySelector(this.getAttribute('data-target'));
+              if(!target) return;
+              const svg = this.querySelector('svg');
+              if(target.style.display === 'block') {
+                target.style.display = 'none';
+                if(svg) svg.style.transform = '';
+              } else {
+                target.style.display = 'block';
+                if(svg) svg.style.transform = 'rotate(180deg)';
+              }
+            })
+          })
+        }, 10);
+  
+      } else {
+        const typesHtml = (data.types && data.types.length) ? `<div style="margin-bottom:8px;"><strong>Types:</strong> ${data.types.join(', ')}</div>` : `<div style="margin-bottom:8px;"><strong>Types:</strong> None detected</div>`;
+        const snippetHtml = data.sampleSnippet ? `<pre class="schema-snippet" style="white-space:pre-wrap; max-height:320px; overflow:auto; background:#f8f9fa; padding:10px; border-radius:4px;">${escapeHtml(data.sampleSnippet)}</pre>` : `<div class="no-snippet">No JSON-LD sample available.</div>`;
+        const problemsHtml = (data.problems && data.problems.length) ? UI.getProblemsElement(data.problems) : `<div class="no-problems">No problems detected.</div>`;
+        div.innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-header-title">
+                <div class="card-header-left">
+                  <h4>${data.title}</h4>
+                </div>
+                ${badge}
+              </div>
+            </div>
+            <div class="card-body collapse show">
+              <div class="row">
+                <div class="content-element col-md-6">
+                  ${typesHtml}
+                  <div style="margin-top:10px;"><strong>Sample JSON-LD</strong></div>
+                  ${snippetHtml}
+                </div>
+                <div class="content-element col-md-6">
+                  <div style="margin-bottom:10px;"><strong>Problems / Warnings</strong></div>
+                  ${problemsHtml}
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+        // style badge for visibility (fallback)
+        setTimeout(()=> {
+          try {
+            const b = div.querySelector('.bagde-single-view');
+            if(b){
+              b.style.backgroundColor = (data.status || (data.problems && data.problems.length===0 && data.httpStatus===200)) ? '#80AE35' : '#FA5457';
+              b.style.color = '#fff';
+              b.style.padding = '4px 8px';
+              b.style.borderRadius = '12px';
+              b.style.fontSize = '12px';
+              b.style.marginLeft = '8px';
+              b.style.display = 'inline-block';
+            }
+          }catch(e){}
+        }, 10);
+      }
+  alert(data.showContent)
+      // If Schema test is excluded (server signals showContent=false) do not render the schema card
+      if(data && data.label && data.label.name === 'schema' && data.showContent === false){
+        return;
+      }
+  
+      // Append into the SEO card container (same place other SEO tests use)
+      const target = document.getElementById("cardMetaTitle") || document.querySelector(".card-custom-container");
+      if(target){
+        target.appendChild(div)
+      }else{
+        document.body.appendChild(div)
+      }
+  
+      // Attach global delegated click handler for schema subcard toggles (only once)
+      try {
+        if (!window._schemaSubToggleBound) {
+          document.addEventListener('click', function(ev){
+          const btn = (ev.target.closest && (ev.target.closest('.schema-sub-toggle') || ev.target.closest('.schema-sub-header')));
+            if(!btn) return;
+            const selector = btn.getAttribute('data-target') || (btn.querySelector && btn.querySelector('.schema-sub-toggle') && btn.querySelector('.schema-sub-toggle').getAttribute('data-target'));
+            if(!selector) return;
+            // Prefer to find target within the same card ancestor for isolation
+            const card = btn.closest('.analysis-card');
+            let target = null;
+            if(card){
+              target = card.querySelector(selector);
+            }
+            if(!target){
+              target = document.querySelector(selector);
+            }
+            if(!target) {
+              console.debug('Schema toggle: target not found', selector, btn);
+              return;
+            }
+  
+            // determine current computed display
+            const comp = window.getComputedStyle(target).display;
+            console.debug('Schema toggle click', { selector, comp, target, btn });
+            try {
+              if(comp === 'none'){
+                target.style.display = 'block';
+                const svg = btn.querySelector('svg');
+                if(svg) svg.style.transform = 'rotate(180deg)';
+              } else {
+                target.style.display = 'none';
+                const svg = btn.querySelector('svg');
+                if(svg) svg.style.transform = '';
+              }
+            } catch (e) {
+              console.error('Schema toggle error', e);
+            }
+          });
+          window._schemaSubToggleBound = true;
+        }
+      } catch(e){}
+    }
+  
+    // helper to escape HTML for safe display
+    function escapeHtml(unsafe) {
+      if(!unsafe) return "";
+      return String(unsafe)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+  
+  // Exposed helper to toggle schema subcards (used by inline onclick attributes)
+  window.toggleSchemaSubBySelector = function(selector, btn){
+    try{
+      const elBtn = btn || document.querySelector(`[data-target="${selector}"]`);
+      const card = elBtn && elBtn.closest ? elBtn.closest('.analysis-card') : null;
+      let target = null;
+      if(card){
+        target = card.querySelector(selector);
+      }
+      if(!target){
+        target = document.querySelector(selector);
+      }
+      if(!target){
+        console.debug('toggleSchemaSubBySelector: target not found', selector, btn);
+        return;
+      }
+      const comp = window.getComputedStyle(target).display;
+      console.debug('toggleSchemaSubBySelector click', { selector, comp, target, btn });
+      if(comp === 'none'){
+        target.style.display = 'block';
+        const svg = (elBtn && elBtn.querySelector) ? elBtn.querySelector('svg') : null;
+        if(svg) svg.style.transform = 'rotate(180deg)';
+      } else {
+        target.style.display = 'none';
+        const svg = (elBtn && elBtn.querySelector) ? elBtn.querySelector('svg') : null;
+        if(svg) svg.style.transform = '';
+      }
+    }catch(e){
+      console.error('toggleSchemaSubBySelector error', e);
+    }
+  }
+
   function buildElementWithTable(testLabels, data){
     let div = document.createElement("div")
       div.classList.add("analysis-card")
@@ -4208,7 +4493,7 @@ function buildLoaderDetailSingleElement(label, idVal){
 
 
   
-function getFormattedName(url) {
+  function getFormattedName(url) {
     // Remove 'https://', 'http://', 'www.', and trailing slashes
     let domain = url.replace(/https?:\/\/(www\.)?/, '').replace(/\/.*/, '');
     
@@ -4399,15 +4684,15 @@ function getFormattedName(url) {
       }
     });
 
-      $("#hidePassed").click(function () {
-          $(this).toggleClass("active");
-          $(".card__failed").show();
-          if ($(this).hasClass("active")) {
-            $(".card__pass").hide();
-          } else {
-            $(".card__pass").show();
-          }
-      });
+    $(document).on("click", ".hidePassedBtn", function () {
+      $(this).toggleClass("active");
+      $(".card__failed").show();
+      if ($(this).hasClass("active")) {
+        $(".card__pass").hide();
+      } else {
+        $(".card__pass").show();
+      }
+    });
 
       $(".fix-btn").on( "click", function(e) {
         const val = e.target.parentElement.getAttribute("data-test-name")
