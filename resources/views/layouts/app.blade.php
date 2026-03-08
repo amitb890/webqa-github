@@ -552,8 +552,8 @@ if(isset($_COOKIE["activeProject"])){
     
 
 
-         <!-- MODAL CUSTOMIZER -->
-          <div class="modal fade" id="modalCustomizer" aria-hidden="true" aria-labelledby="modalCustomizerLabel" tabindex="-1">
+        <!-- MODAL CUSTOMIZER -->
+        <div class="modal fade" id="modalCustomizer" aria-hidden="true" aria-labelledby="modalCustomizerLabel" tabindex="-1">
               <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content">
                       <div class="modal-body">
@@ -562,8 +562,8 @@ if(isset($_COOKIE["activeProject"])){
                         <div class="element-main-area">
                           <div class="element-cls">
                             <div class="form-check">
-                              <input class="form-check-input input-check-all" type="checkbox" id="" checked>
-                              <label class="form-check-label" for="element_all">
+                              <input class="form-check-input input-check-all" id="input-check-all-imran" type="checkbox" id="" checked>
+                              <label class="form-check-label" id="form-check-label-imran" for="element_all">
                                 Select All
                               </label>
                             </div>
@@ -575,7 +575,7 @@ if(isset($_COOKIE["activeProject"])){
                             <div class="single-element-content" id="accordianMetaTags">
                               <div class="element-check-title">
                                 <div class="form-check">
-                                    <input class="form-check-input input-check-all" type="checkbox" id="metaTagsCheckAll" checked>
+                                    <input class="form-check-input input-check-all"  type="checkbox" id="metaTagsCheckAll" checked>
                                     <label class="form-check-label" for="metaTagsCheckAll">
                                     SEO
                                     </label>
@@ -583,7 +583,6 @@ if(isset($_COOKIE["activeProject"])){
                               </div>
                               <div class="inner-element-content"></div>
                             </div>
-
 
 
                             <div class="single-element-content" id="accordianPerformance">
@@ -631,7 +630,6 @@ if(isset($_COOKIE["activeProject"])){
               </div>
           </div>
           <!-- CUSTOMIZER END -->
-
 
 
 
@@ -695,6 +693,7 @@ if(isset($_COOKIE["activeProject"])){
     <script src="{{ asset('new-assets/js/imran.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
 
+
   @php
   $defaultReportSettings = [
       'meta_title' => 1,
@@ -740,13 +739,42 @@ if(isset($_COOKIE["activeProject"])){
 
   @auth
   <script>
-        let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
-        let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
-      window.reportSettings = @json(
-          \App\Models\ReportSettings::where('user_id', auth()->id())->first() ?? $defaultReportSettings
-      );
+      let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
+      let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
+      
+      // Get report settings from database
+      var userSettings = @json(\App\Models\ReportSettings::where('user_id', auth()->id())->first());
+      console.log('Database query result:', userSettings);
+      console.log('User ID:', {{ auth()->id() }});
+      
+      window.reportSettings = userSettings || @json($defaultReportSettings);
+      
+      // Debug: Log final settings
+      console.log('Final window.reportSettings:', window.reportSettings);
+      console.log('Meta Title value:', window.reportSettings.meta_title, 'Type:', typeof window.reportSettings.meta_title);
+      
+      // Verify settings are set
+      if (typeof window.reportSettings === 'undefined') {
+          console.error('ERROR: window.reportSettings is undefined!');
+      } else {
+          console.log('Success: window.reportSettings is defined');
+      }
+  </script>
+  @else
+  <script>
+      // User not authenticated - use default settings
+      console.warn('User not authenticated - using default report settings');
+      window.reportSettings = @json($defaultReportSettings);
+      
+      // Verify settings are set
+      if (typeof window.reportSettings === 'undefined') {
+          console.error('ERROR: window.reportSettings is undefined!');
+      } else {
+          console.log('Success: window.reportSettings is defined (default)');
+      }
   </script>
   @endauth
+  
 
     <script src="{{ asset('new-assets/js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 
@@ -885,53 +913,6 @@ if(isset($_COOKIE["activeProject"])){
         });
       });
 
-      const dropdownContainer = document.querySelector('.project-toggle-container');
-const dropdownToggle = dropdownContainer.querySelector('.dropdown-toggle');
-const dropdownMenu = dropdownContainer.querySelector('.header-dropdown-imran');
-const dropdownInstance = bootstrap.Dropdown.getOrCreateInstance(dropdownToggle);
-
-let hideTimeout;
-
-// Show dropdown smoothly on hover
-dropdownContainer.addEventListener('mouseenter', () => {
-  clearTimeout(hideTimeout);
-  dropdownInstance.show();
-  dropdownMenu.classList.add('show');
-});
-
-// Hide dropdown with slight delay for smoother experience
-dropdownContainer.addEventListener('mouseleave', () => {
-  hideTimeout = setTimeout(() => {
-    dropdownInstance.hide();
-    dropdownMenu.classList.remove('show');
-  }, 150);
-});
-
-const userDropdownContainer = document.querySelector('.dropdown'); // your profile dropdown wrapper
-const userDropdownToggle = userDropdownContainer.querySelector('.dropdown-toggle-two-2');
-const userDropdownMenu = userDropdownContainer.querySelector('.user-dropdown-imran');
-const userDropdownInstance = bootstrap.Dropdown.getOrCreateInstance(userDropdownToggle);
-
-let userHideTimeout;
-
-// Show dropdown smoothly on hover
-userDropdownContainer.addEventListener('mouseenter', () => {
-  clearTimeout(userHideTimeout);
-  userDropdownInstance.show();
-  userDropdownMenu.classList.add('show');
-});
-
-// Hide dropdown with delay
-userDropdownContainer.addEventListener('mouseleave', () => {
-  userHideTimeout = setTimeout(() => {
-    userDropdownInstance.hide();
-    userDropdownMenu.classList.remove('show');
-  }, 150);
-});
-
-
-    
-    
 
       document.addEventListener("DOMContentLoaded", function () {
       const searchInput = document.querySelector(".ssbt-search input");
