@@ -37,6 +37,25 @@ if(isset($_COOKIE["activeProject"])){
   $activeProjectFavicon = $project->favicon;
 }
 
+// Normalize favicon URL to current host if it was saved with a local host (127.0.0.1 / localhost)
+if (!empty($activeProjectFavicon)) {
+    $origin = request()->getSchemeAndHttpHost(); // e.g. https://webqa.co
+
+    $replacements = [
+        'http://127.0.0.1:8000',
+        'https://127.0.0.1:8000',
+        'http://localhost:8000',
+        'https://localhost:8000',
+    ];
+
+    foreach ($replacements as $localHost) {
+        if (strpos($activeProjectFavicon, $localHost) === 0) {
+            $path = parse_url($activeProjectFavicon, PHP_URL_PATH) ?? '';
+            $activeProjectFavicon = rtrim($origin, '/') . $path;
+            break;
+        }
+    }
+}
 
 
 

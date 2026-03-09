@@ -2214,6 +2214,15 @@ function sliderWebTracker(){
   requestAnimationFrame(updateSlider);
 }
 
-sliderWebTracker();
+// Run Website Tracker slider only on reports or website-tracker pages
+const _path = window.location.pathname || "";
+if (
+  _path.startsWith("/reports") ||
+  _path.startsWith("/features/reports") ||
+  _path.startsWith("/website-tracker") ||
+  _path.startsWith("/features/website-tracker")
+) {
+  sliderWebTracker();
+}
 
 // IMRANS CODE ENDS HERE
