@@ -41,8 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
     }
   
+    closeBtn.addEventListener('click', closePreview);
   
-    
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closePreview();
+    });
+  
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closePreview();
     });

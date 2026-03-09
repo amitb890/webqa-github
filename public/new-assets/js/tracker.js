@@ -385,7 +385,6 @@ $(document).ready(function () {
           if(title === "performance"){
             UI.buildPerformanceTableHeader(type)
           }else{
-            console.log(data)
             projectSettings = data[0].settings;
             const displayName = data[0].label.display_name
             const td = document.createElement("td")
@@ -1566,7 +1565,6 @@ $(document).ready(function () {
           }
       });
 
-      console.log(result)
       return result;
     }
 
@@ -2785,7 +2783,6 @@ $(document).ready(function () {
 
       static buildTableBody(options, data, settings, updatedUrls){
         updatedUrls.forEach(el=>{
-          console.log(el)
           UI.buildRootURLElement(el)
 
           const urls = el.urls
@@ -2924,11 +2921,9 @@ $(document).ready(function () {
       }
 
       static updateTestDataForm(results){
-        console.log(results, obj)
         for (const [key, value] of Object.entries(results)) {
           for (const [key1, value1] of Object.entries(results[key])) {
             const result = JSON.parse(value1)
-            console.log(key1)
             obj[key1].push(result)
 
           }
@@ -2942,7 +2937,6 @@ $(document).ready(function () {
       static loadData(loadData){
           DB.returnData(loadData)
           .done(function(data){
-            console.log(data)
             const testDetails = data.results
 
 
@@ -2969,7 +2963,6 @@ $(document).ready(function () {
 
       static activateEvents(){
     
-        console.log(urlsList)
           // Events
         $("#recheckAllTracker").on("click", async function(e){
           await Controls.recheckStart()
