@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 50, recheckGoogle = 5, recheckSingleMax = 50, urlsGoogleFinal = 0
+  var recheckMax = 10, recheckGoogle = 5, recheckSingleMax = 1000, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -3486,19 +3486,22 @@ $(document).ready(function () {
   
     static startTest(urlsUpdated, type, recheck_label = "na"){
       return new Promise((resolve, reject) => {
+        // Send as JSON to avoid PHP max_input_vars limit (form encoding sends urls[0], urls[1]... and drops project_id with 100+ URLs)
+        const payload = {
+          urls: urlsUpdated,
+          project_id: projectId,
+          test_type: type,
+          recheck_label: recheck_label,
+          _method: 'POST'
+        };
         $.ajax({
           url : `/test/start-dashboard-test`,
           type : 'POST',
+          contentType: 'application/json',
           headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
           },
-          data: {
-              "urls": urlsUpdated,
-              "project_id": projectId,
-              "test_type": type,
-              "recheck_label": recheck_label,
-              "_method": 'POST',
-          },
+          data: JSON.stringify(payload),
           success: function(data) {
             resolve(data);
           },

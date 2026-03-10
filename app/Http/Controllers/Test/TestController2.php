@@ -39,11 +39,25 @@ class TestController2 extends Controller
         $userQueue = 'dashboard_' . Auth::id(); // Unique queue per user
 
         $projectsController = new ProjectsController();
+        // Support JSON body (avoids PHP max_input_vars when many URLs are sent)
         $urls = $request->input('urls');
         $project_id = $request->input('project_id');
         $recheck_label = $request->input('recheck_label');
         $type = $request->input('test_type');
-    
+
+        if (empty($project_id) && $request->isJson()) {
+            $json = $request->json()->all();
+            $project_id = $json['project_id'] ?? null;
+            $urls = $urls ?: ($json['urls'] ?? null);
+            $type = $type ?: ($json['test_type'] ?? null);
+            $recheck_label = $recheck_label !== null ? $recheck_label : ($json['recheck_label'] ?? 'na');
+        }
+
+        if (empty($project_id) || (is_string($project_id) && !strlen(trim($project_id)))) {
+            return response()->json(['error' => 'Missing or invalid project_id.'], 422);
+        }
+        $project_id = (int) $project_id;
+
         if (empty($urls) || !is_array($urls)) {
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
