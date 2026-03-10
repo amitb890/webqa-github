@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 10, recheckGoogle = 5, recheckSingleMax = 1000, urlsGoogleFinal = 0
+  var recheckMax = 10, recheckGoogle = 5, recheckSingleMax = 10, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -2123,9 +2123,13 @@ $(document).ready(function () {
 
 
     static updateRecheckProgressBar(index, percentage){
-      $("#urlRechecked").html(index)
-      document.querySelector("#urlRecheckedProgressBar").style.width = percentage + "%"
-      document.querySelector("#urlRecheckedProgressText").innerHTML = parseInt(percentage) + "%"
+      const $rechecked = $("#urlRechecked")
+      const progressBar = document.querySelector("#urlRecheckedProgressBar")
+      const progressText = document.querySelector("#urlRecheckedProgressText")
+      if (!$rechecked.length || !progressBar || !progressText) return // loader may already be removed when recheck finished
+      $rechecked.html(index)
+      progressBar.style.width = percentage + "%"
+      progressText.innerHTML = parseInt(percentage) + "%"
     }
 
 
@@ -3386,11 +3390,9 @@ $(document).ready(function () {
       }
 
       Controls.buildDashboard()
-
-
-      // Re-enable recheck button after test completion
       UI.updateRecheckButtonState(false)
     }
+    
 
     static updateProgress(results, progress, completedCount, total){
         if(results){
