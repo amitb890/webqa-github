@@ -496,7 +496,6 @@ h6 {
   width: 100%;
   float: right;
   padding-block: 15px 84px;
-  padding: 0 20px;
 }
 
 .inner_content-tools{
@@ -13752,7 +13751,6 @@ nav .nav-tabs{
     height: 215px;
     object-fit: cover;
     border-radius: 6px;
-    z-index: 1;
 }
 
 
