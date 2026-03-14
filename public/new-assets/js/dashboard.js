@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 10, recheckGoogle = 5, recheckSingleMax = 10, urlsGoogleFinal = 0
+  var recheckMax = 2000, recheckGoogle = 100, recheckSingleMax = 2000, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -2245,8 +2245,9 @@ $(document).ready(function () {
       const progressBar = target.querySelector('.dashboard-page-speed-progress');
       const progressText = target.querySelector('.page_speed_content span');
       if (progressBar && progressText) {
-        progressBar.style.width = progressDetails.progress + "%";
-        progressText.innerHTML = progressDetails.progress + "%";
+        const pct = Math.round(progressDetails.progress || 0);
+        progressBar.style.width = pct + "%";
+        progressText.innerHTML = pct + "%";
       }
     }
   }
@@ -2417,9 +2418,11 @@ $(document).ready(function () {
 
       const progress = Controls.getGoogleCurrentProgress(results, refreshState)
 
+      const pct = Math.round(progress || 0);
+
       if(document.querySelectorAll(".page_speed_content").length > 0){
-        $("#card_google_overall .dashboard-page-speed-progress, #card_google_lighthouse .dashboard-page-speed-progress, #card_core_web_vitals .dashboard-page-speed-progress").css({width: progress + "%"})
-        $("#card_google_overall .page_speed_content span, #card_google_lighthouse .page_speed_content span, #card_core_web_vitals .page_speed_content span").html(progress + "%")
+        $("#card_google_overall .dashboard-page-speed-progress, #card_google_lighthouse .dashboard-page-speed-progress, #card_core_web_vitals .dashboard-page-speed-progress").css({width: pct + "%"})
+        $("#card_google_overall .page_speed_content span, #card_google_lighthouse .page_speed_content span, #card_core_web_vitals .page_speed_content span").html(pct + "%")
 
       }else{
 
@@ -2427,9 +2430,9 @@ $(document).ready(function () {
         div.classList.add("page_speed_content")
         div.innerHTML =  
             `<div class="progress">
-              <div class="progress-bar dashboard-page-speed-progress" role="progressbar" aria-label="Success example" style="width: ${progress}%" aria-valuenow="${progress}" title="" aria-valuemin="0" aria-valuemax="100"> </div>
+              <div class="progress-bar dashboard-page-speed-progress" role="progressbar" aria-label="Success example" style="width: ${pct}%" aria-valuenow="${pct}" title="" aria-valuemin="0" aria-valuemax="100"> </div>
             </div>
-            <span>${progress} %</span>
+            <span>${pct} %</span>
             <p>Calculating pages speed, please wait...</p>`
             $("#card_google_overall .broken_links_content, #card_google_lighthouse .broken_links_content, #card_core_web_vitals .broken_links_content").remove()
             $("#card_google_overall .single_dashboard_card, #card_google_lighthouse .single_dashboard_card, #card_core_web_vitals .single_dashboard_card").append(div)
