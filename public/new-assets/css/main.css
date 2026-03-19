@@ -10376,6 +10376,7 @@ table.bulk-table td:last-child {
 
 .single_dashboard_card_main {
   grid-column: span 4;
+  position: relative;
 }
 
 .add_Widget_area_main {

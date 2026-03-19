@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 2000, recheckGoogle = 100, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -315,6 +315,93 @@ $(document).ready(function () {
           msg: msg,
           notHide: true
       })
+    }
+
+    static buildWidgetNoticeElement(message){
+      const div = document.createElement("div")
+      div.className = "dashboard-widget-notice"
+      // Inline styles to match the existing UI (screenshot-like bubble with ? icon)
+      div.style.cssText = [
+        "padding: 12px 14px",
+        "background: #FDF6EA",
+        "border: 1px solid #E8DDC1",
+        "box-shadow: 0px 0px 50px 0px #f5f7fb",
+        "border-radius: 6px",
+        "display: flex",
+        "align-items: center",
+        "justify-content: space-between",
+        "gap: 12px",
+        "position: absolute",
+        "top: -80px",
+        "right: 50%",
+        "z-index: 1",
+        "transform: translate(50%, 0)",
+        "width: 100%",
+        "z-index: 1",
+      ].join(";")
+
+      const text = document.createElement("p")
+      text.style.cssText = [
+        "margin: 0",
+        "font-size: 14px",
+        "line-height: 20px",
+        "color: #746C5C",
+        "flex: 1",
+      ].join(";")
+      text.textContent = message
+
+      const iconWrap = document.createElement("span")
+      iconWrap.style.cssText = [
+        "flex: 0 0 auto",
+        "height: 22px",
+        "width: 22px",
+        "border-radius: 50%",
+        "border: 1px solid #C0B489",
+        "display: inline-flex",
+        "align-items: center",
+        "justify-content: center",
+        "color: #C0B489",
+        "font-weight: 700",
+        "font-size: 13px",
+        "background: transparent",
+      ].join(";")
+      iconWrap.textContent = "?"
+
+      div.appendChild(text)
+      div.appendChild(iconWrap)
+      return div
+    }
+
+    static ensureWidgetNotice(dbName, message){
+      const card = document.getElementById(`card_${dbName}`)
+      if(!card) return
+
+      const cardInner = card.querySelector(".single_dashboard_card")
+      const title = cardInner ? cardInner.querySelector(".dashboard_title") : null
+      if(!cardInner || !title) return
+
+      const existing = cardInner.querySelector(`.dashboard-widget-notice[data-notice-for='${dbName}']`)
+      if(existing){
+        const existingHeight = Math.ceil(existing.offsetHeight || 0)
+        card.style.marginTop = existingHeight > 0 ? `${existingHeight}px` : ""
+        return
+      }
+
+      const notice = UI.buildWidgetNoticeElement(message)
+      notice.setAttribute("data-notice-for", dbName)
+
+      // Insert notice and offset this card by notice height
+      card.prepend(notice)
+      const noticeHeight = Math.ceil(notice.offsetHeight || 0)
+      card.style.marginTop = noticeHeight > 0 ? `${noticeHeight}px` : ""
+    }
+
+    static removeWidgetNotice(dbName){
+      const card = document.getElementById(`card_${dbName}`)
+      if(!card) return
+      const existing = card.querySelector(`.dashboard-widget-notice[data-notice-for='${dbName}']`)
+      if(existing) existing.remove()
+      card.style.marginTop = ""
     }
 
     static buildRecheckLoader(){
@@ -2616,7 +2703,7 @@ $(document).ready(function () {
                 core_web_vitals: [],
                 mobile_friendly: [],
               }
-              UI.recheckStartedAlert()
+              // UI.recheckStartedAlert()
 
               async function checkStatusDashboard() {
                 let controller;
@@ -2874,6 +2961,12 @@ $(document).ready(function () {
     
                 Controls.activeEvents()
 
+                // Post-initial-prep notices (Images + Page Speed tiles)
+                UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
+                UI.ensureWidgetNotice("google_overall", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+                UI.ensureWidgetNotice("google_lighthouse", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+                UI.ensureWidgetNotice("core_web_vitals", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+
                 if(dashboardStatus === 2){ // if recheck state build recheck loader
                   urls = originalUrls.slice(0, recheckMax)
                   urlsToCheck = recheckMax
@@ -2987,6 +3080,13 @@ $(document).ready(function () {
     }
 
     static async refreshSingleTile(e){
+      const target = e.target.closest(".single_dashboard_card_main")
+      const elementDbName = target ? target.getAttribute("data-label") : null
+
+      if(elementDbName){
+        UI.removeWidgetNotice(elementDbName)
+      }
+
       const testsRunning = await Controls.checkIfTestsAreRunning();
         
       if (testsRunning) {
@@ -2999,8 +3099,7 @@ $(document).ready(function () {
       }else{
         refreshTileDisabled = true
         recheckSingleIntervalStatus = true
-        const target = e.target.closest(".single_dashboard_card_main")
-        const elementDbName = target.getAttribute("data-label")
+        if(!target || !elementDbName) return
         if(ignore_tests.includes(elementDbName)){
           Controls.refreshTileGoogle(elementDbName, target)
         }else{
@@ -3233,13 +3332,13 @@ $(document).ready(function () {
 
                         UI.updateRecheckButtonState(false);
 
-                        displayAlert(".analysis-content-body-message", {
-                            status: 1,
-                            msg: "Recheck for the selected tile has been completed successfully.",
-                            notHide: true
-                        });
+                        // displayAlert(".analysis-content-body-message", {
+                        //     status: 1,
+                        //     msg: "Recheck for the selected tile has been completed successfully.",
+                        //     notHide: true
+                        // });
 
-                        $('.analysis-content-body-message').show();
+                        // $('.analysis-content-body-message').show();
 
                         refreshTileDisabled = false;
                         recheckSingleIntervalStatus = false;
