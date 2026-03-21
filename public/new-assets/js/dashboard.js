@@ -57,6 +57,36 @@ $(document).ready(function () {
     mobile_friendly: [],
   }
 
+  /** Persist which dashboard tiles had their info notice dismissed (single recheck). Survives page refresh. */
+  const DASHBOARD_WIDGET_NOTICE_DISMISSED_KEY = "dashboard_widget_notice_dismissed_v1"
+
+  function getDismissedWidgetNoticesSet() {
+    if (typeof projectId === "undefined" || !projectId) return new Set()
+    try {
+      const raw = localStorage.getItem(`${DASHBOARD_WIDGET_NOTICE_DISMISSED_KEY}_${projectId}`)
+      if (!raw) return new Set()
+      const arr = JSON.parse(raw)
+      return Array.isArray(arr) ? new Set(arr) : new Set()
+    } catch (e) {
+      return new Set()
+    }
+  }
+
+  function persistDismissedWidgetNotice(dbName) {
+    if (!dbName || typeof projectId === "undefined" || !projectId) return
+    const set = getDismissedWidgetNoticesSet()
+    set.add(dbName)
+    localStorage.setItem(
+      `${DASHBOARD_WIDGET_NOTICE_DISMISSED_KEY}_${projectId}`,
+      JSON.stringify([...set])
+    )
+  }
+
+  function isWidgetNoticeDismissed(dbName) {
+    if (!dbName) return false
+    return getDismissedWidgetNoticesSet().has(dbName)
+  }
+
   
   class DB{
     static getAlerts(projectId){
@@ -373,6 +403,8 @@ $(document).ready(function () {
     }
 
     static ensureWidgetNotice(dbName, message){
+      if (isWidgetNoticeDismissed(dbName)) return
+
       const card = document.getElementById(`card_${dbName}`)
       if(!card) return
 
@@ -402,6 +434,7 @@ $(document).ready(function () {
       const existing = card.querySelector(`.dashboard-widget-notice[data-notice-for='${dbName}']`)
       if(existing) existing.remove()
       card.style.marginTop = ""
+      persistDismissedWidgetNotice(dbName)
     }
 
     static buildRecheckLoader(){
@@ -1095,12 +1128,12 @@ $(document).ready(function () {
                         <td class="text-center ${data.safeBrowsingDisabled > 0 ? 'danger' : ''}">${data.safeBrowsingDisabled}</td>
                       </tr>
                       <tr>
-                        <td>Cross Origin Links</td>
+                        <td>Unsafe Cross Origin Links</td>
                         <td class="text-center ${data.crossOriginLinksEnabled > 0 ? 'success' : ''}">${data.crossOriginLinksEnabled}</td>
                         <td class="text-center ${data.crossOriginLinksDisabled > 0 ? 'danger' : ''}">${data.crossOriginLinksDisabled}</td>
                       </tr>
                       <tr>
-                        <td>Protocol Relative Resource</td>
+                        <td>Protocol Relative Resource Links</td>
                         <td class="text-center ${data.protocolRelativeEnabled > 0 ? 'success' : ''}">${data.protocolRelativeEnabled}</td>
                         <td class="text-center ${data.protocolRelativeDisabled > 0 ? 'danger' : ''}">${data.protocolRelativeDisabled}</td>
                       </tr>
@@ -1120,17 +1153,17 @@ $(document).ready(function () {
                         <td class="text-center ${data.hstsHeaderDisabled > 0 ? 'danger' : ''}">${data.hstsHeaderDisabled}</td>
                       </tr>
                       <tr>
-                        <td>Bad content Type</td>
+                        <td>Bad Content Type</td>
                         <td class="text-center ${data.badContentEnabled > 0 ? 'success' : ''}">${data.badContentEnabled}</td>
                         <td class="text-center ${data.badContentDisabled > 0 ? 'danger' : ''}">${data.badContentDisabled}</td>
                       </tr>
                       <tr>
-                        <td>SSL Certificate Enable</td>
+                        <td>SSL Certificate</td>
                         <td class="text-center ${data.sslCertificateEnabled > 0 ? 'success' : ''}">${data.sslCertificateEnabled}</td>
                         <td class="text-center ${data.sslCertificateDisabled > 0 ? 'danger' : ''}">${data.sslCertificateDisabled}</td>
                       </tr>
                       <tr>
-                        <td>Folder Browsing</td>
+                        <td>Directory Browsing</td>
                         <td class="text-center ${data.folderBrowsingEnabled > 0 ? 'danger' : ''}">${data.folderBrowsingEnabled}</td>
                         <td class="text-center ${data.folderBrowsingDisabled > 0 ? 'success' : ''}">${data.folderBrowsingDisabled}</td>
                       </tr>
@@ -1867,7 +1900,7 @@ $(document).ready(function () {
                 <table class="table table-bordered">
                   <thead>
                     <tr>
-                      <th class="gray-bg">Compressions</th>
+                      <th class="gray-bg">Compression</th>
                       <th class="gray-bg text-center">Enabled</th>
                       <th class="gray-bg text-center">Not Enabled</th>
                     </tr>
@@ -1889,7 +1922,7 @@ $(document).ready(function () {
                       <td class="text-center ${data.cssNotCompressed > 0 ? 'danger' : ''}">${data.cssNotCompressed}</td>
                     </tr>
                     <tr>
-                      <td>Grip Compression</td>
+                      <td>Gzip Compression</td>
                       <td class="text-center ${data.gzipCompressed > 0 ? 'success' : ''}">${data.gzipCompressed}</td>
                       <td class="text-center ${data.gzipNotCompressed > 0 ? 'danger' : ''}">${data.gzipNotCompressed}</td>
                     </tr>
@@ -1899,12 +1932,12 @@ $(document).ready(function () {
                       <td class="gray-bg text-center">Pages without</td>
                     </tr>
                     <tr>
-                      <td>CSS caching enable</td>
+                      <td>CSS Caching</td>
                       <td class="text-center ${data.cssCachingEnable > 0 ? 'success' : ''}">${data.cssCachingEnable}</td>
                       <td class="text-center ${data.cssCachingNotEnable > 0 ? 'danger' : ''}">${data.cssCachingNotEnable}</td>
                     </tr>
                    <tr>
-                      <td>JS caching enable</td>
+                      <td>JS Caching</td>
                       <td class="text-center ${data.jsCachingEnable > 0 ? 'success' : ''}">${data.jsCachingEnable}</td>
                       <td class="text-center ${data.jsCachingNotEnable > 0 ? 'danger' : ''}">${data.jsCachingNotEnable}</td>
                     </tr>

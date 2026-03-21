@@ -264,7 +264,6 @@ static getTableTop(label, slug){
                 <ul class="datatable_download_result bulk-datatable-download-result">
                     
                     <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
                     <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
 
                     <li class='datatable_download_result_li' style="">
@@ -390,6 +389,8 @@ $( document ).ready(function() {
     let activeUpdateStatusElement
     let url_list, url_list_length, obj_settings, obj, settingsVal, activeURL = "", settings
     let errorStatus = false, resultsError = []
+    /** Wall-clock start for current URL (collect + runTest share one minute budget). */
+    let bulkCurrentUrlStartTs = 0
     var updateStatusModal = new bootstrap.Modal(document.getElementById('updateStatusModal'), {
         keyboard: false
     })
@@ -754,11 +755,39 @@ function toggleTestResultAreaVisibility() {
     el.style.display = el.innerHTML.trim().length ? "" : "none";
 }
 
+    /** Max time per URL for collect + run test (Lighthouse / bulk can hang on bad URLs). */
+    const BULK_PER_URL_TIMEOUT_MS = 60000
+
+    /**
+     * Skip current URL and advance progress (never leave the bulk run stuck).
+     * Completion uses results.length + resultsError.length vs url_list_length.
+     */
+    function abortCurrentBulkUrl(reason) {
+        if (!url_list || url_list.length === 0) {
+            return
+        }
+        const currentUrl = constructTestURL(url_list[0])
+        activeURL = currentUrl
+        errorStatus = true
+        resultsError.push({ failed: currentUrl + " — " + (reason || "Skipped") })
+        checkFinished()
+    }
+
 
 
     function startTest(){
+        if (!url_list || url_list.length === 0) {
+            return
+        }
+        bulkCurrentUrlStartTs = Date.now()
         const url = constructTestURL(url_list[0])
-        const origin = new URL(url).origin
+        let origin
+        try {
+            origin = new URL(url).origin
+        } catch (e) {
+            abortCurrentBulkUrl("Invalid URL")
+            return
+        }
         const htmlSitemap = `${origin}/sitemap`
         const xmlSitemap = `${origin}/sitemap.xml`
 
@@ -774,12 +803,21 @@ function toggleTestResultAreaVisibility() {
             url : `/test/collect`,
             type : 'POST',
             aysnc: false,
+            // First leg: leave room so collect + runTest stay within BULK_PER_URL_TIMEOUT_MS total
+            timeout: Math.min(40000, BULK_PER_URL_TIMEOUT_MS),
             data: {
                 "data": obj,
                 "_method": 'POST',
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             },       
-            success : function(data) {
+            success : function(response) {
+                let data
+                try {
+                    data = typeof response === "string" ? JSON.parse(response) : response
+                } catch (e) {
+                    abortCurrentBulkUrl("Invalid response from collect (parse error)")
+                    return
+                }
 
                 if(data.status === 0){
                     // test failed
@@ -787,7 +825,6 @@ function toggleTestResultAreaVisibility() {
                     resultsError.push(data)
                     checkFinished()
                 }else{
-                    data = JSON.parse(data)
                     if(data.response){
                         data = data.response
                         let test = getTest(data, label)
@@ -864,11 +901,22 @@ function toggleTestResultAreaVisibility() {
                         runTest(label, test, url)
                     }else{
                         resultsFailed.push(data.failed)
+                        errorStatus = true
+                        resultsError.push({
+                            failed: (data.failed && String(data.failed).trim() !== "")
+                                ? data.failed
+                                : (url + " — Collect returned no test payload")
+                        })
                         checkFinished()
                     }
                 }
             },
-            error: function(data){
+            error: function(xhr, status, err) {
+                const msg =
+                    status === "timeout"
+                        ? "Collect timed out (first phase, max " + (Math.min(40000, BULK_PER_URL_TIMEOUT_MS) / 1000) + "s)"
+                        : ("Collect failed" + (err ? ": " + err : ""))
+                abortCurrentBulkUrl(msg)
             }
         })
     }
@@ -876,17 +924,30 @@ function toggleTestResultAreaVisibility() {
 
 
     function runTest(label, test, url){
+        const elapsed = Date.now() - bulkCurrentUrlStartTs
+        const runTestTimeout = Math.max(500, BULK_PER_URL_TIMEOUT_MS - elapsed)
+        if (runTestTimeout <= 500) {
+            abortCurrentBulkUrl("No time left for test (over " + (BULK_PER_URL_TIMEOUT_MS / 1000) + "s budget)")
+            return
+        }
         $.ajax({
             url : `${label.url}`,
             type : 'POST',
             aysnc: false,
+            timeout: runTestTimeout,
             data: {
                 "data": test,
                 "_method": 'POST',
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             },       
-            success : function(data) {
-                data = JSON.parse(data)
+            success : function(response) {
+                let data
+                try {
+                    data = typeof response === "string" ? JSON.parse(response) : response
+                } catch (e) {
+                    abortCurrentBulkUrl("Invalid response from test (parse error)")
+                    return
+                }
                 data.label = label
                 data.tested_url = url
                 // testing casing
@@ -934,6 +995,13 @@ function toggleTestResultAreaVisibility() {
                     resultsFailed.push(data)
                 }
                 checkFinished()
+            },
+            error: function(xhr, status, err) {
+                const msg =
+                    status === "timeout"
+                        ? "Test timed out (URL budget " + (BULK_PER_URL_TIMEOUT_MS / 1000) + "s total for collect + test)"
+                        : ("Test request failed" + (err ? ": " + err : ""))
+                abortCurrentBulkUrl(msg)
             }
         })
     }
@@ -1179,7 +1247,7 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="${result.isExists ? "result_fail" : "result_pass"} strong  ${settings.live_urls_robots_meta? "" : "d-none hidden-element"}">${result.contentExists ? "Yes" : "No"}</td>
                     <td class="text-center">${result.content != null && result.content != "" ? result.content : "-"}</td>
                     ${!result.status && result.isExists ? `<td class="export-hidden-element"><a data-name="${data.title}" class="intentional-btn" id="intentional_${i}">Is this is intentional?</a></td>` : "<td class='export-hidden-element'>-</td>"}              
@@ -1237,11 +1305,11 @@ function toggleTestResultAreaVisibility() {
                     <th>#</th>
                     <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
                     <th class="align-left">Slug</th>
-                    <th class="${settings.max_url_length || settings.min_url_length ? "" : "d-none hidden-element"}">LEN</th>
+                    <th class="text-center ${settings.max_url_length || settings.min_url_length ? "" : "d-none hidden-element"}">LEN</th>
                     <th class="${settings.url_no_numbers ? "" : "d-none hidden-element"}">Has Numbers?</th>
-                    <th class="${settings.url_no_special ? "" : "d-none hidden-element"}">Has Special Characters?</th>
-                    <th class="${settings.url_slug_lowercase ? "" : "d-none hidden-element"}">Has Uppercase Characters?</th>
-                    <th class="${settings.url_casing_only_hyphens ? "" : "d-none hidden-element"}">Words Separated By Hyphens Only?</th>
+                    <th class="text-center ${settings.url_no_special ? "" : "d-none hidden-element"}"><span class="bulk-th-tooltip-inline">Special Characters?${typeof getCriteriaTooltipMarkup === 'function' ? getCriteriaTooltipMarkup('<p>Does the URL contain special characters?</p>', 'bulk-tooltips-contents') : ''}</span></th>
+                    <th class="text-center ${settings.url_slug_lowercase ? "" : "d-none hidden-element"}"><span class="bulk-th-tooltip-inline">Uppercase Characters?${typeof getCriteriaTooltipMarkup === 'function' ? getCriteriaTooltipMarkup('<p>Does the URL contain uppercase characters?</p>', 'bulk-tooltips-contents') : ''}</span></th>
+                    <th class="${settings.url_casing_only_hyphens ? "" : "d-none hidden-element"}"><span class="bulk-th-tooltip-inline">Hyphens Only?${typeof getCriteriaTooltipMarkup === 'function' ? getCriteriaTooltipMarkup('<p>Are words in the URL separated by Hyphens only?</p>', 'bulk-tooltips-contents') : ''}</span></th>
                     <th class="${settings.url_casing_only_underscores ? "" : "d-none hidden-element"}">Words Separated By Underscores Only?</th>
                     <th class="${settings.url_stop_words ? "" : "d-none hidden-element"}">Contains Stop Words?</th>
                     <th>Result</th>
@@ -1252,12 +1320,12 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td class="text-center">${i+1}</td>
-                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left content-td">${result.content != '' ? result.content : "-"}</td>
-                    <td class="${result.lengthClass} ${settings.max_url_length || settings.min_url_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
+                    <td class="text-center ${result.lengthClass} ${settings.max_url_length || settings.min_url_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
                     <td class="${result.statusNumbers ? "result_pass" : "result_fail"} ${settings.url_no_numbers ? "" : "d-none hidden-element"}">${result.statusNumbers ? "No" : "Yes"}</td>
-                    <td class="${result.statusSpecial ? "result_pass" : "result_fail"} ${settings.url_no_special ? "" : "d-none hidden-element"}">${result.statusSpecial ? "No" : "Yes"}</td>
-                    <td class="${result.statusLowercase ? "result_pass" : "result_fail"} ${settings.url_slug_lowercase ? "" : "d-none hidden-element"}">${result.statusLowercase ? "No" : "Yes"}</td>
+                    <td class="text-center ${result.statusSpecial ? "result_pass" : "result_fail"} ${settings.url_no_special ? "" : "d-none hidden-element"}">${result.statusSpecial ? "No" : "Yes"}</td>
+                    <td class="text-center ${result.statusLowercase ? "result_pass" : "result_fail"} ${settings.url_slug_lowercase ? "" : "d-none hidden-element"}">${result.statusLowercase ? "No" : "Yes"}</td>
                     <td class="${result.statusHyphens ? "result_pass" : "result_fail"} ${settings.url_casing_only_hyphens ? "" : "d-none hidden-element"}">${!isSingleWord(result.content) ? result.statusHyphens ? "Yes" : "No" : "-"}</td>
                     <td class="${result.statusUnderscore ? "result_pass" : "result_fail"} ${settings.url_casing_only_underscores ? "" : "d-none hidden-element"}">${result.statusUnderscore ? "Yes" : "No"}</td>
                     <td class="${result.statusStopWords ? "result_pass" : "result_fail"} ${settings.url_stop_words ? "" : "d-none hidden-element"}">${result.statusStopWords ? "No" : "Yes"}</td>
@@ -1289,12 +1357,12 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
-                    <td class="${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
+                    <td class="text-center ${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
                     <td class="${result.casingClass} ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
                     <td class="${result.isEqualClass} ${settings.is_og_title_equal_title ? "" : "d-none hidden-element"}">${result.isEqualStatus ? "Yes" : "No"}</td>
-                    <td class="${result.statusTitle ? "result_pass" : "result_fail"}">${result.statusTitle ? "PASS" : "FAIL"}</td>
+                    <td class="text-center ${result.statusTitle ? "result_pass" : "result_fail"}">${result.statusTitle ? "PASS" : "FAIL"}</td>
                     `
                     tbody.appendChild(tr)
                 })
@@ -1314,11 +1382,11 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.contentDesc != null ? result.contentDesc : "Open Graph Description does not exist."}</td>
-                    <td class="${result.lengthDescClass} ${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "d-none hidden-element"}">${result.contentDesc != null ? result.contentDesc.length : 0}</td>
+                    <td class="text-center ${result.lengthDescClass} ${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "d-none hidden-element"}">${result.contentDesc != null ? result.contentDesc.length : 0}</td>
                     <td class="${result.isEqualDescClass} ${settings.is_og_desc_equal_desc ? "" : "d-none hidden-element"}">${result.isEqualDescStatus ? "Yes" : "No"}</td>
-                    <td class="${result.statusDesc ? "result_pass" : "result_fail"}">${result.statusDesc ? "PASS" : "FAIL"}</td>
+                    <td class="text-center ${result.statusDesc ? "result_pass" : "result_fail"}">${result.statusDesc ? "PASS" : "FAIL"}</td>
                     `
                     tbody2.appendChild(tr)
                 })
@@ -1337,10 +1405,10 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
-                    <td class="align-left">${result.contentImage != null && result.contentImage != "" ? result.contentImage : "Open Graph Image does not exist."}</td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
+                    <td class="align-left">${result.contentImage != null && result.contentImage != "" ? `<a href="${result.contentImage}" target="_blank" rel="noopener noreferrer">${result.contentImage}</a>` : "Open Graph Image does not exist."}</td>
                     <td class="${settings.og_image_dimensions_min || settings.og_image_dimensions_exact ? "" : "d-none hidden-element"}"><span class="${result.widthImageClass}">${result.dimensions != null ? result.dimensions.w : "-"}</span>, <span class="${result.heightImageClass}">${result.dimensions != null ? result.dimensions.h : ""}</span></td>
-                    <td class="${result.statusImage ? "result_pass" : "result_fail"}">${result.statusImage ? "PASS" : "FAIL"}</td>
+                    <td class="text-center ${result.statusImage ? "result_pass" : "result_fail"}">${result.statusImage ? "PASS" : "FAIL"}</td>
                     `
                     tbody3.appendChild(tr)
                 })
@@ -1360,11 +1428,11 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.contentURL != null && result.contentURL != "" ? result.contentURL : "Open Graph URL does not exist."}</td>
-                    <td class="${result.lengthURLClass} ${settings.max_og_url_length ? "" : "d-none hidden-element"}">${result.contentURL != null ? result.contentURL.length : 0}</td>
+                    <td class="text-center ${result.lengthURLClass} ${settings.max_og_url_length ? "" : "d-none hidden-element"}">${result.contentURL != null ? result.contentURL.length : 0}</td>
                     <td class="${result.isEqualURLClass} ${settings.is_og_url_equal_url ? "" : "d-none hidden-element"}">${result.isEqualURLStatus ? "Yes" : "No"}</td>
-                    <td class="${result.statusURL ? "result_pass" : "result_fail"}">${result.statusURL ? "PASS" : "FAIL"}</td>
+                    <td class="text-center ${result.statusURL ? "result_pass" : "result_fail"}">${result.statusURL ? "PASS" : "FAIL"}</td>
                     `
                     tbody4.appendChild(tr)
                 })
@@ -1375,7 +1443,7 @@ function toggleTestResultAreaVisibility() {
                     <th>#</th>
                     <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
                     <th class="align-left">Twitter:Title</th>
-                    <th class="${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "d-none hidden-element"}">LEN</th>
+                    <th class="${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "d-none hidden-element"}" style="white-space: nowrap;">LEN</th>
                     <th class="${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "d-none hidden-element"}">Casing</th>
                     <th class="${settings.is_twitter_title_equal_title ? "" : "d-none hidden-element"}">Twitter:Title Equal to title?</th>
                     <th>Result</th>
@@ -1386,12 +1454,12 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
-                    <td class="${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
-                    <td class="${result.casingClass} ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
-                    <td class="${result.isEqualClass} ${settings.is_twitter_title_equal_title ? "" : "d-none hidden-element"}">${result.isEqualStatus ? "Yes" : "No"}</td>
-                    <td class="${result.statusTitle ? "result_pass" : "result_fail"}">${result.statusTitle ? "PASS" : "FAIL"}</td>
+                    <td class="text-center ${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
+                    <td class="text-center ${result.casingClass} ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
+                    <td class="text-center ${result.isEqualClass} ${settings.is_twitter_title_equal_title ? "" : "d-none hidden-element"}">${result.isEqualStatus ? "Yes" : "No"}</td>
+                    <td class="text-center ${result.statusTitle ? "result_pass" : "result_fail"}">${result.statusTitle ? "PASS" : "FAIL"}</td>
                     `
                     tbody.appendChild(tr)
                 })
@@ -1412,10 +1480,10 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
-                    <td class="align-left">${result.contentImage != null && result.contentImage != "" ? result.contentImage : "Twitter Image does not exist."}</td>
-                    <td class="${settings.twitter_image_dimensions_min || settings.twitter_image_dimensions_exact ? "" : "d-none hidden-element"}"><span class="${result.widthImageClass}">${result.dimensions != null ? result.dimensions.w : "-"}</span>, <span class="${result.heightImageClass}">${result.dimensions != null ? result.dimensions.h : ""}</span></td>
-                    <td class="${result.statusImage ? "result_pass" : "result_fail"}">${result.statusImage ? "PASS" : "FAIL"}</td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
+                    <td class="align-left">${result.contentImage != null && result.contentImage != "" ? `<a href="${result.contentImage}" target="_blank" rel="noopener noreferrer">${result.contentImage}</a>` : "Twitter Image does not exist."}</td>
+                    <td class="text-center ${settings.twitter_image_dimensions_min || settings.twitter_image_dimensions_exact ? "" : "d-none hidden-element"}"><span class="${result.widthImageClass}">${result.dimensions != null ? result.dimensions.w : "-"}</span>, <span class="${result.heightImageClass}">${result.dimensions != null ? result.dimensions.h : ""}</span></td>
+                    <td class="text-center ${result.statusImage ? "result_pass" : "result_fail"}">${result.statusImage ? "PASS" : "FAIL"}</td>
                     `
                     tbody2.appendChild(tr)
                 })
@@ -1425,7 +1493,7 @@ function toggleTestResultAreaVisibility() {
                     <th>#</th>
                     <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
                     <th class="align-left">Twitter:Image:Alt</th>
-                    <th class="${settings.max_twitter_image_alt_length ? "" : "d-none hidden-element"}">LEN</th>
+                    <th class="${settings.max_twitter_image_alt_length ? "" : "d-none hidden-element"}" style="white-space: nowrap;">LEN</th>
                     <th>Result</th>
                 </tr>
                 </thead>`
@@ -1434,10 +1502,10 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.contentImageAlt != null && result.contentImageAlt != "" ? result.contentImageAlt : "Twitter Image Alt does not exist."}</td>
-                    <td class="${result.lengthImageAltClass} ${settings.max_twitter_image_alt_length ? "" : "d-none hidden-element"}">${result.contentImageAlt ? result.contentImageAlt.length : 0}</td>
-                    <td class="${result.statusImageAlt ? "result_pass" : "result_fail"}">${result.statusImageAlt ? "PASS" : "FAIL"}</td>
+                    <td class="text-center ${result.lengthImageAltClass} ${settings.max_twitter_image_alt_length ? "" : "d-none hidden-element"}">${result.contentImageAlt ? result.contentImageAlt.length : 0}</td>
+                    <td class="text-center ${result.statusImageAlt ? "result_pass" : "result_fail"}">${result.statusImageAlt ? "PASS" : "FAIL"}</td>
                     `
                     tbody3.appendChild(tr)
                 })
@@ -1623,12 +1691,14 @@ function toggleTestResultAreaVisibility() {
                             <th></th>
                             <th></th>
                             <th class="align-left ${settings.image_alt ? "" : "d-none hidden-element"}">Content</th>
-                            <th class="${settings.image_alt_only_spaces ? "" : "d-none hidden-element"}">Words separated by spaces?</th>
+                            <th class="text-center ${settings.image_alt_only_spaces ? "" : "d-none hidden-element"}">
+                                <span class="bulk-th-tooltip-inline">Spaces${typeof getCriteriaTooltipMarkup === 'function' ? getCriteriaTooltipMarkup('<p>Words separated by spaces?</p>', 'bulk-tooltips-contents') : ''}</span>
+                            </th>
                             <th class="align-left">File name</th>
-                            <th class="${settings.image_name_max_characters ? "" : "d-none hidden-element"}">LEN</th>
+                            <th class="${settings.image_name_max_characters ? "" : "d-none hidden-element"}" style="white-space: nowrap;">LEN</th>
                             <th class="${settings.image_name_only_hyphens ? "" : "d-none hidden-element"}">Words separated by hyphens?</th>
-                            <th class="${settings.image_name_no_uppercase ? "" : "d-none hidden-element"}">Uppercase characters?</th>
-                            <th class="${settings.image_name_no_special ? "" : "d-none hidden-element"}">Special characters?</th>
+                            <th class="text-center ${settings.image_name_no_uppercase ? "" : "d-none hidden-element"}">Uppercase characters?</th>
+                            <th class="text-center ${settings.image_name_no_special ? "" : "d-none hidden-element"}">Special characters?</th>
                             <th class="${settings.image_max_size ? "" : "d-none hidden-element"}">File Size</th>
                             <th class=""></th>
                         </tr>
@@ -1640,18 +1710,14 @@ function toggleTestResultAreaVisibility() {
                                 tr.innerHTML = `
                                 <td class="${z===0 ? 'has-border' : ''}">${z===0 ? i+1 : ''}</td>
                                 <td class="align-left ${z===0 ? 'has-border' : ''}">${z===0 ? result.tested_url: ''}</td>
-                                <td class="content-td image-table-link" td-replace="${prob.imageSrc}"><a href="${prob.imageSrc}" target="_blank"><span>Link</span>
-                                <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M11.3333 5.33333C11.1565 5.33333 10.987 5.40357 10.8619 5.5286C10.7369 5.65362 10.6667 5.82319 10.6667 6V10C10.6667 10.1768 10.5964 10.3464 10.4714 10.4714C10.3464 10.5964 10.1768 10.6667 10 10.6667H2C1.82319 10.6667 1.65362 10.5964 1.5286 10.4714C1.40357 10.3464 1.33333 10.1768 1.33333 10V2C1.33333 1.82319 1.40357 1.65362 1.5286 1.5286C1.65362 1.40357 1.82319 1.33333 2 1.33333H6C6.17681 1.33333 6.34638 1.2631 6.4714 1.13807C6.59643 1.01305 6.66667 0.843478 6.66667 0.666667C6.66667 0.489856 6.59643 0.320286 6.4714 0.195262C6.34638 0.0702379 6.17681 0 6 0H2C1.46957 0 0.960859 0.210714 0.585787 0.585787C0.210714 0.960859 0 1.46957 0 2V10C0 10.5304 0.210714 11.0391 0.585787 11.4142C0.960859 11.7893 1.46957 12 2 12H10C10.5304 12 11.0391 11.7893 11.4142 11.4142C11.7893 11.0391 12 10.5304 12 10V6C12 5.82319 11.9298 5.65362 11.8047 5.5286C11.6797 5.40357 11.5101 5.33333 11.3333 5.33333Z" fill="#1E63B8"></path>
-                                    <path d="M8.66728 1.33333H9.72061L5.52728 5.52C5.46479 5.58198 5.4152 5.65571 5.38135 5.73695C5.3475 5.81819 5.33008 5.90533 5.33008 5.99333C5.33008 6.08134 5.3475 6.16848 5.3794 6.24972C5.41324 6.33096 5.46284 6.40469 5.52532 6.46667C5.5873 6.52915 5.66103 6.57875 5.74227 6.61259C5.82351 6.64644 5.91065 6.66387 5.99866 6.66387C6.08667 6.66387 6.1738 6.64644 6.25504 6.61259C6.33628 6.57875 6.41002 6.52915 6.47199 6.46667L10.6673 2.28V3.33333C10.6673 3.51014 10.7375 3.67971 10.8625 3.80474C10.9876 3.92976 11.1571 4 11.3339 4C11.5108 4 11.6803 3.92976 11.8053 3.80474C11.9304 3.67971 12.0006 3.51014 12.0006 3.33333V0.666667C12.0006 0.489856 11.9304 0.320286 11.8053 0.195262C11.6803 0.0702379 11.5108 0 11.3339 0H8.66728C8.48851 0 8.31894 0.0702379 8.19392 0.195262C8.0689 0.320286 8.00061 0.489856 8.00061 0.666667C8.00061 0.843478 8.07085 1.01305 8.19587 1.13807C8.3209 1.2631 8.49047 1.33333 8.66728 1.33333Z" fill="#1E63B8"></path>
-                                </svg> </a></td>
+                                <td class="content-td image-table-link text-center" td-replace="${prob.imageSrc}"><a href="${prob.imageSrc}" target="_blank">Link</a></td>
                                 <td class="align-left ${settings.image_alt ? "" : "d-none hidden-element"}">${prob.imageAlt}</td>
-                                <td class="${prob.imageAltSpacesClass} ${settings.image_alt_only_spaces ? "" : "d-none hidden-element"}">${prob.imageAltSpacesStatus ? "<span class='result_pass'>Yes</span>" : "<span class='result_fail'>No</span>"}</td>
+                                <td class="text-center ${prob.imageAltSpacesClass} ${settings.image_alt_only_spaces ? "" : "d-none hidden-element"}">${prob.imageAltSpacesStatus ? "<span class='result_pass'>Yes</span>" : "<span class='result_fail'>No</span>"}</td>
                                 <td class="align-left">${prob.imageName}</td>
                                 <td class="${prob.imageLengthClass} ${settings.image_name_max_characters ? "" : "d-none hidden-element"}">${prob.imageLengthStatus ? prob.imageName.length : "-"}</td>
-                                <td class="${prob.imageHyphenClass} ${settings.image_name_only_hyphens ? "" : "d-none hidden-element"}">${prob.imageHyphenStatus ? "<span class='result_pass'>Yes</span>" : "<span class='result_fail'>No</span>"}</td>
-                                <td class="${prob.imageUppercaseClass} ${settings.image_name_no_uppercase ? "" : "d-none hidden-element"}">${prob.imageUppercaseStatus ? "<span class='result_fail'>Yes</span>" : "<span class='result_pass'>No</span>"}</td>
-                                <td class="${prob.imageSpecialClass} ${settings.image_name_no_special ? "" : "d-none hidden-element"}">${prob.imageSpecialStatus ? "<span class='result_fail'>Yes</span>" : "<span class='result_pass'>No</span>"}</td>
+                                <td class="text-center ${prob.imageHyphenClass} ${settings.image_name_only_hyphens ? "" : "d-none hidden-element"}">${prob.imageHyphenStatus ? "<span class='result_pass'>Yes</span>" : "<span class='result_fail'>No</span>"}</td>
+                                <td class="text-center ${prob.imageUppercaseClass} ${settings.image_name_no_uppercase ? "" : "d-none hidden-element"}">${prob.imageUppercaseStatus ? "<span class='result_fail'>Yes</span>" : "<span class='result_pass'>No</span>"}</td>
+                                <td class="text-center ${prob.imageSpecialClass} ${settings.image_name_no_special ? "" : "d-none hidden-element"}">${prob.imageSpecialStatus ? "<span class='result_fail'>Yes</span>" : "<span class='result_pass'>No</span>"}</td>
                                 <td class="${prob.imageSizeClass} ${settings.image_max_size ? "" : "d-none hidden-element"}">${prob.imageSizeValue}</td>
                                 <td class="${prob.status ? "result_pass" : "result_fail"}">${prob.status ? "PASS" : "FAIL"}</td>
                                 `
@@ -1774,22 +1840,22 @@ function toggleTestResultAreaVisibility() {
                     results.forEach((result, i)=>{
                         const tr1 = document.createElement("tr")
                         let rowHtml = `<tr>
-                            <td>${i+1}</td>
+                            <td class="text-center">${i+1}</td>
                             <td class="align-left">${result.tested_url}</td>`;
 
-                        if (showPerfDesktop) rowHtml += `<td class="${result.statusPerformanceDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreDesktop)}</td>`;
-                        if (showPerfMobile)  rowHtml += `<td class="${result.statusPerformanceMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreMobile)}</td>`;
+                        if (showPerfDesktop) rowHtml += `<td class="text-center ${result.statusPerformanceDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreDesktop)}</td>`;
+                        if (showPerfMobile)  rowHtml += `<td class="text-center ${result.statusPerformanceMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreMobile)}</td>`;
 
-                        if (showAccDesktop)  rowHtml += `<td class="${result.statusAccessibilityDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityDesktop)}</td>`;
-                        if (showAccMobile)   rowHtml += `<td class="${result.statusAccessibilityMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityMobile)}</td>`;
+                        if (showAccDesktop)  rowHtml += `<td class="text-center ${result.statusAccessibilityDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityDesktop)}</td>`;
+                        if (showAccMobile)   rowHtml += `<td class="text-center ${result.statusAccessibilityMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.accessibilityMobile)}</td>`;
 
-                        if (showBestDesktop) rowHtml += `<td class="${result.statusBestPracticesDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesDesktop)}</td>`;
-                        if (showBestMobile)  rowHtml += `<td class="${result.statusBestPracticesMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesMobile)}</td>`;
+                        if (showBestDesktop) rowHtml += `<td class="text-center ${result.statusBestPracticesDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesDesktop)}</td>`;
+                        if (showBestMobile)  rowHtml += `<td class="text-center ${result.statusBestPracticesMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.bestPracticesMobile)}</td>`;
 
-                        if (showSeoDesktop)  rowHtml += `<td class="${result.statusSeoDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoDesktop)}</td>`;
-                        if (showSeoMobile)   rowHtml += `<td class="${result.statusSeoMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoMobile)}</td>`;
+                        if (showSeoDesktop)  rowHtml += `<td class="text-center ${result.statusSeoDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoDesktop)}</td>`;
+                        if (showSeoMobile)   rowHtml += `<td class="text-center ${result.statusSeoMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.seoMobile)}</td>`;
 
-                        rowHtml += `<td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>`;
+                        rowHtml += `<td class="text-center ${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>`;
                         rowHtml += `</tr>`;
 
                         tr1.innerHTML = rowHtml;
@@ -1871,31 +1937,31 @@ function toggleTestResultAreaVisibility() {
                 results.forEach((result, i)=>{
                     const tr1 = document.createElement("tr")
                     let rowHtml = `<tr>
-                        <td>${i+1}</td>
+                        <td class="text-center">${i+1}</td>
                         <td class="align-left">${result.tested_url}</td>`;
 
-                    if (showLcpDesktop) rowHtml += `<td class="${result.statusLCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpDesktop)}</td>`;
-                    if (showLcpMobile)  rowHtml += `<td class="${result.statusLCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpMobile)}</td>`;
+                    if (showLcpDesktop) rowHtml += `<td class="text-center ${result.statusLCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpDesktop)}</td>`;
+                    if (showLcpMobile)  rowHtml += `<td class="text-center ${result.statusLCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpMobile)}</td>`;
 
-                    if (showFidDesktop) rowHtml += `<td class="${result.statusFIDDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidDesktop)}</td>`;
-                    if (showFidMobile)  rowHtml += `<td class="${result.statusFIDMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidMobile)}</td>`;
+                    if (showFidDesktop) rowHtml += `<td class="text-center ${result.statusFIDDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidDesktop)}</td>`;
+                    if (showFidMobile)  rowHtml += `<td class="text-center ${result.statusFIDMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fidMobile)}</td>`;
 
-                    if (showClsDesktop) rowHtml += `<td class="${result.statusCLSDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsDesktop)}</td>`;
-                    if (showClsMobile)  rowHtml += `<td class="${result.statusCLSMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsMobile)}</td>`;
+                    if (showClsDesktop) rowHtml += `<td class="text-center ${result.statusCLSDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsDesktop)}</td>`;
+                    if (showClsMobile)  rowHtml += `<td class="text-center ${result.statusCLSMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.clsMobile)}</td>`;
 
-                    if (showFcpDesktop) rowHtml += `<td class="${result.statusFCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpDesktop)}</td>`;
-                    if (showFcpMobile)  rowHtml += `<td class="${result.statusFCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpMobile)}</td>`;
+                    if (showFcpDesktop) rowHtml += `<td class="text-center ${result.statusFCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpDesktop)}</td>`;
+                    if (showFcpMobile)  rowHtml += `<td class="text-center ${result.statusFCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.fcpMobile)}</td>`;
 
-                    if (showTtiDesktop) rowHtml += `<td class="${result.statusTTIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiDesktop)}</td>`;
-                    if (showTtiMobile)  rowHtml += `<td class="${result.statusTTIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiMobile)}</td>`;
+                    if (showTtiDesktop) rowHtml += `<td class="text-center ${result.statusTTIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiDesktop)}</td>`;
+                    if (showTtiMobile)  rowHtml += `<td class="text-center ${result.statusTTIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.ttiMobile)}</td>`;
 
-                    if (showSiDesktop) rowHtml += `<td class="${result.statusSIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siDesktop)}</td>`;
-                    if (showSiMobile)  rowHtml += `<td class="${result.statusSIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siMobile)}</td>`;
+                    if (showSiDesktop) rowHtml += `<td class="text-center ${result.statusSIDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siDesktop)}</td>`;
+                    if (showSiMobile)  rowHtml += `<td class="text-center ${result.statusSIMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.siMobile)}</td>`;
 
-                    if (showTbtDesktop) rowHtml += `<td class="${result.statusTBTDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtDesktop)}</td>`;
-                    if (showTbtMobile)  rowHtml += `<td class="${result.statusTBTMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtMobile)}</td>`;
+                    if (showTbtDesktop) rowHtml += `<td class="text-center ${result.statusTBTDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtDesktop)}</td>`;
+                    if (showTbtMobile)  rowHtml += `<td class="text-center ${result.statusTBTMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.tbtMobile)}</td>`;
 
-                    rowHtml += `<td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>`;
+                    rowHtml += `<td class="text-center ${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>`;
                     rowHtml += `</tr>`;
 
                     tr1.innerHTML = rowHtml;
@@ -3259,8 +3325,9 @@ function toggleTestResultAreaVisibility() {
                     return {
                         fixed,
                         weights: {
-                            url: 50,
-                            content: 30,
+                            // Make URL column 10% narrower and content 10% wider
+                            url: 40,
+                            content: 40,
                             length: 10,
                             result: 10,
                             default: 10
@@ -3270,8 +3337,8 @@ function toggleTestResultAreaVisibility() {
                     return {
                         fixed,
                         weights: {
-                            url: 50,
-                            content: 30,
+                            url: 40,
+                            content: 40,
                             length: 10,
                             result: 10,
                             default: 10
@@ -3423,6 +3490,3 @@ $(document).on("click",".download-xlsx-bulk",function() {
     let xlsxName = $(this).attr('data-csv') + '.xlsx';
     ToolXlsx.buildXLSX(xlsxName);
 });
-
-
-
