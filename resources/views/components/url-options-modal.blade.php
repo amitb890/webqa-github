@@ -1,5 +1,5 @@
 <div class="modal url-options-modal" id="urlOptionsModal">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-dialog-imran">
     <div class="modal-content">
       <div class="modal-body">
         <ul class="">

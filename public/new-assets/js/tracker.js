@@ -357,12 +357,32 @@ $(document).ready(function () {
             elements =  ["Performance", "Accessiblity", "Best Practices", "SEO"]
             break;
           case "core_web_vitals":
-            elements =  ["LCP </br> <small>(Measured in seconds)</small>", "FID </br> <small>(Measured in ms)</small>", "CLS", "FCP </br> <small>(Measured in seconds)</small>", "TTI </br> <small>(Measured in seconds)</small>", "SI </br> <small>(Measured in seconds)</small>", "TBT </br> <small>(Measured in ms)</small>"]
-            break;
+          elements = ["LCP", "FID", "CLS", "FCP", "TTI", "SI", "TBT"];
+          break;
           case "mobile_friendly":
             elements =  ["Mobile Friendly"]
             break;
         }
+
+        const tooltipMap = {
+            "LCP": "Largest Contentful Paint, Measured in seconds",
+            "FID": "First Input Delay, Measured in ms",
+            "CLS": "Cumulative Layout Shift",
+            "FCP": "First Contentful Paint, Measured in seconds",
+            "TTI": "Time to Interactive, Measured in seconds",
+            "SI": "Speed Index, Measured in seconds",
+            "TBT": "Total Blocking Time, Measured in ms"
+        };
+
+
+        document.querySelectorAll(".table-header td").forEach(cell => {
+            const text = cell.innerText.trim();
+
+            if (tooltipMap[text]) {
+                cell.classList.add("custom-tooltip-imran");
+                cell.setAttribute("data-tooltip", tooltipMap[text]);
+            }
+        });
 
 
         elements.forEach(el=>{
@@ -385,6 +405,7 @@ $(document).ready(function () {
           if(title === "performance"){
             UI.buildPerformanceTableHeader(type)
           }else{
+            console.log(data)
             projectSettings = data[0].settings;
             const displayName = data[0].label.display_name
             const td = document.createElement("td")
@@ -395,7 +416,7 @@ $(document).ready(function () {
             <a class="dropdown-toggle dropdown-toggle-tracker p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               <img src="/new-assets/assets/images/more.png">
             </a>
-            <ul class="dropdown-menu dropdown-menu-start">
+            <ul class="dropdown-menu dropdown-menu-start dropdown-menu-start-imran">
                 <li class='show-hidden-elements'>
                     <a class="dropdown-item hide-column" href="#">Show hidden columns</a>
                 </li>
@@ -435,7 +456,7 @@ $(document).ready(function () {
                         </defs>
                       </svg>
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-start">
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
                       <li>
                           <a class="dropdown-item hide-column" href="#">Hide column</a>
                       </li>
@@ -465,7 +486,7 @@ $(document).ready(function () {
                         </defs>
                       </svg>
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-start">
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
                       <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
                       <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
                       <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
@@ -490,7 +511,7 @@ $(document).ready(function () {
                         </defs>
                       </svg>
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-start">
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
                       <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
                       <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
                       <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
@@ -513,7 +534,7 @@ $(document).ready(function () {
                         </defs>
                       </svg>
                   </a>
-                  <ul class="dropdown-menu dropdown-menu-start">
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
                       <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
                       <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
                       <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
@@ -1003,7 +1024,7 @@ $(document).ready(function () {
                         break;
                       }
                       td.innerHTML += `
-                      <td>${result.content != null ? result.content : "-"}</td>`;
+                      <td class="amitBannerJi">${result.content != null ? result.content : "-"}</td>`;
 
                       if (projectSettings.max_url_length == 1 || projectSettings.min_url_length == 1) {
                         td.innerHTML +=  `<td class="${result.lengthClass} ${settings.max_url_length || settings.min_url_length ? "" : "hidden-element-tracker"}">
@@ -1565,6 +1586,7 @@ $(document).ready(function () {
           }
       });
 
+      console.log(result)
       return result;
     }
 
@@ -1674,7 +1696,7 @@ $(document).ready(function () {
             var idHeight = $(modalID).height();
 
             $(".url-options-modal").css({display: "block"})
-            $(modalID).css({ left: thisLeft - Number(idWidth / 2) + Number(thisWidth / 2), top: thisTop - Number(idHeight / 2) + Number(thisHeight) });
+            $(modalID).css({ left: thisLeft - Number(idWidth / 2) + Number(thisWidth / 2), top: thisTop - Number(idHeight / 2) + Number(thisHeight) -50 });
             urlOptionModalOpenStatus = true
         });
 
@@ -2783,6 +2805,7 @@ $(document).ready(function () {
 
       static buildTableBody(options, data, settings, updatedUrls){
         updatedUrls.forEach(el=>{
+          console.log(el)
           UI.buildRootURLElement(el)
 
           const urls = el.urls
@@ -2921,9 +2944,11 @@ $(document).ready(function () {
       }
 
       static updateTestDataForm(results){
+        console.log(results, obj)
         for (const [key, value] of Object.entries(results)) {
           for (const [key1, value1] of Object.entries(results[key])) {
             const result = JSON.parse(value1)
+            console.log(key1)
             obj[key1].push(result)
 
           }
@@ -2937,6 +2962,7 @@ $(document).ready(function () {
       static loadData(loadData){
           DB.returnData(loadData)
           .done(function(data){
+            console.log(data)
             const testDetails = data.results
 
 
@@ -2963,6 +2989,7 @@ $(document).ready(function () {
 
       static activateEvents(){
     
+        console.log(urlsList)
           // Events
         $("#recheckAllTracker").on("click", async function(e){
           await Controls.recheckStart()
@@ -3183,9 +3210,18 @@ $(document).ready(function () {
     Controls.deleteURL()
   })
 
+  
+
 })
 $(document).on("click",".download-xlsx-bulk",function() {
   let xlsxName = TableCSVExporter.prepareCsvName($('#report-slug').val()) + '.xlsx';
   ToolXlsx.buildXLSX(xlsxName);
 
 });
+
+$("#hide-col-btn").on("click", function () {
+    $("table").toggleClass("first-col-collapsed");
+    $(this).toggleClass("collapsed");
+});
+
+z
