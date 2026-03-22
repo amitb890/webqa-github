@@ -1,6 +1,7 @@
 $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
-  var recheckMax = 5, urls, urlsToCheck = 1
+  /** Match dashboard.js: batch sizes for recheck flows */
+  var recheckMax = 2, recheckSingleMax = 1, urls, urlsToCheck = 1, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId
@@ -150,6 +151,43 @@ $(document).ready(function () {
             recheckHyperlink.title = "Recheck dashboard"
           }
         }
+
+        const recheckMenuToggle = document.querySelector(".menu-recheck-option > a.dropdown-toggle")
+        if (recheckMenuToggle) {
+          if (isDisabled) {
+            recheckMenuToggle.style.opacity = "0.6"
+            recheckMenuToggle.style.pointerEvents = "none"
+            recheckMenuToggle.style.cursor = "not-allowed"
+            recheckMenuToggle.title = "Please wait for current tests to complete before rechecking"
+          } else {
+            recheckMenuToggle.style.opacity = "1"
+            recheckMenuToggle.style.pointerEvents = ""
+            recheckMenuToggle.style.cursor = "pointer"
+            recheckMenuToggle.title = ""
+          }
+        }
+        const recheckAllTracker = document.getElementById("recheckAllTracker")
+        if (recheckAllTracker) {
+          recheckAllTracker.style.pointerEvents = isDisabled ? "none" : ""
+          recheckAllTracker.classList.toggle("text-muted", isDisabled)
+        }
+      }
+
+      static removeWaitingMessage(){
+        const existingMessage = document.querySelector("#waiting-message")
+        if (existingMessage) {
+          existingMessage.remove()
+        }
+      }
+
+      static updateRecheckProgressBar(index, percentage){
+        const $rechecked = $("#urlRechecked")
+        const progressBar = document.querySelector("#urlRecheckedProgressBar")
+        const progressText = document.querySelector("#urlRecheckedProgressText")
+        if (!$rechecked.length || !progressBar || !progressText) return
+        $rechecked.html(index)
+        progressBar.style.width = percentage + "%"
+        progressText.innerHTML = parseInt(percentage) + "%"
       }
 
       static showWaitingMessage(){
@@ -164,6 +202,9 @@ $(document).ready(function () {
       }
 
       static buildRecheckLoader(){
+        const area = document.querySelector(".dashboard_recheck_area")
+        if (!area) return
+        area.querySelectorAll(".main-tricker-progress").forEach((el) => el.remove())
         const div = document.createElement("div")
         div.classList.add("main-tricker-progress")
         div.innerHTML = `
@@ -180,7 +221,7 @@ $(document).ready(function () {
                     <div id="urlRecheckedProgressBar" class="progress-bar tricker-progress" role="progressbar" aria-label="Success example" style="width: 0%;" aria-valuenow="70" title="" aria-valuemin="0" aria-valuemax="100"> </div>
                   </div>
                 </div>`
-        document.querySelector(".dashboard_recheck_area").prepend(div)
+        area.prepend(div)
       }
 
       
@@ -1611,6 +1652,15 @@ $(document).ready(function () {
       }
 
       static initDataTable(){
+          const $reportTable = $("#reportTable")
+          if ($reportTable.length && $.fn.DataTable && $.fn.DataTable.isDataTable($reportTable[0])) {
+            try {
+              $reportTable.DataTable().destroy()
+            } catch (e) {
+              console.warn("DataTable destroy failed:", e)
+            }
+          }
+
           const styles = {
             colResize: {
               isEnabled: () => $(window).width() > 768,
@@ -2959,8 +3009,12 @@ $(document).ready(function () {
     }
   
 
-      static loadData(loadData){
-          DB.returnData(loadData)
+      /**
+       * @param {string|number} loadDataParam - project id
+       * @param {{ resumeDashboardRecheckAfterLoad?: boolean }} [options]
+       */
+      static loadData(loadDataParam, options = {}){
+          DB.returnData(loadDataParam)
           .done(function(data){
             console.log(data)
             const testDetails = data.results
@@ -2983,6 +3037,11 @@ $(document).ready(function () {
               UI.toggleTrackerElements()
               UI.updateTableDesign()
               removeLoader()
+              // Same as dashboard: after reload mid-recheck, show recheck bar and keep polling
+              if (options.resumeDashboardRecheckAfterLoad) {
+                UI.buildRecheckLoader()
+                Controls.pollDashboardRecheckUntilComplete()
+              }
           })
   
       }
@@ -2991,7 +3050,7 @@ $(document).ready(function () {
     
         console.log(urlsList)
           // Events
-        $("#recheckAllTracker").on("click", async function(e){
+        $("#recheckAllTracker").off("click.trackerRecheck").on("click.trackerRecheck", async function(e){
           await Controls.recheckStart()
           e.preventDefault()
         })
@@ -3020,31 +3079,174 @@ $(document).ready(function () {
         }
       }
 
+      static async waitForTestsToComplete() {
+        return new Promise((resolve) => {
+          const checkInterval = setInterval(async () => {
+            const testsRunning = await Controls.checkIfTestsAreRunning()
+
+            if (!testsRunning) {
+              clearInterval(checkInterval)
+              resolve()
+            }
+          }, 2000)
+        })
+      }
+
+      static calcProgressDashboard(results){
+        if (!results) results = {}
+
+        const total = urls.length
+        let completedCount = 0
+
+        Object.keys(results).forEach(url => {
+          const urlData = results[url]
+
+          if (!urlData) return
+
+          if (urlData.status === "completed" || urlData.status === "failed") {
+            completedCount++
+            return
+          }
+
+          const hasFinalResults = (
+            urlData.meta_title ||
+            urlData.meta_desc ||
+            urlData.robots_meta ||
+            urlData.canonical_url
+          )
+
+          if (hasFinalResults) {
+            completedCount++
+          }
+        })
+
+        const progress = getReportProgress(completedCount, total, false)
+
+        return {
+          completedCount: completedCount,
+          total: total,
+          progress: progress,
+        }
+      }
+
+      static updateProgressRecheck(results){
+        const progressDetails = Controls.calcProgressDashboard(results)
+        UI.updateRecheckProgressBar(progressDetails.completedCount, progressDetails.progress)
+      }
+
+      static startTest(urlsUpdated, type, recheck_label = "na"){
+        return new Promise((resolve, reject) => {
+          const payload = {
+            urls: urlsUpdated,
+            project_id: projectId,
+            test_type: type,
+            recheck_label: recheck_label,
+            _method: 'POST'
+          }
+          $.ajax({
+            url : `/test/start-dashboard-test`,
+            type : 'POST',
+            contentType: 'application/json',
+            headers: {
+              'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: JSON.stringify(payload),
+            success: function(data) {
+              resolve(data)
+            },
+            error: function(xhr, status, err) {
+              reject(new Error(err || status || 'Start test failed'))
+            }
+          })
+        })
+      }
+
+      /** Resume polling after page refresh while dashboard recheck / single-tile recheck is in progress (dashboard.js parity). */
+      static pollDashboardRecheckUntilComplete(){
+        ;(async function checkStatusDashboard() {
+          let controller
+
+          while (true) {
+            if (controller) controller.abort()
+            controller = new AbortController()
+
+            try {
+              const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+                signal: controller.signal
+              })
+
+              if (!response.ok) {
+                await new Promise(res => setTimeout(res, 1000))
+                continue
+              }
+
+              let data
+              try {
+                data = await response.json()
+              } catch (_) {
+                await new Promise(res => setTimeout(res, 1000))
+                continue
+              }
+
+              const { status, results } = data
+              Controls.updateProgressRecheck(results || {})
+
+              if (status === 'completed') {
+                Controls.endTestRecheck()
+                setTimeout(() => {
+                  recheckAllowed = true
+                  UI.updateRecheckButtonState(false)
+                }, 100)
+                break
+              }
+            } catch (e) {
+              if (e.name !== "AbortError") console.error(e)
+            }
+
+            await new Promise(res => setTimeout(res, 1000))
+          }
+        })()
+      }
+
+      /** After recheck completes: same outcome as dashboard `endTest` but refresh tracker table + Lighthouse data. */
+      static endTestRecheck(){
+        if (document.querySelector(".main-tricker-progress")) {
+          document.querySelector(".main-tricker-progress").remove()
+        }
+        buildLoader()
+        ;(async function refreshAfterRecheck() {
+          try {
+            const response = await fetch(`/api/check-status/${projectId}`)
+            const { status, results } = await response.json()
+            if (status === 'completed') {
+              lighthouseStatus = true
+              testDetailsLighthouse = results
+            }
+          } catch (e) {
+            console.error(e)
+          }
+          Controls.loadData(projectId)
+        })()
+        UI.updateRecheckButtonState(false)
+      }
 
       static async recheckStart(){
         if(recheckAllowed){
-          // First check if any tests are currently running
-          const testsRunning = await Controls.checkIfTestsAreRunning();
-          
+          const testsRunning = await Controls.checkIfTestsAreRunning()
+
           if (testsRunning) {
-            // Show message that we need to wait for tests to complete
-            UI.showWaitingMessage();
-            
-            // Wait for all tests to complete
-            await Controls.waitForTestsToComplete();
-            
-          }else{
-          // Now proceed with recheck
-          recheckAllowed = false
-          
-          // Update button state to show recheck is starting
-          UI.updateRecheckButtonState(true)
-          
-          DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
-            .done(function(data){
+            UI.showWaitingMessage()
+            await Controls.waitForTestsToComplete()
+          } else {
+            recheckAllowed = false
+            UI.updateRecheckButtonState(true)
+
+            DB.getUrlsList(projectId)
+              .done(function(data){
+                originalUrls = data
                 urls = data.slice(0, recheckMax)
                 urlsToCheck = recheckMax
-  
+
                 removeLoader()
                 UI.buildRecheckLoader()
                 obj = {
@@ -3065,85 +3267,55 @@ $(document).ready(function () {
                   http_status_code: [],
                   broken_links: [],
                   security_labels: {
-                      is_safe_browsing: [],
-                      cross_origin_links: [],
-                      protocol_relative_resource: [],
-                      content_security_policy_header: [],
-                      x_frame_options_header: [],
-                      hsts_header: [],
-                      bad_content_type: [],
-                      ssl_certificate_enable: [],
-                      folder_browsing_enable: [],
+                    is_safe_browsing: [],
+                    cross_origin_links: [],
+                    protocol_relative_resource: [],
+                    content_security_policy_header: [],
+                    x_frame_options_header: [],
+                    hsts_header: [],
+                    bad_content_type: [],
+                    ssl_certificate_enable: [],
+                    folder_browsing_enable: [],
                   },
                   cbp_labels: {
-                      html_compression: [],
-                      css_compression: [],
-                      js_compression: [],
-                      gzip_compression: [],
-                      nested_tables: [],
-                      frameset: [],
-                      page_size: [],
-                      css_caching_enable: [],
-                      js_caching_enable: [],
-                      frameset: [],
+                    html_compression: [],
+                    css_compression: [],
+                    js_compression: [],
+                    gzip_compression: [],
+                    nested_tables: [],
+                    frameset: [],
+                    page_size: [],
+                    css_caching_enable: [],
+                    js_caching_enable: [],
+                    frameset: [],
                   },
                   google_overall: [],
                   google_lighthouse: [],
                   core_web_vitals: [],
                   mobile_friendly: [],
                 }
-                // UI.recheckStartedAlert()
-                // Controls.startTest(urls, "recheck")
-  
-  
-  
-                // async function checkStatusDashboard() {
-                //   let controller;
-              
-                //   while (true) {
-              
-                //       // Cancel any previous unfinished request
-                //       if (controller) controller.abort();
-                //       controller = new AbortController();
-              
-                //       try {
-                //           const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-                //               signal: controller.signal
-                //           });
-              
-                //           const { status, results } = await response.json();
-                //           Controls.updateProgressRecheck(results);
-              
-                //           if (status === 'completed') {
-              
-                //               Controls.endTest();
-              
-                //               setTimeout(() => {
-                //                   recheckAllowed = true;
-                //                   UI.updateRecheckButtonState(false); // re-enable button
-                //               }, 100);
-              
-                //               break; // stop loop
-                //           }
-                //       } catch (e) {
-                //           // ignore abort errors
-                //           if (e.name !== "AbortError") console.error(e);
-                //       }
-              
-                //       // wait 1 second before next request
-                //       await new Promise(res => setTimeout(res, 1000));
-                //   }
-                // }
-              
-                // checkStatusDashboard();
-              
-  
-  
-  
-  
-          })
+
+                ;(async function runRecheck() {
+                  try {
+                    await Controls.startTest(urls, "recheck")
+                    Controls.pollDashboardRecheckUntilComplete()
+                  } catch (err) {
+                    console.error('Recheck start failed:', err)
+                    recheckAllowed = true
+                    UI.updateRecheckButtonState(false)
+                    if (document.querySelector(".main-tricker-progress")) {
+                      document.querySelector(".main-tricker-progress").remove()
+                    }
+                    displayAlert(".analysis-content-body-message", {
+                      status: 0,
+                      msg: "Could not start dashboard recheck. Please try again.",
+                      notHide: true
+                    })
+                    $('.analysis-content-body-message').show()
+                  }
+                })()
+              })
           }
-        
         }
       }
 
@@ -3155,9 +3327,17 @@ $(document).ready(function () {
           page = location.pathname.split('/').slice(1)
           buildLoader()
           projectId = getActiveProjectId()
+
+          Controls.checkIfTestsAreRunning().then(testsRunning => {
+            UI.updateRecheckButtonState(testsRunning)
+          })
+
           DB.getDashboardShowStatus(projectId)
           .done(function(data) {
-              if(data.dashboardStatus){
+              const ds = Number(data.dashboardStatus)
+
+              // 1 = tests completed (same as dashboard)
+              if (ds === 1) {
                 async function checkStatus() {
                     const response = await fetch(`/api/check-status/${projectId}`);
                     const { status, results } = await response.json();
@@ -3172,7 +3352,29 @@ $(document).ready(function () {
                     Controls.loadData(projectId)
                 }
                 checkStatus()
-              }else{
+              } else if (ds === 2 || ds === 3) {
+                // Full recheck (2) or single-tile refresh (3) in progress — keep loader UX after refresh (dashboard.js parity)
+                recheckAllowed = false
+                UI.updateRecheckButtonState(true)
+                DB.getUrlsList(projectId).done(function(urlData) {
+                  originalUrls = urlData
+                  urls = urlData.slice(0, ds === 2 ? recheckMax : recheckSingleMax)
+                  urlsToCheck = urls.length
+                  ;(async function loadTableThenResumeRecheckUi() {
+                    try {
+                      const response = await fetch(`/api/check-status/${projectId}`)
+                      const { status, results } = await response.json()
+                      if (status === 'completed') {
+                        lighthouseStatus = true
+                        testDetailsLighthouse = results
+                      }
+                    } catch (e) {
+                      console.error(e)
+                    }
+                    Controls.loadData(projectId, { resumeDashboardRecheckAfterLoad: true })
+                  })()
+                })
+              } else {
                   Controls.showNoTestMessage()
               }
           });
