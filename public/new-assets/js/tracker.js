@@ -1,7 +1,7 @@
 $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 2, recheckSingleMax = 1, urls, urlsToCheck = 1, originalUrls
+  var recheckMax = 2000, recheckSingleMax = 2000, urls, urlsToCheck = 10, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId
