@@ -42,16 +42,16 @@
                       </div>
                     </a>
                     <ul
-                      class="dropdown-menu dropdown-menu-start tracker_downloading_link tracker_downloading_link-imran"
+                      class="dropdown-menu dropdown-menu-start tracker_downloading_link tracker_downloading_link-imran tracker_downloading_link-imran2"
                     >
-                      <li id="downloadCSV">
-                        <a class="dropdown-item website-tracker-csv" href="#"
-                          ><img src="/new-assets/assets/images/csv.png" alt="icon" /> CSV</a
-                        >
-                      </li>
                       <li class="download-xlsx-bulk">
                         <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/csv.png" alt="icon" />Xlsx</a
+                          ><img src="/new-assets/assets/images/xlsx-icon.svg" alt="icon" />XLSX</a
+                        >
+                      </li>
+                      <li id="downloadCSV">
+                        <a class="dropdown-item website-tracker-csv" href="#"
+                          ><img src="/new-assets/assets/images/csv-icon.svg" alt="icon" /> CSV</a
                         >
                       </li>
                     </ul>

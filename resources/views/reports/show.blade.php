@@ -1,6 +1,7 @@
 @extends('layouts.app')
 @include("components.reports-title")
 @section("content")
+@section('title', $label->display_name . ' Report')
 
 @section("css")
 <link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
@@ -22,7 +23,7 @@
               <div class="main-menu-right">
                 <div class="table-menu-right">
 
-                  <div class="menu-right-option tricker_download_option">
+                  <div class="dropdown menu-right-option tricker_download_option">
                     <a
                       class="dropdown-toggle"
                       href="#"
@@ -36,16 +37,17 @@
                       </div>
                     </a>
                     <ul
-                      class="dropdown-menu dropdown-menu-start tracker_downloading_link"
+                      class="dropdown-menu dropdown-menu-start tracker_downloading_link tracker_downloading_link-imran tracker_downloading_link-imran2"
                     >
-                      <li id="downloadCSV">
-                        <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/csv.png" alt="icon" /> CSV</a
-                        >
-                      </li>
+                      
                       <li class="download-xlsx-bulk">
                         <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/csv.png" alt="icon" /> Xlsx</a
+                          ><img src="/new-assets/assets/images/xlsx-icon.svg" alt="icon" /> XLSX</a
+                        >
+                      </li>
+                      <li id="downloadCSV">
+                        <a class="dropdown-item" href="#"
+                          ><img src="/new-assets/assets/images/csv-icon.svg" alt="icon" /> CSV</a
                         >
                       </li>
                     </ul>
@@ -59,13 +61,13 @@
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >
-                      <span class="icon check-reload">
+                      {{-- <span class="icon check-reload">
                         <img src="/new-assets/assets/images/reload.png" alt="icon" />
-                      </span>
-                      <span>Recheck Data</span>
+                      </span> --}}
+                      <span>Recheck</span>
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end">
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-recheck-imran">
                       <li>
                         <a class="dropdown-item" href="#">Recheck all</a>
                       </li>
@@ -102,26 +104,28 @@
                   <thead class="reports-table-header">
                 
                     <tr class="table-header">
-                      <td scope="col">
-                        <div class="form-check left-menu-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="table_input_check1"
-                          />
+                      <td scope="col" class="table-header-imran">
+                        <div class="table-header-imran-inner">
+                          <div class="form-check left-menu-check left-menu-check-imran">
+                            <input
+                              class="form-check-input"
+                              type="checkbox"
+                              value=""
+                              id="table_input_check1"
+                            />
+                          </div>
+                          <span class="text">URL</span>
+                          <button
+                            type="button"
+                            class="first-col-toggle-btn"
+                            id="hide-col-btn"
+                          >
+                            <img
+                              src="/new-assets/assets/images/table-collapse.png"
+                              alt="icon"
+                            />
+                          </button>
                         </div>
-                        <span class="text">URL</span>
-                        <button
-                          type="button"
-                          class="first-col-toggle-btn"
-                          id="hide-col-btn"
-                        >
-                          <img
-                            src="/new-assets/assets/images/table-collapse.png"
-                            alt="icon"
-                          />
-                        </button>
                       </td>
           
                     </tr>

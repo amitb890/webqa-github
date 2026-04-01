@@ -416,14 +416,17 @@ $(document).ready(function () {
         };
 
 
-        document.querySelectorAll(".table-header td").forEach(cell => {
-            const text = cell.innerText.trim();
+         window.setTimeout( function(){
+            document.querySelectorAll(".table-header td").forEach(cell => {
+            console.log(cell);
+              const text = cell.innerText.trim();
 
-            if (tooltipMap[text]) {
-                cell.classList.add("custom-tooltip-imran");
-                cell.setAttribute("data-tooltip", tooltipMap[text]);
-            }
-        });
+              if (tooltipMap[text]) {
+                  cell.classList.add("custom-tooltip-imran");
+                  cell.setAttribute("data-tooltip", tooltipMap[text]);
+              }
+          });
+        }, 2000)
 
 
         elements.forEach(el=>{
@@ -972,7 +975,7 @@ $(document).ready(function () {
                      td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>`
                    }
                    if (projectSettings.is_title_equal_h1 == 1) {
-                     td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}">No</td>`
+                     td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "result_pass" : "result_fail hidden-element-tracker"}">No</td>`
                    }
                    
                    if (projectSettings.title_casing_both == 1 || result.project_settings.title_casing_camel == 1 || result.project_settings.title_casing_sentence == 1) {
@@ -989,7 +992,9 @@ $(document).ready(function () {
                        break;
                      }
                      td.innerHTML+=`
-                     <td>${result.content != null ? result.content : "-"}</td>
+                     <td class="meta-content-imran ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">
+                        ${result.content != null ? result.content : "-"}
+                    </td>
                      <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
                      `
                      break;
@@ -1197,11 +1202,11 @@ $(document).ready(function () {
                         break;
                       }
                       td.innerHTML+=`
-                      <td class="align-left">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
+                      <td class="align-left meta-content-imran">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
                       <td class="${result.casingClass} ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
                       <td class="${result.isEqualClass} ${settings.is_og_title_equal_title ? "" : "hidden-element-tracker"}">${result.isEqualStatus ? "Yes" : "No"}</td>
-                      <td class="align-left">${result.contentDesc != null ? result.contentDesc : "Open Graph Description does not exist."}</td>
+                      <td class="align-left meta-content-imran">${result.contentDesc != null ? result.contentDesc : "Open Graph Description does not exist."}</td>
                       <td class="${result.lengthDescClass} ${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "hidden-element-tracker"}">${result.contentDesc != null ? result.contentDesc.length : 0}</td>
                       <td class="${result.isEqualDescClass} ${settings.is_og_desc_equal_desc ? "" : "hidden-element-tracker"}">${result.isEqualDescStatus ? "Yes" : "No"}</td>
                       <td class="align-left">${result.contentImage != null && result.contentImage != "" ? result.contentImage : "Open Graph Image does not exist."}</td>
@@ -1226,7 +1231,7 @@ $(document).ready(function () {
                         break;
                       }
                       td.innerHTML+=`
-                      <td class="align-left">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
+                      <td class="align-left meta-content-imran">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
                       <td class="${result.casingClass} ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
                       <td class="${result.isEqualClass} ${settings.is_twitter_title_equal_title ? "" : "hidden-element-tracker"}">${result.isEqualStatus ? "Yes" : "No"}</td>
@@ -3425,4 +3430,47 @@ $("#hide-col-btn").on("click", function () {
     $("table").toggleClass("first-col-collapsed");
     $(this).toggleClass("collapsed");
 });
+
+
+function metaDiscriptionReportContent(){
+  const tbody = document.querySelector('#reportTable tbody');
+
+tbody.addEventListener('mouseover', function(e) {
+    const td = e.target.closest('.meta-content-imran');
+    if (!td || !tbody.contains(td)) return;
+
+    const hasContent = td.textContent && td.textContent.trim() !== '' && td.textContent.trim() !== '-';
+
+    const isTruncated = hasContent && td.scrollWidth > td.clientWidth;
+
+    td.style.cursor = isTruncated ? 'pointer' : 'default';
+
+    if (isTruncated && !td._tooltip) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-text';
+        tooltip.textContent = td.textContent;
+        document.body.appendChild(tooltip);
+
+        const rect = td.getBoundingClientRect();
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 5 + window.scrollY + 'px';
+        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + window.scrollX + 'px';
+
+        tooltip.classList.add('show-tooltip');
+        td._tooltip = tooltip;
+    }
+});
+
+tbody.addEventListener('mouseout', function(e) {
+    const td = e.target.closest('.meta-content-imran');
+    if (!td || !tbody.contains(td)) return;
+
+    if (td._tooltip) {
+        td._tooltip.remove();
+        td._tooltip = null;
+    }
+
+    td.style.cursor = 'default';
+});
+}
+metaDiscriptionReportContent();
 
