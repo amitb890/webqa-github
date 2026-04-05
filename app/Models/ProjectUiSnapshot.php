@@ -13,5 +13,7 @@ class ProjectUiSnapshot extends Model
         'dashboard_test_id',
         'lighthouse_test_id',
         'payload',
+        'cached_test_data_json',
+        'cached_lighthouse_json',
     ];
 }

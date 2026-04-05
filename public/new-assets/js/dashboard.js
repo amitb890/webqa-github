@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 2000, recheckGoogle = 100, recheckSingleMax = 100, urlsGoogleFinal = 0
+  var recheckMax = 100, recheckGoogle = 100, recheckSingleMax = 100, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal

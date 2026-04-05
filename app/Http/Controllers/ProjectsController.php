@@ -224,9 +224,9 @@ class ProjectsController extends Controller
         }
 
         if (! $noCache && $dashboardTest->status === 'completed') {
-            $cached = ProjectUiSnapshotService::getCachedTestData($projectId, $dashboardTest);
-            if ($cached !== null) {
-                return response()->json($cached);
+            $cachedJson = ProjectUiSnapshotService::getCachedTestDataJson($projectId, $dashboardTest);
+            if ($cachedJson !== null) {
+                return response($cachedJson, 200, ['Content-Type' => 'application/json']);
             }
         }
 

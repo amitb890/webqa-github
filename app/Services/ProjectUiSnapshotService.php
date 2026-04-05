@@ -13,59 +13,83 @@ use Illuminate\Support\Facades\Log;
 
 class ProjectUiSnapshotService
 {
+    /** Memory for aggregation + json_encode of large payloads (queue / lazy warm). */
+    private static function raiseMemoryLimitForSnapshot(): ?string
+    {
+        $prev = ini_get('memory_limit');
+        @ini_set('memory_limit', '512M');
+
+        return $prev !== false ? (string) $prev : null;
+    }
+
+    private static function restoreMemoryLimit(?string $prev): void
+    {
+        if ($prev !== null && $prev !== '') {
+            @ini_set('memory_limit', $prev);
+        }
+    }
+
     public static function invalidate(int $projectId): void
     {
         ProjectUiSnapshot::where('project_id', $projectId)->delete();
     }
 
     /**
-     * Cached get-test-data payload (same shape as ProjectsController::getTestData JSON).
+     * Raw JSON body for GET get-test-data (no json_decode — avoids 2× memory on read).
      */
-    public static function getCachedTestData(int $projectId, DashboardTests $dashboardTest): ?array
+    public static function getCachedTestDataJson(int $projectId, DashboardTests $dashboardTest): ?string
     {
         if ($dashboardTest->status !== 'completed') {
             return null;
         }
 
-        $snap = ProjectUiSnapshot::where('project_id', $projectId)->first();
-        if (!$snap || (int) $snap->dashboard_test_id !== (int) $dashboardTest->id) {
+        $snap = ProjectUiSnapshot::query()
+            ->where('project_id', $projectId)
+            ->select(['id', 'dashboard_test_id', 'cached_test_data_json'])
+            ->first();
+
+        if (! $snap || (int) $snap->dashboard_test_id !== (int) $dashboardTest->id) {
             return null;
         }
 
-        $payload = json_decode($snap->payload, true);
-        if (!is_array($payload) || empty($payload['test_data']) || !is_array($payload['test_data'])) {
+        $json = $snap->cached_test_data_json;
+        if (! is_string($json) || $json === '') {
             return null;
         }
 
-        $out = $payload['test_data'];
-        $out['dashboard_status'] = $dashboardTest->status;
-
-        return $out;
+        return $json;
     }
 
     /**
-     * Cached Lighthouse check-status payload when the run is finished.
+     * Raw JSON for Lighthouse check-status payload when the run is finished.
      */
-    public static function getCachedLighthouseStatus(int $projectId, LighthouseTest $lighthouseTest): ?array
+    public static function getCachedLighthouseJson(int $projectId, LighthouseTest $lighthouseTest): ?string
     {
         if ($lighthouseTest->status !== 'completed') {
             return null;
         }
 
-        $snap = ProjectUiSnapshot::where('project_id', $projectId)->first();
-        if (!$snap || (int) $snap->lighthouse_test_id !== (int) $lighthouseTest->id) {
+        $snap = ProjectUiSnapshot::query()
+            ->where('project_id', $projectId)
+            ->select(['id', 'lighthouse_test_id', 'cached_lighthouse_json'])
+            ->first();
+
+        if (! $snap || (int) $snap->lighthouse_test_id !== (int) $lighthouseTest->id) {
             return null;
         }
 
-        $payload = json_decode($snap->payload, true);
-        if (!is_array($payload) || empty($payload['lighthouse']) || !is_array($payload['lighthouse'])) {
+        $json = $snap->cached_lighthouse_json;
+        if (! is_string($json) || $json === '') {
             return null;
         }
 
-        return $payload['lighthouse'];
+        return $json;
     }
 
-    public static function buildAggregatedResults($details): array
+    /**
+     * @param  iterable<int, \App\Models\DashboardTestsDetails>  $detailsIterable
+     */
+    public static function buildAggregatedResults(iterable $detailsIterable): array
     {
         $obj = [
             'meta_title' => [],
@@ -115,13 +139,13 @@ class ProjectUiSnapshotService
             'mobile_friendly' => [],
         ];
 
-        foreach ($details as $detail) {
-            if (!$detail->data) {
+        foreach ($detailsIterable as $detail) {
+            if (! $detail->data) {
                 continue;
             }
 
             $decoded = json_decode($detail->data, true);
-            if (!is_array($decoded)) {
+            if (! is_array($decoded)) {
                 continue;
             }
 
@@ -148,23 +172,33 @@ class ProjectUiSnapshotService
 
     public static function buildTestDataPayload(int $projectId, Projects $project, DashboardTests $dashboardTest): array
     {
-        $settings = projectSettings::where('projects_id', $project->id)
-            ->with('settingsSub')
-            ->orderBy('id', 'DESC')
-            ->get()
-            ->first();
+        $prevMem = self::raiseMemoryLimitForSnapshot();
 
-        $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id)->get();
-        $results = self::buildAggregatedResults($details);
+        try {
+            $settings = projectSettings::where('projects_id', $project->id)
+                ->with('settingsSub')
+                ->orderBy('id', 'DESC')
+                ->get()
+                ->first();
 
-        return [
-            'status' => 1,
-            'msg' => 'Success.',
-            'project' => $project->toArray(),
-            'dashboard_status' => $dashboardTest->status,
-            'results' => $results,
-            'settings' => $settings ? $settings->toArray() : null,
-        ];
+            $cursor = DashboardTestsDetails::query()
+                ->where('dashboard_test_id', $dashboardTest->id)
+                ->orderBy('id')
+                ->cursor();
+
+            $results = self::buildAggregatedResults($cursor);
+
+            return [
+                'status' => 1,
+                'msg' => 'Success.',
+                'project' => $project->toArray(),
+                'dashboard_status' => $dashboardTest->status,
+                'results' => $results,
+                'settings' => $settings ? $settings->toArray() : null,
+            ];
+        } finally {
+            self::restoreMemoryLimit($prevMem);
+        }
     }
 
     /**
@@ -172,7 +206,7 @@ class ProjectUiSnapshotService
      */
     public static function buildLighthouseStatusPayload(?LighthouseTest $lighthouseTest): array
     {
-        if (!$lighthouseTest) {
+        if (! $lighthouseTest) {
             return [
                 'status' => 'in_progress',
                 'results' => [],
@@ -209,46 +243,63 @@ class ProjectUiSnapshotService
     public static function warmAfterDashboardComplete(int $projectId): void
     {
         $project = Projects::find($projectId);
-        if (!$project) {
+        if (! $project) {
             return;
         }
 
         $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
-        if (!$dashboardTest || $dashboardTest->status !== 'completed') {
+        if (! $dashboardTest || $dashboardTest->status !== 'completed') {
             return;
         }
 
+        $prevMem = self::raiseMemoryLimitForSnapshot();
+
         try {
             $testData = self::buildTestDataPayload($projectId, $project, $dashboardTest);
+            $testJson = json_encode($testData);
+            unset($testData);
+
             $lighthouseTest = LighthouseTest::where('project_id', $projectId)->latest()->first();
             $lighthouse = self::buildLighthouseStatusPayload($lighthouseTest);
+            $lhJson = json_encode($lighthouse);
+            unset($lighthouse);
 
-            self::upsertPayload(
+            if ($testJson === false || $lhJson === false) {
+                Log::warning('ProjectUiSnapshotService::warmAfterDashboardComplete json_encode failed');
+
+                return;
+            }
+
+            self::upsertSplitJson(
                 $projectId,
                 (int) $dashboardTest->id,
                 $lighthouseTest ? (int) $lighthouseTest->id : null,
-                [
-                    'test_data' => $testData,
-                    'lighthouse' => $lighthouse,
-                ]
+                $testJson,
+                $lhJson
             );
         } catch (\Throwable $e) {
             Log::warning('ProjectUiSnapshotService::warmAfterDashboardComplete failed: '.$e->getMessage());
+        } finally {
+            self::restoreMemoryLimit($prevMem);
         }
     }
 
     /**
-     * Update only Lighthouse portion when PageSpeed jobs finish (cheap).
+     * Update only Lighthouse JSON when PageSpeed jobs finish (no full payload decode).
      */
     public static function patchLighthouseAfterComplete(int $projectId): void
     {
-        $snap = ProjectUiSnapshot::where('project_id', $projectId)->first();
-        if (!$snap) {
+        $snap = ProjectUiSnapshot::query()
+            ->where('project_id', $projectId)
+            ->select(['id', 'dashboard_test_id'])
+            ->first();
+
+        if (! $snap) {
             return;
         }
 
         $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
-        if (!$dashboardTest || $dashboardTest->status !== 'completed') {
+        if (! $dashboardTest || $dashboardTest->status !== 'completed') {
             return;
         }
 
@@ -256,24 +307,30 @@ class ProjectUiSnapshotService
             return;
         }
 
+        $prevMem = self::raiseMemoryLimitForSnapshot();
+
         try {
             $lighthouseTest = LighthouseTest::where('project_id', $projectId)->latest()->first();
-            if (!$lighthouseTest) {
+            if (! $lighthouseTest) {
                 return;
             }
 
             $lighthouse = self::buildLighthouseStatusPayload($lighthouseTest);
-            $payload = json_decode($snap->payload, true);
-            if (!is_array($payload)) {
-                $payload = [];
-            }
-            $payload['lighthouse'] = $lighthouse;
+            $lhJson = json_encode($lighthouse);
+            unset($lighthouse);
 
-            $snap->lighthouse_test_id = $lighthouseTest->id;
-            $snap->payload = json_encode($payload);
-            $snap->save();
+            if ($lhJson === false) {
+                return;
+            }
+
+            ProjectUiSnapshot::where('project_id', $projectId)->update([
+                'lighthouse_test_id' => $lighthouseTest->id,
+                'cached_lighthouse_json' => $lhJson,
+            ]);
         } catch (\Throwable $e) {
             Log::warning('ProjectUiSnapshotService::patchLighthouseAfterComplete failed: '.$e->getMessage());
+        } finally {
+            self::restoreMemoryLimit($prevMem);
         }
     }
 
@@ -283,29 +340,42 @@ class ProjectUiSnapshotService
     public static function ensureSnapshotForCompletedDashboard(int $projectId): void
     {
         $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
-        if (!$dashboardTest || $dashboardTest->status !== 'completed') {
+        if (! $dashboardTest || $dashboardTest->status !== 'completed') {
             return;
         }
 
-        $existing = ProjectUiSnapshot::where('project_id', $projectId)->first();
-        if ($existing && (int) $existing->dashboard_test_id === (int) $dashboardTest->id) {
-            $decoded = json_decode($existing->payload, true);
-            if (is_array($decoded) && ! empty($decoded['test_data']) && is_array($decoded['test_data'])) {
-                return;
-            }
+        $existing = ProjectUiSnapshot::query()
+            ->where('project_id', $projectId)
+            ->select(['dashboard_test_id', 'cached_test_data_json'])
+            ->first();
+
+        if (
+            $existing
+            && (int) $existing->dashboard_test_id === (int) $dashboardTest->id
+            && is_string($existing->cached_test_data_json)
+            && strlen($existing->cached_test_data_json) > 2
+        ) {
+            return;
         }
 
         self::warmAfterDashboardComplete($projectId);
     }
 
-    private static function upsertPayload(int $projectId, int $dashboardTestId, ?int $lighthouseTestId, array $body): void
-    {
+    private static function upsertSplitJson(
+        int $projectId,
+        int $dashboardTestId,
+        ?int $lighthouseTestId,
+        string $testDataJson,
+        string $lighthouseJson
+    ): void {
         ProjectUiSnapshot::updateOrCreate(
             ['project_id' => $projectId],
             [
                 'dashboard_test_id' => $dashboardTestId,
                 'lighthouse_test_id' => $lighthouseTestId,
-                'payload' => json_encode($body),
+                'cached_test_data_json' => $testDataJson,
+                'cached_lighthouse_json' => $lighthouseJson,
+                'payload' => null,
             ]
         );
     }

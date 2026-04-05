@@ -85,9 +85,12 @@ class LighthouseController extends Controller
         }
 
         if ($lighthouseTest->status === 'completed' && ! request()->boolean('nocache')) {
-            $cached = ProjectUiSnapshotService::getCachedLighthouseStatus($projectId, $lighthouseTest);
-            if ($cached !== null && ($cached['status'] ?? '') === 'completed') {
-                return response()->json($cached);
+            $cachedJson = ProjectUiSnapshotService::getCachedLighthouseJson($projectId, $lighthouseTest);
+            if ($cachedJson !== null) {
+                $decoded = json_decode($cachedJson, true);
+                if (is_array($decoded) && ($decoded['status'] ?? '') === 'completed') {
+                    return response($cachedJson, 200, ['Content-Type' => 'application/json']);
+                }
             }
         }
 
