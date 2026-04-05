@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 2000, recheckGoogle = 100, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 2000, recheckGoogle = 100, recheckSingleMax = 100, urlsGoogleFinal = 0
   var htmlSitemapData, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -223,7 +223,7 @@ $(document).ready(function () {
       });
   }
 
-    
+    /** Loads aggregated dashboard results. Server uses `project_ui_snapshots` when the latest dashboard run is completed (fast path). Append `&nocache=1` to bypass for debugging. */
     static getTestData(projectId){
         return $.ajax({
             url : `/get-test-data/${projectId}`,

@@ -19,6 +19,7 @@ use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DashboardTestsDetails;
+use App\Services\ProjectUiSnapshotService;
 
 ini_set('max_execution_time', 180000);
 ini_set('memory_limit', '512M');
@@ -512,6 +513,8 @@ class RunTest implements ShouldQueue
      
              DashboardTests::where('id', $this->dashboardTestId)
                  ->update(['status' => 'completed']);
+
+            ProjectUiSnapshotService::warmAfterDashboardComplete((int) $projectId);
 
              // create success alert
             if($this->type != "single_recheck"){

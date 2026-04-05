@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\ProjectsController;
 
 use Illuminate\Support\Facades\Auth;
+use App\Services\ProjectUiSnapshotService;
 
 class LighthouseController extends Controller
 {
@@ -74,7 +75,7 @@ class LighthouseController extends Controller
 
     public function checkStatus($projectId)
     {
-
+        $projectId = (int) $projectId;
 
         // Always use the latest Lighthouse test for this project
         $lighthouseTest = LighthouseTest::where('project_id', $projectId)->latest()->first();
@@ -83,13 +84,20 @@ class LighthouseController extends Controller
             return response()->json(['error' => 'Test ID not found.'], 404);
         }
 
+        if ($lighthouseTest->status === 'completed' && ! request()->boolean('nocache')) {
+            $cached = ProjectUiSnapshotService::getCachedLighthouseStatus($projectId, $lighthouseTest);
+            if ($cached !== null && ($cached['status'] ?? '') === 'completed') {
+                return response()->json($cached);
+            }
+        }
+
         // Get URL-level results
         $detailsTotal = LighthouseResult::where('test_id', $lighthouseTest->id)
-        ->get();
+            ->get();
 
         $details = LighthouseResult::where('test_id', $lighthouseTest->id)
-        ->whereIn('status', ['completed', 'failed'])
-        ->get();
+            ->whereIn('status', ['completed', 'failed'])
+            ->get();
 
         
         $completedCount = 0;

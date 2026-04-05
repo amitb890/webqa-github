@@ -25,6 +25,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\File;
+use App\Services\ProjectUiSnapshotService;
 
 
 class ProjectsController extends Controller
@@ -44,6 +45,7 @@ class ProjectsController extends Controller
     public function removeDashboardData($projectId){
         DashboardTests::where('project_id', $projectId)->delete();
         Projects::where('id', $projectId)->update(['dashboard_show_status'=>0]);
+        ProjectUiSnapshotService::invalidate((int) $projectId);
         return response()->json(['status' => 1, 'msg' => 'Success.']);
     }
 
@@ -206,107 +208,35 @@ class ProjectsController extends Controller
 
     public function getTestData($projectId)
     {
+        $projectId = (int) $projectId;
         $project = Projects::find($projectId);
 
-        // settings
-        $settings = projectSettings::where("projects_id", $project->id)->with("settingsSub")->orderBy('id', 'DESC')->get()->first();
+        if (!$project) {
+            return response()->json(['error' => 'Project not found'], 404);
+        }
 
-    
-        // Get the dashboard test
-        $dashboardTest = DashboardTests::where("project_id", $projectId)->first();
-    
+        $noCache = request()->boolean('nocache');
+
+        $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
+
         if (!$dashboardTest) {
             return response()->json(['error' => 'Test not found'], 404);
         }
-    
-        // Get all URL-level details
-        $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id)->get();
-    
-        // ✅ Prepare JS structure
-        $obj = [
-            'meta_title' => [],
-            'meta_desc' => [],
-            'robots_meta' => [],
-            'canonical_url' => [],
-            'url_slug' => [],
-            'meta_viewport' => [],
-            'doctype' => [],
-            'favicon' => [],
-            'page_size' => [],
-            'xml_sitemap' => [],
-            'html_sitemap' => [],
-            'images' => [],
-            'open_graph_tags' => [],
-            'twitter_tags' => [],
-            'http_status_code' => [],
-            'broken_links' => [],
-    
-            'security_labels' => [
-                'is_safe_browsing' => [],
-                'cross_origin_links' => [],
-                'protocol_relative_resource' => [],
-                'content_security_policy_header' => [],
-                'x_frame_options_header' => [],
-                'hsts_header' => [],
-                'bad_content_type' => [],
-                'ssl_certificate_enable' => [],
-                'folder_browsing_enable' => [],
-            ],
-    
-            'cbp_labels' => [
-                'html_compression' => [],
-                'css_compression' => [],
-                'js_compression' => [],
-                'gzip_compression' => [],
-                'nested_tables' => [],
-                'frameset' => [],
-                'page_size' => [],
-                'css_caching_enable' => [],
-                'js_caching_enable' => [],
-            ],
-    
-            'google_overall' => [],
-            'google_lighthouse' => [],
-            'core_web_vitals' => [],
-            'mobile_friendly' => [],
-        ];
-    
-        // ✅ Combine all URL results into the same structure
-        foreach ($details as $detail) {
-            if (!$detail->data) continue;
-    
-            $decoded = json_decode($detail->data, true);
-    
-            foreach ($decoded as $testKey => $value) {
-    
-                // SECURITY LABELS
-                if (isset($obj['security_labels'][$testKey])) {
-                    $obj['security_labels'][$testKey][] = json_decode($value, true);
-                    continue;
-                }
-    
-                // CBP LABELS
-                if (isset($obj['cbp_labels'][$testKey])) {
-                    $obj['cbp_labels'][$testKey][] = json_decode($value, true);
-                    continue;
-                }
-    
-                // NORMAL LABELS
-                if (isset($obj[$testKey])) {
-                    $obj[$testKey][] = json_decode($value, true);
-                    continue;
-                }
+
+        if (! $noCache && $dashboardTest->status === 'completed') {
+            $cached = ProjectUiSnapshotService::getCachedTestData($projectId, $dashboardTest);
+            if ($cached !== null) {
+                return response()->json($cached);
             }
         }
-    
-        return response()->json([
-            'status' => 1,
-            'msg' => "Success.",
-            'project' => $project,
-            'dashboard_status' => $dashboardTest->status,
-            'results' => $obj,
-            'settings' => $settings,
-        ]);
+
+        $payload = ProjectUiSnapshotService::buildTestDataPayload($projectId, $project, $dashboardTest);
+
+        if (! $noCache && $dashboardTest->status === 'completed') {
+            ProjectUiSnapshotService::ensureSnapshotForCompletedDashboard($projectId);
+        }
+
+        return response()->json($payload);
     }
     
 

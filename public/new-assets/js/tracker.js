@@ -99,6 +99,7 @@ $(document).ready(function () {
           });
       }
 
+      /** Same payload as dashboard `get-test-data`; served from `project_ui_snapshots` when fresh. Use `&nocache=1` to force rebuild. */
       static returnData(projectId){
           return $.ajax({
               url : `/get-test-data/${projectId}`,
