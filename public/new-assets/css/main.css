@@ -10372,6 +10372,7 @@ table.bulk-table td:last-child {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: 50px 19px;
+  padding-bottom: 100px;
 }
 
 .single_dashboard_card_main {
@@ -11380,6 +11381,7 @@ table.bulk-table td:last-child {
   width: 100%;
   margin: auto;
   padding-top: 80px;
+  padding-bottom: 78px;
 }
 
 .dashboard_preparing_content .progress {
