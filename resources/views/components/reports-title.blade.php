@@ -8,6 +8,14 @@
 @section('title', "Robots Meta Report - Webqa")
 @endif
 
+@if($slug == 'headings')
+@section('title', "Headings Report - Webqa")
+@endif
+
+@if($slug == 'robotstxt')
+@section('title', "Robots.txt Report - Webqa")
+@endif
+
 @if($slug == 'canonical-url')
 @section('title', "Canonical URL Report - Webqa")
 @endif
@@ -26,6 +34,14 @@
 
 @if($slug == 'http-status-code')
 @section('title', "HTTP Status Code Report - Webqa")
+@endif
+
+@if($slug == 'xml-sitemap')
+@section('title', "XML Sitemap Report - Webqa")
+@endif
+
+@if($slug == 'html-sitemap')
+@section('title', "HTML Sitemap Report - Webqa")
 @endif
 
 @if($slug == 'url-slug')

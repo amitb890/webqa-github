@@ -20,6 +20,8 @@ $(document).ready(function () {
     html_sitemap: [],
     images: [],
     broken_links: [],
+    robot_text_test: [],
+    h1_heading_tag: [],
     open_graph_tags: [],
     twitter_tags: [],
     is_safe_browsing: [],
@@ -118,11 +120,25 @@ $(document).ready(function () {
       }
   }
 
+  function trackerBrokenLinkSubsetCount(val) {
+    if (Array.isArray(val)) return val.length
+    if (val == null) return 0
+    const n = Number(val)
+    return Number.isFinite(n) ? n : 0
+  }
+
+  function trackerEscapeHtml(s) {
+    return String(s == null ? "" : s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+  }
+
   class UI{
       static deleteURL(){
         activeOptionsElement.remove()
       }
-
 
       static updateRecheckButtonState(isDisabled) {
         const recheckBtn = document.querySelector("#recheckBtn")
@@ -416,8 +432,8 @@ $(document).ready(function () {
             "TBT": "Total Blocking Time, Measured in ms"
         };
 
-
-        document.querySelectorAll(".table-header td").forEach(cell => {
+        window.setTimeout( function(){
+          document.querySelectorAll(".table-header td").forEach(cell => {
             const text = cell.innerText.trim();
 
             if (tooltipMap[text]) {
@@ -425,6 +441,7 @@ $(document).ready(function () {
                 cell.setAttribute("data-tooltip", tooltipMap[text]);
             }
         });
+      }, 2000)
 
 
         elements.forEach(el=>{
@@ -447,9 +464,20 @@ $(document).ready(function () {
           if(title === "performance"){
             UI.buildPerformanceTableHeader(type)
           }else{
-            console.log(data)
-            projectSettings = data[0].settings;
-            const displayName = data[0].label.display_name
+            // Top-row title must follow the results bucket key (`type`), not data[0].label — stale rows can embed the wrong label.
+            const trackerTypeToLabelDb = {
+              title: "meta_title",
+              description: "meta_desc",
+              robots: "robots_meta",
+              canonical: "canonical_url",
+            }
+            const labelDbName = trackerTypeToLabelDb[type] || type
+            const labelConfig = Controls.getActiveLabel(labelDbName)
+            projectSettings = data[0]?.settings ?? {}
+            const displayName =
+              (labelConfig && labelConfig.display_name) ||
+              (data[0] && data[0].label && data[0].label.display_name) ||
+              labelDbName
             const td = document.createElement("td")
             td.setAttribute("data-consists", type)
             td.setAttribute("scope", "col")
@@ -596,6 +624,25 @@ $(document).ready(function () {
                   <th>Content</th>
                   `
                   break;
+              case "robot_text_test": {
+                  const hideRobotTxt = settings.robot_text_test === false || settings.robot_text_test === 0;
+                  tr.innerHTML+= `
+                  <th class="${hideRobotTxt ? "hidden-element-tracker" : ""}">Robots.txt URL</th>
+                  <th class="${hideRobotTxt ? "hidden-element-tracker" : ""}">URL blocked</th>
+                  <th class="${hideRobotTxt ? "hidden-element-tracker" : ""}">Resource rules</th>
+                  `
+                  break;
+              }
+              case "h1_heading_tag": {
+                  const hideH = settings.h1_heading_tag === false || settings.h1_heading_tag === 0;
+                  tr.innerHTML += `
+                  <th class="${hideH ? "hidden-element-tracker" : ""}">H1</th>
+                  <th class="${hideH ? "hidden-element-tracker" : ""}">H2</th>
+                  <th class="${hideH ? "hidden-element-tracker" : ""}">H3–H6</th>
+                  <th class="${hideH ? "hidden-element-tracker" : ""}">Result</th>
+                  `;
+                  break;
+              }
               case "canonical":
                   tr.innerHTML+= `
                   <th class="text-start">Canonical URL</th>
@@ -662,6 +709,35 @@ $(document).ready(function () {
                   tr.innerHTML+= `
                   <th></th>`
                   break;
+                case "broken_links": {
+                  const hideBl = settings.broken_links === false || settings.broken_links === 0;
+                  tr.innerHTML+= `
+                  <th class="${hideBl ? "hidden-element-tracker" : ""}">Broken (total)</th>
+                  <th class="${hideBl ? "hidden-element-tracker" : ""}">Internal</th>
+                  <th class="${hideBl ? "hidden-element-tracker" : ""}">External</th>
+                  <th class="${hideBl ? "hidden-element-tracker" : ""}">Result</th>`
+                  break;
+                }
+                case "xml_sitemap": {
+                  const hide = settings.xml_sitemap === false || settings.xml_sitemap === 0;
+                  const hid = hide ? "hidden-element-tracker" : "";
+                  tr.innerHTML+= `
+                  <th class="${hid} text-start">XML sitemap URL</th>
+                  <th class="${hid}">Sitemap reachable</th>
+                  <th class="${hid}">URL listed</th>
+                  <th class="${hid} text-start">Detail</th>`;
+                  break;
+                }
+                case "html_sitemap": {
+                  const hide = settings.html_sitemap === false || settings.html_sitemap === 0;
+                  const hid = hide ? "hidden-element-tracker" : "";
+                  tr.innerHTML+= `
+                  <th class="${hid} text-start">HTML sitemap URL</th>
+                  <th class="${hid}">Sitemap reachable</th>
+                  <th class="${hid}">URL listed</th>
+                  <th class="${hid} text-start">Detail</th>`;
+                  break;
+                }
                 case "open_graph_tags":
                   tr.innerHTML+= `
                   <th class="text-start">Open Graph Title</th>
@@ -948,52 +1024,54 @@ $(document).ready(function () {
           
 
               switch(type){
-                 case "title":
-                     if (!result) {
-                       if (projectSettings && projectSettings.meta_title == 1) {  
-                         td.innerHTML+=`<td class="text-start"></td>`;
-                       }
-                       if (projectSettings && projectSettings.max_title_length == 1) {
-                         td.innerHTML+=`<td class="${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}"></td>`;
-                       }
-                       if (projectSettings && projectSettings.is_title_equal_h1 == 1) {
-                         td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}"></td>`;
-                       }
-                       if (projectSettings && (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1)) {
-                         td.innerHTML+=`<td class="${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}"></td>`;
-                       }
-                       break;
-                     }
-                     td.innerHTML+=``
-                     
-                     if (projectSettings.meta_title == 1) {  
-                     td.innerHTML+=`<td class="text-start">${result.content != null ? result.content : "-"}</td>`
-                     }
-                   if (projectSettings.max_title_length == 1) {
-                     td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>`
-                   }
-                   if (projectSettings.is_title_equal_h1 == 1) {
-                     td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}">No</td>`
-                   }
-                   
-                   if (projectSettings.title_casing_both == 1 || result.project_settings.title_casing_camel == 1 || result.project_settings.title_casing_sentence == 1) {
-                   td.innerHTML+=`<td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
-                     `
-                   }
-                     break;
-                 case "description":
-                     if (!result) {
-                       td.innerHTML+=`
-                       <td></td>
-                       <td class="${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}"></td>
-                       `;
-                       break;
-                     }
-                     td.innerHTML+=`
-                     <td>${result.content != null ? result.content : "-"}</td>
-                     <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
-                     `
-                     break;
+                case "title":
+                  if (!result) {
+                    if (projectSettings && projectSettings.meta_title == 1) {  
+                      td.innerHTML+=`<td class="text-start"></td>`;
+                    }
+                    if (projectSettings && projectSettings.max_title_length == 1) {
+                      td.innerHTML+=`<td class="${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}"></td>`;
+                    }
+                    if (projectSettings && projectSettings.is_title_equal_h1 == 1) {
+                      td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}"></td>`;
+                    }
+                    if (projectSettings && (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1)) {
+                      td.innerHTML+=`<td class="${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}"></td>`;
+                    }
+                    break;
+                  }
+                  td.innerHTML+=``
+                  
+                  if (projectSettings.meta_title == 1) {  
+                  td.innerHTML+=`<td class="text-start">${result.content != null ? result.content : "-"}</td>`
+                  }
+                if (projectSettings.max_title_length == 1) {
+                  td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>`
+                }
+                if (projectSettings.is_title_equal_h1 == 1) {
+                  td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "result_pass" : "result_fail hidden-element-tracker"}">No</td>`
+                }
+                
+                if (projectSettings.title_casing_both == 1 || result.project_settings.title_casing_camel == 1 || result.project_settings.title_casing_sentence == 1) {
+                td.innerHTML+=`<td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
+                  `
+                }
+                  break;
+                     case "description":
+                      if (!result) {
+                        td.innerHTML+=`
+                        <td></td>
+                        <td class="${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}"></td>
+                        `;
+                        break;
+                      }
+                      td.innerHTML+=`
+                      <td class="meta-content-imran ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">
+                         ${result.content != null ? result.content : "-"}
+                     </td>
+                      <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
+                      `
+                      break;
                  case "robots":
                      if (!result) {
                        td.innerHTML+=`
@@ -1007,6 +1085,55 @@ $(document).ready(function () {
                      <td class="">${result.content != null && result.content != "" ? result.content : "-"}</td>
                      `
                      break;
+                 case "robot_text_test": {
+                     const hideRt = settings.robot_text_test === false || settings.robot_text_test === 0;
+                     const visRt = hideRt ? "hidden-element-tracker" : "";
+                     if (!result) {
+                       td.innerHTML += `<td class="${visRt}"></td><td class="${visRt}"></td><td class="${visRt}"></td>`;
+                       break;
+                     }
+                     let robotsUrl = result.robots_txt_url || "";
+                     if (!robotsUrl && result.tested_url) {
+                       try {
+                         robotsUrl = new URL(result.tested_url).origin + "/robots.txt";
+                       } catch (e) {
+                         robotsUrl = "";
+                       }
+                     }
+                     const blocked = !!result.urlBlock;
+                     const resCount = typeof result.resources_blocked_count === "number" ? result.resources_blocked_count : "-";
+                     td.innerHTML += `
+                     <td class="${visRt}">${robotsUrl ? `<a href="${robotsUrl.replace(/"/g, "&quot;")}" target="_blank" rel="noopener noreferrer">${robotsUrl}</a>` : "-"}</td>
+                     <td class="${blocked ? "result_fail" : "result_pass"} ${visRt}">${blocked ? "Yes" : "No"}</td>
+                     <td class="${visRt}">${resCount}</td>
+                     `;
+                     break;
+                 }
+                 case "h1_heading_tag": {
+                     const hideHdg = settings.h1_heading_tag === false || settings.h1_heading_tag === 0;
+                     const visH = hideHdg ? "hidden-element-tracker" : "";
+                     const cnt = (ha, n) => {
+                       if (!ha) return 0;
+                       const v = ha["h" + n];
+                       return Array.isArray(v) ? v.length : 0;
+                     };
+                     if (!result) {
+                       td.innerHTML += `<td class="${visH}"></td><td class="${visH}"></td><td class="${visH}"></td><td class="${visH}"></td>`;
+                       break;
+                     }
+                     const ha = result.headingArray || {};
+                     const h1c = cnt(ha, 1);
+                     const h2c = cnt(ha, 2);
+                     const other = cnt(ha, 3) + cnt(ha, 4) + cnt(ha, 5) + cnt(ha, 6);
+                     const ok = !!result.status;
+                     td.innerHTML += `
+                     <td class="${visH}">${h1c}</td>
+                     <td class="${visH}">${h2c}</td>
+                     <td class="${visH}">${other}</td>
+                     <td class="${ok ? "result_pass" : "result_fail"} ${visH}">${ok ? "PASS" : "FAIL"}</td>
+                     `;
+                     break;
+                 }
                  case "canonical":
                      if (!result) {
                        td.innerHTML+=`
@@ -1179,6 +1306,63 @@ $(document).ready(function () {
                       <td class="${tdClass}">${result.httpCode} - ${result.httpCodeName}</td>
                       `
                       break;
+                    case "broken_links": {
+                      const hideBl = settings.broken_links === false || settings.broken_links === 0;
+                      const hid = hideBl ? "hidden-element-tracker" : "";
+                      if (!result) {
+                        td.innerHTML += `<td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td>`;
+                        break;
+                      }
+                      if (result.testerrorcaught || result.status_url === false) {
+                        td.innerHTML += `<td class="${hid}">—</td><td class="${hid}">—</td><td class="${hid}">—</td><td class="${hid}">—</td>`;
+                        break;
+                      }
+                      const inC = trackerBrokenLinkSubsetCount(result.totalBrokenInternal);
+                      const exC = trackerBrokenLinkSubsetCount(result.totalBrokenExternal);
+                      const total = Number(result.totalBrokenLinks) || inC + exC;
+                      const passClass = result.status ? "result_pass" : "result_fail";
+                      td.innerHTML += `
+                      <td class="${hid}">${total}</td>
+                      <td class="${hid}">${inC}</td>
+                      <td class="${hid}">${exC}</td>
+                      <td class="${passClass} ${hid}">${result.status ? "PASS" : "FAIL"}</td>`;
+                      break;
+                    }
+                    case "xml_sitemap":
+                    case "html_sitemap": {
+                      const isXml = type === "xml_sitemap";
+                      const hide = isXml
+                        ? (settings.xml_sitemap === false || settings.xml_sitemap === 0)
+                        : (settings.html_sitemap === false || settings.html_sitemap === 0);
+                      const hid = hide ? "hidden-element-tracker" : "";
+                      const valKey = isXml ? "xml_sitemap_val" : "html_sitemap_val";
+                      if (!result) {
+                        td.innerHTML += `<td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td>`;
+                        break;
+                      }
+                      const rawUrl = (result.settings && result.settings[valKey]) ? String(result.settings[valKey]) : "";
+                      const hrefEsc = rawUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+                      const excluded = /excluded/i.test(result.message || "");
+                      const fileCell = excluded ? "—" : (result.fileExists ? "Yes" : "No");
+                      let listCell = "—";
+                      let listClass = "";
+                      if (!result.testerrorcaught && !excluded) {
+                        listCell = result.status ? "Yes" : "No";
+                        listClass = result.status ? "result_pass" : "result_fail";
+                      } else if (excluded) {
+                        listCell = "N/A";
+                      }
+                      const detail = trackerEscapeHtml(result.message || "");
+                      const urlCell = rawUrl
+                        ? `<a href="${hrefEsc}" target="_blank" rel="noopener noreferrer">${trackerEscapeHtml(rawUrl)}</a>`
+                        : "—";
+                      td.innerHTML += `
+                      <td class="${hid} text-start">${urlCell}</td>
+                      <td class="${hid}">${fileCell}</td>
+                      <td class="${listClass} ${hid}">${listCell}</td>
+                      <td class="${hid} text-start">${detail}</td>`;
+                      break;
+                    }
                     case "open_graph_tags":
                       if (!result) {
                         td.innerHTML+=`
@@ -1198,11 +1382,11 @@ $(document).ready(function () {
                         break;
                       }
                       td.innerHTML+=`
-                      <td class="align-left">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
+                      <td class="align-left meta-content-imran">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
                       <td class="${result.casingClass} ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
                       <td class="${result.isEqualClass} ${settings.is_og_title_equal_title ? "" : "hidden-element-tracker"}">${result.isEqualStatus ? "Yes" : "No"}</td>
-                      <td class="align-left">${result.contentDesc != null ? result.contentDesc : "Open Graph Description does not exist."}</td>
+                      <td class="align-left meta-content-imran">${result.contentDesc != null ? result.contentDesc : "Open Graph Description does not exist."}</td>
                       <td class="${result.lengthDescClass} ${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "hidden-element-tracker"}">${result.contentDesc != null ? result.contentDesc.length : 0}</td>
                       <td class="${result.isEqualDescClass} ${settings.is_og_desc_equal_desc ? "" : "hidden-element-tracker"}">${result.isEqualDescStatus ? "Yes" : "No"}</td>
                       <td class="align-left">${result.contentImage != null && result.contentImage != "" ? result.contentImage : "Open Graph Image does not exist."}</td>
@@ -1227,7 +1411,7 @@ $(document).ready(function () {
                         break;
                       }
                       td.innerHTML+=`
-                      <td class="align-left">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
+                      <td class="align-left meta-content-imran">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
                       <td class="${result.casingClass} ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
                       <td class="${result.isEqualClass} ${settings.is_twitter_title_equal_title ? "" : "hidden-element-tracker"}">${result.isEqualStatus ? "Yes" : "No"}</td>
@@ -2125,6 +2309,60 @@ $(document).ready(function () {
               UI.buildTableBody(el.id, "http_status_code", data.http_status_code[originalIndex], options, url, settings, "seo", data.meta_title)
             })
           })
+        }else if(page[1] === "broken-links"){
+          UI.buildTableHeader("broken_links", data.broken_links, 4, options, settings, "seo")
+          updatedUrls.forEach(el=>{
+            UI.buildRootURLElement(el)
+
+            const urls = el.urls
+            urls.forEach(urlEl=>{
+              const url = urlEl.url
+              const originalIndex = urlEl.original_index
+
+              if(data.broken_links[originalIndex]){
+                urlsList.push(url)
+              }
+
+              const options = UI.initTableBody(el.id)
+              UI.buildTableBody(el.id, "broken_links", data.broken_links[originalIndex], options, url, settings, "seo", data.meta_title)
+            })
+          })
+        }else if(page[1] === "xml-sitemap"){
+          UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 4, options, settings, "seo")
+          updatedUrls.forEach(el=>{
+            UI.buildRootURLElement(el)
+
+            const urls = el.urls
+            urls.forEach(urlEl=>{
+              const url = urlEl.url
+              const originalIndex = urlEl.original_index
+
+              if(data.xml_sitemap[originalIndex]){
+                urlsList.push(url)
+              }
+
+              const options = UI.initTableBody(el.id)
+              UI.buildTableBody(el.id, "xml_sitemap", data.xml_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
+            })
+          })
+        }else if(page[1] === "html-sitemap"){
+          UI.buildTableHeader("html_sitemap", data.html_sitemap, 4, options, settings, "seo")
+          updatedUrls.forEach(el=>{
+            UI.buildRootURLElement(el)
+
+            const urls = el.urls
+            urls.forEach(urlEl=>{
+              const url = urlEl.url
+              const originalIndex = urlEl.original_index
+
+              if(data.html_sitemap[originalIndex]){
+                urlsList.push(url)
+              }
+
+              const options = UI.initTableBody(el.id)
+              UI.buildTableBody(el.id, "html_sitemap", data.html_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
+            })
+          })
         } else if(page[1] === "url-slug"){
           const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("url_slug", data.url_slug, rowspanCal, options, settings, "seo")
@@ -2181,6 +2419,42 @@ $(document).ready(function () {
       
               const options = UI.initTableBody(el.id)
               UI.buildTableBody(el.id, "robots", data.robots_meta[originalIndex], options, url, settings, "seo", data.url_slug)
+            })
+          })
+        } else if(page[1] === "robotstxt"){
+          UI.buildTableHeader("robot_text_test", data.robot_text_test, 3, options, settings, "seo")
+          updatedUrls.forEach(el=>{
+            UI.buildRootURLElement(el)
+
+            const urls = el.urls
+            urls.forEach(urlEl=>{
+              const url = urlEl.url
+              const originalIndex = urlEl.original_index
+
+              if(data.robot_text_test[originalIndex]){
+                urlsList.push(url)
+              }
+
+              const options = UI.initTableBody(el.id)
+              UI.buildTableBody(el.id, "robot_text_test", data.robot_text_test[originalIndex], options, url, settings, "seo", data.url_slug)
+            })
+          })
+        } else if(page[1] === "headings"){
+          UI.buildTableHeader("h1_heading_tag", data.h1_heading_tag, 4, options, settings, "seo")
+          updatedUrls.forEach(el=>{
+            UI.buildRootURLElement(el)
+
+            const urls = el.urls
+            urls.forEach(urlEl=>{
+              const url = urlEl.url
+              const originalIndex = urlEl.original_index
+
+              if(data.h1_heading_tag[originalIndex]){
+                urlsList.push(url)
+              }
+
+              const options = UI.initTableBody(el.id)
+              UI.buildTableBody(el.id, "h1_heading_tag", data.h1_heading_tag[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         } else if(page[1] === "doctype"){
@@ -2271,9 +2545,10 @@ $(document).ready(function () {
           })
         }
 
+
         else if(page[1] === "gzip-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("gzip_compression", data.gzip_compression, 1, options, settings, "seo")
+          UI.buildTableHeader("gzip_compression", data.cbp_labels.gzip_compression, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2282,19 +2557,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.gzip_compression[originalIndex]){
+              if(data.cbp_labels.gzip_compression[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "gzip_compression", data.gzip_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "gzip_compression", data.cbp_labels.gzip_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "css-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("css_compression", data.css_compression, 1, options, settings, "seo")
+          UI.buildTableHeader("css_compression", data.cbp_labels.css_compression, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2303,18 +2578,18 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.css_compression[originalIndex]){
+              if(data.cbp_labels.css_compression[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "css_compression", data.css_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "css_compression", data.cbp_labels.css_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
         else if(page[1] === "js-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("js_compression", data.js_compression, 1, options, settings, "seo")
+          UI.buildTableHeader("js_compression", data.cbp_labels.js_compression, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2323,18 +2598,18 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.js_compression[originalIndex]){
+              if(data.cbp_labels.js_compression[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "js_compression", data.js_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "js_compression", data.cbp_labels.js_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
         else if(page[1] === "html-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("html_compression", data.html_compression, 1, options, settings, "seo")
+          UI.buildTableHeader("html_compression", data.cbp_labels.html_compression, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2343,19 +2618,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.html_compression[originalIndex]){
+              if(data.cbp_labels.html_compression[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "html_compression", data.html_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "html_compression", data.cbp_labels.html_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
     
         else if(page[1] === "css-caching"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("css_caching_enable", data.css_caching_enable, 1, options, settings, "seo")
+          UI.buildTableHeader("css_caching_enable", data.cbp_labels.css_caching_enable, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2364,19 +2639,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.css_caching_enable[originalIndex]){
+              if(data.cbp_labels.css_caching_enable[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "css_caching_enable", data.css_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "css_caching_enable", data.cbp_labels.css_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "js-caching"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("js_caching_enable", data.js_caching_enable, 1, options, settings, "seo")
+          UI.buildTableHeader("js_caching_enable", data.cbp_labels.js_caching_enable, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2385,19 +2660,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.js_caching_enable[originalIndex]){
+              if(data.cbp_labels.js_caching_enable[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "js_caching_enable", data.js_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "js_caching_enable", data.cbp_labels.js_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "page-size"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("page_size", data.page_size, 1, options, settings, "seo")
+          UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2406,18 +2681,18 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.page_size[originalIndex]){
+              if(data.cbp_labels.page_size[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "page_size", data.page_size[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
         else if(page[1] === "nested-tables"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("nested_tables", data.nested_tables, 1, options, settings, "seo")
+          UI.buildTableHeader("nested_tables", data.cbp_labels.nested_tables, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2426,18 +2701,18 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.nested_tables[originalIndex]){
+              if(data.cbp_labels.nested_tables[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "nested_tables", data.nested_tables[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "nested_tables", data.cbp_labels.nested_tables[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
         else if(page[1] === "frameset"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("frameset", data.frameset, 1, options, settings, "seo")
+          UI.buildTableHeader("frameset", data.cbp_labels.frameset, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2446,40 +2721,21 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.frameset[originalIndex]){
+              if(data.cbp_labels.frameset[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "frameset", data.cbp_labels.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
-        else if(page[1] === "frameset"){
-          // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("frameset", data.frameset, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
 
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.frameset[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
-            })
-          })
-        }
 
         else if(page[1] === "safe-browsing"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("is_safe_browsing", data.is_safe_browsing, 1, options, settings, "seo")
+          UI.buildTableHeader("is_safe_browsing", data.security_labels.is_safe_browsing, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2488,19 +2744,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.is_safe_browsing[originalIndex]){
+              if(data.security_labels.is_safe_browsing[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "is_safe_browsing", data.is_safe_browsing[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "is_safe_browsing", data.security_labels.is_safe_browsing[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "unsafe-cross-origin-links"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("cross_origin_links", data.cross_origin_links, 1, options, settings, "seo")
+          UI.buildTableHeader("cross_origin_links", data.security_labels.cross_origin_links, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2509,19 +2765,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.cross_origin_links[originalIndex]){
+              if(data.security_labels.cross_origin_links[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "cross_origin_links", data.cross_origin_links[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "cross_origin_links", data.security_labels.cross_origin_links[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "protocol-relative-resource"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("protocol_relative_resource", data.protocol_relative_resource, 1, options, settings, "seo")
+          UI.buildTableHeader("protocol_relative_resource", data.security_labels.protocol_relative_resource, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2530,19 +2786,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.protocol_relative_resource[originalIndex]){
+              if(data.security_labels.protocol_relative_resource[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "protocol_relative_resource", data.protocol_relative_resource[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "protocol_relative_resource", data.security_labels.protocol_relative_resource[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "content-security-policy-header"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("content_security_policy_header", data.content_security_policy_header, 1, options, settings, "seo")
+          UI.buildTableHeader("content_security_policy_header", data.security_labels.content_security_policy_header, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2551,41 +2807,21 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.content_security_policy_header[originalIndex]){
+              if(data.security_labels.content_security_policy_header[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "content_security_policy_header", data.content_security_policy_header[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "content_security_policy_header", data.security_labels.content_security_policy_header[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
-        else if(page[1] === "frameset"){
-          // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("frameset", data.frameset, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.frameset[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "frameset", data.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
-            })
-          })
-        }
 
         else if(page[1] === "hsts-header"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("hsts_header", data.hsts_header, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
+          UI.buildTableHeader("hsts_header", data.security_labels.hsts_header, 1, options, settings, "seo")
+          updatedUrls.forEach(el=>{ 
             UI.buildRootURLElement(el)
 
             const urls = el.urls
@@ -2593,19 +2829,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.hsts_header[originalIndex]){
+              if(data.security_labels.hsts_header[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "hsts_header", data.hsts_header[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "hsts_header", data.security_labels.hsts_header[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "bad-content-type"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("bad_content_type", data.bad_content_type, 1, options, settings, "seo")
+          UI.buildTableHeader("bad_content_type", data.security_labels.bad_content_type, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2614,19 +2850,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.bad_content_type[originalIndex]){
+              if(data.security_labels.bad_content_type[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "bad_content_type", data.bad_content_type[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "bad_content_type", data.security_labels.bad_content_type[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "ssl-certificate"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("ssl_certificate_enable", data.ssl_certificate_enable, 1, options, settings, "seo")
+          UI.buildTableHeader("ssl_certificate_enable", data.security_labels.ssl_certificate_enable, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2635,40 +2871,20 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.ssl_certificate_enable[originalIndex]){
+              if(data.security_labels.ssl_certificate_enable[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "ssl_certificate_enable", data.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "ssl_certificate_enable", data.security_labels.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
-        else if(page[1] === "ssl-certificate"){
-          // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("ssl_certificate_enable", data.ssl_certificate_enable, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.ssl_certificate_enable[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "ssl_certificate_enable", data.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
-            })
-          })
-        }
 
         else if(page[1] === "directory-browsing"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("folder_browsing_enable", data.folder_browsing_enable, 1, options, settings, "seo")
+          UI.buildTableHeader("folder_browsing_enable", data.security_labels.folder_browsing_enable, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2677,19 +2893,19 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.folder_browsing_enable[originalIndex]){
+              if(data.security_labels.folder_browsing_enable[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "folder_browsing_enable", data.folder_browsing_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "folder_browsing_enable", data.security_labels.folder_browsing_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
 
         else if(page[1] === "x-frame-options-header"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("x_frame_options_header", data.x_frame_options_header, 1, options, settings, "seo")
+          UI.buildTableHeader("x_frame_options_header", data.security_labels.x_frame_options_header, 1, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
 
@@ -2698,12 +2914,12 @@ $(document).ready(function () {
               const url = urlEl.url
               const originalIndex = urlEl.original_index
 
-              if(data.x_frame_options_header[originalIndex]){
+              if(data.security_labels.x_frame_options_header[originalIndex]){
                 urlsList.push(url)
               }
       
               const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "x_frame_options_header", data.x_frame_options_header[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(el.id, "x_frame_options_header", data.security_labels.x_frame_options_header[originalIndex], options, url, settings, "seo", data.url_slug)
             })
           })
         }
@@ -2873,6 +3089,8 @@ $(document).ready(function () {
             UI.buildTableBody(el.id, "title", data.meta_title[originalIndex], options, url, settings, "seo", data.meta_title)
             UI.buildTableBody(el.id, "description", data.meta_desc[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "robots", data.robots_meta[originalIndex], options, url, settings, "seo")
+            UI.buildTableBody(el.id, "robot_text_test", data.robot_text_test[originalIndex], options, url, settings, "seo", data.url_slug)
+            UI.buildTableBody(el.id, "h1_heading_tag", data.h1_heading_tag[originalIndex], options, url, settings, "seo", data.url_slug)
             UI.buildTableBody(el.id, "canonical", data.canonical_url[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "open_graph_tags", data.open_graph_tags[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "twitter_tags", data.twitter_tags[originalIndex], options, url, settings, "seo")
@@ -2882,6 +3100,9 @@ $(document).ready(function () {
             UI.buildTableBody(el.id, "meta_viewport", data.meta_viewport[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "doctype", data.doctype[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "http_status_code", data.http_status_code[originalIndex], options, url, settings, "seo", data.meta_title)
+            UI.buildTableBody(el.id, "broken_links", data.broken_links[originalIndex], options, url, settings, "seo", data.meta_title)
+            UI.buildTableBody(el.id, "xml_sitemap", data.xml_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
+            UI.buildTableBody(el.id, "html_sitemap", data.html_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
             lighthouseStatus ? UI.buildTableBody(el.id, "google_overall", Controls.getGoogleDataByUrl(url), options, url, settings, "performance") : ""
             lighthouseStatus ? UI.buildTableBody(el.id, "google_lighthouse", Controls.getGoogleDataByUrl(url), options, url, settings, "performance") : ""
             lighthouseStatus ? UI.buildTableBody(el.id, "core_web_vitals", Controls.getGoogleDataByUrl(url), options, url, settings, "performance") : ""
@@ -2918,6 +3139,8 @@ $(document).ready(function () {
           UI.buildTableHeader("title", data.meta_title, rowspanCalHeader, options, settings, "seo")
           UI.buildTableHeader("description", data.meta_desc, 2, options, settings, "seo")
           UI.buildTableHeader("robots", data.robots_meta, 2, options, settings, "seo")
+          UI.buildTableHeader("robot_text_test", data.robot_text_test, 3, options, settings, "seo")
+          UI.buildTableHeader("h1_heading_tag", data.h1_heading_tag, 4, options, settings, "seo")
           UI.buildTableHeader("canonical", data.canonical_url, 2, options, settings, "seo")
           UI.buildTableHeader("open_graph_tags", data.open_graph_tags, 12, options, settings, "seo")
           UI.buildTableHeader("twitter_tags", data.twitter_tags, 8, options, settings, "seo")
@@ -2929,7 +3152,9 @@ $(document).ready(function () {
           UI.buildTableHeader("meta_viewport", data.meta_viewport, 1, options, settings, "seo")
           UI.buildTableHeader("doctype", data.doctype, 1, options, settings, "seo")
           UI.buildTableHeader("http_status_code", data.http_status_code, 1, options, settings, "seo")
-
+          UI.buildTableHeader("broken_links", data.broken_links, 4, options, settings, "seo")
+          UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 4, options, settings, "seo")
+          UI.buildTableHeader("html_sitemap", data.html_sitemap, 4, options, settings, "seo")
 
           lighthouseStatus ? UI.buildTableHeader("google_overall", testDetailsLighthouse, 2, options, settings, "performance") : ""
           lighthouseStatus ? UI.buildTableHeader("google_lighthouse", testDetailsLighthouse, 8, options, settings, "performance") : ""
@@ -3034,7 +3259,6 @@ $(document).ready(function () {
               Controls.initDataTable()
               Controls.activateEvents()
 
-
               UI.toggleTrackerElements()
               UI.updateTableDesign()
               removeLoader()
@@ -3113,7 +3337,9 @@ $(document).ready(function () {
             urlData.meta_title ||
             urlData.meta_desc ||
             urlData.robots_meta ||
-            urlData.canonical_url
+            urlData.canonical_url ||
+            urlData.robot_text_test ||
+            urlData.h1_heading_tag
           )
 
           if (hasFinalResults) {
@@ -3267,6 +3493,8 @@ $(document).ready(function () {
                   twitter_tags: [],
                   http_status_code: [],
                   broken_links: [],
+                  robot_text_test: [],
+                  h1_heading_tag: [],
                   security_labels: {
                     is_safe_browsing: [],
                     cross_origin_links: [],
@@ -3427,3 +3655,44 @@ $("#hide-col-btn").on("click", function () {
     $(this).toggleClass("collapsed");
 });
 
+function metaDiscriptionReportContent(){
+  const tbody = document.querySelector('#reportTable tbody');
+
+tbody.addEventListener('mouseover', function(e) {
+    const td = e.target.closest('.meta-content-imran');
+    if (!td || !tbody.contains(td)) return;
+
+    const hasContent = td.textContent && td.textContent.trim() !== '' && td.textContent.trim() !== '-';
+
+    const isTruncated = hasContent && td.scrollWidth > td.clientWidth;
+
+    td.style.cursor = isTruncated ? 'pointer' : 'default';
+
+    if (isTruncated && !td._tooltip) {
+        const tooltip = document.createElement('div');
+        tooltip.className = 'tooltip-text';
+        tooltip.textContent = td.textContent;
+        document.body.appendChild(tooltip);
+
+        const rect = td.getBoundingClientRect();
+        tooltip.style.top = rect.top - tooltip.offsetHeight - 5 + window.scrollY + 'px';
+        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + window.scrollX + 'px';
+
+        tooltip.classList.add('show-tooltip');
+        td._tooltip = tooltip;
+    }
+});
+
+tbody.addEventListener('mouseout', function(e) {
+    const td = e.target.closest('.meta-content-imran');
+    if (!td || !tbody.contains(td)) return;
+
+    if (td._tooltip) {
+        td._tooltip.remove();
+        td._tooltip = null;
+    }
+
+    td.style.cursor = 'default';
+});
+}
+metaDiscriptionReportContent();

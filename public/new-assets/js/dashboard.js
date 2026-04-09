@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 100, recheckGoogle = 100, recheckSingleMax = 100, urlsGoogleFinal = 0
-  var htmlSitemapData, recheckAllowed = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1, urlsGoogleFinal = 0
+  var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
@@ -28,6 +28,8 @@ $(document).ready(function () {
     twitter_tags: [],
     http_status_code: [],
     broken_links: [],
+    robot_text_test: [],
+    h1_heading_tag: [],
     security_labels: {
         is_safe_browsing: [],
         cross_origin_links: [],
@@ -641,6 +643,7 @@ $(document).ready(function () {
               let show_dashboard_status = Controls.getShowDashboardStatus(element)
 
 
+
               if(key === "security_labels"){
                   status = show_dashboard_status
                   label = {
@@ -660,11 +663,12 @@ $(document).ready(function () {
                 }
 
               }else{
-
-                if(key === "images"){
-                  label = Controls.getActiveLabel("images")
-                }else{
-                  label = Controls.getActiveLabel(element[0].label.db_name)
+                // Use the results bucket key (e.g. robot_text_test), not element[0].label.db_name.
+                // Stale rows can embed the wrong label while still sitting under the correct key; the key must win.
+                label = Controls.getActiveLabel(key)
+                if (!label) {
+                  console.warn("buildLoaderCards: no label for results key", key)
+                  continue
                 }
 
                 if(label.db_name === "xml_sitemap"){
@@ -755,6 +759,42 @@ $(document).ready(function () {
                 <div class="deshboard_inner_description">
                   <p>URL's with Noindex, Nofollow<span>${data.withNoIndexNofollow}</span></p>
                   <p>URL's with Noindex<span>${data.withNoIndex}</span></p>
+                </div>
+                <div class="inner_dashboard_footer">
+                  <a href="${reportsUrl}">View Report</a>
+                </div>`
+                break;
+            case "robot_text_test": {
+                const rtUrl = (data.robotsTxtUrl || "").replace(/"/g, "&quot;")
+                element = `
+                <div class="deshboard_inner_description border_bottom">
+                  <div class="roboto_url">
+                    <p>
+                      <span>Robots.txt URL: </span>
+                      <span>
+                        <a href="${rtUrl}" target="_blank" rel="noopener noreferrer">${data.robotsTxtUrl || ""}</a>
+                        <img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />
+                      </span>
+                    </p>
+                  </div>
+                </div>
+                <div class="deshboard_inner_description">
+                  <p>URL's blocked through Robots.txt <span class="danger">${data.urlsBlockedThroughRobots ?? 0}</span></p>
+                  <p>Resources blocked through Robots.txt <span class="success">${data.resourcesBlockedThroughRobots ?? 0}</span></p>
+                </div>
+                <div class="inner_dashboard_footer">
+                  <a href="${reportsUrl}">View Report</a>
+                </div>`
+                break;
+            }
+            case "h1_heading_tag":
+                element = `
+                <div class="deshboard_inner_description border_bottom">
+                  <p>URLs with heading check failures <span class="danger">${data.urlsFailed ?? 0}</span></p>
+                  <p>URLs passing <span class="success">${data.urlsPassed ?? 0}</span></p>
+                </div>
+                <div class="deshboard_inner_description">
+                  <p>URLs with no H1 <span class="danger">${data.urlsMissingH1 ?? 0}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
                   <a href="${reportsUrl}">View Report</a>
@@ -1960,7 +2000,18 @@ $(document).ready(function () {
             </div>
               `
               break;    
-            case "xml_sitemap":
+            case "xml_sitemap": {
+            const xmlSitemapReportsUrl = reportsUrl
+            const htmlLabel = Controls.getActiveLabel("html_sitemap")
+            const htmlSitemapReportsUrl = (htmlLabel && htmlLabel.reportsUrl) || "#"
+            const xmlRobotsAttr = (data.robotsTxtUrl || "").replace(/"/g, "&quot;")
+            const xmlRobotsText = data.robotsTxtUrl || ""
+            let htmlRobotsAttr = ""
+            let htmlRobotsText = ""
+            if (htmlSitemapData != null) {
+              htmlRobotsText = htmlSitemapData.robotsTxtUrl || ""
+              htmlRobotsAttr = htmlRobotsText.replace(/"/g, "&quot;")
+            }
             element = `
               <div class="dashboard_sitemap_content common_tab">
                       <ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -2013,11 +2064,10 @@ $(document).ready(function () {
                               <p>
                                 <span>Robots.txt URL: </span>
                                 <span>
-                                  https://www.setmore.com/robots.txt
-                                  <img
-                                    src="/new-assets/assets/images/copy-link2.png"
-                                    alt="icon"
-                                /></span>
+                                  ${xmlRobotsText
+                                    ? `<a href="${xmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${xmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
+                                    : "<span>—</span>"}
+                                </span>
                               </p>
                             </div>
                             <div class="deshboard_inner_description">
@@ -2038,7 +2088,7 @@ $(document).ready(function () {
                           </div>
 
                           <div class="inner_dashboard_footer">
-                            <a href="${reportsUrl}">View Report</a>
+                            <a href="${xmlSitemapReportsUrl}">View Report</a>
                           </div>
                           ` 
                           
@@ -2058,7 +2108,7 @@ $(document).ready(function () {
                           </div>
 
                            <div class="inner_dashboard_footer">
-                            <a href="${reportsUrl}">View Report</a>
+                            <a href="${xmlSitemapReportsUrl}">View Report</a>
                             </div>
                           `
                         
@@ -2085,11 +2135,10 @@ $(document).ready(function () {
                           <p>
                             <span>Robots.txt URL: </span>
                             <span>
-                              https://www.setmore.com/robots.txt
-                              <img
-                                src="/new-assets/assets/images/copy-link2.png"
-                                alt="icon"
-                            /></span>
+                              ${htmlRobotsText
+                                ? `<a href="${htmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${htmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
+                                : "<span>—</span>"}
+                            </span>
                           </p>
                         </div>
                         <div class="deshboard_inner_description">
@@ -2110,7 +2159,7 @@ $(document).ready(function () {
                       </div>
 
                       <div class="inner_dashboard_footer">
-                        <a href="${reportsUrl}">View Report</a>
+                        <a href="${htmlSitemapReportsUrl}">View Report</a>
                       </div>
                       ` 
                       
@@ -2130,18 +2179,14 @@ $(document).ready(function () {
                       </div>
 
                        <div class="inner_dashboard_footer">
-                        <a href="${reportsUrl}">View Report</a>
+                        <a href="${htmlSitemapReportsUrl}">View Report</a>
                         </div>
                       `
                     
                       : "" }
-
-                    <div class="inner_dashboard_footer">
-                      <a href="${reportsUrl}">View Report</a>
-                    </div>
             `
-      
               break;
+            }
               case "images":
                 element = `
                 <div div class="dashboard_image_content">
@@ -2177,17 +2222,21 @@ $(document).ready(function () {
             label = key
             break;
           default:
-            label = activeLabel.db_name
+            // Match the results bucket (same as card id from buildSingleLoaderCard), not embedded payload label.
+            label = key
             break;
         }
-        div.innerHTML =  UI.getSingleLoaderCardElement(label, JSON.parse(data))
-        if(document.getElementById(`card_${label}`).querySelector(".page_speed_content")){
-          document.getElementById(`card_${label}`).querySelector(".page_speed_content").remove()
-          document.getElementById(`card_${label}`).querySelector(".single_dashboard_card").appendChild(div)
-        }else{
-          document.getElementById(`card_${label}`).querySelector(".broken_links_content").remove()
-          document.getElementById(`card_${label}`).querySelector(".single_dashboard_card").appendChild(div)
-        }
+        const parsed = typeof data === "string" ? JSON.parse(data) : data
+        div.innerHTML = UI.getSingleLoaderCardElement(label, parsed)
+        const cardShell = document.getElementById(`card_${label}`)?.querySelector(".single_dashboard_card")
+        if (!cardShell) return
+        // First update removes .broken_links_content; later updates (e.g. XML sitemap + htmlSitemapData) must remove .single_dashboard_card_content instead.
+        const block =
+          cardShell.querySelector(".page_speed_content") ||
+          cardShell.querySelector(".single_dashboard_card_content") ||
+          cardShell.querySelector(".broken_links_content")
+        if (block) block.remove()
+        cardShell.appendChild(div)
     }
 
     static buildSingleLoaderCard(label, buildSingleLoaderCard){
@@ -2708,6 +2757,8 @@ $(document).ready(function () {
                 twitter_tags: [],
                 http_status_code: [],
                 broken_links: [],
+                robot_text_test: [],
+                h1_heading_tag: [],
                 security_labels: {
                     is_safe_browsing: [],
                     cross_origin_links: [],
@@ -2880,9 +2931,23 @@ $(document).ready(function () {
       if(!ignore_tests.includes(key)){
         DB.getTestDetails(label, element)
         .done(function(data) {
+          console.log("Label", label)
             if(label.db_name == "html_sitemap"){
-              htmlSitemapData = data
+              console.log("HTML Sitemap data", data)
+              htmlSitemapData = typeof data === "string" ? JSON.parse(data) : data
+              // XML sitemap card HTML is built with htmlSitemapData; that request often finishes second.
+              if (lastXmlSitemapCardPayload && document.getElementById("card_xml_sitemap")) {
+                UI.updateSingleLoaderCard(
+                  lastXmlSitemapCardPayload.data,
+                  element,
+                  lastXmlSitemapCardPayload.key,
+                  lastXmlSitemapCardPayload.label
+                )
+              }
             }else{
+              if (label.db_name === "xml_sitemap") {
+                lastXmlSitemapCardPayload = { data, key, label }
+              }
               UI.updateSingleLoaderCard(data, element, key, label)
             }
         });
@@ -2978,6 +3043,8 @@ $(document).ready(function () {
             const testDetails = data.results
             projectFinal = data.project
             $(".dashboard_top_items_main").html("")
+            htmlSitemapData = null
+            lastXmlSitemapCardPayload = null
             UI.buildWidgetSidebar()
 
 
@@ -3291,6 +3358,8 @@ $(document).ready(function () {
         twitter_tags: [],
         http_status_code: [],
         broken_links: [],
+        robot_text_test: [],
+        h1_heading_tag: [],
         security_labels: {
             is_safe_browsing: [],
             cross_origin_links: [],
@@ -3573,7 +3642,9 @@ $(document).ready(function () {
               urlData.meta_title ||
               urlData.meta_desc ||
               urlData.robots_meta ||
-              urlData.canonical_url
+              urlData.canonical_url ||
+              urlData.robot_text_test ||
+              urlData.h1_heading_tag
           );
   
           if (hasFinalResults) {

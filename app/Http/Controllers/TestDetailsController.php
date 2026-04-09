@@ -157,6 +157,19 @@ class TestDetailsController extends Controller
         $fileExists = isset($elements[0]->fileExists) ? $elements[0]->fileExists : false;
         $object = new \stdClass();
         $object->fileExists = $fileExists;
+        $robotsTxtUrl = '';
+        if (is_array($elements) || is_object($elements)) {
+            foreach ($elements as $element) {
+                if (! is_object($element)) {
+                    continue;
+                }
+                $candidateUrl = self::resolveRobotsTxtUrlFromStoredResult($element);
+                if ($robotsTxtUrl === '' && $candidateUrl !== '') {
+                    $robotsTxtUrl = $candidateUrl;
+                }
+            }
+        }
+        $object->robotsTxtUrl = $robotsTxtUrl;
 
         if($fileExists){
             $sitemapExists = 0;
@@ -242,6 +255,19 @@ class TestDetailsController extends Controller
         $fileExists = isset($elements[0]->fileExists) ? $elements[0]->fileExists : false;
         $object = new \stdClass();
         $object->fileExists = $fileExists;
+        $robotsTxtUrl = '';
+        if (is_array($elements) || is_object($elements)) {
+            foreach ($elements as $element) {
+                if (! is_object($element)) {
+                    continue;
+                }
+                $candidateUrl = self::resolveRobotsTxtUrlFromStoredResult($element);
+                if ($robotsTxtUrl === '' && $candidateUrl !== '') {
+                    $robotsTxtUrl = $candidateUrl;
+                }
+            }
+        }
+        $object->robotsTxtUrl = $robotsTxtUrl;
 
         if($fileExists){
             $sitemapExists = 0;
@@ -701,6 +727,148 @@ class TestDetailsController extends Controller
         $object->totalBrokenWebPages = $totalBrokenWebPages;
         $object->totalBrokenInternal = $totalBrokenInternal;
         $object->totalBrokenExternal = $totalBrokenExternal;
+
+        echo json_encode($object);
+    }
+
+    /**
+     * Prefer stored robots_txt_url; fall back to tested_url origin so dashboard tiles still show a link
+     * when older rows omit robots_txt_url or used a different payload shape.
+     */
+    private static function resolveRobotsTxtUrlFromStoredResult(object $element): string
+    {
+        foreach (['robots_txt_url', 'robotsTxtUrl'] as $prop) {
+            if (! empty($element->{$prop}) && is_string($element->{$prop})) {
+                return $element->{$prop};
+            }
+        }
+
+        $testedUrl = $element->tested_url ?? '';
+        if (! is_string($testedUrl) || $testedUrl === '') {
+            return '';
+        }
+
+        $p = parse_url($testedUrl);
+        if (empty($p['host'])) {
+            return '';
+        }
+        $scheme = $p['scheme'] ?? '';
+        if ($scheme === '') {
+            $scheme = 'https';
+        }
+
+        return $scheme.'://'.$p['host'].'/robots.txt';
+    }
+
+    public function robotTextTest(Request $request)
+    {
+        $elements = json_decode($request->input('data'));
+        if (! is_array($elements) && ! is_object($elements)) {
+            $object = new \stdClass();
+            $object->settings = null;
+            $object->totalUrls = 0;
+            $object->robotsTxtUrl = '';
+            $object->urlsBlockedThroughRobots = 0;
+            $object->resourcesBlockedThroughRobots = 0;
+            echo json_encode($object);
+
+            return;
+        }
+
+        $urlsBlockedThroughRobots = 0;
+        $resourcesBlockedThroughRobots = 0;
+        $robotsTxtUrl = '';
+        $firstOk = null;
+
+        foreach ($elements as $element) {
+            if (! is_object($element)) {
+                continue;
+            }
+
+            $candidateUrl = self::resolveRobotsTxtUrlFromStoredResult($element);
+            if ($robotsTxtUrl === '' && $candidateUrl !== '') {
+                $robotsTxtUrl = $candidateUrl;
+            }
+
+            if (! empty($element->testerrorcaught)) {
+                continue;
+            }
+            if ($firstOk === null) {
+                $firstOk = $element;
+            }
+            if (! empty($element->urlBlock)) {
+                $urlsBlockedThroughRobots++;
+            }
+            $rc = intval($element->resources_blocked_count ?? 0);
+            if ($rc > $resourcesBlockedThroughRobots) {
+                $resourcesBlockedThroughRobots = $rc;
+            }
+        }
+
+        $object = new \stdClass();
+        $object->settings = $firstOk ? $firstOk->settings : null;
+        $object->totalUrls = count((array) $elements);
+        $object->robotsTxtUrl = $robotsTxtUrl;
+        $object->urlsBlockedThroughRobots = $urlsBlockedThroughRobots;
+        $object->resourcesBlockedThroughRobots = $resourcesBlockedThroughRobots;
+
+        echo json_encode($object);
+    }
+
+    /**
+     * Dashboard aggregate for the Headings (H1–H6) test — mirrors per-URL data from RunTest::h1HeadindTag.
+     */
+    public function headings(Request $request)
+    {
+        $elements = json_decode($request->input('data'));
+        if (! is_array($elements) && ! is_object($elements)) {
+            $object = new \stdClass();
+            $object->settings = null;
+            $object->totalUrls = 0;
+            $object->urlsFailed = 0;
+            $object->urlsPassed = 0;
+            $object->urlsMissingH1 = 0;
+            echo json_encode($object);
+
+            return;
+        }
+
+        $urlsFailed = 0;
+        $urlsPassed = 0;
+        $urlsMissingH1 = 0;
+        $firstOk = null;
+
+        foreach ($elements as $element) {
+            if (! is_object($element)) {
+                continue;
+            }
+            if (! empty($element->testerrorcaught)) {
+                continue;
+            }
+            if ($firstOk === null) {
+                $firstOk = $element;
+            }
+            if (! empty($element->status)) {
+                $urlsPassed++;
+            } else {
+                $urlsFailed++;
+            }
+            $ha = $element->headingArray ?? null;
+            if ($ha !== null) {
+                $h1 = is_array($ha) ? ($ha['h1'] ?? []) : ($ha->h1 ?? []);
+                $n = is_countable($h1) ? count($h1) : 0;
+                if ($n === 0) {
+                    $urlsMissingH1++;
+                }
+            }
+        }
+
+        $object = new \stdClass();
+        $object->settings = $firstOk ? $firstOk->settings : null;
+        $object->totalUrls = count((array) $elements);
+        $object->urlsFailed = $urlsFailed;
+        $object->urlsPassed = $urlsPassed;
+        $object->urlsMissingH1 = $urlsMissingH1;
 
         echo json_encode($object);
     }

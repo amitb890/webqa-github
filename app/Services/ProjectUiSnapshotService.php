@@ -108,6 +108,8 @@ class ProjectUiSnapshotService
             'twitter_tags' => [],
             'http_status_code' => [],
             'broken_links' => [],
+            'robot_text_test' => [],
+            'h1_heading_tag' => [],
 
             'security_labels' => [
                 'is_safe_browsing' => [],

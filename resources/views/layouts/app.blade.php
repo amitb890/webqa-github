@@ -486,7 +486,7 @@ if (!empty($activeProjectFavicon)) {
                 <li data-report-setting="h1_heading_tag"><a href="/reports/headings"><p>Headings</p></a></li>
                 <li data-report-setting="http_status_code"><a href="/reports/http-status-code"><p>HTTP Status code</p></a></li>
                 <li data-report-setting="xml_sitemap"><a href="/reports/xml-sitemap"><p>XML Sitemap</p></a></li>
-                <li data-report-setting="xml_sitemap"><a href="/reports/html-sitemap"><p>HTML Sitemap</p></a></li>
+                <li data-report-setting="html_sitemap"><a href="/reports/html-sitemap"><p>HTML Sitemap</p></a></li>
                 <li data-report-setting="open_graph_tags"><a href="/reports/og-tags"><p>Open Graph Tags</p></a></li>
                 <li data-report-setting="twitter_tags"><a href="/reports/twitter-tags"><p>Twitter Tags</p></a></li>
                 <li data-report-setting="doctype"><a href="/reports/doctype"><p>Doctype</p></a></li>
@@ -724,6 +724,7 @@ if (!empty($activeProjectFavicon)) {
       'twitter_tags' => 1,
       'favicon' => 1,
       'xml_sitemap' => 1,
+      'html_sitemap' => 1,
       'meta_viewport' => 1,
       'frameset' => 1,
       'doctype' => 1,

@@ -947,6 +947,55 @@ class Helpers{
 
     }
 
+    /**
+     * Count Disallow rules that likely target static assets (for dashboard summary).
+     */
+    public function countResourceDisallowRulesInRobotsTxt(string $robotsTxtUrl): int
+    {
+        try {
+            $httpResponse = $this->httpGetContent($robotsTxtUrl);
+            if ($httpResponse->status() !== 200) {
+                return 0;
+            }
+            $client = new GuzzleClient();
+            $response = $client->request('GET', $robotsTxtUrl);
+            $content = $response->getBody()->getContents();
+
+            return $this->countDisallowLinesTargetingResources($content);
+        } catch (\Throwable $e) {
+            return 0;
+        }
+    }
+
+    public function countDisallowLinesTargetingResources(string $robotsTxtContent): int
+    {
+        $count = 0;
+        foreach (explode("\n", $robotsTxtContent) as $line) {
+            $line = trim($line);
+            if ($line === '' || strpos($line, '#') === 0) {
+                continue;
+            }
+            if (stripos($line, 'disallow:') !== 0) {
+                continue;
+            }
+            $path = trim(preg_replace('/^disallow:\s*/i', '', $line));
+            if ($path === '' || $path === '/') {
+                continue;
+            }
+            $pl = strtolower($path);
+            if (preg_match('/\.(css|js|mjs|png|jpe?g|gif|svg|webp|woff2?|ico|map)(\b|\/|$)/', $pl)) {
+                $count++;
+
+                continue;
+            }
+            if (preg_match('#/(js|css|assets|static|cdn|wp-content|wp-includes|fonts?|img|images|media)(/|$)#', $pl)) {
+                $count++;
+            }
+        }
+
+        return $count;
+    }
+
     // Function to parse the robots.txt and return an array of disallow paths user-agent wise
     public function parseRobotsTxt($robotsTxt) {
     $lines = explode("\n", $robotsTxt);

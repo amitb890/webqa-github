@@ -389,6 +389,34 @@
                     </div>
                   </div>
 
+                  <!-- HTML Sitemap Report -->
+                  <div class="report-item">
+                    <div class="report-label">
+                      <span>HTML Sitemap</span>
+                    </div>
+                    <div class="report-actions">
+                      <a href="/reports/html-sitemap" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                    <div class="report-switch">
+                      <div class="toggle-button-cover">
+                        <div class="button-cover">
+                          <div class="button r" id="button-9-html-sitemap">
+                            <input
+                              type="checkbox"
+                              class="checkbox"
+                              id="switchHtmlSitemap"
+                              {{ !$settings || ($settings->html_sitemap ?? 1) ? 'checked' : '' }}
+                            />
+                            <div class="knobs">
+                              <span></span>
+                            </div>
+                            <div class="layer"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   <!-- Open Graph Title Tag Report -->
                   <div class="report-item">
                     <div class="report-label">
@@ -1433,6 +1461,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 'robot_text_test': 'robot_text_test',
                 'h1_heading_tag': 'h1_heading_tag',
                 'xml_sitemap': 'xml_sitemap',
+                'html_sitemap': 'html_sitemap',
                 'open_graph_tags': 'open_graph_tags',
                 'twitter_tags': 'twitter_tags',
                 'favicon': 'favicon',
@@ -1504,6 +1533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         'robot_text_test': 'robot_text_test',
                         'h1_heading_tag': 'h1_heading_tag',
                         'xml_sitemap': 'xml_sitemap',
+                        'html_sitemap': 'html_sitemap',
                         'open_graph_tags': 'open_graph_tags',
                         'twitter_tags': 'twitter_tags',
                         'favicon': 'favicon',

@@ -292,9 +292,13 @@ class RunTest implements ShouldQueue
                 }
 
                 if (!$label->initialTestingState) continue;
-        
+
+                // Must reset each iteration: if db_name has no matching case, $testData must not leak from the previous label.
+                $testData = null;
+                $dbName = isset($label->db_name) ? trim((string) $label->db_name) : '';
+
                 try {
-                    switch($label->db_name){
+                    switch ($dbName) {
                         case "meta_title":
                             $testData = $this->title($finalRes, $label, $url);
                             break;
@@ -425,6 +429,16 @@ class RunTest implements ShouldQueue
                         case "broken_links":
                             $testData = $this->brokenLinks($finalRes, $label, $url);
                             break;
+                        case "robot_text_test":
+                            $testData = $this->robotTextTest($finalRes, $label, $url);
+                            break;
+                        case "h1_heading_tag":
+                            $testData = $this->h1HeadindTag($finalRes, $label, $url);
+                            break;
+                        default:
+                            Log::warning("RunTest: no handler for label db_name '{$dbName}' on URL {$url} (project {$projectId})");
+                            $testData = null;
+                            break;
                     }
         
                 } catch (\Throwable $th) {
@@ -434,7 +448,9 @@ class RunTest implements ShouldQueue
         
                 }
         
-                $allResults[$label->db_name] = $testData;
+                if ($dbName !== '') {
+                    $allResults[$dbName] = $testData;
+                }
             }
         
 
@@ -684,6 +700,128 @@ class RunTest implements ShouldQueue
             $object->tested_url = $testedUrl;
             $object->tested_at = time();
             $object->testerrorcaught = true;
+            return json_encode($object);
+        }
+    }
+
+    public function robotTextTest($data, $label, $testedUrl)
+    {
+        try {
+            $helpers = new Helper();
+
+            $status = true;
+            $problems = [];
+            $settings = json_decode($data['settings']);
+            $title = 'Robots.txt';
+            $description = 'Robots.txt';
+            $message = '';
+            $content = '';
+            $robotTextTestBlockUrl = $settings->settings_sub->robot_text_test_block_url;
+            $robotTextResponseData = [];
+            $secondaryBots = [];
+            $urlBlock = false;
+
+            $parsed_url = parse_url($testedUrl);
+            $base_url = $parsed_url['scheme'].'://'.$parsed_url['host'];
+            $robotsTxtUrl = $base_url.'/robots.txt';
+
+            $resourcesBlockedCount = $helpers->countResourceDisallowRulesInRobotsTxt($robotsTxtUrl);
+
+            $robotTextResponse = $helpers->robotTextTtest($testedUrl);
+            $hasFullResponse = is_array($robotTextResponse) && count($robotTextResponse) === 5;
+
+            if (! $hasFullResponse) {
+                $status = true;
+                $urlBlock = false;
+                $message = 'We did not detect a Robots.txt file in the root directory of your website, so the current page is not blocked from crawling by any search engine.';
+            } elseif ($robotTextTestBlockUrl) {
+                if ($robotTextResponse[1] == false) {
+                    $status = false;
+                    $urlBlock = true;
+                    $robotTextResponseData = $robotTextResponse[0];
+                    $userAgent = implode(',', $robotTextResponse[3]);
+                    $message = 'The current page is blocked from being crawled by '.$userAgent.' in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website.';
+                    $secondaryBots = $robotTextResponse[4];
+                    if (count($robotTextResponse[4]) > 3) {
+                        $message = 'The current page is blocked from being crawled by Yandex and Bing in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website. The page is also blocked from crawling by '.count($robotTextResponse[4]).' secondary bots. <span data-bs-toggle="modal" data-bs-target="#secondaryBots" style="border-bottom: 1px solid #7f6e6e; cursor: pointer;">see the list of all secondary bots</span>';
+                    }
+                } else {
+                    $urlBlock = false;
+                    $status = true;
+                    $secondaryBots = $robotTextResponse[4];
+                    $message = 'The current page is not blocked from being crawled by any search engines in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website.';
+                    if (count($robotTextResponse[4]) > 3) {
+                        $secondaryBots = $robotTextResponse[4];
+                        $message = 'The current page is not blocked from being crawled by any search engines in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website, but it is being blocked from Crawling by '.count($robotTextResponse[4]).' other secondary bots. <span data-bs-toggle="modal" data-bs-target="#secondaryBots" style="border-bottom: 1px solid #7f6e6e; cursor: pointer;">see the list of all secondary bots</span>';
+                    } else {
+                        $userAgentSecond = implode(',', $robotTextResponse[4]);
+                        $message = 'The current page is not blocked from being crawled by any search engines in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website';
+                        if (count($robotTextResponse[4]) > 0) {
+                            $message .= ', but it is being blocked from Crawling by '.$userAgentSecond;
+                        } else {
+                            $message .= '.';
+                        }
+                    }
+                }
+            } else {
+                $urlBlock = false;
+                $status = true;
+                $secondaryBots = $hasFullResponse ? $robotTextResponse[4] : [];
+                $userAgentSecond = implode(',', $secondaryBots);
+                $message = 'The current page is not blocked from being crawled by any search engines in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website.';
+                if (count($secondaryBots) > 3) {
+                    $message = 'The current page is not blocked from being crawled by any search engines in the '.'<a href='.$robotsTxtUrl.' target="_blank">Robots.txt file</a>'.' file of your website, but it is being blocked from Crawling by '.count($secondaryBots).' other secondary bots. <span data-bs-toggle="modal" data-bs-target="#secondaryBots" style="border-bottom: 1px solid #7f6e6e; cursor: pointer;">see the list of all secondary bots</span>';
+                } elseif (count($secondaryBots) > 0) {
+                    $message .= ', but it is being blocked from Crawling by '.$userAgentSecond;
+                } else {
+                    $message .= '.';
+                }
+            }
+
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->title = $title;
+            $object->problems = $problems;
+            $object->message = $message;
+            $object->description = $description;
+            $object->learnMoreURL = 'https://setmore.com/';
+            $object->tagName = 'Robots.txt Test';
+            $object->settings = $settings->settings_sub;
+            $object->content = $content;
+            $object->urlBlock = $urlBlock;
+            $object->robotTextResponseData = $robotTextResponseData;
+            $object->secondaryBots = $secondaryBots;
+            $object->robots_txt_url = $robotsTxtUrl;
+            $object->resources_blocked_count = $resourcesBlockedCount;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = false;
+
+            return json_encode($object);
+        } catch (\Exception $e) {
+            Log::error('Error in robotTextTest for URL: '.$testedUrl.' - '.$e->getMessage());
+
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = 'Robots.txt';
+            $object->problems = ['Test failed due to an error: '.$e->getMessage()];
+            $object->message = 'An error occurred while testing Robots.txt.';
+            $object->description = 'Robots.txt';
+            $object->learnMoreURL = 'https://setmore.com/';
+            $object->tagName = 'Robots.txt Test';
+            $object->settings = isset($data['settings']) ? json_decode($data['settings'])->settings_sub : null;
+            $object->content = '';
+            $object->urlBlock = false;
+            $object->robotTextResponseData = [];
+            $object->secondaryBots = [];
+            $object->robots_txt_url = '';
+            $object->resources_blocked_count = 0;
+            $object->label = $label;
+            $object->tested_url = $testedUrl;
+            $object->tested_at = time();
+            $object->testerrorcaught = true;
+
             return json_encode($object);
         }
     }
@@ -4392,7 +4530,7 @@ class RunTest implements ShouldQueue
             $content = '';
             $hideDetails=true;
             
-            $headingArray = $helpers->h1HeadindTag($url);
+            $headingArray = $helpers->h1HeadindTag($url, $data['html'] ?? '');
             if (count($headingArray) > 0) {
                 $h1HeadingTagSubSetting = $settings->settings_sub->h1_heading_tag_length;
                 $h2HeadingTagSubSetting = $settings->settings_sub->h2_heading_tag_length;

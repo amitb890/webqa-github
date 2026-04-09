@@ -2780,13 +2780,17 @@ function getAllTestLabels(type, label = "default"){
             name: "robot_text_test",
             dbName: "robot_text_test",
             url: "/test/robot-text-test",
+            urlDetails: "/test-details/robot-text-test",
+            reportsUrl: "/reports/robotstxt",
             parent: "seo",
         },
         {
             displayName: "Headings",
             name: "h1_heading_tag",
             dbName: "h1_heading_tag",
-            url: "/test/h1-heading-tag",
+            url: "/test/headings",
+            urlDetails: "/test-details/headings",
+            reportsUrl: "/reports/headings",
             parent: "seo",
         },
         {

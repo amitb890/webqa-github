@@ -491,12 +491,6 @@ h6 {
   margin-top: auto;
 }
 
-.inner_content {
-  max-width: calc(100% - 68px);
-  width: 100%;
-  float: right;
-  padding-block: 15px 84px;
-}
 
 .inner_content-tools{
   max-width: 1400px!important;
@@ -9592,9 +9586,7 @@ table.bulk-table td:last-child {
 .result_data_body td p{
   margin-bottom: 0px;
 }
-.result_pass{
-  color: #68BF7B!important;
-}
+
 .result_fail{
   color: #DC7373!important;
 }
@@ -10377,7 +10369,6 @@ table.bulk-table td:last-child {
 
 .single_dashboard_card_main {
   grid-column: span 4;
-  position: relative;
 }
 
 .add_Widget_area_main {
@@ -13773,6 +13764,7 @@ nav .nav-tabs{
     height: 215px;
     object-fit: cover;
     border-radius: 6px;
+    z-index: 1;
 }
 
 
@@ -16945,7 +16937,7 @@ background-color:#f5f8ff !important;
 /* Smooth dropdown transition */
 .user-dropdown-imran {
   opacity: 0;
-  /* visibility: hidden; */
+  visibility: hidden;
   transform: translateY(8px);
   transition: all 0.2s ease-in-out;
 }
@@ -18396,6 +18388,7 @@ right: -50px !important;
 
 
 
+
 .reports-table-body tr .result_pass{
   position: relative;
   background: transparent !important;
@@ -18443,9 +18436,9 @@ display:none !important;
   color:#484848;
 }
 
-/* .table-header td:nth-child(2){
+.table-header td:nth-child(2){
   display:none !important;
-} */
+}
 
 
 table.dataTable thead th[data-is-resizable="true"] {
@@ -18520,6 +18513,7 @@ table.dataTable thead th[data-is-resizable="true"] {
 }
 
 
+
 .table-header td:first-child,
 .reports-table-body td:first-child {
     width: 287px;
@@ -18558,8 +18552,6 @@ table.dataTable thead th[data-is-resizable="true"] {
     position: relative;
     cursor: pointer;
 }
-
-
 .custom-tooltip-imran::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -18581,8 +18573,6 @@ table.dataTable thead th[data-is-resizable="true"] {
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     z-index:100000;
 }
-
-
 .custom-tooltip-imran::before {
     content: "";
     position: absolute;
@@ -18598,8 +18588,6 @@ table.dataTable thead th[data-is-resizable="true"] {
     transition: all 0.25s ease;
     z-index:100000;
 }
-
-
 .custom-tooltip-imran:hover::after,
 .custom-tooltip-imran:hover::before {
     opacity: 1;
@@ -18624,7 +18612,7 @@ table.dataTable thead th[data-is-resizable="true"] {
 
 .tracker_downloading_link-imran{
   --bs-dropdown-min-width: 1rem !important;
-  width:110px !important;
+  width:142px !important;
   border: none !important;
   outline: none !important;
   padding-bottom: 0.5rem !important;
@@ -18634,3 +18622,145 @@ table.dataTable>tbody>tr .amitBannerJi{
     text-align: left !important;
 }
 
+
+
+
+
+
+
+
+
+.table-header td{
+  width:100%;
+}
+
+.bg-success-light { background: #e5f5df; }
+.bg-danger-light { background: #f9e6e6; }
+
+
+.tooltip-text {
+    visibility: hidden;       
+    background-color: rgba(0,0,0,0.85);
+    color: #fff;
+    text-align: left;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    position: absolute;
+    z-index: 1000;
+    white-space: normal;      
+    max-width: 600px;        
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    pointer-events: none;     
+    transition: opacity 0.2s;
+    opacity: 0;
+    text-align: center;
+}
+
+.tooltip-text.show-tooltip {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+.result_data_body tr .result_pass-imran{
+  position: relative;
+  background: transparent !important;
+  color: var(--text-gray) !important;
+  z-index: 0;
+}
+.result_data_body tr .result_fail-imran{
+  box-shadow: inset 0 0 0 4px white;
+  background:#f9e6e6;
+}
+.result_data_body tr .result_pass-imran::before,
+.result_data_body tr .result_fail-imran::before{
+  content: "";
+  position: absolute;
+  inset: 4px;
+  background: #e5f8eb;
+  border-radius: 2px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+
+.bulk-download-result ul li button img {
+    width: 25px;
+    height: 25px;
+    margin-right: 0;
+    object-fit: contain;
+}
+
+
+.tracker_downloading_link-imran2{
+  position:relative;
+  border:1px solid #ccc !important;
+}
+
+.tracker_downloading_link-imran2::before {
+    content: "";
+    position: absolute;
+    top: -9px;
+    left: 20px;
+
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid #ccc; /* border color */
+}
+
+.tracker_downloading_link-imran2::after {
+    content: "";
+    position: absolute;
+    top: -7px;
+    left: 20px;
+
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white; /* dropdown background */
+}
+
+.image-table-link a svg{
+  width:15px;
+  position: relative;
+}
+.image-table-link a{
+    position: relative;
+}
+
+.image-table-link a::after {
+    content: attr(td-replace);
+    visibility: hidden;
+    background-color: rgba(0,0,0,0.85);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 13px;
+    position: absolute;
+    z-index: 1000;
+
+    max-width: 200px;              /* ✅ your requirement */
+    width: max-content;            /* grows until 200px */
+
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    white-space: normal;       
+    word-break: break-word;    
+    overflow-wrap: anywhere;      
+    text-align: center;
+    bottom: 110%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.image-table-link a:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+.result_fail-imran {
+    text-align: center; 
+    vertical-align: middle;
+}
