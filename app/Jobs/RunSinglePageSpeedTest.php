@@ -11,7 +11,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
-use App\Services\ProjectUiSnapshotService;
 
 class RunSinglePageSpeedTest implements ShouldQueue
 {
@@ -113,9 +112,6 @@ class RunSinglePageSpeedTest implements ShouldQueue
             $test->update([
                 'status' => $failed > 0 ? 'failed' : 'completed',
             ]);
-            if ($test->status === 'completed') {
-                ProjectUiSnapshotService::patchLighthouseAfterComplete((int) $test->project_id);
-            }
         }
     }
 }

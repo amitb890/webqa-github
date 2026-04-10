@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\Http;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use App\Services\ProjectUiSnapshotService;
 
 class TestController2 extends Controller
 {
@@ -63,8 +62,6 @@ class TestController2 extends Controller
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
 
-        ProjectUiSnapshotService::invalidate($project_id);
-    
         // // Updating dashboard testing status
         // if ($type != "single_recheck") {
         //     // Only delete old data if not a single recheck

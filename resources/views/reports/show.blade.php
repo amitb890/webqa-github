@@ -184,6 +184,7 @@
 @section("js")
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="{{ asset('new-assets/vendor/datatables/jquery.dataTables.colResize.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('new-assets/js/dashboard-tracker-view-cache.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="{{ asset('new-assets/js/tracker.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="/new-assets/js/exceljs.min.js"></script>
 <script src="/new-assets/js/exportXlsx.js"></script>

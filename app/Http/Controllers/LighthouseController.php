@@ -11,8 +11,6 @@ use Illuminate\Support\Str;
 use App\Http\Controllers\ProjectsController;
 
 use Illuminate\Support\Facades\Auth;
-use App\Services\ProjectUiSnapshotService;
-
 class LighthouseController extends Controller
 {
     public function startTests(Request $request)
@@ -82,16 +80,6 @@ class LighthouseController extends Controller
 
         if (!$lighthouseTest) {
             return response()->json(['error' => 'Test ID not found.'], 404);
-        }
-
-        if ($lighthouseTest->status === 'completed' && ! request()->boolean('nocache')) {
-            $cachedJson = ProjectUiSnapshotService::getCachedLighthouseJson($projectId, $lighthouseTest);
-            if ($cachedJson !== null) {
-                $decoded = json_decode($cachedJson, true);
-                if (is_array($decoded) && ($decoded['status'] ?? '') === 'completed') {
-                    return response($cachedJson, 200, ['Content-Type' => 'application/json']);
-                }
-            }
         }
 
         // Get URL-level results

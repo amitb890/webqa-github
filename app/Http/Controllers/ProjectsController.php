@@ -25,7 +25,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\File;
-use App\Services\ProjectUiSnapshotService;
+use App\Services\DashboardTestDataService;
 
 
 class ProjectsController extends Controller
@@ -45,7 +45,6 @@ class ProjectsController extends Controller
     public function removeDashboardData($projectId){
         DashboardTests::where('project_id', $projectId)->delete();
         Projects::where('id', $projectId)->update(['dashboard_show_status'=>0]);
-        ProjectUiSnapshotService::invalidate((int) $projectId);
         return response()->json(['status' => 1, 'msg' => 'Success.']);
     }
 
@@ -215,26 +214,13 @@ class ProjectsController extends Controller
             return response()->json(['error' => 'Project not found'], 404);
         }
 
-        $noCache = request()->boolean('nocache');
-
         $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
 
         if (!$dashboardTest) {
             return response()->json(['error' => 'Test not found'], 404);
         }
 
-        if (! $noCache && $dashboardTest->status === 'completed') {
-            $cachedJson = ProjectUiSnapshotService::getCachedTestDataJson($projectId, $dashboardTest);
-            if ($cachedJson !== null) {
-                return response($cachedJson, 200, ['Content-Type' => 'application/json']);
-            }
-        }
-
-        $payload = ProjectUiSnapshotService::buildTestDataPayload($projectId, $project, $dashboardTest);
-
-        if (! $noCache && $dashboardTest->status === 'completed') {
-            ProjectUiSnapshotService::ensureSnapshotForCompletedDashboard($projectId);
-        }
+        $payload = DashboardTestDataService::buildTestDataPayload($projectId, $project, $dashboardTest);
 
         return response()->json($payload);
     }
@@ -293,7 +279,11 @@ class ProjectsController extends Controller
             'status' => 1,
             'msg' => 'Success.',
             'dashboardStatus' => $dashboardStatus,
-            'details_progress' => $detailsStatus
+            'details_progress' => $detailsStatus,
+            'dashboard_test_id' => $details ? $details->id : null,
+            'dashboard_cache_revision' => $details
+                ? $details->id.'@'.$details->updated_at->getTimestamp()
+                : null,
         ]);
     }
     
