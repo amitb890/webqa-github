@@ -1,7 +1,8 @@
 $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
-  var recheckMax = 10, recheckGoogle = 1, recheckSingleMax = 10, urlsGoogleFinal = 0
+  /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
+  var recheckMax = 10, recheckGoogle = 1, recheckSingleMax = 100, urlsGoogleFinal = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal

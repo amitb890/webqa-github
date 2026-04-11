@@ -31,6 +31,23 @@ class TestController2 extends Controller
 {
     private $crawler;
 
+    /**
+     * @param  array<int, mixed>  $urls
+     * @return array<int, string>
+     */
+    private static function normalizeDashboardBatchUrls(array $urls): array
+    {
+        $batchUrls = [];
+        foreach ($urls as $u) {
+            if (is_array($u) && ! empty($u['url'])) {
+                $batchUrls[] = $u['url'];
+            } elseif (is_string($u) && $u !== '') {
+                $batchUrls[] = $u;
+            }
+        }
+
+        return $batchUrls;
+    }
 
     public function startTests(Request $request)
     {
@@ -111,8 +128,15 @@ class TestController2 extends Controller
                 $dashboardTest->update([
                     'status' => 'recheck',
                 ]);
-                DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
-                    ->update(['status' => 'pending']);
+                // Only mark rows for URLs in this batch as pending. Marking every row pending while jobs
+                // run for a subset (e.g. dashboard recheckSingleMax) left the rest stuck pending, broke
+                // check-status completion, and dropped URLs from tracker (meta_title array length).
+                $batchUrls = self::normalizeDashboardBatchUrls($urls);
+                if ($batchUrls !== []) {
+                    DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
+                        ->whereIn('url', $batchUrls)
+                        ->update(['status' => 'pending']);
+                }
             } else {
                 // No existing test (e.g. first run on VPS): create one like initial run
                 $dashboardTest = DashboardTests::create([
@@ -129,8 +153,12 @@ class TestController2 extends Controller
                 $dashboardTest->update([
                     'status' => 'recheck',
                 ]);
-                DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
-                    ->update(['status' => 'pending']);
+                $batchUrls = self::normalizeDashboardBatchUrls($urls);
+                if ($batchUrls !== []) {
+                    DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
+                        ->whereIn('url', $batchUrls)
+                        ->update(['status' => 'pending']);
+                }
             } else {
                 $dashboardTest = DashboardTests::create([
                     'test_id' => $testId,
