@@ -3236,30 +3236,11 @@ $(document).ready(function () {
 
       /**
        * @param {string|number} loadDataParam - project id
-       * @param {{ resumeDashboardRecheckAfterLoad?: boolean, fromCache?: object, cacheRevision?: string }} [options]
+       * @param {{ resumeDashboardRecheckAfterLoad?: boolean }} [options]
        */
       static loadData(loadDataParam, options = {}){
-          if (options.fromCache && options.fromCache.testData) {
-            Controls.finishTrackerLoad(options.fromCache.testData, options)
-            return
-          }
           DB.returnData(loadDataParam)
           .done(function(data){
-            const rev = data.dashboard_cache_revision || options.cacheRevision
-            if (window.WebqaViewCache && rev != null) {
-              WebqaViewCache.setTracker(projectId, {
-                revision: rev,
-                testData: data,
-                lighthouseStatus: lighthouseStatus,
-                testDetailsLighthouse: testDetailsLighthouse,
-              })
-            }
-            Controls.finishTrackerLoad(data, options)
-          })
-  
-      }
-
-      static finishTrackerLoad(data, options = {}){
             console.log(data)
             const testDetails = data.results
 
@@ -3285,25 +3266,8 @@ $(document).ready(function () {
                 UI.buildRecheckLoader()
                 Controls.pollDashboardRecheckUntilComplete()
               }
-      }
-
-      static runTrackerInitialLoad(cacheRevision){
-        ;(async function checkStatus() {
-            try {
-                const response = await fetch(`/api/check-status/${projectId}`);
-                const { status, results } = await response.json();
-
-
-                if(status === 'completed') {
-                  lighthouseStatus = true
-                  testDetailsLighthouse = results
-                }
-            } catch (e) {
-                console.error(e)
-            }
-
-            Controls.loadData(projectId, { cacheRevision: cacheRevision })
-        })()
+          })
+  
       }
 
       static activateEvents(){
@@ -3500,9 +3464,6 @@ $(document).ready(function () {
             UI.showWaitingMessage()
             await Controls.waitForTestsToComplete()
           } else {
-            if (window.WebqaViewCache) {
-              WebqaViewCache.invalidateProject(projectId)
-            }
             recheckAllowed = false
             UI.updateRecheckButtonState(true)
 
@@ -3605,22 +3566,20 @@ $(document).ready(function () {
 
               // 1 = tests completed (same as dashboard)
               if (ds === 1) {
-                var trRev = data.dashboard_cache_revision
-                if (window.WebqaViewCache && trRev != null) {
-                  WebqaViewCache.getTracker(projectId, trRev).then(function (cached) {
-                    if (cached && cached.testData) {
-                      lighthouseStatus = !!cached.lighthouseStatus
-                      testDetailsLighthouse = cached.testDetailsLighthouse || null
-                      Controls.loadData(projectId, { fromCache: cached })
-                    } else {
-                      Controls.runTrackerInitialLoad(trRev)
+                async function checkStatus() {
+                    const response = await fetch(`/api/check-status/${projectId}`);
+                    const { status, results } = await response.json();
+        
+        
+                    if(status === 'completed') {
+                      lighthouseStatus = true
+                      testDetailsLighthouse = results
                     }
-                  }).catch(function () {
-                    Controls.runTrackerInitialLoad(trRev)
-                  })
-                } else {
-                  Controls.runTrackerInitialLoad(trRev)
+
+
+                    Controls.loadData(projectId)
                 }
+                checkStatus()
               } else if (ds === 2 || ds === 3) {
                 // Full recheck (2) or single-tile refresh (3) in progress — keep loader UX after refresh (dashboard.js parity)
                 recheckAllowed = false

@@ -18,6 +18,7 @@ class Projects extends Model
         'google_show_status',
         'recheck_type',
         'google_urls_checked_active',
+        'dashboard_fully_done_status',
     ];
     use HasFactory;
 

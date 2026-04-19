@@ -166,6 +166,8 @@ Route::middleware('auth')->group(function () {
         Route::post('editProject', [App\Http\Controllers\ProjectsController::class, 'editProject'])->name('editProject');
         Route::get('get-projects-data', [App\Http\Controllers\ProjectsController::class, 'getProjectData'])->name('getProjectData');
         Route::get('get-show-dashboard-status/{id}', [App\Http\Controllers\ProjectsController::class, 'getShowDashboardStatus'])->name('getShowDashboardStatus');
+        Route::get('get-dashboard-widget-cache/{id}', [App\Http\Controllers\ProjectsController::class, 'getDashboardWidgetCache'])->name('getDashboardWidgetCache');
+        Route::post('save-dashboard-widget-cache/{id}', [App\Http\Controllers\ProjectsController::class, 'saveDashboardWidgetCache'])->name('saveDashboardWidgetCache');
         Route::get('get-google-status/{id}', [App\Http\Controllers\ProjectsController::class, 'getGoogleStatus'])->name('getGoogleStatus');
         Route::get('get-urls/{id}', [App\Http\Controllers\DashboardController::class, 'getUrlsList'])->name('getUrlsList'); 
         Route::post('get-alerts', [App\Http\Controllers\ProjectsController::class, 'getAlerts'])->name('get-alerts'); 

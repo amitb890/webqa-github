@@ -136,8 +136,6 @@ class DashboardTestDataService
                 'msg' => 'Success.',
                 'project' => $project->toArray(),
                 'dashboard_status' => $dashboardTest->status,
-                'dashboard_test_id' => $dashboardTest->id,
-                'dashboard_cache_revision' => $dashboardTest->id.'@'.$dashboardTest->updated_at->getTimestamp(),
                 'results' => $results,
                 'settings' => $settings ? $settings->toArray() : null,
             ];
