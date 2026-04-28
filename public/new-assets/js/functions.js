@@ -1210,6 +1210,10 @@ function isSentenceCase(str, brandname){
 
 
 function isSingleWord(str){
+    if (str == null || str === "") {
+        return true;
+    }
+    str = String(str);
     if(str.split("-").length > 1){
         return false;
     }

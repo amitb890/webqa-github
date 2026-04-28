@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
   var recheckMax = 10, recheckGoogle = 1, recheckSingleMax = 10, urlsGoogleFinal = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
@@ -14,6 +14,12 @@ $(document).ready(function () {
   const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
   /** After endTest(), snapshot tile payloads once all /test-details calls finish */
   var shouldPersistDashboardWidgetSnapshot = false
+  /** Non-Google tiles written first; persist deferred until Lighthouse bundle is merged or fallback timeout */
+  var deferredDashboardSnapshotPending = false
+  /** Set if finalizeGoogleElements completes before loader cards flip deferredDashboardSnapshotPending */
+  var googleSnapshotReadyBundle = null
+  /** Latest aggregated /get-test-data `results` (website tracker + reports tables); copied into cache on snapshot persist */
+  var trackerSnapshotResultsForCache = null
   var dashboardSnapshotBuffer = {}
   /** When set, manageSingleCard uses these instead of POST /test-details (same shape as API) */
   var dashboardWidgetPayloadsFromCache = null
@@ -666,6 +672,7 @@ $(document).ready(function () {
         const promises = []
         if (shouldPersistDashboardWidgetSnapshot) {
           dashboardSnapshotBuffer = {}
+          googleSnapshotReadyBundle = null
         }
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
@@ -2620,16 +2627,71 @@ $(document).ready(function () {
     
 
 
+    static attachTrackerPageSnapshotToBuffer(lighthouseRaw){
+      if (!trackerSnapshotResultsForCache) {
+        return
+      }
+      try {
+        dashboardSnapshotBuffer.tracker_page_snapshot = {
+          results: JSON.parse(JSON.stringify(trackerSnapshotResultsForCache)),
+          lighthouse: lighthouseRaw != null ? JSON.parse(JSON.stringify(lighthouseRaw)) : null,
+        }
+      } catch (e) {
+        console.warn("attachTrackerPageSnapshotToBuffer", e)
+      }
+    }
+
+    static mergeGoogleDashboardBundleAndPersist(bundle){
+      if (!bundle || !bundle.details) {
+        return
+      }
+      clearTimeout(window.__dashGoogleSnapshotFallbackTimer)
+      dashboardSnapshotBuffer.google_dashboard_bundle = bundle
+      Controls.attachTrackerPageSnapshotToBuffer(bundle.rawResults)
+      googleSnapshotReadyBundle = null
+      deferredDashboardSnapshotPending = false
+      Controls.persistDashboardWidgetSnapshotToServer()
+    }
+
+    /** Restore Page Speed tiles from cached snapshot (same path as finalizeGoogleElements → updateSingleLoaderCard). */
+    static applyGoogleTilesFromCachedSnapshot(bundle){
+      if (!bundle || !bundle.rawResults || !bundle.details) {
+        return
+      }
+      const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
+      tests.forEach(function (test) {
+        const data = bundle.details[test]
+        if (data === undefined) {
+          return
+        }
+        const testLabel = Controls.getActiveLabel(test)
+        UI.updateSingleLoaderCard(data, bundle.rawResults, test, testLabel)
+      })
+    }
+
     static finalizeGoogleElements(results){
       const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
-      tests.forEach(test=>{
+      const details = {}
+      const promises = tests.map(function (test) {
         const testLabel = Controls.getActiveLabel(test)
-
-        DB.getTestDetails(testLabel, results)
-        .done(function(data) {
+        return DB.getTestDetails(testLabel, results).done(function (data) {
+          let parsed = data
+          try {
+            parsed = typeof data === "string" ? JSON.parse(data) : data
+          } catch (e) {
+            parsed = data
+          }
+          details[test] = parsed
           UI.updateSingleLoaderCard(data, results, test, testLabel)
-
-        });
+        })
+      })
+      $.when.apply($, promises).done(function () {
+        const bundle = { rawResults: results, details: details }
+        if (deferredDashboardSnapshotPending) {
+          Controls.mergeGoogleDashboardBundleAndPersist(bundle)
+        } else {
+          googleSnapshotReadyBundle = bundle
+        }
       })
     }
 
@@ -2680,10 +2742,15 @@ $(document).ready(function () {
 
       return getReportProgress(resultsTotal, total, false)
     }
-    static buildGoogleElements(refreshState = false){
+    static buildGoogleElements(refreshState = false, options){
+      options = options || {}
+      var skipStartTests = options.skipStartTests === true
       // CHECKING IF GOOGLE ELEMENTS WERE STARTED OR NOT
       DB.getGoogleShowStatus(projectId)
       .done(function(data) {
+          if(skipStartTests){
+              return
+          }
           if(data.googleStatus){
               
           }else{
@@ -3115,6 +3182,7 @@ $(document).ready(function () {
           }
 
             const testDetails = data.results
+            trackerSnapshotResultsForCache = testDetails
             projectFinal = data.project
             $(".dashboard_top_items_main").html("")
             htmlSitemapData = null
@@ -3131,20 +3199,38 @@ $(document).ready(function () {
                 removeLoader()
                 UI.toggleDashboardElements(projectFinal)
 
+                const cardsDeferred = UI.buildLoaderCards(testDetails)
                 UI.buildSubmitIdeaWidget(testDetails)
                 UI.buildAddWidget(testDetails)
-
-                const cardsDeferred = UI.buildLoaderCards(testDetails)
                 $.when(cardsDeferred).always(function () {
                   dashboardWidgetPayloadsFromCache = null
                 })
                 $.when(cardsDeferred).done(function () {
+                  var googleRestoreBundle =
+                    dashboardWidgetPayloadsFromCache &&
+                    dashboardWidgetPayloadsFromCache.google_dashboard_bundle
+
                   if (shouldPersistDashboardWidgetSnapshot) {
                     shouldPersistDashboardWidgetSnapshot = false
-                    Controls.persistDashboardWidgetSnapshotToServer()
+                    deferredDashboardSnapshotPending = true
+                    clearTimeout(window.__dashGoogleSnapshotFallbackTimer)
+                    window.__dashGoogleSnapshotFallbackTimer = setTimeout(function () {
+                      if (deferredDashboardSnapshotPending) {
+                        deferredDashboardSnapshotPending = false
+                        var lhRaw =
+                          googleSnapshotReadyBundle && googleSnapshotReadyBundle.rawResults
+                            ? googleSnapshotReadyBundle.rawResults
+                            : null
+                        Controls.attachTrackerPageSnapshotToBuffer(lhRaw)
+                        Controls.persistDashboardWidgetSnapshotToServer()
+                      }
+                    }, 120000)
+                    if (googleSnapshotReadyBundle) {
+                      Controls.mergeGoogleDashboardBundleAndPersist(googleSnapshotReadyBundle)
+                    }
                   }
 
-                  Controls.activeEvents()
+                  Controls.activeEvents({ skipGooglePolling: !!googleRestoreBundle })
 
                   // Post-initial-prep notices (Images + Page Speed tiles)
                   UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
@@ -3161,7 +3247,10 @@ $(document).ready(function () {
                   }
 
                   console.log("Dashboard finished")
-                  Controls.buildGoogleElements()
+                  Controls.buildGoogleElements(false, { skipStartTests: !!googleRestoreBundle })
+                  if (googleRestoreBundle) {
+                    Controls.applyGoogleTilesFromCachedSnapshot(googleRestoreBundle)
+                  }
                 })
             });
             
@@ -3169,7 +3258,8 @@ $(document).ready(function () {
 
     }
 
-    static activeEvents(){
+    static activeEvents(options){
+      options = options || {}
       Controls.activeSidebarEvents()
       
       $("#submitIdeaForm").on("submit", (e)=>{
@@ -3193,6 +3283,9 @@ $(document).ready(function () {
       })
       
 
+      if (options.skipGooglePolling) {
+        return
+      }
 
       async function checkStatus() {
           const interval = setInterval(async () => {
@@ -3601,6 +3694,7 @@ $(document).ready(function () {
       DB.saveDashboardWidgetCache(projectId, payload)
         .done(function () {
           dashboardSnapshotBuffer = {}
+          trackerSnapshotResultsForCache = null
         })
         .fail(function (xhr) {
           console.error("saveDashboardWidgetCache failed", xhr)

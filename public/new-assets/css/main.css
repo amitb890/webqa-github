@@ -10756,6 +10756,9 @@ table.bulk-table td:last-child {
   top: -80px!important;
  }
 
+ .single_dashboard_card_main{
+  position: relative;
+ }
 
 #card_google_lighthouse, #card_core_web_vitals {
   grid-column: span 8;

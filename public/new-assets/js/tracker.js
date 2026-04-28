@@ -85,6 +85,17 @@ $(document).ready(function () {
           });
       }
 
+      static getDashboardWidgetCache(projectId){
+          return $.ajax({
+              url : `/get-dashboard-widget-cache/${projectId}`,
+              type : 'get',
+              aysnc: false,
+              data: {
+                  "_token": $('meta[name="csrf-token"]').attr('content'),
+              },
+          })
+      }
+
 
       static getUrlsList(projectId){
         return $.ajax({
@@ -3235,37 +3246,44 @@ $(document).ready(function () {
   
 
       /**
+       * Build tracker/reports table from the same shape as GET /get-test-data (`data.results`).
+       * @param {{ results: object }} data
+       * @param {{ resumeDashboardRecheckAfterLoad?: boolean }} [options]
+       */
+      static renderTestDataTable(data, options = {}){
+          console.log(data)
+          const testDetails = data.results
+
+          allUrls = Controls.getAllUrls(testDetails)
+          const updatedUrls = groupUrlsBySubfolder(allUrls)
+          if (page.includes("reports")) {
+            Controls.buildTableReports(testDetails, updatedUrls)
+          } else {
+            Controls.buildTable(testDetails, updatedUrls)
+          }
+          firstRow = $('.reports-table-header tr:eq(0)').clone().html()
+          secondRow = $('.reports-table-header tr:eq(1)').clone().html()
+
+          Controls.initDataTable()
+          Controls.activateEvents()
+
+          UI.toggleTrackerElements()
+          UI.updateTableDesign()
+          removeLoader()
+          if (options.resumeDashboardRecheckAfterLoad) {
+            UI.buildRecheckLoader()
+            Controls.pollDashboardRecheckUntilComplete()
+          }
+      }
+
+      /**
        * @param {string|number} loadDataParam - project id
        * @param {{ resumeDashboardRecheckAfterLoad?: boolean }} [options]
        */
       static loadData(loadDataParam, options = {}){
           DB.returnData(loadDataParam)
           .done(function(data){
-            console.log(data)
-            const testDetails = data.results
-
-
-              allUrls = Controls.getAllUrls(testDetails)
-              const updatedUrls = groupUrlsBySubfolder(allUrls);
-              if(page.includes("reports")){
-                Controls.buildTableReports(testDetails, updatedUrls)
-              }else{
-                Controls.buildTable(testDetails, updatedUrls)
-              }
-              firstRow = $('.reports-table-header tr:eq(0)').clone().html();
-              secondRow = $('.reports-table-header tr:eq(1)').clone().html();;
-
-              Controls.initDataTable()
-              Controls.activateEvents()
-
-              UI.toggleTrackerElements()
-              UI.updateTableDesign()
-              removeLoader()
-              // Same as dashboard: after reload mid-recheck, show recheck bar and keep polling
-              if (options.resumeDashboardRecheckAfterLoad) {
-                UI.buildRecheckLoader()
-                Controls.pollDashboardRecheckUntilComplete()
-              }
+            Controls.renderTestDataTable(data, options)
           })
   
       }
@@ -3566,20 +3584,54 @@ $(document).ready(function () {
 
               // 1 = tests completed (same as dashboard)
               if (ds === 1) {
-                async function checkStatus() {
-                    const response = await fetch(`/api/check-status/${projectId}`);
-                    const { status, results } = await response.json();
-        
-        
-                    if(status === 'completed') {
+                const fullyDone = Number(data.dashboard_fully_done_status) === 1
+
+                function runLiveTrackerLoad(loadOptions) {
+                  ;(async function checkStatus() {
+                    const response = await fetch(`/api/check-status/${projectId}`)
+                    const { status, results } = await response.json()
+
+                    if (status === 'completed') {
                       lighthouseStatus = true
                       testDetailsLighthouse = results
                     }
 
-
-                    Controls.loadData(projectId)
+                    Controls.loadData(projectId, loadOptions || {})
+                  })()
                 }
-                checkStatus()
+
+                if (fullyDone) {
+                  DB.getDashboardWidgetCache(projectId)
+                    .done(function (cacheRes) {
+                      const snap =
+                        cacheRes &&
+                        cacheRes.status === 1 &&
+                        cacheRes.widgets &&
+                        cacheRes.widgets.tracker_page_snapshot
+                      if (
+                        snap &&
+                        snap.results &&
+                        typeof snap.results === 'object' &&
+                        Object.keys(snap.results).length > 0
+                      ) {
+                        if (snap.lighthouse) {
+                          lighthouseStatus = true
+                          testDetailsLighthouse = snap.lighthouse
+                        } else {
+                          lighthouseStatus = false
+                          testDetailsLighthouse = undefined
+                        }
+                        Controls.renderTestDataTable({ results: snap.results }, {})
+                        return
+                      }
+                      runLiveTrackerLoad({})
+                    })
+                    .fail(function () {
+                      runLiveTrackerLoad({})
+                    })
+                } else {
+                  runLiveTrackerLoad({})
+                }
               } else if (ds === 2 || ds === 3) {
                 // Full recheck (2) or single-tile refresh (3) in progress — keep loader UX after refresh (dashboard.js parity)
                 recheckAllowed = false
