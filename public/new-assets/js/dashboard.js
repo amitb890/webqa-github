@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 10, recheckGoogle = 1, recheckSingleMax = 10, urlsGoogleFinal = 0
+  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1, urlsGoogleFinal = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -12,17 +12,6 @@ $(document).ready(function () {
   })
   let removeTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
   const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
-  /** After endTest(), snapshot tile payloads once all /test-details calls finish */
-  var shouldPersistDashboardWidgetSnapshot = false
-  /** Non-Google tiles written first; persist deferred until Lighthouse bundle is merged or fallback timeout */
-  var deferredDashboardSnapshotPending = false
-  /** Set if finalizeGoogleElements completes before loader cards flip deferredDashboardSnapshotPending */
-  var googleSnapshotReadyBundle = null
-  /** Latest aggregated /get-test-data `results` (website tracker + reports tables); copied into cache on snapshot persist */
-  var trackerSnapshotResultsForCache = null
-  var dashboardSnapshotBuffer = {}
-  /** When set, manageSingleCard uses these instead of POST /test-details (same shape as API) */
-  var dashboardWidgetPayloadsFromCache = null
   let obj = {
     meta_title: [],
     meta_desc: [],
@@ -236,29 +225,6 @@ $(document).ready(function () {
           }
       });
   }
-
-    static getDashboardWidgetCache(projectId){
-      return $.ajax({
-          url : `/get-dashboard-widget-cache/${projectId}`,
-          type : 'get',
-          aysnc: false,
-          data: {
-              "_token": $('meta[name="csrf-token"]').attr('content'),
-          },
-      })
-    }
-
-    static saveDashboardWidgetCache(projectId, widgets){
-      return $.ajax({
-          url : `/save-dashboard-widget-cache/${projectId}`,
-          type : 'POST',
-          contentType: 'application/json',
-          headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-          },
-          data: JSON.stringify({ widgets: widgets }),
-      })
-    }
 
     static getTestData(projectId){
         return $.ajax({
@@ -670,10 +636,6 @@ $(document).ready(function () {
 
     static buildLoaderCards(data){
         const promises = []
-        if (shouldPersistDashboardWidgetSnapshot) {
-          dashboardSnapshotBuffer = {}
-          googleSnapshotReadyBundle = null
-        }
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
             if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
@@ -2498,28 +2460,7 @@ $(document).ready(function () {
               DB.getDashboardShowStatus(projectId)
               .done(function(data) {
                   if(data.dashboardStatus === 1){
-                    function openDashboard() {
-                      Controls.buildDashboard(data.dashboardStatus)
-                    }
-                    if (Number(data.dashboard_fully_done_status) === 1) {
-                      DB.getDashboardWidgetCache(projectId)
-                        .done(function (cacheRes) {
-                          if (cacheRes && cacheRes.status === 1 && cacheRes.widgets && Object.keys(cacheRes.widgets).length > 0) {
-                            dashboardWidgetPayloadsFromCache = cacheRes.widgets
-                          } else {
-                            dashboardWidgetPayloadsFromCache = null
-                          }
-                          openDashboard()
-                        })
-                        .fail(function () {
-                          dashboardWidgetPayloadsFromCache = null
-                          openDashboard()
-                        })
-                    } else {
-                      dashboardWidgetPayloadsFromCache = null
-                      openDashboard()
-                    }
-
+                    Controls.buildDashboard(data.dashboardStatus)
                   }else if(data.dashboardStatus === 2){
 
                     Controls.buildDashboard(data.dashboardStatus)
@@ -2626,72 +2567,15 @@ $(document).ready(function () {
   
     
 
-
-    static attachTrackerPageSnapshotToBuffer(lighthouseRaw){
-      if (!trackerSnapshotResultsForCache) {
-        return
-      }
-      try {
-        dashboardSnapshotBuffer.tracker_page_snapshot = {
-          results: JSON.parse(JSON.stringify(trackerSnapshotResultsForCache)),
-          lighthouse: lighthouseRaw != null ? JSON.parse(JSON.stringify(lighthouseRaw)) : null,
-        }
-      } catch (e) {
-        console.warn("attachTrackerPageSnapshotToBuffer", e)
-      }
-    }
-
-    static mergeGoogleDashboardBundleAndPersist(bundle){
-      if (!bundle || !bundle.details) {
-        return
-      }
-      clearTimeout(window.__dashGoogleSnapshotFallbackTimer)
-      dashboardSnapshotBuffer.google_dashboard_bundle = bundle
-      Controls.attachTrackerPageSnapshotToBuffer(bundle.rawResults)
-      googleSnapshotReadyBundle = null
-      deferredDashboardSnapshotPending = false
-      Controls.persistDashboardWidgetSnapshotToServer()
-    }
-
-    /** Restore Page Speed tiles from cached snapshot (same path as finalizeGoogleElements → updateSingleLoaderCard). */
-    static applyGoogleTilesFromCachedSnapshot(bundle){
-      if (!bundle || !bundle.rawResults || !bundle.details) {
-        return
-      }
-      const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
-      tests.forEach(function (test) {
-        const data = bundle.details[test]
-        if (data === undefined) {
-          return
-        }
-        const testLabel = Controls.getActiveLabel(test)
-        UI.updateSingleLoaderCard(data, bundle.rawResults, test, testLabel)
-      })
-    }
-
     static finalizeGoogleElements(results){
       const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
-      const details = {}
-      const promises = tests.map(function (test) {
+      tests.forEach(test=>{
         const testLabel = Controls.getActiveLabel(test)
-        return DB.getTestDetails(testLabel, results).done(function (data) {
-          let parsed = data
-          try {
-            parsed = typeof data === "string" ? JSON.parse(data) : data
-          } catch (e) {
-            parsed = data
-          }
-          details[test] = parsed
+        DB.getTestDetails(testLabel, results)
+        .done(function(data) {
           UI.updateSingleLoaderCard(data, results, test, testLabel)
-        })
-      })
-      $.when.apply($, promises).done(function () {
-        const bundle = { rawResults: results, details: details }
-        if (deferredDashboardSnapshotPending) {
-          Controls.mergeGoogleDashboardBundleAndPersist(bundle)
-        } else {
-          googleSnapshotReadyBundle = bundle
-        }
+  
+        });
       })
     }
 
@@ -3046,14 +2930,6 @@ $(document).ready(function () {
 
     static applyDashboardCardResponse(data, element, key, label){
       console.log("Label", label)
-      if (shouldPersistDashboardWidgetSnapshot) {
-        try {
-          const parsed = typeof data === "string" ? JSON.parse(data) : data
-          dashboardSnapshotBuffer[key] = parsed
-        } catch (e) {
-          dashboardSnapshotBuffer[key] = data
-        }
-      }
       if(label.db_name == "html_sitemap"){
           console.log("HTML Sitemap data", data)
           htmlSitemapData = typeof data === "string" ? JSON.parse(data) : data
@@ -3078,16 +2954,6 @@ $(document).ready(function () {
         UI.buildSingleLoaderCard(label, appendStatus)
       }
       if(ignore_tests.includes(key)){
-        return $.Deferred().resolve().promise()
-      }
-      if (dashboardWidgetPayloadsFromCache && Object.prototype.hasOwnProperty.call(dashboardWidgetPayloadsFromCache, key)) {
-        let data = dashboardWidgetPayloadsFromCache[key]
-        if (typeof data === "string") {
-          try {
-            data = JSON.parse(data)
-          } catch (e) {}
-        }
-        Controls.applyDashboardCardResponse(data, element, key, label)
         return $.Deferred().resolve().promise()
       }
       return DB.getTestDetails(label, element).done(function(data) {
@@ -3182,7 +3048,6 @@ $(document).ready(function () {
           }
 
             const testDetails = data.results
-            trackerSnapshotResultsForCache = testDetails
             projectFinal = data.project
             $(".dashboard_top_items_main").html("")
             htmlSitemapData = null
@@ -3202,35 +3067,8 @@ $(document).ready(function () {
                 const cardsDeferred = UI.buildLoaderCards(testDetails)
                 UI.buildSubmitIdeaWidget(testDetails)
                 UI.buildAddWidget(testDetails)
-                $.when(cardsDeferred).always(function () {
-                  dashboardWidgetPayloadsFromCache = null
-                })
                 $.when(cardsDeferred).done(function () {
-                  var googleRestoreBundle =
-                    dashboardWidgetPayloadsFromCache &&
-                    dashboardWidgetPayloadsFromCache.google_dashboard_bundle
-
-                  if (shouldPersistDashboardWidgetSnapshot) {
-                    shouldPersistDashboardWidgetSnapshot = false
-                    deferredDashboardSnapshotPending = true
-                    clearTimeout(window.__dashGoogleSnapshotFallbackTimer)
-                    window.__dashGoogleSnapshotFallbackTimer = setTimeout(function () {
-                      if (deferredDashboardSnapshotPending) {
-                        deferredDashboardSnapshotPending = false
-                        var lhRaw =
-                          googleSnapshotReadyBundle && googleSnapshotReadyBundle.rawResults
-                            ? googleSnapshotReadyBundle.rawResults
-                            : null
-                        Controls.attachTrackerPageSnapshotToBuffer(lhRaw)
-                        Controls.persistDashboardWidgetSnapshotToServer()
-                      }
-                    }, 120000)
-                    if (googleSnapshotReadyBundle) {
-                      Controls.mergeGoogleDashboardBundleAndPersist(googleSnapshotReadyBundle)
-                    }
-                  }
-
-                  Controls.activeEvents({ skipGooglePolling: !!googleRestoreBundle })
+                  Controls.activeEvents()
 
                   // Post-initial-prep notices (Images + Page Speed tiles)
                   UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
@@ -3247,10 +3085,7 @@ $(document).ready(function () {
                   }
 
                   console.log("Dashboard finished")
-                  Controls.buildGoogleElements(false, { skipStartTests: !!googleRestoreBundle })
-                  if (googleRestoreBundle) {
-                    Controls.applyGoogleTilesFromCachedSnapshot(googleRestoreBundle)
-                  }
+                  Controls.buildGoogleElements()
                 })
             });
             
@@ -3258,8 +3093,7 @@ $(document).ready(function () {
 
     }
 
-    static activeEvents(options){
-      options = options || {}
+    static activeEvents(){
       Controls.activeSidebarEvents()
       
       $("#submitIdeaForm").on("submit", (e)=>{
@@ -3282,10 +3116,6 @@ $(document).ready(function () {
         e.preventDefault()
       })
       
-
-      if (options.skipGooglePolling) {
-        return
-      }
 
       async function checkStatus() {
           const interval = setInterval(async () => {
@@ -3683,25 +3513,6 @@ $(document).ready(function () {
     }
 
 
- 
-
-    static persistDashboardWidgetSnapshotToServer(){
-      const keys = Object.keys(dashboardSnapshotBuffer)
-      if (keys.length === 0) {
-        return
-      }
-      const payload = Object.assign({}, dashboardSnapshotBuffer)
-      DB.saveDashboardWidgetCache(projectId, payload)
-        .done(function () {
-          dashboardSnapshotBuffer = {}
-          trackerSnapshotResultsForCache = null
-        })
-        .fail(function (xhr) {
-          console.error("saveDashboardWidgetCache failed", xhr)
-        })
-    }
-
-
     static getTestObject(url, label){
       url = constructTestURL(url)
       const origin = new URL(url).origin
@@ -3779,7 +3590,6 @@ $(document).ready(function () {
 
       }
 
-      shouldPersistDashboardWidgetSnapshot = true
       Controls.buildDashboard()
       UI.updateRecheckButtonState(false)
     }

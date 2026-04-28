@@ -1,7 +1,7 @@
 $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 2000, recheckSingleMax = 2000, urls, urlsToCheck = 10, originalUrls
+  var recheckMax = 2, recheckSingleMax = 2, urls, urlsToCheck = 10, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId
@@ -85,18 +85,6 @@ $(document).ready(function () {
           });
       }
 
-      static getDashboardWidgetCache(projectId){
-          return $.ajax({
-              url : `/get-dashboard-widget-cache/${projectId}`,
-              type : 'get',
-              aysnc: false,
-              data: {
-                  "_token": $('meta[name="csrf-token"]').attr('content'),
-              },
-          })
-      }
-
-
       static getUrlsList(projectId){
         return $.ajax({
             url : `/get-urls/${projectId}`,
@@ -153,6 +141,7 @@ $(document).ready(function () {
       static updateRecheckButtonState(isDisabled) {
         const recheckBtn = document.querySelector("#recheckBtn")
         const recheckHyperlink = document.querySelector("#recheckHyperlink")
+        const trackerRecheckBtn = document.querySelector("#recheckTrackerBtn")
         
         if (recheckBtn) {
           recheckBtn.disabled = isDisabled
@@ -193,10 +182,18 @@ $(document).ready(function () {
             recheckMenuToggle.title = ""
           }
         }
-        const recheckAllTracker = document.getElementById("recheckAllTracker")
-        if (recheckAllTracker) {
-          recheckAllTracker.style.pointerEvents = isDisabled ? "none" : ""
-          recheckAllTracker.classList.toggle("text-muted", isDisabled)
+        if (trackerRecheckBtn) {
+          if (isDisabled) {
+            trackerRecheckBtn.style.opacity = "0.6"
+            trackerRecheckBtn.style.pointerEvents = "none"
+            trackerRecheckBtn.style.cursor = "not-allowed"
+            trackerRecheckBtn.title = "Please wait for current tests to complete before rechecking"
+          } else {
+            trackerRecheckBtn.style.opacity = "1"
+            trackerRecheckBtn.style.pointerEvents = ""
+            trackerRecheckBtn.style.cursor = "pointer"
+            trackerRecheckBtn.title = ""
+          }
         }
       }
 
@@ -271,7 +268,13 @@ $(document).ready(function () {
 
       static updateTableDesign(){
         const height = $("#reportTable .table-header-top").height() + 2
-        $(".table-header-top td:first-child").css({height: height})          
+        $(".table-header-top td:first-child").css({height: height})   
+        $("#reportTable [data-consists='title']").each(function () {
+          const currentColspan = parseInt($(this).attr("colspan"), 10)
+          if (Number.isFinite(currentColspan)) {
+            $(this).attr("colspan", currentColspan + 1)
+          }
+        })
       }
 
       static toggleTrackerElements(){
@@ -3146,7 +3149,7 @@ $(document).ready(function () {
       static buildTableHeader(options, data, settings, testDetailsLighthouse){
         let rowspanCalHeader = 0;
           rowspanCalHeader  = this.calculateColspan('meta-title', data.meta_title);
-          UI.buildTableHeader("title", data.meta_title, rowspanCalHeader, options, settings, "seo")
+          UI.buildTableHeader("title", data.meta_title, 4, options, settings, "seo")
           UI.buildTableHeader("description", data.meta_desc, 2, options, settings, "seo")
           UI.buildTableHeader("robots", data.robots_meta, 2, options, settings, "seo")
           UI.buildTableHeader("robot_text_test", data.robot_text_test, 3, options, settings, "seo")
@@ -3291,11 +3294,58 @@ $(document).ready(function () {
       static activateEvents(){
     
         console.log(urlsList)
-          // Events
-        $("#recheckAllTracker").off("click.trackerRecheck").on("click.trackerRecheck", async function(e){
+        // Events (delegated to survive table/menu redraws)
+        $(document).off("click.trackerRecheck", "#recheckTrackerBtn").on("click.trackerRecheck", "#recheckTrackerBtn", async function(e){
           await Controls.recheckStart()
           e.preventDefault()
         })
+      }
+
+      static getReportRecheckLabel(){
+        if (!page.includes("reports")) return null
+        const slug = page[1]
+        const map = {
+          "meta-title": "meta_title",
+          "description": "meta_desc",
+          "http-status-code": "http_status_code",
+          "broken-links": "broken_links",
+          "xml-sitemap": "xml_sitemap",
+          "html-sitemap": "html_sitemap",
+          "url-slug": "url_slug",
+          "canonical": "canonical_url",
+          "robots-meta": "robots_meta",
+          "robotstxt": "robot_text_test",
+          "headings": "h1_heading_tag",
+          "doctype": "doctype",
+          "meta-viewport": "meta_viewport",
+          "favicon": "favicon",
+          "images": "images",
+          "gzip-compression": "gzip_compression",
+          "css-compression": "css_compression",
+          "js-compression": "js_compression",
+          "html-compression": "html_compression",
+          "css-caching": "css_caching_enable",
+          "js-caching": "js_caching_enable",
+          "page-size": "page_size",
+          "nested-tables": "nested_tables",
+          "frameset": "frameset",
+          "safe-browsing": "is_safe_browsing",
+          "unsafe-cross-origin-links": "cross_origin_links",
+          "protocol-relative-resource": "protocol_relative_resource",
+          "content-security-policy-header": "content_security_policy_header",
+          "hsts-header": "hsts_header",
+          "bad-content-type": "bad_content_type",
+          "ssl-certificate": "ssl_certificate_enable",
+          "directory-browsing": "folder_browsing_enable",
+          "x-frame-options-header": "x_frame_options_header",
+          "og-tags": "open_graph_tags",
+          "twitter-tags": "twitter_tags",
+          "google-page-speed-insights": "google_overall",
+          "google-page-speed-lighthouse": "google_lighthouse",
+          "google-page-speed-core-web-vitals": "core_web_vitals",
+          "mobile-friendly": "mobile_friendly",
+        }
+        return map[slug] || null
       }
 
       static async checkIfTestsAreRunning() {
@@ -3457,19 +3507,18 @@ $(document).ready(function () {
         if (document.querySelector(".main-tricker-progress")) {
           document.querySelector(".main-tricker-progress").remove()
         }
-        buildLoader()
-        ;(async function refreshAfterRecheck() {
-          try {
-            const response = await fetch(`/api/check-status/${projectId}`)
-            const { status, results } = await response.json()
-            if (status === 'completed') {
-              lighthouseStatus = true
-              testDetailsLighthouse = results
-            }
-          } catch (e) {
-            console.error(e)
+        ;(async function waitThenReload() {
+          // Give backend a short window to finalize status/data writes before rebuilding table.
+          for (let i = 0; i < 10; i++) {
+            try {
+              const s = await DB.getDashboardShowStatus(projectId)
+              if (Number(s.dashboardStatus) === 1) {
+                break
+              }
+            } catch (_) {}
+            await new Promise(res => setTimeout(res, 500))
           }
-          Controls.loadData(projectId)
+          window.location.reload()
         })()
         UI.updateRecheckButtonState(false)
       }
@@ -3488,8 +3537,11 @@ $(document).ready(function () {
             DB.getUrlsList(projectId)
               .done(function(data){
                 originalUrls = data
-                urls = data.slice(0, recheckMax)
-                urlsToCheck = recheckMax
+                const reportLabel = Controls.getReportRecheckLabel()
+                const runSingleReportRecheck = !!reportLabel
+                const maxBatch = runSingleReportRecheck ? recheckSingleMax : recheckMax
+                urls = data.slice(0, maxBatch)
+                urlsToCheck = maxBatch
 
                 removeLoader()
                 UI.buildRecheckLoader()
@@ -3543,7 +3595,11 @@ $(document).ready(function () {
 
                 ;(async function runRecheck() {
                   try {
-                    await Controls.startTest(urls, "recheck")
+                    if (runSingleReportRecheck) {
+                      await Controls.startTest(urls, "single_recheck", reportLabel)
+                    } else {
+                      await Controls.startTest(urls, "recheck")
+                    }
                     Controls.pollDashboardRecheckUntilComplete()
                   } catch (err) {
                     console.error('Recheck start failed:', err)
@@ -3584,8 +3640,6 @@ $(document).ready(function () {
 
               // 1 = tests completed (same as dashboard)
               if (ds === 1) {
-                const fullyDone = Number(data.dashboard_fully_done_status) === 1
-
                 function runLiveTrackerLoad(loadOptions) {
                   ;(async function checkStatus() {
                     const response = await fetch(`/api/check-status/${projectId}`)
@@ -3600,38 +3654,7 @@ $(document).ready(function () {
                   })()
                 }
 
-                if (fullyDone) {
-                  DB.getDashboardWidgetCache(projectId)
-                    .done(function (cacheRes) {
-                      const snap =
-                        cacheRes &&
-                        cacheRes.status === 1 &&
-                        cacheRes.widgets &&
-                        cacheRes.widgets.tracker_page_snapshot
-                      if (
-                        snap &&
-                        snap.results &&
-                        typeof snap.results === 'object' &&
-                        Object.keys(snap.results).length > 0
-                      ) {
-                        if (snap.lighthouse) {
-                          lighthouseStatus = true
-                          testDetailsLighthouse = snap.lighthouse
-                        } else {
-                          lighthouseStatus = false
-                          testDetailsLighthouse = undefined
-                        }
-                        Controls.renderTestDataTable({ results: snap.results }, {})
-                        return
-                      }
-                      runLiveTrackerLoad({})
-                    })
-                    .fail(function () {
-                      runLiveTrackerLoad({})
-                    })
-                } else {
-                  runLiveTrackerLoad({})
-                }
+                runLiveTrackerLoad({})
               } else if (ds === 2 || ds === 3) {
                 // Full recheck (2) or single-tile refresh (3) in progress — keep loader UX after refresh (dashboard.js parity)
                 recheckAllowed = false

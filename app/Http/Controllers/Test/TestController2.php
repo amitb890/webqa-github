@@ -16,7 +16,6 @@ use App\Models\TestResults;
 use App\Models\Alerts;
 use App\Models\DashboardTests;
 use App\Models\DashboardTestsDetails;
-use App\Models\ProjectDashboardWidgetCache;
 
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
@@ -102,9 +101,6 @@ class TestController2 extends Controller
 
         // Update project testing status
         $projectsController->updateTestingStatus($project_id);
-
-        ProjectDashboardWidgetCache::where('project_id', $project_id)->delete();
-        Projects::where('id', $project_id)->update(['dashboard_fully_done_status' => 0]);
     
         // Create or fetch DashboardTest
         $testId = Str::uuid();

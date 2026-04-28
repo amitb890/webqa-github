@@ -16939,8 +16939,6 @@ background-color:#f5f8ff !important;
 
 /* Smooth dropdown transition */
 .user-dropdown-imran {
-  opacity: 0;
-  visibility: hidden;
   transform: translateY(8px);
   transition: all 0.2s ease-in-out;
 }

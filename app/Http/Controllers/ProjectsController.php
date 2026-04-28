@@ -26,7 +26,6 @@ use GuzzleHttp\Promise\Utils;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\File;
 use App\Services\DashboardTestDataService;
-use App\Models\ProjectDashboardWidgetCache;
 
 
 class ProjectsController extends Controller
@@ -281,68 +280,7 @@ class ProjectsController extends Controller
             'msg' => 'Success.',
             'dashboardStatus' => $dashboardStatus,
             'details_progress' => $detailsStatus,
-            'dashboard_fully_done_status' => (int) ($project->dashboard_fully_done_status ?? 0),
         ]);
-    }
-
-    /**
-     * Saved dashboard tile payloads (same shape as /test-details aggregate responses) for fast reload.
-     */
-    public function getDashboardWidgetCache($id)
-    {
-        $projectId = (int) $id;
-        $project = Projects::find($projectId);
-
-        if (! $project || (int) $project->user_id !== (int) Auth::id()) {
-            return response()->json(['error' => 'Project not found'], 404);
-        }
-
-        if (! (int) ($project->dashboard_fully_done_status ?? 0)) {
-            return response()->json(['status' => 1, 'widgets' => []]);
-        }
-
-        $widgets = [];
-        foreach (ProjectDashboardWidgetCache::where('project_id', $projectId)->get() as $row) {
-            $widgets[$row->widget_key] = $row->payload;
-        }
-
-        return response()->json(['status' => 1, 'widgets' => $widgets]);
-    }
-
-    public function saveDashboardWidgetCache(Request $request, $id)
-    {
-        $projectId = (int) $id;
-        $project = Projects::find($projectId);
-
-        if (! $project || (int) $project->user_id !== (int) Auth::id()) {
-            return response()->json(['error' => 'Project not found'], 404);
-        }
-
-        $request->validate([
-            'widgets' => 'required|array',
-        ]);
-
-        $widgets = $request->input('widgets', []);
-
-        ProjectDashboardWidgetCache::where('project_id', $projectId)->delete();
-
-        foreach ($widgets as $key => $payload) {
-            if (! is_string($key) || $key === '') {
-                continue;
-            }
-            if (! is_array($payload)) {
-                continue;
-            }
-            ProjectDashboardWidgetCache::create([
-                'project_id' => $projectId,
-                'widget_key' => $key,
-                'payload' => $payload,
-            ]);
-        }
-
-        $project->update(['dashboard_fully_done_status' => 1]);
-
-        return response()->json(['status' => 1, 'msg' => 'Saved.']);
     }
     
 

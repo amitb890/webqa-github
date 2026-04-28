@@ -56,30 +56,10 @@
                     </ul>
                   </div>
       
-                  <div class="dropdown menu-recheck-option">
-                    <a
-                      class="dropdown-toggle p-2"
-                      href="#"
-                      role="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                    >
-                      {{-- <span class="icon check-reload">
-                        <img src="/new-assets/assets/images/reload.png" alt="icon" />
-                      </span> --}}
-                      <span>Recheck </span>
+                  <div class="menu-recheck-option">
+                    <a class="dropdown-toggle p-2" href="#" id="recheckTrackerBtn">
+                      <span>Recheck</span>
                     </a>
-
-                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-recheck-imran">
-                      <li>
-                        <a class="dropdown-item" id="recheckAllTracker">Recheck all</a>
-                      </li>
-                      <li>
-                        <a class="dropdown-item" href="#"
-                          >Recheck selected (3)</a
-                        >
-                      </li>
-                    </ul>
                   </div>
                 </div>
               </div>
