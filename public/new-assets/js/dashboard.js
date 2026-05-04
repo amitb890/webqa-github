@@ -153,7 +153,8 @@ $(document).ready(function () {
           body: JSON.stringify({ 
             "_token": $('meta[name="csrf-token"]').attr('content'),
             "urls":originalUrls.slice(0, urlsGoogle), 
-            "project_id": projectId
+            "project_id": projectId,
+            "send_completion_notification": true
           })
       });
 
@@ -175,10 +176,10 @@ $(document).ready(function () {
         });
     }
 
-    static submitIdea(msg){
+    static submitIdeaTile(msg){
       var formData = new FormData();
-      formData.append("ideaMessage", msg)
-
+      formData.append("from_dashboard_tile", "1");
+      formData.append("ideaMessage", msg);
 
       return $.ajax({
         url: '/create-feature-request',
@@ -459,6 +460,16 @@ $(document).ready(function () {
       document.querySelector(".dashboard_recheck_area").prepend(div)
     }
 
+    static showPageSpeedInitiatedBanner(urlCount) {
+      const n = parseInt(urlCount, 10) || 0
+      const msg = "Initiated page speed checks for " + n + " urls, we will notify you by email once the checks are completed"
+      displayAlert(".analysis-content-body-message", {
+        status: 1,
+        msg: msg,
+        notHide: true
+      })
+    }
+
     static showWaitingMessage(){
       // Remove any existing waiting message first
       this.removeWaitingMessage();
@@ -468,6 +479,7 @@ $(document).ready(function () {
         msg: msg,
         notHide: true
       })
+      scrollToTop()
       
       // const div = document.createElement("div")
       // div.id = "waiting-message"
@@ -600,8 +612,9 @@ $(document).ready(function () {
             Dashboard
           </p>
           <form method="POST" id="submitIdeaForm">
+            <label for="submitIdeaWidgetMsg" class="form-label" style="font-size:13px;display:block;text-align:left;">Message</label>
             <textarea id="submitIdeaWidgetMsg"></textarea>
-            <span>0/200</span>
+            <span id="submitIdeaWidgetCounter">0/2000</span>
             <div class="dasboard_submit_btn">
               <button id="submitIdeaWidgetBtn" type="submit">Submit Idea</button>
             </div>
@@ -657,7 +670,7 @@ $(document).ready(function () {
               }else if(key === "cbp_labels"){
                 status = show_dashboard_status
                 label = {
-                  display_name: "HTML Best Practices",
+                  display_name: "Best Practices",
                   urlDetails: "/test-details/coding-best-practices",
                   reportsUrl: "/reports/coding-best-practices",
                   db_name: "cbp_labels"
@@ -1236,7 +1249,7 @@ $(document).ready(function () {
               </div>
             </div>
             <div class="inner_dashboard_footer">
-              <a href="#">View Report</a>
+              <a href="${reportsUrl}">View Report</a>
             </div>`
               break;
             case "google_overall":
@@ -2198,13 +2211,13 @@ $(document).ready(function () {
                   <div class="deshboard_inner_description border_bottom">
                     <p>Totals Images <span>${data.totalImages}</span></p>
                     <p>
-                      Image file name with high file name characters (>${settings.settings_sub.image_name_max_characters_val} characters) <span class="${data.imageNameLengthOver > 0 ? 'danger' : 'success'}">${data.imageNameLengthOver}</span>
+                      Image file name with Large File Name (>${settings.settings_sub.image_name_max_characters_val} characters) <span class="${data.imageNameLengthOver > 0 ? 'danger' : 'success'}">${data.imageNameLengthOver}</span>
                     </p>
                     <p>
-                      Images with missing alternative text <span class="${data.imageNameMissingAlt > 0 ? 'danger' : 'success'}">${data.imageNameMissingAlt}</span>
+                      Images with Missing Alternative Text <span class="${data.imageNameMissingAlt > 0 ? 'danger' : 'success'}">${data.imageNameMissingAlt}</span>
                     </p>
                     <p>
-                      Images with high file size (>${settings.settings_sub.image_max_size_val} KB) <span class="${data.imageSizeOver > 0 ? 'danger' : 'success'}">${data.imageSizeOver}</span>
+                      Images with High File Size (>${settings.settings_sub.image_max_size_val} KB) <span class="${data.imageSizeOver > 0 ? 'danger' : 'success'}">${data.imageSizeOver}</span>
                     </p>
                   </div>
                 </div>
@@ -2646,7 +2659,10 @@ $(document).ready(function () {
               }else{
                 urlsGoogleFinal = googleUrlsToCheck
               }
-              const testId = await DB.startGoogleTests(urlsGoogleFinal)
+              const result = await DB.startGoogleTests(urlsGoogleFinal)
+              if (result && result.error === undefined && result.url_count !== undefined) {
+                UI.showPageSpeedInitiatedBanner(result.url_count)
+              }
 
             })()
           }
@@ -2973,7 +2989,7 @@ $(document).ready(function () {
 
       if(dbName === "cbp_labels"){
         return {
-          display_name: "HTML Best Practices",
+          display_name: "Best Practices",
           urlDetails: "/test-details/coding-best-practices",
           reportsUrl: "/reports/coding-best-practices",
           db_name: "cbp_labels"
@@ -3103,7 +3119,7 @@ $(document).ready(function () {
 
       $("#submitIdeaWidgetMsg").on("keyup", (e)=>{
         const val = e.target.value.length
-        $("#submitIdeaForm span").html(`${val}/200`)
+        $("#submitIdeaWidgetCounter").html(`${val}/2000`)
       })
 
       $("#recheckHyperlink").on("click", async (e)=>{
@@ -3144,16 +3160,18 @@ $(document).ready(function () {
       clearAlerts()
 
       if(Controls.validateSubmitIdea()){
-        let msg = document.querySelector("#submitIdeaWidgetMsg").value
-        DB.submitIdea(msg)
+        const msgEl = document.querySelector("#submitIdeaWidgetMsg")
+        let msg = msgEl ? msgEl.value : ""
+        DB.submitIdeaTile(msg)
         .done(function(data) {
           if(data.status === 0){
             displayAlertGlobal(data)
           }else{
             msg = ""
+            if (msgEl) msgEl.value = ""
             displayAlertSimpleSuccess(".dashboard_submit_content", {
               status: 1,
-              msg: "Featues request successfully submitted."
+              msg: "Thank you — your message was sent."
             })
           }
         });
@@ -3163,15 +3181,15 @@ $(document).ready(function () {
     static validateSubmitIdea(){
       let state = true
       let alertMsg = ""
-      const msg = document.querySelector("#submitIdeaWidgetMsg").value
-      if(msg.length < 1){
-        state = false
-        alertMsg = "Submit idea field can not be empty."
-      }
+      const msgEl = document.querySelector("#submitIdeaWidgetMsg")
+      const msg = msgEl ? msgEl.value : ""
 
-      if(msg.length > 200){
+      if (msg.length < 1) {
         state = false
-        alertMsg = "Message can not be greater than 200 characters. For more detailed message use the sidebar feature request."
+        alertMsg = "Message can not be empty."
+      } else if (msg.length > 2000) {
+        state = false
+        alertMsg = "Message can not be greater than 2000 characters. Use the sidebar Submit your idea form for longer feedback."
       }
 
 
@@ -3544,7 +3562,7 @@ $(document).ready(function () {
 
       }else if(key === "cbp_labels"){
         label = {
-          display_name: "HTML Best Practices",
+          display_name: "Best Practices",
           urlDetails: "/test-details/coding-best-practices",
           reportsUrl: "/reports/coding-best-practices",
           db_name: "cbp_labels"

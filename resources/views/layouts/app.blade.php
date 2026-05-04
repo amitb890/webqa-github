@@ -510,7 +510,7 @@ if (!empty($activeProjectFavicon)) {
                 <li data-report-setting="google_overall"><a href="/reports/google-page-speed-insights"><p>Overall Score</p></a></li>
                 <li data-report-setting="google_lighthouse"><a href="/reports/google-page-speed-lighthouse"><p>Lighthouse Score</p></a></li>
                 <li data-report-setting="core_web_vitals"><a href="/reports/google-page-speed-core-web-vitals"><p>Core Web Vitals</p></a></li>
-                <li data-report-setting="mobile_friendly"><a href="/reports/mobile-friendly"><p>Mobile Friendliness</p></a></li>
+                <li data-report-setting="mobile_friendly"><a href="/reports/mobile-friendliness"><p>Mobile Friendliness</p></a></li>
               </ul>
             </div>
             <div class="ssbl-item">
@@ -761,6 +761,7 @@ if (!empty($activeProjectFavicon)) {
   <script>
       let plusIcon = "{{ asset('new-assets/assets/images/new-sidebar/plus.svg') }}";
       let minusIcon = "{{ asset('new-assets/assets/images/new-sidebar/minus-sign.svg') }}";
+      window.webqaFeatureAttachmentMaxBytes = {{ (int) config('mail.dashboard_feature_attachment_max_kb', 5120) * 1024 }};
       
       // Get report settings from database
       var userSettings = @json(\App\Models\ReportSettings::where('user_id', auth()->id())->first());

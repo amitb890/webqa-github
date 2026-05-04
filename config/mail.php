@@ -98,6 +98,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | About page & internal lead notifications
+    |--------------------------------------------------------------------------
+    */
+
+    'contact_lead_to' => env('CONTACT_LEAD_EMAIL', 'iamamitb@gmail.com'),
+
+    /*
+    | Max upload size (KB) for dashboard sidebar “Submit your idea” attachment.
+    | Laravel validates file size in kilobytes (e.g. 5120 ≈ 5 MB).
+    */
+    'dashboard_feature_attachment_max_kb' => (int) env('DASHBOARD_FEATURE_ATTACHMENT_MAX_KB', 5120),
+
+    /*
+    |--------------------------------------------------------------------------
     | Markdown Mail Settings
     |--------------------------------------------------------------------------
     |

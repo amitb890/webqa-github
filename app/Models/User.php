@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Mail\ForgotPasswordMail;
+use App\Support\UserDisplayName;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -43,4 +46,28 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Send the password reset notification (custom WebQA template).
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $resetUrl = url(route('password.reset', [
+            'token' => $token,
+            'email' => $this->getEmailForPasswordReset(),
+        ], false));
+
+        $firstName = UserDisplayName::firstName($this->name);
+
+        try {
+            Mail::to($this->email)->send(new ForgotPasswordMail($firstName, $resetUrl));
+        } catch (\Throwable $e) {
+            Log::warning('Password reset email failed: '.$e->getMessage(), [
+                'user_id' => $this->id,
+                'email' => $this->email,
+            ]);
+        }
+    }
 }

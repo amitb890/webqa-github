@@ -13,6 +13,28 @@ $( document ).ready(function() {
 
     const allLabels = getAllTestLabels("analysis-app").allLabels
 
+    // Keep HTML canvas rendering dimensions aligned with viewport CSS sizing.
+    function syncViewportCanvasSize() {
+        const vw = window.innerWidth || document.documentElement.clientWidth
+        const vh = window.innerHeight || document.documentElement.clientHeight
+        document.querySelectorAll("canvas").forEach((canvas) => {
+            if (canvas.width !== vw) canvas.width = vw
+            if (canvas.height !== vh) canvas.height = vh
+        })
+    }
+
+    let canvasResizeRaf = null
+    function scheduleViewportCanvasSync() {
+        if (canvasResizeRaf) return
+        canvasResizeRaf = window.requestAnimationFrame(() => {
+            canvasResizeRaf = null
+            syncViewportCanvasSize()
+        })
+    }
+
+    syncViewportCanvasSize()
+    window.addEventListener("resize", scheduleViewportCanvasSync)
+
     function startTestBuilUI(){
         removeLoader()
         clearAlerts()
@@ -44,7 +66,20 @@ $( document ).ready(function() {
         formData.append("ideaEmail", ideaEmail.val())
         formData.append("ideaMessage", ideaMessage.val())
         formData.append("ideaUrl", ideaUrl.val())
-        formData.append("ideaAttachment", ideaAttachment.prop('files')[0])
+        const attachmentFile = ideaAttachment.prop('files') && ideaAttachment.prop('files')[0]
+        const maxBytes = typeof window.webqaFeatureAttachmentMaxBytes === "number"
+          ? window.webqaFeatureAttachmentMaxBytes
+          : (5120 * 1024)
+        if (attachmentFile && attachmentFile.size > maxBytes) {
+          clearAlerts()
+          const maxMb = (maxBytes / (1024 * 1024)).toFixed(maxBytes % (1024 * 1024) === 0 ? 0 : 1)
+          const alert = new Toast("Attachment must be " + maxMb + " MB or smaller.")
+          alert.display()
+          return
+        }
+        if (attachmentFile) {
+          formData.append("ideaAttachment", attachmentFile)
+        }
         formData.append("ideaImportance", ideaImportance.val())
 
 

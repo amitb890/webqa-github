@@ -169,7 +169,11 @@ Route::middleware('auth')->group(function () {
         Route::get('get-google-status/{id}', [App\Http\Controllers\ProjectsController::class, 'getGoogleStatus'])->name('getGoogleStatus');
         Route::get('get-urls/{id}', [App\Http\Controllers\DashboardController::class, 'getUrlsList'])->name('getUrlsList'); 
         Route::post('get-alerts', [App\Http\Controllers\ProjectsController::class, 'getAlerts'])->name('get-alerts'); 
-        Route::post('update-alert-status', [App\Http\Controllers\ProjectsController::class, 'updateAlertStatus'])->name('update-alert-status'); 
+        Route::post('update-alert-status', [App\Http\Controllers\ProjectsController::class, 'updateAlertStatus'])->name('update-alert-status');
+
+        Route::post('/api/start-tests', [App\Http\Controllers\LighthouseController::class, 'startTests']);
+        Route::get('/api/check-status/{testId}', [App\Http\Controllers\LighthouseController::class, 'checkStatus']);
+        Route::post('/api/update-google-recheck-active-urls', [App\Http\Controllers\LighthouseController::class, 'updateGoogleRecheckActiveUrls']);
 
     });
     Route::post('check-valid-url', [App\Http\Controllers\ProjectsController::class, 'checkValidUrl'])->name('checkValidUrl');
@@ -205,7 +209,7 @@ Route::namespace("TestDetails")->prefix('test-details')->group(function(){
     Route::post('/security-headers', [App\Http\Controllers\TestDetailsController::class, 'securityHeaders'])->name('test.security-headers');
     Route::post('/coding-best-practices', [App\Http\Controllers\TestDetailsController::class, 'codingBestPractices'])->name('test.coding-best-practices');
     Route::post('/page-size', [App\Http\Controllers\TestDetailsController::class, 'pageSize'])->name('test.page-size');
-    Route::post('/mobile-friendly', [App\Http\Controllers\TestDetailsController::class, 'mobileFriendly'])->name('test.mobile-friendly');
+    Route::post('/mobile-friendliness', [App\Http\Controllers\TestDetailsController::class, 'mobileFriendly'])->name('test.mobile-friendly');
     Route::post('/google-page-speed-insights', [App\Http\Controllers\TestDetailsController::class, 'googleInsights'])->name('test.google-page-speed-insights');
     Route::post('/google-page-speed-lighthouse', [App\Http\Controllers\TestDetailsController::class, 'googleLighthouse'])->name('test.google-page-speed-lighthouse');
     Route::post('/google-page-speed-core-web-vitals', [App\Http\Controllers\TestDetailsController::class, 'googleCoreWebVitals'])->name('test.google-page-speed-core-web-vitals');
@@ -220,11 +224,6 @@ Route::namespace("TestDetails")->prefix('test-details')->group(function(){
 Route::post('/test/start-dashboard-test', [App\Http\Controllers\Test\TestController2::class, 'startTests']);
 Route::post('/test/update-single-dashboard-test', [App\Http\Controllers\Test\TestController2::class, 'updateSingleTest']);
 Route::get('/api/check-status-dashboard/{testId}', [App\Http\Controllers\Test\TestController2::class, 'checkStatus']);
-
-Route::post('/api/start-tests', [App\Http\Controllers\LighthouseController::class, 'startTests']);
-Route::get('/api/check-status/{testId}', [App\Http\Controllers\LighthouseController::class, 'checkStatus']);
-Route::post('/api/update-google-recheck-active-urls', [App\Http\Controllers\LighthouseController::class, 'updateGoogleRecheckActiveUrls']);
-
 
 Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/get-analysis', [App\Http\Controllers\Test\TestController::class, 'getAnalysis'])->name('test.get-analysis');
@@ -258,7 +257,7 @@ Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/broken-links', [App\Http\Controllers\Test\TestController::class, 'brokenLinks'])->name('test.broken-links');
     
     Route::post('/title', [App\Http\Controllers\Test\TestController::class, 'title'])->name('test.title');
-    Route::post('/description', [App\Http\Controllers\Test\TestController::class, 'description'])->name('test.description');
+    Route::post('/meta-description', [App\Http\Controllers\Test\TestController::class, 'description'])->name('test.meta-description');
     Route::post('/robots-meta', [App\Http\Controllers\Test\TestController::class, 'robots'])->name('test.robots-meta');
     Route::post('/url-slug', [App\Http\Controllers\Test\TestController::class, 'urlSlug'])->name('test.url-slug');
     Route::post('/canonical-url', [App\Http\Controllers\Test\TestController::class, 'canonical'])->name('test.canonical-url');

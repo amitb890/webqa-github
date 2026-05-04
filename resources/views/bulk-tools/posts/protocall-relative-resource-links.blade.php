@@ -15,7 +15,7 @@
   <span class="summary-heading">Quick Summary</span>
   <p>
     Protocol relative resource links are URLs that omit the "Protocall" meaning, they do not include "http:" or "https:" and the URL starts with "//".
-    This system was once common, but modern HTML best practices generally recommend using explicit protocalls like "https://" URLs instead.
+    This system was once common, but modern best practices generally recommend using explicit protocalls like "https://" URLs instead.
   </p>
   <ol>
     <li>Protocol relative URLs inherit the protocol (HTTP or HTTPS) of the page they’re loaded on.</li>

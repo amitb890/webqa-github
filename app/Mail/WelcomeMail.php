@@ -10,25 +10,26 @@ use Illuminate\Queue\SerializesModels;
 class WelcomeMail extends Mailable
 {
     use Queueable, SerializesModels;
+
+    /** @var array{name?: string, email: string, firstName: string} */
     public $data;
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct($data)
+
+    public string $firstName;
+
+    public function __construct(array $data)
     {
         $this->data = $data;
+        $this->firstName = $data['firstName'] ?? 'there';
     }
 
-    /**
-     * Build the message.
-     *
-     * @return $this
-     */
     public function build()
     {
-        $subject = 'Welcome';
-       return $this->view('emails.welcome')->subject($subject);
+        $subject = "Welcome to WebQA - Let’s find and fix issues on your website";
+
+        return $this
+            ->subject($subject)
+            ->view('emails.welcome', [
+                'firstName' => $this->firstName,
+            ]);
     }
 }

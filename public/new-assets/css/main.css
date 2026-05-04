@@ -7655,6 +7655,7 @@ h6 {
   width: 100%;
   max-width: 1202px;
   margin: auto;
+  padding-top: 50px;
 }
 
 .single_footer_item {
@@ -11214,6 +11215,11 @@ table.bulk-table td:last-child {
 .add_Widget_area .btn {
   border-radius: 50%;
   border: none;
+}
+
+canvas {
+  width: 100vw;
+  height: 100vh;
 }
 
 .dashboard_offcanvas .offcanvas {
@@ -17962,7 +17968,7 @@ textarea.auto-number.has-content {
 
 /* Task 3 Code Starts */
 .form-check-input.input-check-all{
-  margin-left:-15px;
+  /* margin-left:-15px; */
 }
 .element-check-title label {
   margin-left: 5px;

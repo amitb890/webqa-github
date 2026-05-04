@@ -1746,7 +1746,7 @@ $( document ).ready(function() {
       let metaTagsElementStatus = false
       const performanceElement = buildLoaderDetailSingleElement("Performance", "performance-content")
       let performanceElementStatus = false
-      const bestPracticesElement = buildLoaderDetailSingleElement("HTML Best practices", "best-practices-content")
+      const bestPracticesElement = buildLoaderDetailSingleElement("Best Practices", "best-practices-content")
       let bestPracticesElementStatus = false
       const securityElement = buildLoaderDetailSingleElement("Security", "security-content")
       let securityElementStatus = false

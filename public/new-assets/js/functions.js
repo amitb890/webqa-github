@@ -808,18 +808,89 @@ function getLoaderElement(status){
 
 function validateFrontFooter(data, type){
     const value = data.el.value.trim()
+    const legacyRoot = data.el.parentElement && data.el.parentElement.parentElement && data.el.parentElement.parentElement.parentElement
+    const legacyContainer = legacyRoot ? legacyRoot.querySelector(".search-setting-container") : null
+    const footerBlock = data.el.closest(".footer-form-container") || data.el.closest(".footer_search_item")
+
+    function showValidationAlert(msg) {
+        const alert = buildAlertNew(msg)
+        if (legacyContainer) {
+            legacyContainer.prepend(alert)
+        } else if (footerBlock) {
+            footerBlock.insertBefore(alert, footerBlock.firstChild)
+        } else if (data.el.parentElement) {
+            data.el.parentElement.prepend(alert)
+        }
+    }
+
     if(value === ""){
-        const alert = buildAlertNew(data.msgEmpty)
-        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
+        showValidationAlert(data.msgEmpty)
         return false
     }else if(!isValidURL(value)){
         let msgInvalid = `Incorrect URL format.`
-        const alert = buildAlertNew(msgInvalid)
-        data.el.parentElement.parentElement.parentElement.querySelector(".search-setting-container").prepend(alert)
+        showValidationAlert(msgInvalid)
         return false
     }
 
     return true
+}
+
+// POST /test/collect with project "default" (all default tests; no custom home settings).
+function runFooterCollectTest(testLabels, url) {
+    const alertClass = ".footer-form-container"
+    try {
+        new URL(url).origin
+    } catch (e) {
+        removeLoader()
+        displayAlertSimple(alertClass, {
+            status: 0,
+            msg: "Incorrect URL format.",
+        }, false)
+        return
+    }
+
+    const obj = {}
+    obj["urlValue"] = url
+    obj["project"] = "default"
+    obj["saveInDB"] = 1
+    obj["testLabels"] = JSON.stringify(testLabels)
+
+    $.ajax({
+        url : `/test/collect`,
+        type : 'POST',
+        async: false,
+        data: {
+            "data": obj,
+            "_method": 'POST',
+            "_token": $('meta[name="csrf-token"]').attr('content'),
+        },
+        success : function(data) {
+            if(data.status === 0){
+                removeLoader()
+                displayAlertSimple(alertClass, {
+                    status: 0,
+                    msg: "The url you have entered was not found. Please test with a different url."
+                })
+            }else if(data.status === 1){
+                window.location.href = `/analysis-report/w/${data.ref_id}`
+            }else if(data.status === 2){
+                removeLoader()
+                displayAlertSimple(alertClass, {
+                    status: 0,
+                    msg: data.msg
+                })
+            }
+        },
+        error: function(data){
+            removeLoader()
+            displayAlertSimple(alertClass, {
+                status: 0,
+                msg: "The url you have entered was not found. Please test with a different url."
+
+            }, false)
+
+        }
+    })
 }
 
 
@@ -1687,6 +1758,24 @@ function groupUrlsBySubfolder(urls) {
 // Helper function to capitalize the first letter of a string
 function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Capitalize the first word only: first letter upper, rest of that word lower;
+ * remaining text after the first word is left unchanged. Trims and normalizes inner spaces.
+ */
+function capitalizeFirstWord(str) {
+    str = String(str || "").trim().replace(/\s+/g, " ");
+    if (!str) {
+        return "";
+    }
+    const idx = str.search(/\s/);
+    if (idx === -1) {
+        return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    }
+    const first = str.slice(0, idx);
+    const rest = str.slice(idx + 1);
+    return first.charAt(0).toUpperCase() + first.slice(1).toLowerCase() + " " + rest;
 }
 
 

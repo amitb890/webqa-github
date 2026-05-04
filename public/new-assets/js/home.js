@@ -275,31 +275,6 @@ $( document ).ready(function() {
     });
     
 
-    $("#startTestFooter").on( "click", function(e) {
-        e.preventDefault()
-        clearAlerts()
-        const urlField = document.querySelector("#urlValueFooter")
-        if(validateFrontFooter({el: urlField, msgEmpty: "Please enter a URL to conduct a test."}, "analysis")){
-            buildLoader()
-            let testLabels = []
-            allLabels.forEach(label=>{
-                const nameVal = label
-                const labelObj = {
-                    name: label.name,
-                    url: label.url,
-                    title: label.displayName,
-                    parent: label.parent,
-                    information: label
-                }
-                testLabels.push(labelObj)
-            })
-            // Note: #urlValueFooter doesn't have truncation, so use value directly
-            runTest(testLabels, urlField.value, "default")
-        }
-
-    });
-
-
  
 
 
@@ -519,7 +494,7 @@ function createTypeWriter(){
     if (!textFields.length) return;
   
     // make a words array
-    const words = ["Technical SEO", "Page Speed", "HTML Best Practices", "Images", "Mobile Friendliness", "Meta Tags"];
+    const words = ["Technical SEO", "Page Speed", "Best Practices", "Images", "Mobile Friendliness", "Meta Tags"];
   
     textFields.forEach(function (text) {
       // start typing effect

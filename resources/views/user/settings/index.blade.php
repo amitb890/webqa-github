@@ -4199,7 +4199,7 @@
                       <span>Meta Title</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/meta-title" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/meta-title" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4227,7 +4227,7 @@
                       <span>Meta Description</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/description" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/description" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4255,7 +4255,7 @@
                       <span>Robots Meta Tag</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/robots-meta" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/robots-meta" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4283,7 +4283,7 @@
                       <span>Canonical URL</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/canonical" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/canonical" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4311,7 +4311,7 @@
                       <span>Images</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/images" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/images" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4339,7 +4339,7 @@
                       <span>URL Slug</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/url-slug" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/url-slug" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4367,7 +4367,7 @@
                       <span>Robots.txt</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/robots-meta" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/robots-meta" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4395,7 +4395,7 @@
                       <span>Headings</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/headings" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/headings" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4423,7 +4423,7 @@
                       <span>XML Sitemap</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/xml-sitemap" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/xml-sitemap" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4451,7 +4451,7 @@
                       <span>Open Graph Title Tag</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/og-tags" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/og-tags" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4479,7 +4479,7 @@
                       <span>Twitter Tags</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/twitter-tags" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/twitter-tags" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4507,7 +4507,7 @@
                       <span>Favicon</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/favicon" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/favicon" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4535,7 +4535,7 @@
                       <span>Meta Viewport</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/meta-viewport" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/meta-viewport" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4563,7 +4563,7 @@
                       <span>Doctype</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/doctype" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/doctype" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4591,7 +4591,7 @@
                       <span>HTTP Status Code</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/http-status-code" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/http-status-code" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4639,7 +4639,7 @@
                       <span>Overall Score</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/google-page-speed-insights" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/google-page-speed-insights" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4667,7 +4667,7 @@
                       <span>Lighthouse Score</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/google-page-speed-lighthouse" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/google-page-speed-lighthouse" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4695,7 +4695,7 @@
                       <span>Core Web Vitals</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/google-page-speed-core-web-vitals" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/google-page-speed-core-web-vitals" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4723,7 +4723,7 @@
                       <span>Mobile Friendliness</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/mobile-friendly" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/mobile-friendly" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4771,7 +4771,7 @@
                       <span>HTML Compression</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/html-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/html-compression" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4799,7 +4799,7 @@
                       <span>CSS Compression</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/css-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/css-compression" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4827,7 +4827,7 @@
                       <span>JavaScript Compression</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/js-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/js-compression" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4855,7 +4855,7 @@
                       <span>GZIP Compression</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/gzip-compression" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/gzip-compression" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4883,7 +4883,7 @@
                       <span>CSS Caching</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/css-caching" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/css-caching" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4911,7 +4911,7 @@
                       <span>JS Caching</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/js-caching" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/js-caching" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4939,7 +4939,7 @@
                       <span>Page Size</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/page-size" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/page-size" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4967,7 +4967,7 @@
                       <span>Nested Tables</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/nested-tables" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/nested-tables" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -4995,7 +4995,7 @@
                       <span>Frameset</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/frameset" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/frameset" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5023,7 +5023,7 @@
                       <span>Broken Links</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/broken-links" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/broken-links" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5071,7 +5071,7 @@
                       <span>Safe Browsing</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/safe-browsing" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/safe-browsing" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5099,7 +5099,7 @@
                       <span>Unsafe Cross Origin Links</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/unsafe-cross-origin-links" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/unsafe-cross-origin-links" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5127,7 +5127,7 @@
                       <span>Protocol Relative Resource Links</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/protocol-relative-resource" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/protocol-relative-resource" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5155,7 +5155,7 @@
                       <span>Content Security Policy Header</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/content-security-policy-header" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/content-security-policy-header" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5183,7 +5183,7 @@
                       <span>X Frame Options Header</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/x-frame-options-header" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/x-frame-options-header" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5211,7 +5211,7 @@
                       <span>HSTS Header</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/hsts-header" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/hsts-header" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5239,7 +5239,7 @@
                       <span>Bad Content Type</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/bad-content-type" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/bad-content-type" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5267,7 +5267,7 @@
                       <span>SSL Certificate</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/ssl-certificate" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/ssl-certificate" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">
@@ -5295,7 +5295,7 @@
                       <span>Directory Browsing</span>
                     </div>
                     <div class="report-actions">
-                      <a href="/reports/directory-browsing" target="_blank" class="open-link">Open Link <i class="fas fa-external-link-alt"></i></a>
+                      <a href="/reports/directory-browsing" target="_blank" class="open-link">Open Report</a>
                     </div>
                     <div class="report-switch">
                       <div class="toggle-button-cover">

@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PasswordUpdatedMail;
+use App\Support\UserDisplayName;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use App\Models\DeletedFeedback;
 
 class ProfileController extends Controller
@@ -105,6 +109,16 @@ class ProfileController extends Controller
                 if(!$update ){
                     return response()->json(['status'=>3,'msg'=>'Something went wrong, Please try again later.']);
                 }else{
+                    try {
+                        Mail::to(Auth::user()->email)->send(new PasswordUpdatedMail(
+                            UserDisplayName::firstName(Auth::user()->name)
+                        ));
+                    } catch (\Throwable $e) {
+                        Log::warning('Password updated email failed (profile): '.$e->getMessage(), [
+                            'user_id' => Auth::id(),
+                        ]);
+                    }
+
                     return response()->json(['status'=>1,'msg'=>'Your password has been updated successfully']);
                 }
             }

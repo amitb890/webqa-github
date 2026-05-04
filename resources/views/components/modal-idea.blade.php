@@ -26,7 +26,7 @@
 
 
             <div class="mb-3">
-                <label for="ideaMessage" class="form-label">Explain Issue</label>
+                <label for="ideaMessage" class="form-label">Issue</label>
                 <textarea class="form-control" id="ideaMessage" rows="3"></textarea>
             </div>
 
@@ -42,7 +42,7 @@
             </div>
 
 
-            <label for="important_check" class="form-label">How important is this to you?</label>
+            <label for="important_check" class="form-label">Severity</label>
             <div class="mb-3" id="important_check">
                 <input type="radio" class="btn-check" name="ideaImportanceRadio" value="Nice to have" id="ideaImportanceNice" autocomplete="off">
                 <label class="btn" for="ideaImportanceNice">Nice to have</label>

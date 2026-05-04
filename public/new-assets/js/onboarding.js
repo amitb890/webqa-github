@@ -43,7 +43,7 @@ $(document).ready(function(){
                 const url = $("#homepage").val();
                 const domainName = this.extractDomainName(url);
                 if (domainName) {
-                    $("#name").val(domainName);
+                    $("#name").val(capitalizeFirstWord(domainName));
                 }
                 this.clearErrorMessages();
                 this.updateButtonStates();
@@ -161,7 +161,6 @@ $(document).ready(function(){
                 }
                 
                 let data = await res.json();
-                console.log('Total URLs:', data.count, data.urls);
                 
                 // Process URLs similar to getUrlsList function
                 if (data.urls && data.urls.length > 0) {
@@ -259,7 +258,6 @@ $(document).ready(function(){
                 }
                 
                 const data = await response.json();
-                console.log('Sitemap detection result:', data);
                 
                 // Process sitemap data using the same logic as main.js
                 this.updateSitemapInputsServer(data.sitemaps || [], homepage);
@@ -499,7 +497,8 @@ $(document).ready(function(){
 
         finishOnboarding() {
             // Get form data
-            const name = $("#name").val();
+            const namePosted = capitalizeFirstWord($("#name").val());
+            $("#name").val(namePosted);
             const homepage = $("#homepage").val();
             const xmlSitemap = $("#xmlSitemap").val();
             const urlsList = $("#urlsList").val();
@@ -526,7 +525,7 @@ $(document).ready(function(){
                 url: '/createProject',
                 type: 'POST',
                 data: {
-                    "name": name,
+                    "name": namePosted,
                     "homepage": homepage,
                     "xmlSitemap": xmlSitemapString,
                     "htmlSitemap": "", // Not used in current flow
@@ -744,7 +743,7 @@ $(document).ready(function(){
                     this.formData.urlsList = $('#urlsList').val();
                     break;
                 case 3: // Step 4 (now project name)
-                    this.formData.name = $('#name').val();
+                    this.formData.name = capitalizeFirstWord($('#name').val());
                     break;
             }
         }

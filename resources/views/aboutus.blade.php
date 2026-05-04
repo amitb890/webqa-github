@@ -333,7 +333,8 @@
   </div>
 
   <div class="contact-us-form" style="width: 550px;margin: 0 auto;padding-top: 50px;">
-    <form action="/contact" method="post">
+    <form action="{{ route('contact.store') }}" method="post">
+      @csrf
       <div class="name" style="margin-bottom: 15px;">
         <label for="name" style="margin-right: 50px;">Name</label>
         <input
@@ -388,11 +389,17 @@
           Submit
         </button>
       </div>
-    
-    <div role="alert" class="alert webqa__alert alert-custom alert-dismissible fade show" style="margin-top:50px;text-align:center;">Your message has been sent. You will hear from us shortly
+    @if(session('contact_success'))
+    <div role="alert" class="alert webqa__alert alert-custom alert-dismissible fade show" style="margin-top:50px;text-align:center;">Your message has been sent. You will hear from us shortly.
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
-    
+    @endif
+    @if(session('contact_error'))
+    <div role="alert" class="alert webqa__alert alert-danger alert-dismissible fade show" style="margin-top:50px;text-align:center;">{{ session('contact_error') }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
     </form>
   </div>
 </div>

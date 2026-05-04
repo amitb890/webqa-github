@@ -953,7 +953,7 @@ document.querySelectorAll('.dropdown-toggle').forEach(link => {
     }
 
     function updateProjectName(){
-      const name = $("#name").val()
+      const name = capitalizeFirstWord($("#name").val())
       $("#projectName").html(name)
     }
 
@@ -1332,16 +1332,18 @@ document.querySelectorAll('.dropdown-toggle').forEach(link => {
 
     $("#finishOnboarding").click(function (e) {
         const route = "onboarding";
-        const name = $("#name")
+        const name = capitalizeFirstWord($("#name").val())
         const homepage = $("#homepage")
         const xmlSitemap = $("#xmlSitemap")
         const htmlSitemap = $("#htmlSitemap")
         const urlsList = $("#urlsList")
+        const namePosted = capitalizeFirstWord(name.val())
+        name.val(namePosted)
         $.ajax({
             url : `/createProject`,
             type : 'POST',
             data: {
-                "name": name.val(),
+                "name": namePosted,
                 "homepage": homepage.val(),
                 "xmlSitemap": xmlSitemap.val(),
                 "htmlSitemap": htmlSitemap.val(),
@@ -1703,6 +1705,33 @@ $(function () {
 // sidebar collaps js 
 $(".sibar_collaps2").click(function () {
   $(".sidebar_menu.sidebar_menu2").toggleClass('sidebar_active');
+});
+
+// Footer "Test Now" — same /test/collect flow as home #startTest but with default (all) criteria; master layout loads main.js on all public pages.
+$(document).on("click", "#startTestFooter", function (e) {
+  e.preventDefault();
+  const urlField = document.getElementById("urlValueFooter");
+  if (!urlField) return;
+  clearAlerts();
+  if (!validateFrontFooter({ el: urlField, msgEmpty: "Please enter a URL to conduct a test." }, "analysis")) return;
+  buildLoader();
+  const footerLabels = getAllTestLabels("dashboard").allLabels;
+  const testLabels = footerLabels.map(function (label) {
+    return {
+      name: label.name,
+      url: label.url,
+      title: label.displayName,
+      parent: label.parent,
+      information: label,
+    };
+  });
+  runFooterCollectTest(testLabels, urlField.value.trim());
+});
+
+$(document).on("submit", "#footer_search_box_home", function (e) {
+  e.preventDefault();
+  const btn = document.getElementById("startTestFooter");
+  if (btn) btn.click();
 });
 
 

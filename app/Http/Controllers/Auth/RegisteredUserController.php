@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use App\Mail\WelcomeMail;
+use App\Support\UserDisplayName;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class RegisteredUserController extends Controller
 {
@@ -58,13 +61,21 @@ class RegisteredUserController extends Controller
     
             Auth::login($user);
     
-            $data = ([
-                "name" => $request->get("name"),
-                "email" => $request->get("email"),
+            $firstName = UserDisplayName::firstName($request->input('name'));
+
+            try {
+                Mail::to($request->email)->send(new WelcomeMail([
+                    'name' => $request->input('name'),
+                    'email' => $request->email,
+                    'firstName' => $firstName,
+                ]));
+            } catch (\Throwable $e) {
+                Log::warning('Welcome email failed to send: '.$e->getMessage(), [
+                    'user_id' => $user->id,
+                    'email' => $request->email,
                 ]);
-                
-            // \Mail::to($request->email)->send(new WelcomeMail($data));
-    
+            }
+
             return redirect(RouteServiceProvider::USER);
         }
     }

@@ -18,7 +18,7 @@
       Generate Clear Website Reports in Minutes
     </h1>
     <p class="fcr1-d1-p">
-      Create detailed reports for SEO, performance, HTML best practices, and security - all from a single dashboard. Share insights, spot issues, and take action fast.
+      Create detailed reports for SEO, performance, best practices, and security - all from a single dashboard. Share insights, spot issues, and take action fast.
     </p>
     <div>
       <button class="fr1-d1-button" id="fr1-d1-button" data-bs-toggle="modal" data-bs-target="#registerModal">

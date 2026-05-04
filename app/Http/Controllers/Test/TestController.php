@@ -101,7 +101,13 @@ class TestController extends Controller
             }
 
             if($data["project"] === "default"){
-                $settings = projectSettings::where("type", "default")->with("settingsSub")->get()->first();
+                $settings = $this->resolveCollectSettingsForDefaultProject();
+                if (!$settings || !$settings->settingsSub) {
+                    return response()->json([
+                        'status' => 2,
+                        'msg' => 'We could not load default test settings. Create at least one project (with saved settings), then try again.',
+                    ]);
+                }
                 Session::put('settings', json_encode($settings));
             }else if($data["project"] === "bulk" || $data["project"] === "analysis"){
                 $settings = $data["settingsVal"];
@@ -2742,14 +2748,19 @@ class TestController extends Controller
 
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settingsSub = $this->sessionSettingsSubOrDefaults([
+            'google_insights_desktop' => 1,
+            'google_insights_desktop_val' => 90,
+            'google_insights_mobile' => 1,
+            'google_insights_mobile_val' => 90,
+        ]);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
-        $googleInsightsDesktop = $settings->settings_sub->google_insights_desktop;
-        $googleInsightsDesktopVal = $settings->settings_sub->google_insights_desktop_val;
-        $googleInsightsMobile = $settings->settings_sub->google_insights_mobile;
-        $googleInsightsMobileVal = $settings->settings_sub->google_insights_mobile_val;
+        $googleInsightsDesktop = $settingsSub->google_insights_desktop;
+        $googleInsightsDesktopVal = $settingsSub->google_insights_desktop_val;
+        $googleInsightsMobile = $settingsSub->google_insights_mobile;
+        $googleInsightsMobileVal = $settingsSub->google_insights_mobile_val;
  
         $title = "Google Page Speed Overall Score";
         $titleDesktop = "Google Page Speed (Desktop)";
@@ -2823,7 +2834,7 @@ class TestController extends Controller
         $object->name = "google_check";
         $object->parentCard = "performance";
         
-        $object->settings = $settings->settings_sub;
+        $object->settings = $settingsSub;
         echo json_encode($object);
     }
 
@@ -2844,29 +2855,46 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settingsSub = $this->sessionSettingsSubOrDefaults([
+            'google_performance_desktop' => 1,
+            'google_performance_desktop_val' => 90,
+            'google_performance_mobile' => 1,
+            'google_performance_mobile_val' => 90,
+            'google_accessibility_desktop' => 1,
+            'google_accessibility_desktop_val' => 90,
+            'google_accessibility_mobile' => 1,
+            'google_accessibility_mobile_val' => 90,
+            'google_best_practices_desktop' => 1,
+            'google_best_practices_desktop_val' => 90,
+            'google_best_practices_mobile' => 1,
+            'google_best_practices_mobile_val' => 90,
+            'google_seo_desktop' => 1,
+            'google_seo_desktop_val' => 90,
+            'google_seo_mobile' => 1,
+            'google_seo_mobile_val' => 90,
+        ]);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
-        $googlePerformanceDesktop = $settings->settings_sub->google_performance_desktop;
-        $googlePerformanceDesktopVal = $settings->settings_sub->google_performance_desktop_val;
-        $googlePerformanceMobile = $settings->settings_sub->google_performance_mobile;
-        $googlePerformanceMobileVal = $settings->settings_sub->google_performance_mobile_val;
+        $googlePerformanceDesktop = $settingsSub->google_performance_desktop;
+        $googlePerformanceDesktopVal = $settingsSub->google_performance_desktop_val;
+        $googlePerformanceMobile = $settingsSub->google_performance_mobile;
+        $googlePerformanceMobileVal = $settingsSub->google_performance_mobile_val;
         
-        $googleAccessibilityDesktop = $settings->settings_sub->google_accessibility_desktop;
-        $googleAccessibilityDesktopVal = $settings->settings_sub->google_accessibility_desktop_val;
-        $googleAccessibilityMobile = $settings->settings_sub->google_accessibility_mobile;
-        $googleAccessibilityMobileVal = $settings->settings_sub->google_accessibility_mobile_val;
+        $googleAccessibilityDesktop = $settingsSub->google_accessibility_desktop;
+        $googleAccessibilityDesktopVal = $settingsSub->google_accessibility_desktop_val;
+        $googleAccessibilityMobile = $settingsSub->google_accessibility_mobile;
+        $googleAccessibilityMobileVal = $settingsSub->google_accessibility_mobile_val;
 
-        $googleBestPracticesDesktop = $settings->settings_sub->google_best_practices_desktop;
-        $googleBestPracticesDesktopVal = $settings->settings_sub->google_best_practices_desktop_val;
-        $googleBestPracticesMobile = $settings->settings_sub->google_best_practices_mobile;
-        $googleBestPracticesMobileVal = $settings->settings_sub->google_best_practices_mobile_val;
+        $googleBestPracticesDesktop = $settingsSub->google_best_practices_desktop;
+        $googleBestPracticesDesktopVal = $settingsSub->google_best_practices_desktop_val;
+        $googleBestPracticesMobile = $settingsSub->google_best_practices_mobile;
+        $googleBestPracticesMobileVal = $settingsSub->google_best_practices_mobile_val;
 
-        $googleSeoDesktop = $settings->settings_sub->google_seo_desktop;
-        $googleSeoDesktopVal = $settings->settings_sub->google_seo_desktop_val;
-        $googleSeoMobile = $settings->settings_sub->google_seo_mobile;
-        $googleSeoMobileVal = $settings->settings_sub->google_seo_mobile_val;
+        $googleSeoDesktop = $settingsSub->google_seo_desktop;
+        $googleSeoDesktopVal = $settingsSub->google_seo_desktop_val;
+        $googleSeoMobile = $settingsSub->google_seo_mobile;
+        $googleSeoMobileVal = $settingsSub->google_seo_mobile_val;
 
         $googleLighthouseCheckDesktop = $googlePerformanceDesktop || $googleAccessibilityDesktop || $googleBestPracticesDesktop || $googleSeoDesktop ? true : false;
         $googleLighthouseCheckMobile = $googlePerformanceMobile || $googleAccessibilityMobile || $googleBestPracticesMobile || $googleSeoMobile ? true : false;
@@ -3030,7 +3058,7 @@ class TestController extends Controller
         $object->tagName = "lighthouse";
         $object->name = "google_check";
         $object->parentCard = "performance";
-        $object->settings = $settings->settings_sub;
+        $object->settings = $settingsSub;
         echo json_encode($object);
     }
 
@@ -3059,44 +3087,73 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settingsSub = $this->sessionSettingsSubOrDefaults([
+            'google_lcp_desktop' => 1,
+            'google_lcp_desktop_val' => 2.5,
+            'google_lcp_mobile' => 1,
+            'google_lcp_mobile_val' => 2.5,
+            'google_cls_desktop' => 1,
+            'google_cls_desktop_val' => 0.1,
+            'google_cls_mobile' => 1,
+            'google_cls_mobile_val' => 0.1,
+            'google_fcp_desktop' => 1,
+            'google_fcp_desktop_val' => 2,
+            'google_fcp_mobile' => 1,
+            'google_fcp_mobile_val' => 2,
+            'google_fid_desktop' => 1,
+            'google_fid_desktop_val' => 100,
+            'google_fid_mobile' => 1,
+            'google_fid_mobile_val' => 100,
+            'google_tbt_desktop' => 1,
+            'google_tbt_desktop_val' => 300,
+            'google_tbt_mobile' => 1,
+            'google_tbt_mobile_val' => 300,
+            'google_tti_desktop' => 1,
+            'google_tti_desktop_val' => 4,
+            'google_tti_mobile' => 1,
+            'google_tti_mobile_val' => 4,
+            'google_speed_index_desktop' => 1,
+            'google_speed_index_desktop_val' => 4,
+            'google_speed_index_mobile' => 1,
+            'google_speed_index_mobile_val' => 4,
+        ]);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
-        $googleLCPDesktop = $settings->settings_sub->google_lcp_desktop;
-        $googleLCPDesktopVal = $settings->settings_sub->google_lcp_desktop_val;
-        $googleLCPMobile = $settings->settings_sub->google_lcp_mobile;
-        $googleLCPMobileVal = $settings->settings_sub->google_lcp_mobile_val;
+        $googleLCPDesktop = $settingsSub->google_lcp_desktop;
+        $googleLCPDesktopVal = $settingsSub->google_lcp_desktop_val;
+        $googleLCPMobile = $settingsSub->google_lcp_mobile;
+        $googleLCPMobileVal = $settingsSub->google_lcp_mobile_val;
         
-        $googleCLSDesktop = $settings->settings_sub->google_cls_desktop;
-        $googleCLSDesktopVal = $settings->settings_sub->google_cls_desktop_val;
-        $googleCLSMobile = $settings->settings_sub->google_cls_mobile;
-        $googleCLSMobileVal = $settings->settings_sub->google_cls_mobile_val;
+        $googleCLSDesktop = $settingsSub->google_cls_desktop;
+        $googleCLSDesktopVal = $settingsSub->google_cls_desktop_val;
+        $googleCLSMobile = $settingsSub->google_cls_mobile;
+        $googleCLSMobileVal = $settingsSub->google_cls_mobile_val;
 
-        $googleFCPDesktop = $settings->settings_sub->google_fcp_desktop;
-        $googleFCPDesktopVal = $settings->settings_sub->google_fcp_desktop_val;
-        $googleFCPMobile = $settings->settings_sub->google_fcp_mobile;
-        $googleFCPMobileVal = $settings->settings_sub->google_fcp_mobile_val;
+        $googleFCPDesktop = $settingsSub->google_fcp_desktop;
+        $googleFCPDesktopVal = $settingsSub->google_fcp_desktop_val;
+        $googleFCPMobile = $settingsSub->google_fcp_mobile;
+        $googleFCPMobileVal = $settingsSub->google_fcp_mobile_val;
 
-        $googleFIDDesktop = $settings->settings_sub->google_fid_desktop;
-        $googleFIDDesktopVal = $settings->settings_sub->google_fid_desktop_val;
-        $googleFIDMobile = $settings->settings_sub->google_fid_mobile;
-        $googleFIDMobileVal = $settings->settings_sub->google_fid_mobile_val;
+        $googleFIDDesktop = $settingsSub->google_fid_desktop;
+        $googleFIDDesktopVal = $settingsSub->google_fid_desktop_val;
+        $googleFIDMobile = $settingsSub->google_fid_mobile;
+        $googleFIDMobileVal = $settingsSub->google_fid_mobile_val;
 
-        $googleTBTDesktop = $settings->settings_sub->google_tbt_desktop;
-        $googleTBTDesktopVal = $settings->settings_sub->google_tbt_desktop_val;
-        $googleTBTMobile = $settings->settings_sub->google_tbt_mobile;
-        $googleTBTMobileVal = $settings->settings_sub->google_tbt_mobile_val;
+        $googleTBTDesktop = $settingsSub->google_tbt_desktop;
+        $googleTBTDesktopVal = $settingsSub->google_tbt_desktop_val;
+        $googleTBTMobile = $settingsSub->google_tbt_mobile;
+        $googleTBTMobileVal = $settingsSub->google_tbt_mobile_val;
 
-        $googleTTIDesktop = $settings->settings_sub->google_tti_desktop;
-        $googleTTIDesktopVal = $settings->settings_sub->google_tti_desktop_val;
-        $googleTTIMobile = $settings->settings_sub->google_tti_mobile;
-        $googleTTIMobileVal = $settings->settings_sub->google_tti_mobile_val;
+        $googleTTIDesktop = $settingsSub->google_tti_desktop;
+        $googleTTIDesktopVal = $settingsSub->google_tti_desktop_val;
+        $googleTTIMobile = $settingsSub->google_tti_mobile;
+        $googleTTIMobileVal = $settingsSub->google_tti_mobile_val;
 
-        $googleSIDesktop = $settings->settings_sub->google_speed_index_desktop;
-        $googleSIDesktopVal = $settings->settings_sub->google_speed_index_desktop_val;
-        $googleSIMobile = $settings->settings_sub->google_speed_index_mobile;
-        $googleSIMobileVal = $settings->settings_sub->google_speed_index_mobile_val;
+        $googleSIDesktop = $settingsSub->google_speed_index_desktop;
+        $googleSIDesktopVal = $settingsSub->google_speed_index_desktop_val;
+        $googleSIMobile = $settingsSub->google_speed_index_mobile;
+        $googleSIMobileVal = $settingsSub->google_speed_index_mobile_val;
 
         $googleCoreCheckDesktop = $googleLCPDesktop || $googleCLSDesktop || $googleFCPDesktop || $googleFIDDesktop || $googleTBTDesktop || $googleTTIDesktop || $googleSIDesktop ? true : false;
         $googleCoreCheckMobile = $googleLCPMobile || $googleCLSMobile || $googleFCPMobile || $googleFIDMobile || $googleTBTMobile || $googleTTIMobile || $googleSIMobile ? true : false;
@@ -3344,7 +3401,7 @@ class TestController extends Controller
         $object->tagName = "core_web_vitals";
         $object->name = "google_check";
         $object->parentCard = "performance";
-        $object->settings = $settings->settings_sub;
+        $object->settings = $settingsSub;
         echo json_encode($object);
     }
 
@@ -4100,5 +4157,70 @@ class TestController extends Controller
             $object->allLinks = $output->results;
         }
         echo json_encode($object);
+    }
+
+    /**
+     * Merge session settings.settings_sub with defaults (DB migration defaults) when session is empty or malformed.
+     *
+     * @param  array<string, mixed>  $defaults
+     */
+    protected function sessionSettingsSubOrDefaults(array $defaults): object
+    {
+        $base = (object) $defaults;
+        $raw = Session::get('settings');
+        if ($raw === null || $raw === '') {
+            return $base;
+        }
+        $settings = is_string($raw) ? json_decode($raw) : $raw;
+        if (! is_object($settings) || ! isset($settings->settings_sub)) {
+            return $base;
+        }
+        $sub = $settings->settings_sub;
+        if (is_array($sub)) {
+            $sub = (object) $sub;
+        }
+        if (! is_object($sub)) {
+            return $base;
+        }
+        foreach (array_keys($defaults) as $key) {
+            if (property_exists($sub, $key)) {
+                $base->{$key} = $sub->{$key};
+            }
+        }
+
+        return $base;
+    }
+
+    /**
+     * Public/footer "default" collects expect session settings shaped like projectSettings + settingsSub.
+     * Rows with type "default" are often missing; fall back to the signed-in user's projects, then any row.
+     */
+    protected function resolveCollectSettingsForDefaultProject(): ?projectSettings
+    {
+        $settings = projectSettings::where('type', 'default')
+            ->with('settingsSub')
+            ->first();
+        if ($settings && $settings->settingsSub) {
+            return $settings;
+        }
+
+        if (Auth::check()) {
+            $projectIds = Projects::where('user_id', Auth::id())->pluck('id');
+            if ($projectIds->isNotEmpty()) {
+                $settings = projectSettings::with('settingsSub')
+                    ->whereIn('projects_id', $projectIds)
+                    ->whereHas('settingsSub')
+                    ->orderByDesc('id')
+                    ->first();
+                if ($settings) {
+                    return $settings;
+                }
+            }
+        }
+
+        return projectSettings::with('settingsSub')
+            ->whereHas('settingsSub')
+            ->orderBy('id')
+            ->first();
     }
 }

@@ -3043,7 +3043,7 @@ $(document).ready(function () {
       })
     }
 
-    else if(page[1] === "mobile-friendly"){
+    else if(page[1] === "mobile-friendliness"){
      UI.buildTableHeader("mobile_friendly", data.mobile_friendly, 1, options, settings, "performance")
 
     updatedUrls.forEach(el=>{
@@ -3216,7 +3216,7 @@ $(document).ready(function () {
   
         if(dbName === "cbp_labels"){
           return {
-            display_name: "HTML Best Practices",
+            display_name: "Best Practices",
             urlDetails: "/test-details/coding-best-practices",
             reportsUrl: "/reports/coding-best-practices",
             db_name: "cbp_labels"

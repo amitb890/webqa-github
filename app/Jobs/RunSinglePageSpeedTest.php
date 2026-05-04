@@ -2,15 +2,21 @@
 
 namespace App\Jobs;
 
+use App\Mail\PageSpeedCompletedMail;
 use App\Models\LighthouseResult;
 use App\Models\LighthouseTest;
+use App\Models\Projects;
+use App\Models\User;
+use App\Support\UserDisplayName;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class RunSinglePageSpeedTest implements ShouldQueue
 {
@@ -112,6 +118,56 @@ class RunSinglePageSpeedTest implements ShouldQueue
             $test->update([
                 'status' => $failed > 0 ? 'failed' : 'completed',
             ]);
+
+            $this->maybeSendCompletionEmail((int) $testId);
         }
+    }
+
+    private function maybeSendCompletionEmail(int $testId): void
+    {
+        DB::transaction(function () use ($testId) {
+            $test = LighthouseTest::lockForUpdate()->find($testId);
+            if (! $test || $test->completion_email_sent_at) {
+                return;
+            }
+            if (! $test->send_completion_email) {
+                $test->update(['completion_email_sent_at' => now()]);
+
+                return;
+            }
+
+            $user = User::find($test->user_id);
+            if (! $user) {
+                $test->update(['completion_email_sent_at' => now()]);
+
+                return;
+            }
+
+            $project = Projects::find($test->project_id);
+            $projectName = $project ? $project->name : 'your project';
+
+            $urls = json_decode($test->urls, true);
+            $urlCount = is_array($urls) ? count($urls) : 0;
+
+            $reportUrl = URL::route('dashboard');
+
+            try {
+                Mail::to($user->email)->send(new PageSpeedCompletedMail(
+                    UserDisplayName::firstName($user->name),
+                    $projectName,
+                    $urlCount,
+                    $reportUrl
+                ));
+            } catch (\Throwable $e) {
+                Log::warning('Page speed completion email failed: '.$e->getMessage(), [
+                    'lighthouse_test_id' => $test->id,
+                    'user_id' => $user->id,
+                ]);
+
+                return;
+            }
+
+            $test->update(['completion_email_sent_at' => now()]);
+        });
     }
 }

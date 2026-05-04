@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
@@ -20,7 +21,29 @@ class NewPasswordController extends Controller
      */
     public function create(Request $request)
     {
+        $email = $request->query('email');
+        $token = $request->route('token');
+
+        if (! $this->passwordResetTokenIsValid($email, $token)) {
+            return view('auth.reset-password-link-expired');
+        }
+
         return view('auth.reset-password', ['request' => $request]);
+    }
+
+    private function passwordResetTokenIsValid(?string $email, string $token): bool
+    {
+        if (! $email) {
+            return false;
+        }
+
+        $record = DB::table('password_resets')->where('email', $email)->first();
+
+        if (! $record) {
+            return false;
+        }
+
+        return Hash::check($token, $record->token);
     }
 
     /**

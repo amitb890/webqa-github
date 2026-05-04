@@ -297,6 +297,7 @@
 
   .g_footer_main {
     justify-content: space-around;
+    padding-top: 0px;
   }
 
   /* blog page 991 responsive start 
