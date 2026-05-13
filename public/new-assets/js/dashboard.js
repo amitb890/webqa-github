@@ -1,9 +1,10 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1, urlsGoogleFinal = 0
+  var recheckMax = 100, recheckGoogle = 1, recheckSingleMax = 100, urlsGoogleFinal = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
+  var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
@@ -700,6 +701,71 @@ $(document).ready(function () {
           return $.Deferred().resolve().promise()
         }
         return $.when.apply($, promises)
+    }
+
+    /**
+     * Renders dashboard tiles from cached_dashboard_details summaries (one get-test-data response).
+     * Skips per-widget getTestDetails requests. Page Speed tiles are excluded — use buildGoogleElements.
+     */
+    static buildLoaderCardsFromCached(data){
+      const skipCachedWidgets = new Set([
+        "url_slug",
+        "meta_viewport",
+        "doctype",
+        "favicon",
+        "page_size",
+        "google_overall",
+        "google_lighthouse",
+        "core_web_vitals"
+      ])
+      for (const [key, value] of Object.entries(data || {})) {
+        if (skipCachedWidgets.has(key) || ignore_tests.includes(key)) continue
+
+        const hasRenderableData = Array.isArray(value)
+          ? value.length > 0
+          : (value && typeof value === "object" ? Object.keys(value).length > 0 : Boolean(value))
+
+        if (!hasRenderableData) continue
+
+        let label
+        if(key === "security_labels"){
+          label = {
+            display_name: "Security Headers",
+            urlDetails: "/test-details/security-headers",
+            reportsUrl: "/reports/security-headers",
+            db_name: "security_labels"
+          }
+        }else if(key === "cbp_labels"){
+          label = {
+            display_name: "Best Practices",
+            urlDetails: "/test-details/coding-best-practices",
+            reportsUrl: "/reports/coding-best-practices",
+            db_name: "cbp_labels"
+          }
+        }else{
+          label = Controls.getActiveLabel(key)
+          if (!label) continue
+          if (label.db_name === "xml_sitemap") {
+            label.display_name = "Sitemap"
+          }
+          if (label.show_dashboard_status === false) continue
+        }
+
+        UI.buildSingleLoaderCard(label, false)
+        Controls.applyDashboardCardResponse(value, [], key, label)
+      }
+    }
+
+    /** Shell tiles (preloader) for Page Speed widgets — same DOM as manageSingleCard when results are empty. */
+    static buildGooglePlaceholderLoaderCards(){
+      for (let i = 0; i < ignore_tests.length; i++) {
+        const dbName = ignore_tests[i]
+        const label = Controls.getActiveLabel(dbName)
+        if (!label) continue
+        if (label.show_dashboard_status === false) continue
+        if (document.getElementById("card_" + dbName)) continue
+        UI.buildSingleLoaderCard(label, false)
+      }
     }
 
 
@@ -3054,6 +3120,7 @@ $(document).ready(function () {
     static buildDashboard(dashboardStatus){
         DB.getTestData(projectId)
         .done(function(data) {
+          useCachedDashboardData = data.use_cached_dashboard === true
           projectSettings = data.settings
           if(data.results.security_labels){
             data.results.security_labels = Controls.cleanNulls(data.results.security_labels) 
@@ -3070,8 +3137,41 @@ $(document).ready(function () {
             lastXmlSitemapCardPayload = null
             UI.buildWidgetSidebar()
 
+            function finishDashboardTiles(cardsDeferred){
+              $.when(cardsDeferred).done(function () {
+                Controls.activeEvents()
 
+                UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
+                UI.ensureWidgetNotice("google_overall", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+                UI.ensureWidgetNotice("google_lighthouse", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+                UI.ensureWidgetNotice("core_web_vitals", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
 
+                if(dashboardStatus === 2){
+                  urls = originalUrls.slice(0, recheckMax)
+                  urlsToCheck = recheckMax
+                  UI.buildRecheckLoader()
+                }else if(dashboardStatus === 3){
+
+                }
+
+                console.log(useCachedDashboardData ? "Dashboard finished (cached)" : "Dashboard finished")
+                Controls.buildGoogleElements()
+              })
+            }
+
+            if (useCachedDashboardData) {
+              removeLoader()
+              UI.toggleDashboardElements(projectFinal)
+              if (data.alerts && Array.isArray(data.alerts)) {
+                UI.buildDBAlerts(data.alerts)
+              }
+              UI.buildLoaderCardsFromCached(testDetails)
+              UI.buildGooglePlaceholderLoaderCards()
+              UI.buildSubmitIdeaWidget(testDetails)
+              UI.buildAddWidget(testDetails)
+              finishDashboardTiles($.Deferred().resolve().promise())
+              return
+            }
 
             // display alerts from DB
             DB.getAlerts(projectId)
@@ -3083,26 +3183,7 @@ $(document).ready(function () {
                 const cardsDeferred = UI.buildLoaderCards(testDetails)
                 UI.buildSubmitIdeaWidget(testDetails)
                 UI.buildAddWidget(testDetails)
-                $.when(cardsDeferred).done(function () {
-                  Controls.activeEvents()
-
-                  // Post-initial-prep notices (Images + Page Speed tiles)
-                  UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
-                  UI.ensureWidgetNotice("google_overall", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
-                  UI.ensureWidgetNotice("google_lighthouse", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
-                  UI.ensureWidgetNotice("core_web_vitals", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
-
-                  if(dashboardStatus === 2){ // if recheck state build recheck loader
-                    urls = originalUrls.slice(0, recheckMax)
-                    urlsToCheck = recheckMax
-                    UI.buildRecheckLoader()
-                  }else if(dashboardStatus === 3){ // if recheck single state build recheck loader
-                    
-                  }
-
-                  console.log("Dashboard finished")
-                  Controls.buildGoogleElements()
-                })
+                finishDashboardTiles(cardsDeferred)
             });
             
         });
@@ -3447,11 +3528,21 @@ $(document).ready(function () {
 
                 if (status === 'completed') {
                     if (recheckSingleIntervalStatus) {
-                        let obj = Controls.updateTestDataForm(results);
+                        let obj = Controls.updateTestDataForm(results || {});
+                        const refreshedElement = obj && Array.isArray(obj[dbName]) ? obj[dbName] : [];
+                        const refreshedLabel = Controls.getActiveLabel(dbName);
+
+                        // Some completed polls can arrive without the specific widget payload;
+                        // avoid crashing and wait for the next poll instead.
+                        if (!refreshedLabel || refreshedElement.length === 0) {
+                          await new Promise(res => setTimeout(res, 700));
+                          continue;
+                        }
+
                         Controls.manageSingleCard(
-                            obj[dbName],
+                            refreshedElement,
                             dbName,
-                            obj[dbName][0].label,
+                            refreshedLabel,
                             false,
                             false
                         );

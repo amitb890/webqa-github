@@ -19,6 +19,7 @@ use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DashboardTestsDetails;
+use App\Services\DashboardTrackerCacheService;
 
 ini_set('max_execution_time', 180000);
 ini_set('memory_limit', '512M');
@@ -42,6 +43,24 @@ class RunTest implements ShouldQueue
     protected $total_urls_count;
     protected $user_id;
 
+    private function clearProxyEnvironment(): void
+    {
+        // Prevent worker-level proxy env vars from breaking outbound site fetches.
+        foreach ([
+            'http_proxy',
+            'https_proxy',
+            'HTTP_PROXY',
+            'HTTPS_PROXY',
+            'all_proxy',
+            'ALL_PROXY',
+            'no_proxy',
+            'NO_PROXY',
+        ] as $envKey) {
+            putenv($envKey);
+            $_ENV[$envKey] = '';
+            $_SERVER[$envKey] = '';
+        }
+    }
     
 
 
@@ -202,12 +221,15 @@ class RunTest implements ShouldQueue
          $finalRes = [];
      
          try {
+            $this->clearProxyEnvironment();
      
             $goutteClient = new Client(
                 HttpClient::create([
                     'timeout' => 120,
                     'verify_host' => false,     // replaces CURLOPT_SSL_VERIFYHOST
                     'verify_peer' => false,     // replaces CURLOPT_SSL_VERIFYPEER
+                    'proxy' => null,
+                    'no_proxy' => '*',
             
                     // CURLOPT_SSLVERSION => TLS v1.2 equivalent:
                     'crypto_method' => STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT,
@@ -458,11 +480,16 @@ class RunTest implements ShouldQueue
             $existingData = json_decode($result->data, true) ?? [];
 
             if ($typeOfTest === "single_recheck") {
+                // Parent widget refreshes (security_labels / cbp_labels) produce child label keys.
+                // Preserve untouched keys and only overwrite keys produced in this recheck job.
+                if (in_array($this->recheck_label, ['security_labels', 'cbp_labels'], true)) {
+                    foreach ($allResults as $k => $v) {
+                        $existingData[$k] = $v;
+                    }
+                } else {
+                    $existingData[$this->recheck_label] = $allResults[$this->recheck_label] ?? null;
+                }
 
-                // Update ONLY the one label inside the JSON
-                $existingData[$this->recheck_label] = $allResults[$this->recheck_label] ?? null;
-
-                // Save old + updated label
                 $finalData = $existingData;
 
             } else {
@@ -523,21 +550,34 @@ class RunTest implements ShouldQueue
          $done  = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
              ->whereIn('status', ['completed', 'failed'])
              ->count();
+         $completed = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
+             ->where('status', 'completed')
+             ->count();
      
          if ($total > 0 && $total === $done) {
-     
-             DashboardTests::where('id', $this->dashboardTestId)
-                 ->update(['status' => 'completed']);
+            $allSucceeded = ($completed === $total);
+            DashboardTests::where('id', $this->dashboardTestId)
+                ->update(['status' => $allSucceeded ? 'completed' : 'failed']);
 
-             // create success alert
-            if($this->type != "single_recheck"){
-                $alert = new Alerts();
-                $alert->user_id = $this->user_id;
-                $alert->project_id = $projectId;
-                $alert->message = $DB_MSG;
-                $alert->page = "dashboard";
-                $alert->status = 1;
-                $alert->save();
+            if ($allSucceeded) {
+                DashboardTrackerCacheService::finalizeDashboardTestAndRefreshCaches(
+                    (int) $projectId,
+                    (int) $this->user_id,
+                    (int) $this->dashboardTestId,
+                    (string) $this->type,
+                    (string) $this->recheck_label
+                );
+
+                // create success alert
+                if($this->type != "single_recheck"){
+                    $alert = new Alerts();
+                    $alert->user_id = $this->user_id;
+                    $alert->project_id = $projectId;
+                    $alert->message = $DB_MSG;
+                    $alert->page = "dashboard";
+                    $alert->status = 1;
+                    $alert->save();
+                }
             }
          }
      }

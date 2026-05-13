@@ -25,7 +25,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Promise\Utils;
 use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Schema;
 use App\Services\DashboardTestDataService;
+use App\Services\DashboardTrackerCacheService;
+use App\Models\CachedDashboardDetail;
 
 
 class ProjectsController extends Controller
@@ -218,6 +222,51 @@ class ProjectsController extends Controller
 
         if (!$dashboardTest) {
             return response()->json(['error' => 'Test not found'], 404);
+        }
+
+        if (
+            DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()
+            && (int) $project->dashboard_fully_tested === 1
+            && Schema::hasTable('cached_dashboard_details')
+        ) {
+            $settings = projectSettings::where('projects_id', $project->id)
+                ->with('settingsSub')
+                ->orderBy('id', 'DESC')
+                ->first();
+
+            $cachedRows = CachedDashboardDetail::query()
+                ->where('project_id', $projectId)
+                ->where('user_id', (int) $project->user_id)
+                ->orderBy('id')
+                ->get(['widget_key', 'widget_data_json']);
+
+            $results = [];
+            foreach ($cachedRows as $row) {
+                $decoded = json_decode((string) $row->widget_data_json, true);
+                $results[$row->widget_key] = is_array($decoded) ? $decoded : [];
+            }
+
+            // Page Speed / Lighthouse tiles: built via buildGoogleElements + polling, not from cache.
+            foreach (['google_overall', 'google_lighthouse', 'core_web_vitals'] as $googleKey) {
+                unset($results[$googleKey]);
+            }
+
+            $alerts = Alerts::where('user_id', Auth::id())
+                ->where('project_id', $projectId)
+                ->where('page', 'dashboard')
+                ->where('status', 1)
+                ->get();
+
+            return response()->json([
+                'status' => 1,
+                'msg' => 'Success.',
+                'project' => $project->toArray(),
+                'dashboard_status' => $dashboardTest->status,
+                'results' => $results,
+                'settings' => $settings ? $settings->toArray() : null,
+                'use_cached_dashboard' => true,
+                'alerts' => $alerts,
+            ]);
         }
 
         $payload = DashboardTestDataService::buildTestDataPayload($projectId, $project, $dashboardTest);
@@ -453,6 +502,9 @@ class ProjectsController extends Controller
             $project->homepage = $homepage;
             $project->favicon = $favicon_name;
             $project->landing_page_preview = "default";
+            if (DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()) {
+                $project->dashboard_fully_tested = 0;
+            }
 
             $urlsListState = true;
             $urlsList = null;
@@ -517,6 +569,18 @@ class ProjectsController extends Controller
             $settingsSub->xml_sitemap_val = $request->input('xmlSitemap');
             $settingsSub->html_sitemap_val = $request->input('htmlSitemap');
             $settingsSubState = $settingsSub->save();
+
+            if ($projectState) {
+                try {
+                    DashboardTrackerCacheService::initializeProjectCaches((int) $project->id, (int) Auth::id());
+                } catch (\Throwable $e) {
+                    Log::warning('Project cache init skipped: ' . $e->getMessage(), [
+                        'project_id' => (int) $project->id,
+                        'user_id' => (int) Auth::id(),
+                    ]);
+                }
+            }
+
             if ($projectState && $urlsListState && $settingsState && $settingsSubState) {
                 // Set the newly created project as the active project in session
                 session(['active_project_id' => $project->id]);

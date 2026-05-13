@@ -15,6 +15,7 @@ class Projects extends Model
         'favicon',
         'landing_page_preview',
         'dashboard_show_status',
+        'dashboard_fully_tested',
         'google_show_status',
         'recheck_type',
         'google_urls_checked_active',

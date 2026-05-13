@@ -6,6 +6,7 @@ use App\Http\Controllers\ProjectsController;
 use App\Jobs\RunLighthouseTest;
 use App\Models\LighthouseResult;
 use App\Models\LighthouseTest;
+use App\Services\DashboardTrackerCacheService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -111,6 +112,14 @@ class LighthouseController extends Controller
     
         // Optionally update the main DashboardTests status in DB
         $lighthouseTest->update(['status' => $status]);
+
+        if ($status === 'completed') {
+            DashboardTrackerCacheService::finalizeGoogleWidgetsCache(
+                (int) $projectId,
+                (int) $lighthouseTest->user_id,
+                (int) $lighthouseTest->id
+            );
+        }
     
         return response()->json([
             'status' => $status,

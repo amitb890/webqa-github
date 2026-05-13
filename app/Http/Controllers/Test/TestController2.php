@@ -20,6 +20,7 @@ use App\Models\DashboardTestsDetails;
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
 use App\Models\ProjectTestDetails;
+use App\Services\DashboardTrackerCacheService;
 use App\Mail\EmailReportMail;
 use Helper;
 use Illuminate\Support\Facades\Http;
@@ -61,6 +62,34 @@ class TestController2 extends Controller
         if (empty($urls) || !is_array($urls)) {
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
+        $targetUrls = collect($urls)
+            ->map(function ($u) {
+                if (is_array($u) && isset($u['url'])) {
+                    return trim((string) $u['url']);
+                }
+                return is_string($u) ? trim($u) : '';
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        $project = Projects::select('id')->find($project_id);
+        if (! $project) {
+            return response()->json(['error' => 'Project not found.'], 404);
+        }
+
+        $isFullDashboardRun = ($type === 'default' || $type === null || $type === '');
+        if ($isFullDashboardRun && DashboardTrackerCacheService::getProjectDashboardFullyTestedValue($project_id) === 1) {
+            return response()->json([
+                'status' => 1,
+                'skipped' => true,
+                'msg' => 'Dashboard test already fully completed for this project.',
+            ]);
+        }
+
+        // Allow recheck/single_recheck to run even when fully-tested is 1.
+        // Only reset the flag when an actual new test run is starting.
+        DashboardTrackerCacheService::resetProjectDashboardFullyTested($project_id);
 
         // // Updating dashboard testing status
         // if ($type != "single_recheck") {
@@ -110,8 +139,10 @@ class TestController2 extends Controller
             if ($dashboardTest) {
                 $dashboardTest->update([
                     'status' => 'recheck',
+                    'urls' => json_encode($urls),
                 ]);
                 DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
+                    ->whereIn('url', $targetUrls)
                     ->update(['status' => 'pending']);
             } else {
                 // No existing test (e.g. first run on VPS): create one like initial run
@@ -128,8 +159,10 @@ class TestController2 extends Controller
             if ($dashboardTest) {
                 $dashboardTest->update([
                     'status' => 'recheck',
+                    'urls' => json_encode($urls),
                 ]);
                 DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
+                    ->whereIn('url', $targetUrls)
                     ->update(['status' => 'pending']);
             } else {
                 $dashboardTest = DashboardTests::create([
