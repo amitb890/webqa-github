@@ -483,13 +483,31 @@ $(document).ready(function () {
 
       static updateTableDesign(){
         const height = $("#reportTable .table-header-top").height() + 2
-        $(".table-header-top td:first-child").css({height: height})   
-        $("#reportTable [data-consists='title']").each(function () {
-          const currentColspan = parseInt($(this).attr("colspan"), 10)
-          if (Number.isFinite(currentColspan)) {
-            $(this).attr("colspan", currentColspan + 1)
+        $(".table-header-top td:first-child").css({height: height})
+
+        const isWebsiteTracker = page && page[0] === "website-tracker"
+
+        if (isWebsiteTracker) {
+          $("#reportTable [data-consists='title']").each(function () {
+            const currentColspan = parseInt($(this).attr("colspan"), 10)
+            if (Number.isFinite(currentColspan)) {
+              $(this).attr("colspan", currentColspan + 1)
+            }
+          })
+        } else {
+          const consistsType = Controls.getReportTableConsistsType()
+          if (!consistsType) {
+            return
           }
-        })
+
+          const selector = `#reportTable [data-consists='${consistsType.replace(/'/g, "\\'")}']`
+          $(selector).each(function () {
+            const currentColspan = parseInt($(this).attr("colspan"), 10)
+            if (Number.isFinite(currentColspan)) {
+              $(this).attr("colspan", currentColspan + 1)
+            }
+          })
+        }
       }
 
       static toggleTrackerElements(){
@@ -2507,7 +2525,7 @@ $(document).ready(function () {
             })
           })
 
-        }else if(page[1] === "description"){
+        }else if(page[1] === "meta-description"){
           UI.buildTableHeader("description", data.meta_desc, 2, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
@@ -3535,6 +3553,54 @@ $(document).ready(function () {
           await Controls.recheckStart()
           e.preventDefault()
         })
+      }
+
+      /** Report slug → buildTableHeader `type` / `data-consists` value (reports table layout only). */
+      static getReportTableConsistsType(){
+        if (!page.includes("reports")) return null
+        const slug = page[1]
+        const map = {
+          "meta-title": "title",
+          "meta-description": "description",
+          "http-status-code": "http_status_code",
+          "broken-links": "broken_links",
+          "xml-sitemap": "xml_sitemap",
+          "html-sitemap": "html_sitemap",
+          "url-slug": "url_slug",
+          "canonical": "canonical",
+          "robots-meta": "robots",
+          "robotstxt": "robot_text_test",
+          "headings": "h1_heading_tag",
+          "doctype": "doctype",
+          "meta-viewport": "meta_viewport",
+          "favicon": "favicon",
+          "images": "images",
+          "gzip-compression": "gzip_compression",
+          "css-compression": "css_compression",
+          "js-compression": "js_compression",
+          "html-compression": "html_compression",
+          "css-caching": "css_caching_enable",
+          "js-caching": "js_caching_enable",
+          "page-size": "page_size",
+          "nested-tables": "nested_tables",
+          "frameset": "frameset",
+          "safe-browsing": "is_safe_browsing",
+          "unsafe-cross-origin-links": "cross_origin_links",
+          "protocol-relative-resource": "protocol_relative_resource",
+          "content-security-policy-header": "content_security_policy_header",
+          "hsts-header": "hsts_header",
+          "bad-content-type": "bad_content_type",
+          "ssl-certificate": "ssl_certificate_enable",
+          "directory-browsing": "folder_browsing_enable",
+          "x-frame-options-header": "x_frame_options_header",
+          "og-tags": "open_graph_tags",
+          "twitter-tags": "twitter_tags",
+          "google-page-speed-insights": "google_overall",
+          "google-page-speed-lighthouse": "google_lighthouse",
+          "google-page-speed-core-web-vitals": "core_web_vitals",
+          "mobile-friendly": "mobile_friendly",
+        }
+        return map[slug] || null
       }
 
       static getReportRecheckLabel(){

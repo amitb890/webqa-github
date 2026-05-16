@@ -2,7 +2,7 @@ $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 100, recheckGoogle = 1, recheckSingleMax = 100, urlsGoogleFinal = 0
+  var recheckMax = 100, recheckGoogle = 1, recheckSingleMax = 10, urlsGoogleFinal = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
   var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
@@ -2277,13 +2277,13 @@ $(document).ready(function () {
                   <div class="deshboard_inner_description border_bottom">
                     <p>Totals Images <span>${data.totalImages}</span></p>
                     <p>
-                      Image file name with Large File Name (>${settings.settings_sub.image_name_max_characters_val} characters) <span class="${data.imageNameLengthOver > 0 ? 'danger' : 'success'}">${data.imageNameLengthOver}</span>
+                      Large File Name <span class="${data.imageNameLengthOver > 0 ? 'danger' : 'success'}">${data.imageNameLengthOver}</span>
                     </p>
                     <p>
-                      Images with Missing Alternative Text <span class="${data.imageNameMissingAlt > 0 ? 'danger' : 'success'}">${data.imageNameMissingAlt}</span>
+                      Missing Alternative Text <span class="${data.imageNameMissingAlt > 0 ? 'danger' : 'success'}">${data.imageNameMissingAlt}</span>
                     </p>
                     <p>
-                      Images with High File Size (>${settings.settings_sub.image_max_size_val} KB) <span class="${data.imageSizeOver > 0 ? 'danger' : 'success'}">${data.imageSizeOver}</span>
+                      High File Size  <span class="${data.imageSizeOver > 0 ? 'danger' : 'success'}">${data.imageSizeOver}</span>
                     </p>
                   </div>
                 </div>
@@ -3686,24 +3686,37 @@ $(document).ready(function () {
     
 
     static updateProgress(results, progress, completedCount, total){
-        if(results){
+        const hasProgress = progress !== undefined && progress !== null
+        const hasCounts = completedCount !== undefined && total !== undefined
+
+        if (!hasProgress && !hasCounts && !results) {
+          return
+        }
+
+        if (hasProgress) {
           UI.updateProgressBar(progress)
+        }
 
-          
-
+        if (hasCounts) {
           document.querySelectorAll(".preparing_list").forEach(li=>{
-            li.querySelector(".taly-done").textContent = completedCount
-
+            const tally = li.querySelector(".taly-done")
+            if (tally) {
+              tally.textContent = completedCount
+            }
 
             // update image
-            if(total === completedCount){
-              const svg = `<svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>`
-              li.querySelector("img").remove()
-              const html = svg + li.querySelector("p").innerHTML
-              li.querySelector("p").innerHTML = html
+            if (total === completedCount) {
+              const img = li.querySelector("img")
+              if (img) {
+                const svg = `<svg class="svg-inline--fa fa-check" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="check" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M470.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L192 338.7 425.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg>`
+                img.remove()
+                const p = li.querySelector("p")
+                if (p) {
+                  p.innerHTML = svg + p.innerHTML
+                }
+              }
             }
           })
-
         }
     }
 

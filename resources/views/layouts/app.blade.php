@@ -477,7 +477,7 @@ if (!empty($activeProjectFavicon)) {
               </div>
               <ul id="ssbl-item-top-seo" class="ssbl-item-top-seo">
                 <li data-report-setting="meta_title"><a href="/reports/meta-title"><p>Meta Title</p></a></li>
-                <li data-report-setting="meta_desc"><a href="/reports/description"><p>Meta Description</p></a></li>
+                <li data-report-setting="meta_desc"><a href="/reports/meta-description"><p>Meta Description</p></a></li>
                 <li data-report-setting="robots_meta"><a href="/reports/robots-meta"><p>Robots Meta</p></a></li>
                 <li data-report-setting="canonical_url"><a href="/reports/canonical"><p>Canonical</p></a></li>
                 <li data-report-setting="url_slug"><a href="/reports/url-slug"><p>URL Slug</p></a></li>
