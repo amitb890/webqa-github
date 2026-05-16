@@ -275,6 +275,43 @@ class ProjectsController extends Controller
     }
     
 
+    public function getTestDataTracker($projectId)
+    {
+        $projectId = (int) $projectId;
+        $project = Projects::find($projectId);
+
+        if (!$project) {
+            return response()->json(['error' => 'Project not found'], 404);
+        }
+
+        $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
+
+        if (!$dashboardTest) {
+            return response()->json(['error' => 'Test not found'], 404);
+        }
+
+        if (
+            DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()
+            && (int) $project->dashboard_fully_tested === 1
+            && Schema::hasTable('cached_tracker_details')
+        ) {
+            $cachedPayload = DashboardTrackerCacheService::buildTrackerTestDataPayloadFromCache(
+                $projectId,
+                $project,
+                $dashboardTest
+            );
+
+            if ($cachedPayload !== null) {
+                return response()->json($cachedPayload);
+            }
+        }
+
+        $payload = DashboardTestDataService::buildTestDataPayload($projectId, $project, $dashboardTest);
+
+        return response()->json($payload);
+    }
+
+
     public function getTestDataSingle($id, $label){
         $project = Projects::find($id);
         $security_labels = ["is_safe_browsing", "cross_origin_links", "protocol_relative_resource", "content_security_policy_header", "x_frame_options_header", "hsts_header", "bad_content_type", "ssl_certificate_enable", "folder_browsing_enable"];

@@ -8,7 +8,7 @@ $(document).ready(function () {
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
-  var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {
+  var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {     
     keyboard: false 
   })
   let removeTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
@@ -2490,15 +2490,19 @@ $(document).ready(function () {
       document.querySelector("#urlSearchForm").classList.remove("d-none")
     }
 
-    static updateSingleTileProgress(target, results, dbName, totalUrls) {
-      const progressDetails = Controls.calcProgressDashboard(results)
-
+    static updateSingleTileProgress(target, statusPayload, dbName, totalUrls) {
+      let pct = 0
+      if (statusPayload && statusPayload.progress) {
+        pct = Math.round(statusPayload.progress.percent || 0)
+      } else {
+        const progressDetails = Controls.calcProgressDashboard(statusPayload && statusPayload.results ? statusPayload.results : statusPayload)
+        pct = Math.round(progressDetails.progress || 0)
+      }
 
       // Update the progress bar in the target tile
       const progressBar = target.querySelector('.dashboard-page-speed-progress');
       const progressText = target.querySelector('.page_speed_content span');
       if (progressBar && progressText) {
-        const pct = Math.round(progressDetails.progress || 0);
         progressBar.style.width = pct + "%";
         progressText.innerHTML = pct + "%";
       }
@@ -2558,8 +2562,9 @@ $(document).ready(function () {
                                   signal: controller.signal
                               });
                   
-                              const { status, results } = await response.json();
-                              Controls.updateProgressRecheck(results);
+                              const statusPayload = await response.json();
+                              const { status } = statusPayload;
+                              Controls.updateProgressRecheck(statusPayload);
                   
                               if (status === 'completed') {
                   
@@ -2607,9 +2612,10 @@ $(document).ready(function () {
                                 signal: controller.signal
                             });
 
-                            const { status, results } = await response.json();
+                            const statusPayload = await response.json();
+                            const { status } = statusPayload;
 
-                            Controls.updateDashboardLoader(results);
+                            Controls.updateDashboardLoader(statusPayload);
 
                             if (status === 'completed') {
                                 Controls.endTest();
@@ -2637,11 +2643,15 @@ $(document).ready(function () {
     }
 
 
-    static updateDashboardLoader(results) {
-  
-      const progressDetails = Controls.calcProgressDashboard(results)
+    static updateDashboardLoader(statusPayload) {
+      if (statusPayload && statusPayload.progress) {
+        const p = statusPayload.progress
+        Controls.updateProgress(null, p.percent, p.completed, p.total)
+        return
+      }
 
-      Controls.updateProgress(results, progressDetails.progress, progressDetails.completedCount, progressDetails.total);
+      const progressDetails = Controls.calcProgressDashboard(statusPayload && statusPayload.results ? statusPayload.results : statusPayload)
+      Controls.updateProgress(statusPayload, progressDetails.progress, progressDetails.completedCount, progressDetails.total);
   }
   
     
@@ -2901,8 +2911,8 @@ $(document).ready(function () {
                           continue;
                         }
 
-                        const { status, results } = data;
-                        Controls.updateProgressRecheck(results || {});
+                        const { status } = data;
+                        Controls.updateProgressRecheck(data);
             
                         if (status === 'completed') {
                             Controls.endTest();
@@ -3522,44 +3532,15 @@ $(document).ready(function () {
                     continue;
                 }
 
-                const { status, results } = data;
+                const { status } = data;
 
-                UI.updateSingleTileProgress(target, results || {}, dbName, urls.length);
+                UI.updateSingleTileProgress(target, data, dbName, urls.length);
 
                 if (status === 'completed') {
                     if (recheckSingleIntervalStatus) {
-                        let obj = Controls.updateTestDataForm(results || {});
-                        const refreshedElement = obj && Array.isArray(obj[dbName]) ? obj[dbName] : [];
-                        const refreshedLabel = Controls.getActiveLabel(dbName);
-
-                        // Some completed polls can arrive without the specific widget payload;
-                        // avoid crashing and wait for the next poll instead.
-                        if (!refreshedLabel || refreshedElement.length === 0) {
-                          await new Promise(res => setTimeout(res, 700));
-                          continue;
-                        }
-
-                        Controls.manageSingleCard(
-                            refreshedElement,
-                            dbName,
-                            refreshedLabel,
-                            false,
-                            false
-                        );
-
-                        UI.updateRecheckButtonState(false);
-
-                        // displayAlert(".analysis-content-body-message", {
-                        //     status: 1,
-                        //     msg: "Recheck for the selected tile has been completed successfully.",
-                        //     notHide: true
-                        // });
-
-                        // $('.analysis-content-body-message').show();
-
                         refreshTileDisabled = false;
                         recheckSingleIntervalStatus = false;
-
+                        Controls.endTest("single_recheck");
                         break;
                     }
                 }
@@ -3768,9 +3749,14 @@ $(document).ready(function () {
 
     }
 
-    static updateProgressRecheck(results){
-      
-      const progressDetails = Controls.calcProgressDashboard(results)
+    static updateProgressRecheck(statusPayload){
+      if (statusPayload && statusPayload.progress) {
+        const p = statusPayload.progress
+        UI.updateRecheckProgressBar(p.completed, p.percent)
+        return
+      }
+
+      const progressDetails = Controls.calcProgressDashboard(statusPayload && statusPayload.results ? statusPayload.results : statusPayload)
       UI.updateRecheckProgressBar(progressDetails.completedCount, progressDetails.progress)
     }
 

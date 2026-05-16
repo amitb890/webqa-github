@@ -253,35 +253,18 @@ class TestController2 extends Controller
         $status = ($totalCount > 0 && $completedCount === $totalCount)
                     ? 'completed'
                     : 'in_progress';
-    
-        // $dashboardTest->update(['status' => $status]);
-    
-        $allResults = [];
-    
-        foreach ($details as $detail) {
-    
-            // If not finished, DO NOT send full data
-            if ($status !== 'completed') {
-                $allResults[$detail->url] = [
-                    "status" => $detail->status,    // loader needs this
-                    "progress" => [
-                        "completed" => $completedCount,
-                        "total"     => $totalCount,
-                        "percent"   => $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0
-                    ]
-                    // NOT sending heavy data here
-                ];
-            }
-    
-            // When completed → send full structure
-            else {
-                $allResults[$detail->url] = json_decode($detail->data, true) ?? [];
-            }
-        }
-    
+
+        $percent = $totalCount > 0
+            ? (int) round(($completedCount / $totalCount) * 100)
+            : 0;
+
         return response()->json([
-            'status'  => $status,
-            'results' => $allResults
+            'status' => $status,
+            'progress' => [
+                'completed' => $completedCount,
+                'total' => $totalCount,
+                'percent' => $percent,
+            ],
         ]);
     }
     

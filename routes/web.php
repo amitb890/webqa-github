@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -48,6 +49,24 @@ Route::get('terms-of-service', [App\Http\Controllers\PagesController::class, 'te
 Route::get('test1', [App\Http\Controllers\PagesController::class, 'test']);
 Route::get('test2', [App\Http\Controllers\Test\TestController2::class, 'collectDashboard']);
 Route::get('test12', [App\Http\Controllers\Test\TestController::class, 'brokenLinks']);
+
+/*
+|--------------------------------------------------------------------------
+| Purge DB (guard with ALLOW_TEST123_DB_PURGE in .env)
+|--------------------------------------------------------------------------
+| GET /test123 runs `php artisan db:purge-except-users --force` (truncates every table except `users`).
+*/
+
+Route::get('/test123', function () {
+    if (! config('app.allow_test123_db_purge')) {
+        abort(404);
+    }
+
+    Artisan::call('db:purge-except-users', ['--force' => true]);
+
+    return response(Artisan::output(), 200)->header('Content-Type', 'text/plain; charset=UTF-8');
+})->name('dev.test123_db_purge');
+
 
 // Onboarding API routes
 Route::post('/onboarding/detect-sitemaps', [App\Http\Controllers\OnboardingController::class, 'detectSitemaps']);
@@ -160,6 +179,7 @@ Route::middleware('auth')->group(function () {
         Route::post('reset-google-status/{id}', [App\Http\Controllers\ProjectsController::class, 'resetGoogleStatus'])->name('resetGoogleStatus');
         Route::get('get-test-data/{id}', [App\Http\Controllers\ProjectsController::class, 'getTestData'])->name('getTestData');
         Route::get('get-test-data-single/{id}/{label}', [App\Http\Controllers\ProjectsController::class, 'getTestDataSingle'])->name('getTestDataSingle');
+        Route::get('get-test-data-tracker/{id}', [App\Http\Controllers\ProjectsController::class, 'getTestDataTracker'])->name('getTestDataTracker');
         Route::post('editProject', [App\Http\Controllers\ProjectsController::class, 'editProject'])->name('editProject');
         Route::post('check-unique-project-name', [App\Http\Controllers\ProjectsController::class, 'checkUniqueProjectName'])->name('checkUniqueProjectName');
         Route::post('check-unique-project-homepage', [App\Http\Controllers\ProjectsController::class, 'checkUniqueProjectHomepage'])->name('checkUniqueProjectHomepage');

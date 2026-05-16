@@ -1,5 +1,6 @@
 $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
+  var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
   var recheckMax = 2, recheckSingleMax = 2, urls, urlsToCheck = 10, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
@@ -102,7 +103,7 @@ $(document).ready(function () {
 
       static returnData(projectId){
           return $.ajax({
-              url : `/get-test-data/${projectId}`,
+              url : `/get-test-data-tracker/${projectId}`,
               type : 'get',
               aysnc: false,
               data: {
@@ -131,6 +132,220 @@ $(document).ready(function () {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
+  }
+
+  /** Map cached_tracker_details JSON to the shape buildTableBody expects. */
+  function normalizeTrackerResult(type, result) {
+    if (!result || typeof result !== "object") return result
+
+    // Rows saved with tracker field names (lengthClass, isExists, httpCode, …) — use as-is.
+    if (
+      result.lengthClass !== undefined ||
+      result.isExists !== undefined ||
+      result.httpCode !== undefined ||
+      result.headingArray !== undefined ||
+      result.robots_txt_url !== undefined ||
+      result.totalBrokenLinks !== undefined ||
+      (result.settings && result.fileExists !== undefined)
+    ) {
+      if (result.content != null && result.length == null && typeof result.content === "string") {
+        result.length = result.content.length
+      }
+      return result
+    }
+
+    const passClass = (ok) => (ok ? "result_pass" : "result_fail")
+
+    switch (type) {
+      case "title":
+        if (result.content !== undefined && result.lengthClass !== undefined) {
+          return result
+        }
+        if (result.content !== undefined && result.length !== undefined) {
+          const ok = !!result.status
+          return {
+            content: result.content,
+            length: result.length,
+            lengthClass: passClass(ok),
+            casing: result.casing != null ? result.casing : "",
+            casingClass: result.casingClass || passClass(ok),
+            equal_h1: !!result.equal_h1,
+            status: ok,
+          }
+        }
+        break
+      case "description":
+        if (result.content !== undefined && result.length !== undefined) {
+          const ok = !!result.status
+          return {
+            content: result.content,
+            lengthClass: passClass(ok),
+            status: ok,
+          }
+        }
+        break
+      case "robots":
+        if (result.exists !== undefined) {
+          return { isExists: !!result.exists, content: result.content != null ? result.content : "" }
+        }
+        break
+      case "canonical":
+        if (result.equal_url !== undefined) {
+          return {
+            content: result.content != null ? result.content : "",
+            statusIsEqualURL: result.equal_url === null || result.equal_url === undefined ? null : !!result.equal_url,
+          }
+        }
+        break
+      case "http_status_code":
+        if (result.code !== undefined) {
+          return {
+            httpCode: result.code,
+            httpCodeName: result.name || "",
+            status: !!result.status,
+          }
+        }
+        break
+      case "broken_links":
+        if (result.total !== undefined) {
+          return {
+            totalBrokenLinks: result.total,
+            totalBrokenInternal: result.internal,
+            totalBrokenExternal: result.external,
+            status: !!result.status,
+            testerrorcaught: !!result.error,
+            status_url: !result.error,
+          }
+        }
+        break
+      case "robot_text_test":
+        if (result.robots_url !== undefined || result.blocked !== undefined) {
+          return {
+            robots_txt_url: result.robots_url || "",
+            urlBlock: !!result.blocked,
+            resources_blocked_count: result.resources_count,
+            tested_url: result.tested_url || "",
+          }
+        }
+        break
+      case "h1_heading_tag":
+        if (result.h1 !== undefined) {
+          return {
+            status: !!result.status,
+            headingArray: {
+              h1: Array(result.h1 || 0).fill(null),
+              h2: Array(result.h2 || 0).fill(null),
+              h3: Array(result.other || 0).fill(null),
+            },
+          }
+        }
+        break
+      case "xml_sitemap":
+      case "html_sitemap": {
+        const valKey = type === "xml_sitemap" ? "xml_sitemap_val" : "html_sitemap_val"
+        if (result.sitemap_url !== undefined || result.listed !== undefined) {
+          const settings = {}
+          if (result.sitemap_url) settings[valKey] = result.sitemap_url
+          return {
+            settings,
+            fileExists: !!result.file_exists,
+            status: !!result.listed,
+            message: result.message || "",
+            testerrorcaught: !!result.error,
+          }
+        }
+        break
+      }
+      case "open_graph_tags":
+        if (result.title !== undefined) {
+          const ok = (v) => !!v
+          return {
+            content: result.title,
+            lengthClass: passClass(true),
+            casing: result.title_casing || "",
+            casingClass: passClass(true),
+            isEqualStatus: ok(result.title_equal),
+            isEqualClass: passClass(ok(result.title_equal)),
+            contentDesc: result.desc || "",
+            lengthDescClass: passClass(true),
+            isEqualDescStatus: ok(result.desc_equal),
+            isEqualDescClass: passClass(ok(result.desc_equal)),
+            contentImage: result.image || "",
+            dimensions: { w: result.image_w, h: result.image_h },
+            widthImageClass: passClass(true),
+            heightImageClass: passClass(true),
+            contentURL: result.url || "",
+            lengthURLClass: passClass(true),
+            isEqualURLStatus: ok(result.url_equal),
+            isEqualURLClass: passClass(ok(result.url_equal)),
+          }
+        }
+        break
+      case "twitter_tags":
+        if (result.title !== undefined) {
+          const ok = (v) => !!v
+          return {
+            content: result.title,
+            lengthClass: passClass(true),
+            casing: result.title_casing || "",
+            casingClass: passClass(true),
+            isEqualStatus: ok(result.title_equal),
+            isEqualClass: passClass(ok(result.title_equal)),
+            contentImage: result.image || "",
+            dimensions: { w: result.image_w, h: result.image_h },
+            widthImageClass: passClass(true),
+            heightImageClass: passClass(true),
+            contentImageAlt: result.image_alt || "",
+            lengthImageAltClass: passClass(true),
+          }
+        }
+        break
+      case "google_overall":
+        if (result.desktop_score !== undefined) {
+          return {
+            desktop: { data: JSON.stringify({ performance_score: result.desktop_score }) },
+            mobile: { data: JSON.stringify({ performance_score: result.mobile_score }) },
+          }
+        }
+        break
+      case "google_lighthouse":
+        if (result.desktop && result.desktop.performance !== undefined) {
+          const pack = (side) => JSON.stringify({
+            performance_score: side.performance,
+            accessibility_score: side.accessibility,
+            best_practices_score: side.best_practices,
+            seo_score: side.seo,
+          })
+          return {
+            desktop: { data: pack(result.desktop) },
+            mobile: { data: pack(result.mobile || {}) },
+          }
+        }
+        break
+      case "core_web_vitals":
+        if (result.desktop && result.desktop.lcp !== undefined) {
+          const pack = (side) => JSON.stringify({
+            largest_contentful_paint: side.lcp,
+            max_potential_fid: side.fid,
+            cumulative_layout_shift: side.cls,
+            first_contentful_paint: side.fcp,
+            interactive: side.interactive,
+            speed_index: side.speed_index,
+            total_blocking_time: side.tbt,
+          })
+          return {
+            desktop: { data: pack(result.desktop) },
+            mobile: { data: pack(result.mobile || {}) },
+          }
+        }
+        break
+      default:
+        if (result.status !== undefined && Object.keys(result).length <= 2) {
+          return { status: !!result.status }
+        }
+    }
+
+    return result
   }
 
   class UI{
@@ -488,9 +703,9 @@ $(document).ready(function () {
             const labelConfig = Controls.getActiveLabel(labelDbName)
             projectSettings = data[0]?.settings ?? {}
             const displayName =
-              (labelConfig && labelConfig.display_name) ||
-              (data[0] && data[0].label && data[0].label.display_name) ||
-              labelDbName
+              Controls.getLabelDisplayName(labelConfig) ||
+              (data[0] && data[0].label && Controls.getLabelDisplayName(data[0].label)) ||
+              Controls.formatTrackerColumnTitle(labelDbName)
             const td = document.createElement("td")
             td.setAttribute("data-consists", type)
             td.setAttribute("scope", "col")
@@ -994,15 +1209,20 @@ $(document).ready(function () {
         }
 
         if(result){
+          result = normalizeTrackerResult(type, result)
           if(ignore_tests.includes(type)){
             time = "2025-03-28 08:08:23"
-          }else{
+          }else if(result.tested_at){
             time = new DateTime.fromSeconds(parseInt(result.tested_at))
+          }else{
+            time = ""
           }
         }else{
           time = ""
         }
-        time = time.toLocaleString({day: 'numeric', month: 'long', year: 'numeric'});
+        if (time && typeof time.toLocaleString === "function") {
+          time = time.toLocaleString({day: 'numeric', month: 'long', year: 'numeric'});
+        }
           let td = options.tableBody
           if(options.firstTimeStatus){
               td.innerHTML+=`
@@ -1059,13 +1279,15 @@ $(document).ready(function () {
                   td.innerHTML+=`<td class="text-start">${result.content != null ? result.content : "-"}</td>`
                   }
                 if (projectSettings.max_title_length == 1) {
-                  td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>`
+                  const titleLen = result.length != null ? result.length : (result.content != null ? result.content.length : 0)
+                  td.innerHTML+=`<td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "hidden-element-tracker"}">${titleLen}</td>`
                 }
                 if (projectSettings.is_title_equal_h1 == 1) {
-                  td.innerHTML+= `<td class="${settings.is_title_equal_h1 ? "result_pass" : "result_fail hidden-element-tracker"}">No</td>`
+                  const eqH1 = result.equal_h1 === true
+                  td.innerHTML+= `<td class="${eqH1 ? "result_pass" : "result_fail"} ${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"}">${eqH1 ? "Yes" : "No"}</td>`
                 }
                 
-                if (projectSettings.title_casing_both == 1 || result.project_settings.title_casing_camel == 1 || result.project_settings.title_casing_sentence == 1) {
+                if (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1) {
                 td.innerHTML+=`<td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
                   `
                 }
@@ -1082,7 +1304,7 @@ $(document).ready(function () {
                       <td class="meta-content-imran ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">
                          ${result.content != null ? result.content : "-"}
                      </td>
-                      <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
+                      <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">${result.length != null ? result.length : (result.content != null ? result.content.length : 0)}</td>
                       `
                       break;
                  case "robots":
@@ -1825,7 +2047,6 @@ $(document).ready(function () {
           }
       });
 
-      console.log(result)
       return result;
     }
 
@@ -3085,7 +3306,6 @@ $(document).ready(function () {
 
       static buildTableBody(options, data, settings, updatedUrls){
         updatedUrls.forEach(el=>{
-          console.log(el)
           UI.buildRootURLElement(el)
 
           const urls = el.urls
@@ -3204,6 +3424,22 @@ $(document).ready(function () {
           return urls
       }
 
+      static getLabelDbName(label) {
+        if (!label) return ""
+        return label.db_name || label.dbName || label.name || ""
+      }
+
+      static getLabelDisplayName(label) {
+        if (!label) return ""
+        return label.display_name || label.displayName || ""
+      }
+
+      static formatTrackerColumnTitle(dbName) {
+        return String(dbName || "")
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (c) => c.toUpperCase())
+      }
+
       static getActiveLabel(dbName){
         if(dbName === "security_labels"){
           return {
@@ -3226,18 +3462,16 @@ $(document).ready(function () {
         for(var i = 0;i < allLabels.length;i++){
           const label = allLabels[i]
   
-          if(label.db_name === dbName){
+          if(Controls.getLabelDbName(label) === dbName){
             return label
           }
         }
       }
 
       static updateTestDataForm(results){
-        console.log(results, obj)
         for (const [key, value] of Object.entries(results)) {
           for (const [key1, value1] of Object.entries(results[key])) {
             const result = JSON.parse(value1)
-            console.log(key1)
             obj[key1].push(result)
 
           }
@@ -3254,7 +3488,6 @@ $(document).ready(function () {
        * @param {{ resumeDashboardRecheckAfterLoad?: boolean }} [options]
        */
       static renderTestDataTable(data, options = {}){
-          console.log(data)
           const testDetails = data.results
 
           allUrls = Controls.getAllUrls(testDetails)
@@ -3286,6 +3519,10 @@ $(document).ready(function () {
       static loadData(loadDataParam, options = {}){
           DB.returnData(loadDataParam)
           .done(function(data){
+            useCachedTrackerData = data.use_cached_tracker === true
+            if (useCachedTrackerData) {
+              console.log("Tracker finished (cached)")
+            }
             Controls.renderTestDataTable(data, options)
           })
   
@@ -3293,7 +3530,6 @@ $(document).ready(function () {
 
       static activateEvents(){
     
-        console.log(urlsList)
         // Events (delegated to survive table/menu redraws)
         $(document).off("click.trackerRecheck", "#recheckTrackerBtn").on("click.trackerRecheck", "#recheckTrackerBtn", async function(e){
           await Controls.recheckStart()
@@ -3423,8 +3659,14 @@ $(document).ready(function () {
         }
       }
 
-      static updateProgressRecheck(results){
-        const progressDetails = Controls.calcProgressDashboard(results)
+      static updateProgressRecheck(statusPayload){
+        if (statusPayload && statusPayload.progress) {
+          const p = statusPayload.progress
+          UI.updateRecheckProgressBar(p.completed, p.percent)
+          return
+        }
+
+        const progressDetails = Controls.calcProgressDashboard(statusPayload && statusPayload.results ? statusPayload.results : statusPayload)
         UI.updateRecheckProgressBar(progressDetails.completedCount, progressDetails.progress)
       }
 
@@ -3482,8 +3724,8 @@ $(document).ready(function () {
                 continue
               }
 
-              const { status, results } = data
-              Controls.updateProgressRecheck(results || {})
+              const { status } = data
+              Controls.updateProgressRecheck(data)
 
               if (status === 'completed') {
                 Controls.endTestRecheck()

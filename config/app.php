@@ -127,6 +127,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Dev purge route (/test123)
+    |--------------------------------------------------------------------------
+    |
+    | When true, GET /test123 runs `php artisan db:purge-except-users --force`.
+    | Leaves the `users` table intact. Disable in staging/production.
+    |
+    */
+
+    'allow_test123_db_purge' => (bool) env('ALLOW_TEST123_DB_PURGE', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Autoloaded Service Providers
     |--------------------------------------------------------------------------
     |
