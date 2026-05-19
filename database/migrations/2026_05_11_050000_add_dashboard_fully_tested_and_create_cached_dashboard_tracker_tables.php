@@ -29,11 +29,13 @@ return new class extends Migration
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('user_id');
             $table->longText('url')->nullable();
+            // SHA-256 of url — MySQL cannot unique-index longText columns.
+            $table->char('url_hash', 64);
             $table->string('widget_key', 128);
             $table->longText('widget_data_json')->nullable();
             $table->timestamps();
 
-            $table->unique(['project_id', 'user_id', 'url', 'widget_key'], 'cached_tracker_project_user_url_widget_unique');
+            $table->unique(['project_id', 'user_id', 'url_hash', 'widget_key'], 'cached_tracker_project_user_url_widget_unique');
             $table->index(['project_id', 'user_id'], 'cached_tracker_project_user_index');
         });
     }

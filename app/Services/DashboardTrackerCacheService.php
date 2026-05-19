@@ -17,6 +17,11 @@ use Illuminate\Support\Facades\Schema;
 
 class DashboardTrackerCacheService
 {
+    public static function hashTrackerUrl(string $url): string
+    {
+        return hash('sha256', $url);
+    }
+
     /** Dashboard summary cache only (no per-card tiles); tracker still stores per-URL rows for these. */
     private const DASHBOARD_OMITTED_CACHE_WIDGET_KEYS = [
         'url_slug',
@@ -518,10 +523,12 @@ class DashboardTrackerCacheService
 
                 $trackerData = self::extractTrackerDataFromSingleUrlResult($decoded);
                 foreach ($trackerKeysToUpdate as $widgetKey) {
+                    $url = (string) $detail->url;
                     $trackerRows[] = [
                         'project_id' => $projectId,
                         'user_id' => $userId,
-                        'url' => (string) $detail->url,
+                        'url' => $url,
+                        'url_hash' => self::hashTrackerUrl($url),
                         'widget_key' => $widgetKey,
                         'widget_data_json' => json_encode(
                             self::sanitizeTrackerWidgetPayload(
@@ -538,8 +545,8 @@ class DashboardTrackerCacheService
             foreach (array_chunk($trackerRows, 500) as $rowsChunk) {
                 DB::table('cached_tracker_details')->upsert(
                     $rowsChunk,
-                    ['project_id', 'user_id', 'url', 'widget_key'],
-                    ['widget_data_json', 'updated_at']
+                    ['project_id', 'user_id', 'url_hash', 'widget_key'],
+                    ['url', 'widget_data_json', 'updated_at']
                 );
             }
 

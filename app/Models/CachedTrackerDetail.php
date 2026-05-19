@@ -15,6 +15,7 @@ class CachedTrackerDetail extends Model
         'project_id',
         'user_id',
         'url',
+        'url_hash',
         'widget_key',
         'widget_data_json',
     ];
