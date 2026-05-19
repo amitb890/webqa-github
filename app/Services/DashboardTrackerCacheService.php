@@ -508,6 +508,7 @@ class DashboardTrackerCacheService
                 ['widget_data_json', 'updated_at']
             );
 
+            $trackerKeysToUpdate = self::resolveTrackerWidgetKeysToUpdate($testType, $recheckLabel);
             $trackerRows = [];
             foreach ($details as $detail) {
                 $decoded = json_decode((string) $detail->data, true);
@@ -516,7 +517,7 @@ class DashboardTrackerCacheService
                 }
 
                 $trackerData = self::extractTrackerDataFromSingleUrlResult($decoded);
-                foreach (self::TRACKER_WIDGET_KEYS as $widgetKey) {
+                foreach ($trackerKeysToUpdate as $widgetKey) {
                     $trackerRows[] = [
                         'project_id' => $projectId,
                         'user_id' => $userId,
@@ -585,7 +586,12 @@ class DashboardTrackerCacheService
         );
     }
 
-    private static function extractRunTargetUrls(?DashboardTests $dashboardTest): array
+    /**
+     * URLs for the current dashboard test run (stored on dashboard_tests.urls).
+     *
+     * @return list<string>
+     */
+    public static function extractRunTargetUrls(?DashboardTests $dashboardTest): array
     {
         if (! $dashboardTest || ! is_string($dashboardTest->urls) || trim($dashboardTest->urls) === '') {
             return [];
@@ -596,19 +602,28 @@ class DashboardTrackerCacheService
             return [];
         }
 
-        $urls = [];
-        foreach ($decoded as $item) {
+        return self::normalizeDashboardUrlList($decoded);
+    }
+
+    /**
+     * @param  array<int, mixed>  $urls
+     * @return list<string>
+     */
+    public static function normalizeDashboardUrlList(array $urls): array
+    {
+        $normalized = [];
+        foreach ($urls as $item) {
             if (is_array($item) && isset($item['url']) && is_string($item['url']) && trim($item['url']) !== '') {
-                $urls[] = trim($item['url']);
+                $normalized[] = trim($item['url']);
                 continue;
             }
 
             if (is_string($item) && trim($item) !== '') {
-                $urls[] = trim($item);
+                $normalized[] = trim($item);
             }
         }
 
-        return array_values(array_unique($urls));
+        return array_values(array_unique($normalized));
     }
 
     private static function extractTrackerDataFromSingleUrlResult(array $decoded): array
@@ -1439,6 +1454,50 @@ class DashboardTrackerCacheService
         }
 
         return $summary;
+    }
+
+    /**
+     * @return list<string>
+     */
+    private static function resolveTrackerWidgetKeysToUpdate(string $testType, ?string $recheckLabel): array
+    {
+        if ($testType !== 'single_recheck') {
+            return self::TRACKER_WIDGET_KEYS;
+        }
+
+        $label = trim((string) $recheckLabel);
+        if ($label === 'security_labels') {
+            return [
+                'is_safe_browsing',
+                'cross_origin_links',
+                'protocol_relative_resource',
+                'content_security_policy_header',
+                'x_frame_options_header',
+                'hsts_header',
+                'bad_content_type',
+                'ssl_certificate_enable',
+                'folder_browsing_enable',
+            ];
+        }
+
+        if ($label === 'cbp_labels') {
+            return [
+                'html_compression',
+                'css_compression',
+                'js_compression',
+                'gzip_compression',
+                'nested_tables',
+                'frameset',
+                'css_caching_enable',
+                'js_caching_enable',
+            ];
+        }
+
+        if ($label !== '' && in_array($label, self::TRACKER_WIDGET_KEYS, true)) {
+            return [$label];
+        }
+
+        return self::TRACKER_WIDGET_KEYS;
     }
 
     private static function resolveDashboardWidgetKeysToUpdate(string $testType, ?string $recheckLabel): array

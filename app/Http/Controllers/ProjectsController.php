@@ -27,10 +27,10 @@ use Symfony\Component\DomCrawler\Crawler;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
+use App\Services\DashboardBootstrapService;
+use App\Services\DashboardLabelsService;
 use App\Services\DashboardTestDataService;
 use App\Services\DashboardTrackerCacheService;
-use App\Models\CachedDashboardDetail;
-
 
 class ProjectsController extends Controller
 {
@@ -127,84 +127,16 @@ class ProjectsController extends Controller
 
 
     public function getLabels($project_id){
-        $active_settings_labels = [];
-        $active_settings_seo_labels = [];
-        $active_settings_performance_labels = [];
-        $active_settings_cbp_labels = [];
-        $active_settings_security_labels = [];
-
-
-        $all_labels = TestLabel::where("project_id", $project_id)->get();
-        $seo_labels = TestLabel::where("project_id", $project_id)->where("parent", "seo")->get();
-        $performance_labels = TestLabel::where("project_id", $project_id)->where("parent", "performance")->get();
-        $cbp_labels = TestLabel::where("project_id", $project_id)->where("parent", "bestPractices")->get();
-        $security_labels = TestLabel::where("project_id", $project_id)->where("parent", "security")->get();
-
-        $settings_labels = projectSettings::where("projects_id", $project_id)->get()->first();
-        foreach ($settings_labels->toArray() as $key => $value) {
-            foreach($all_labels as $label){
-                if($label->db_name === $key){
-                    if($value === 1){
-                        array_push($active_settings_labels, $label);
-                    }
-                }
-            }
-        }
-
-        foreach ($settings_labels->toArray() as $key => $value) {
-            foreach($seo_labels as $label){
-                if($label->db_name === $key){
-                    if($value === 1){
-                        array_push($active_settings_seo_labels, $label);
-                    }
-                }
-            }
-        }
-
-        foreach ($settings_labels->toArray() as $key => $value) {
-            foreach($performance_labels as $label){
-                if($label->db_name === $key){
-                    if($value === 1){
-                        array_push($active_settings_performance_labels, $label);
-                    }
-                }
-            }
-        }
-
-        foreach ($settings_labels->toArray() as $key => $value) {
-            foreach($cbp_labels as $label){
-                if($label->db_name === $key){
-                    if($value === 1){
-                        array_push($active_settings_cbp_labels, $label);
-                    }
-                }
-            }
-        }
-
-        foreach ($settings_labels->toArray() as $key => $value) {
-            foreach($security_labels as $label){
-                if($label->db_name === $key){
-                    if($value === 1){
-                        array_push($active_settings_security_labels, $label);
-                    }
-                }
-            }
-        }
-
-        $all_labels = $active_settings_labels;
-        $seo_labels = $active_settings_seo_labels;
-        $performance_labels = $active_settings_performance_labels;
-        $cbp_labels = $active_settings_cbp_labels;
-        $security_labels = $active_settings_security_labels;
+        $labels = DashboardLabelsService::groupedLabelsForProject((int) $project_id);
 
         return response()->json([
-            'status' => 1, 
-            'msg' => 'Success.', 
-            'all_labels' => $all_labels,
-            'seo_labels' => $seo_labels,
-            'performance_labels' => $performance_labels,
-            'cbp_labels' => $cbp_labels,
-            'security_labels' => $security_labels,
+            'status' => 1,
+            'msg' => 'Success.',
+            'all_labels' => $labels['all_labels'],
+            'seo_labels' => $labels['seo_labels'],
+            'performance_labels' => $labels['performance_labels'],
+            'cbp_labels' => $labels['cbp_labels'],
+            'security_labels' => $labels['security_labels'],
         ]);
     }
 
@@ -224,49 +156,9 @@ class ProjectsController extends Controller
             return response()->json(['error' => 'Test not found'], 404);
         }
 
-        if (
-            DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()
-            && (int) $project->dashboard_fully_tested === 1
-            && Schema::hasTable('cached_dashboard_details')
-        ) {
-            $settings = projectSettings::where('projects_id', $project->id)
-                ->with('settingsSub')
-                ->orderBy('id', 'DESC')
-                ->first();
-
-            $cachedRows = CachedDashboardDetail::query()
-                ->where('project_id', $projectId)
-                ->where('user_id', (int) $project->user_id)
-                ->orderBy('id')
-                ->get(['widget_key', 'widget_data_json']);
-
-            $results = [];
-            foreach ($cachedRows as $row) {
-                $decoded = json_decode((string) $row->widget_data_json, true);
-                $results[$row->widget_key] = is_array($decoded) ? $decoded : [];
-            }
-
-            // Page Speed / Lighthouse tiles: built via buildGoogleElements + polling, not from cache.
-            foreach (['google_overall', 'google_lighthouse', 'core_web_vitals'] as $googleKey) {
-                unset($results[$googleKey]);
-            }
-
-            $alerts = Alerts::where('user_id', Auth::id())
-                ->where('project_id', $projectId)
-                ->where('page', 'dashboard')
-                ->where('status', 1)
-                ->get();
-
-            return response()->json([
-                'status' => 1,
-                'msg' => 'Success.',
-                'project' => $project->toArray(),
-                'dashboard_status' => $dashboardTest->status,
-                'results' => $results,
-                'settings' => $settings ? $settings->toArray() : null,
-                'use_cached_dashboard' => true,
-                'alerts' => $alerts,
-            ]);
+        $cachedPayload = DashboardBootstrapService::buildCachedTestDataIfReady($projectId, $project);
+        if ($cachedPayload !== null) {
+            return response()->json($cachedPayload);
         }
 
         $payload = DashboardTestDataService::buildTestDataPayload($projectId, $project, $dashboardTest);
@@ -333,39 +225,18 @@ class ProjectsController extends Controller
     public function getShowDashboardStatus($id)
     {
         $project = Projects::find($id);
-    
-        // Latest dashboard test
-        $details = DashboardTests::where("project_id", $id)
-            ->latest()
-            ->first();
-    
-        // Default
-        $detailsStatus = $details->status ?? "pending";
-    
-        // -----------------------------------------
-        // 1 = full test completed
-        // 2 = recheck running/in progress
-        // 0 = still processing OR not done
-        // -----------------------------------------
-        $dashboardStatus = 0;
-    
-        if ($detailsStatus === "completed" && $project->dashboard_show_status) {
-            $dashboardStatus = 1; // normal test completed
-        }
-    
-        if ($detailsStatus === "recheck") {
-            $dashboardStatus = 2; // new recheck status
+
+        if (!$project) {
+            return response()->json(['status' => 0, 'msg' => 'Project not found.'], 404);
         }
 
-        if ($detailsStatus === "recheck-single") {
-            $dashboardStatus = 3; // new recheck status
-        }
-    
+        $state = DashboardBootstrapService::dashboardShowState($project);
+
         return response()->json([
             'status' => 1,
             'msg' => 'Success.',
-            'dashboardStatus' => $dashboardStatus,
-            'details_progress' => $detailsStatus,
+            'dashboardStatus' => $state['dashboardStatus'],
+            'details_progress' => $state['details_progress'],
         ]);
     }
     

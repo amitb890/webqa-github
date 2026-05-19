@@ -62,16 +62,10 @@ class TestController2 extends Controller
         if (empty($urls) || !is_array($urls)) {
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
-        $targetUrls = collect($urls)
-            ->map(function ($u) {
-                if (is_array($u) && isset($u['url'])) {
-                    return trim((string) $u['url']);
-                }
-                return is_string($u) ? trim($u) : '';
-            })
-            ->filter()
-            ->values()
-            ->all();
+        $targetUrls = DashboardTrackerCacheService::normalizeDashboardUrlList($urls);
+        if ($targetUrls === []) {
+            return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
+        }
 
         $project = Projects::select('id')->find($project_id);
         if (! $project) {
@@ -139,7 +133,7 @@ class TestController2 extends Controller
             if ($dashboardTest) {
                 $dashboardTest->update([
                     'status' => 'recheck',
-                    'urls' => json_encode($urls),
+                    'urls' => json_encode($targetUrls),
                 ]);
                 DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
                     ->whereIn('url', $targetUrls)
@@ -150,7 +144,7 @@ class TestController2 extends Controller
                     'test_id' => $testId,
                     'user_id' => Auth::id(),
                     'project_id' => $project_id,
-                    'urls' => json_encode($urls),
+                    'urls' => json_encode($targetUrls),
                     'status' => 'in_progress'
                 ]);
             }
@@ -159,7 +153,7 @@ class TestController2 extends Controller
             if ($dashboardTest) {
                 $dashboardTest->update([
                     'status' => 'recheck',
-                    'urls' => json_encode($urls),
+                    'urls' => json_encode($targetUrls),
                 ]);
                 DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
                     ->whereIn('url', $targetUrls)
@@ -169,7 +163,7 @@ class TestController2 extends Controller
                     'test_id' => $testId,
                     'user_id' => Auth::id(),
                     'project_id' => $project_id,
-                    'urls' => json_encode($urls),
+                    'urls' => json_encode($targetUrls),
                     'status' => 'in_progress'
                 ]);
             }
@@ -178,7 +172,7 @@ class TestController2 extends Controller
                 'test_id' => $testId,
                 'user_id' => Auth::id(),
                 'project_id' => $project_id,
-                'urls' => json_encode($urls),
+                'urls' => json_encode($targetUrls),
                 'status' => 'in_progress'
             ]);
         }
@@ -187,13 +181,13 @@ class TestController2 extends Controller
 
         
         // --- Dispatch a separate job for each URL ---
-        foreach ($urls as $url) {
+        foreach ($targetUrls as $urlString) {
          
              // Reuse existing detail row on recheck
             $result = DashboardTestsDetails::firstOrCreate(
                 [
                     'dashboard_test_id' => $dashboardTest->id,
-                    'url' => $url['url'],
+                    'url' => $urlString,
                 ],
                 [
                     'data' => json_encode([]),
@@ -207,7 +201,7 @@ class TestController2 extends Controller
             $index = ($userId - 1) % count($queues);
             $userQueue = $queues[$index];
 
-            dispatch((new RunTest($result->id, $project_id, $type, $dashboardTest->id, $recheck_label, count($urls), $userId))
+            dispatch((new RunTest($result->id, $project_id, $type, $dashboardTest->id, $recheck_label, count($targetUrls), $userId))
                 ->onQueue($userQueue));
 
         }
@@ -245,7 +239,17 @@ class TestController2 extends Controller
             return response()->json(['error' => 'Test ID not found.'], 404);
         }
     
-        $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id)->get();
+        $detailsQuery = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id);
+        $targetUrls = DashboardTrackerCacheService::extractRunTargetUrls($dashboardTest);
+
+        if (
+            ! empty($targetUrls)
+            && in_array($dashboardTest->status, ['recheck', 'recheck-single'], true)
+        ) {
+            $detailsQuery->whereIn('url', $targetUrls);
+        }
+
+        $details = $detailsQuery->get();
     
         $completedCount = $details->whereIn('status', ['completed', 'failed'])->count();
         $totalCount     = $details->count();

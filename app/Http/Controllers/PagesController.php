@@ -15,6 +15,7 @@ use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Cookie;
+use App\Services\DashboardBootstrapService;
 use Yajra\DataTables\DataTables;
 use App\Models\CachedTest;
 $FastImageSize = new \FastImageSize\FastImageSize();
@@ -241,7 +242,16 @@ class PagesController extends Controller
 
     
     public function dashboard(){
-        return view("dashboard");
+        $dashboardBootstrap = null;
+
+        if (Auth::check()) {
+            $projectId = DashboardBootstrapService::resolveActiveProjectId();
+            if ($projectId) {
+                $dashboardBootstrap = DashboardBootstrapService::buildForProject($projectId);
+            }
+        }
+
+        return view('dashboard', compact('dashboardBootstrap'));
     }
 
     public function appAnalysis(Request $request, $ref_id = null)

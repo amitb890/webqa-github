@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const overlay = document.getElementById('imagePreviewOverlay');
     const previewImg = document.getElementById('imagePreviewContent');
     const closeBtn = document.querySelector('.image-preview-close');
-  
+    if (!overlay || !previewImg || !closeBtn) return;
+
     document.addEventListener('click', (e) => {
     const el = e.target.closest('.zoomable-img');
     if (!el) return;

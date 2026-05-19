@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 100, recheckGoogle = 1, recheckSingleMax = 10, urlsGoogleFinal = 0
+  var recheckMax = 100, recheckGoogle = 1, recheckSingleMax = 100, urlsGoogleFinal = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
   var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
@@ -2515,129 +2515,148 @@ $(document).ready(function () {
     static init(){
       buildLoader()
 
+      const bootstrap = window.__DASHBOARD_BOOTSTRAP__
+      if (bootstrap && bootstrap.projectId) {
+        Controls.initFromBootstrap(bootstrap)
+        return
+      }
+
+      Controls.initFromAjax()
+    }
+
+    static initFromBootstrap(bootstrap) {
+      projectId = bootstrap.projectId
+      UI.updateRecheckButtonState(!!bootstrap.testsRunning)
+      Controls.checkIfTestsAreRunning().then(testsRunning => {
+        UI.updateRecheckButtonState(testsRunning)
+      })
+
+      Controls.applyLabelsPayload(bootstrap.labels)
+      originalUrls = bootstrap.urls || []
+      urls = originalUrls.slice(0, urlsToCheck)
+
+      Controls.runDashboardInitBranch({
+        dashboardStatus: bootstrap.dashboardStatus,
+        details_progress: bootstrap.details_progress,
+      }, bootstrap.testData || null)
+    }
+
+    static initFromAjax() {
       projectId = getActiveProjectId()
 
-
-       // Check initial button state
       Controls.checkIfTestsAreRunning().then(testsRunning => {
-        UI.updateRecheckButtonState(testsRunning);
-      });
+        UI.updateRecheckButtonState(testsRunning)
+      })
 
       getAllTestLabels2(projectId)
       .done(function(data) {
-          allLabels = data.all_labels
+          Controls.applyLabelsPayload(data)
 
-          seoLabels = data.seo_labels
-          performanceLabels = data.performance_labels
-          cbpLabels = data.cbp_labels
-          securityLabels = data.security_labels
-          Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
+          DB.getUrlsList(projectId)
+          .done(function(urlData){
+            originalUrls = urlData
+            urls = urlData.slice(0, urlsToCheck)
 
-
-          DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
-          .done(function(data){
-            originalUrls = data
-              urls = data.slice(0, urlsToCheck)
-
-              // CHECKING IF DASHBOARD WAS BUILT
-              DB.getDashboardShowStatus(projectId)
-              .done(function(data) {
-                  if(data.dashboardStatus === 1){
-                    Controls.buildDashboard(data.dashboardStatus)
-                  }else if(data.dashboardStatus === 2){
-
-                    Controls.buildDashboard(data.dashboardStatus)
-
-                    async function checkStatusDashboard() {
-                      let controller;
-                  
-                      while (true) {
-                  
-                          // Cancel any previous unfinished request
-                          if (controller) controller.abort();
-                          controller = new AbortController();
-                  
-                          try {
-                              const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-                                  signal: controller.signal
-                              });
-                  
-                              const statusPayload = await response.json();
-                              const { status } = statusPayload;
-                              Controls.updateProgressRecheck(statusPayload);
-                  
-                              if (status === 'completed') {
-                  
-                                  Controls.endTest();
-                  
-                                  setTimeout(() => {
-                                      recheckAllowed = true;
-                                      UI.updateRecheckButtonState(false); // re-enable button
-                                  }, 100);
-                  
-                                  break; // stop loop
-                              }
-                          } catch (e) {
-                              // ignore abort errors
-                              if (e.name !== "AbortError") console.error(e);
-                          }
-                  
-                          // wait 1 second before next request
-                          await new Promise(res => setTimeout(res, 1000));
-                      }
-                    }
-                  
-                    checkStatusDashboard();
-
-                  }else if(data.dashboardStatus === 3){
-                    Controls.buildDashboard(data.dashboardStatus)
-
-                  }else{ 
-                    removeLoader()
-                    Controls.buildDashboardLoader()
-                    if(data.details_progress != "in_progress"){
-                      Controls.startTest(urls, "default")
-                    } 
-
-                    
-                    let controller;
-                    async function checkStatusDashboard() {
-                        while (true) {
-
-                            // Cancel previous request if still running
-                            if (controller) controller.abort();
-                            controller = new AbortController();
-
-                            const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-                                signal: controller.signal
-                            });
-
-                            const statusPayload = await response.json();
-                            const { status } = statusPayload;
-
-                            Controls.updateDashboardLoader(statusPayload);
-
-                            if (status === 'completed') {
-                                Controls.endTest();
-                                setTimeout(() => (recheckAllowed = true), 100);
-                                break;
-                            }
-
-                            await new Promise(res => setTimeout(res, 1000));
-                        }
-                    }
-
-            
-                    checkStatusDashboard()
-                    
-                  }
-              });
-             
-
+            DB.getDashboardShowStatus(projectId)
+            .done(function(statusData) {
+              Controls.runDashboardInitBranch(statusData, null)
+            })
           })
-          
-      });
-  }
+      })
+    }
+
+    static applyLabelsPayload(data) {
+      allLabels = data.all_labels
+      seoLabels = data.seo_labels
+      performanceLabels = data.performance_labels
+      cbpLabels = data.cbp_labels
+      securityLabels = data.security_labels
+      Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
+    }
+
+    static runDashboardInitBranch(statusData, preloadedTestData) {
+      if(statusData.dashboardStatus === 1){
+        Controls.buildDashboard(statusData.dashboardStatus, preloadedTestData)
+      }else if(statusData.dashboardStatus === 2){
+        Controls.buildDashboard(statusData.dashboardStatus, preloadedTestData)
+        Controls.pollDashboardStatusRecheck()
+      }else if(statusData.dashboardStatus === 3){
+        Controls.buildDashboard(statusData.dashboardStatus, preloadedTestData)
+      }else{
+        removeLoader()
+        Controls.buildDashboardLoader()
+        if(statusData.details_progress != "in_progress"){
+          Controls.startTest(urls, "default")
+        }
+        Controls.pollDashboardStatusInitial()
+      }
+    }
+
+    static pollDashboardStatusRecheck() {
+      let controller
+
+      async function checkStatusDashboard() {
+        while (true) {
+          if (controller) controller.abort()
+          controller = new AbortController()
+
+          try {
+            const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+              signal: controller.signal
+            })
+
+            const statusPayload = await response.json()
+            const { status } = statusPayload
+            Controls.updateProgressRecheck(statusPayload)
+
+            if (status === 'completed') {
+              Controls.endTest()
+              setTimeout(() => {
+                recheckAllowed = true
+                UI.updateRecheckButtonState(false)
+              }, 100)
+              break
+            }
+          } catch (e) {
+            if (e.name !== "AbortError") console.error(e)
+          }
+
+          await new Promise(res => setTimeout(res, 1000))
+        }
+      }
+
+      checkStatusDashboard()
+    }
+
+    static pollDashboardStatusInitial() {
+      let controller
+
+      async function checkStatusDashboard() {
+        while (true) {
+          if (controller) controller.abort()
+          controller = new AbortController()
+
+          const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
+            signal: controller.signal
+          })
+
+          const statusPayload = await response.json()
+          const { status } = statusPayload
+
+          Controls.updateDashboardLoader(statusPayload)
+
+          if (status === 'completed') {
+            Controls.endTest()
+            setTimeout(() => (recheckAllowed = true), 100)
+            break
+          }
+
+          await new Promise(res => setTimeout(res, 1000))
+        }
+      }
+
+      checkStatusDashboard()
+    }
     static displayAlerts(){
       
     }
@@ -2831,7 +2850,7 @@ $(document).ready(function () {
         
         DB.getUrlsList(projectId) // GET PROJECT URLS AND START TEST
           .done(function(data){
-              urls = data.slice(0, recheckMax)
+              urls = Controls.normalizeUrlsForTest(data).slice(0, recheckMax)
               urlsToCheck = recheckMax
 
               removeLoader()
@@ -3021,7 +3040,6 @@ $(document).ready(function () {
 
 
     static applyDashboardCardResponse(data, element, key, label){
-      console.log("Label", label)
       if(label.db_name == "html_sitemap"){
           console.log("HTML Sitemap data", data)
           htmlSitemapData = typeof data === "string" ? JSON.parse(data) : data
@@ -3127,77 +3145,82 @@ $(document).ready(function () {
     }
     
 
-    static buildDashboard(dashboardStatus){
+    static buildDashboard(dashboardStatus, preloadedTestData = null){
+        if (preloadedTestData) {
+          Controls.renderDashboardFromTestData(preloadedTestData, dashboardStatus)
+          return
+        }
+
         DB.getTestData(projectId)
         .done(function(data) {
-          useCachedDashboardData = data.use_cached_dashboard === true
-          projectSettings = data.settings
-          if(data.results.security_labels){
-            data.results.security_labels = Controls.cleanNulls(data.results.security_labels) 
+          Controls.renderDashboardFromTestData(data, dashboardStatus)
+        })
+    }
+
+    static renderDashboardFromTestData(data, dashboardStatus) {
+      useCachedDashboardData = data.use_cached_dashboard === true
+      projectSettings = data.settings
+      if(data.results.security_labels){
+        data.results.security_labels = Controls.cleanNulls(data.results.security_labels)
+      }
+
+      if(data.results.cbp_labels){
+        data.results.cbp_labels = Controls.cleanNulls(data.results.cbp_labels)
+      }
+
+      const testDetails = data.results
+      projectFinal = data.project
+      $(".dashboard_top_items_main").html("")
+      htmlSitemapData = null
+      lastXmlSitemapCardPayload = null
+      UI.buildWidgetSidebar()
+
+      function finishDashboardTiles(cardsDeferred){
+        $.when(cardsDeferred).done(function () {
+          Controls.activeEvents()
+
+          UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
+          UI.ensureWidgetNotice("google_overall", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+          UI.ensureWidgetNotice("google_lighthouse", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+          UI.ensureWidgetNotice("core_web_vitals", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+
+          if(dashboardStatus === 2){
+            urls = originalUrls.slice(0, recheckMax)
+            urlsToCheck = recheckMax
+            UI.buildRecheckLoader()
+          }else if(dashboardStatus === 3){
+
           }
 
-          if(data.results.cbp_labels){
-            data.results.cbp_labels = Controls.cleanNulls(data.results.cbp_labels) 
-          }
+          Controls.buildGoogleElements()
+        })
+      }
 
-            const testDetails = data.results
-            projectFinal = data.project
-            $(".dashboard_top_items_main").html("")
-            htmlSitemapData = null
-            lastXmlSitemapCardPayload = null
-            UI.buildWidgetSidebar()
+      if (useCachedDashboardData) {
+        removeLoader()
+        UI.toggleDashboardElements(projectFinal)
+        if (data.alerts && Array.isArray(data.alerts)) {
+          UI.buildDBAlerts(data.alerts)
+        }
+        UI.buildLoaderCardsFromCached(testDetails)
+        UI.buildGooglePlaceholderLoaderCards()
+        UI.buildSubmitIdeaWidget(testDetails)
+        UI.buildAddWidget(testDetails)
+        finishDashboardTiles($.Deferred().resolve().promise())
+        return
+      }
 
-            function finishDashboardTiles(cardsDeferred){
-              $.when(cardsDeferred).done(function () {
-                Controls.activeEvents()
+      DB.getAlerts(projectId)
+        .done(function(alertsData){
+          UI.buildDBAlerts(alertsData.alerts)
+          removeLoader()
+          UI.toggleDashboardElements(projectFinal)
 
-                UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
-                UI.ensureWidgetNotice("google_overall", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
-                UI.ensureWidgetNotice("google_lighthouse", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
-                UI.ensureWidgetNotice("core_web_vitals", "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
-
-                if(dashboardStatus === 2){
-                  urls = originalUrls.slice(0, recheckMax)
-                  urlsToCheck = recheckMax
-                  UI.buildRecheckLoader()
-                }else if(dashboardStatus === 3){
-
-                }
-
-                console.log(useCachedDashboardData ? "Dashboard finished (cached)" : "Dashboard finished")
-                Controls.buildGoogleElements()
-              })
-            }
-
-            if (useCachedDashboardData) {
-              removeLoader()
-              UI.toggleDashboardElements(projectFinal)
-              if (data.alerts && Array.isArray(data.alerts)) {
-                UI.buildDBAlerts(data.alerts)
-              }
-              UI.buildLoaderCardsFromCached(testDetails)
-              UI.buildGooglePlaceholderLoaderCards()
-              UI.buildSubmitIdeaWidget(testDetails)
-              UI.buildAddWidget(testDetails)
-              finishDashboardTiles($.Deferred().resolve().promise())
-              return
-            }
-
-            // display alerts from DB
-            DB.getAlerts(projectId)
-              .done(function(alertsData){
-                UI.buildDBAlerts(alertsData.alerts)
-                removeLoader()
-                UI.toggleDashboardElements(projectFinal)
-
-                const cardsDeferred = UI.buildLoaderCards(testDetails)
-                UI.buildSubmitIdeaWidget(testDetails)
-                UI.buildAddWidget(testDetails)
-                finishDashboardTiles(cardsDeferred)
-            });
-            
-        });
-
+          const cardsDeferred = UI.buildLoaderCards(testDetails)
+          UI.buildSubmitIdeaWidget(testDetails)
+          UI.buildAddWidget(testDetails)
+          finishDashboardTiles(cardsDeferred)
+      })
     }
 
     static activeEvents(){
@@ -3504,7 +3527,7 @@ $(document).ready(function () {
         mobile_friendly: [],
       }
       UI.buildRefreshTileLoader(dbName, target, name)
-      urls = originalUrls.slice(0, recheckSingleMax)
+      urls = Controls.normalizeUrlsForTest(originalUrls).slice(0, recheckSingleMax)
 
       async function checkStatusDashboard() {
         let controller;
@@ -3797,11 +3820,26 @@ $(document).ready(function () {
     }
 
   
+    static normalizeUrlsForTest(urlList) {
+      if (!Array.isArray(urlList)) {
+        return []
+      }
+      return urlList.map((u) => {
+        if (typeof u === 'string') {
+          return u.trim()
+        }
+        if (u && typeof u.url === 'string') {
+          return u.url.trim()
+        }
+        return ''
+      }).filter(Boolean)
+    }
+
     static startTest(urlsUpdated, type, recheck_label = "na"){
       return new Promise((resolve, reject) => {
         // Send as JSON to avoid PHP max_input_vars limit (form encoding sends urls[0], urls[1]... and drops project_id with 100+ URLs)
         const payload = {
-          urls: urlsUpdated,
+          urls: Controls.normalizeUrlsForTest(urlsUpdated),
           project_id: projectId,
           test_type: type,
           recheck_label: recheck_label,

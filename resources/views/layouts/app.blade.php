@@ -102,7 +102,7 @@ if (!empty($activeProjectFavicon)) {
         <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/sweetalert2@10.10.1/dist/sweetalert2.min.css'>
         <link rel="stylesheet" href="{{ asset('new-assets/vendor/datatables/datatables.min.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <!-- nice select -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/css/nice-select.min.css" integrity="sha512-CruCP+TD3yXzlvvijET8wV5WxxEh5H8P4cmz0RFbKK6FlZ2sYl3AEsKlLPHbNiXKSrDdFewhbmBK5skbdsASbQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+        <link rel="stylesheet" href="{{ asset('new-assets/vendor/jQuery-nice-select/css/nice-select.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
         <link rel="icon" type="image/x-icon" href="{{ asset('new-assets/assets/images/favicon.ico') }}{{ \App\Http\Helpers::getCacheBuster() }}">
         <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('new-assets/assets/images/apple-icon-180x180.png') }}{{ \App\Http\Helpers::getCacheBuster() }}">
         <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('new-assets/assets/images/android-chrome-192x192.png') }}{{ \App\Http\Helpers::getCacheBuster() }}">
@@ -699,7 +699,7 @@ if (!empty($activeProjectFavicon)) {
     <script src="{{ asset('new-assets/vendor/fontawesome/js/all.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.all.min.js"></script>
     <!-- nice select -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-nice-select/1.1.0/js/jquery.nice-select.min.js" integrity="sha512-NqYds8su6jivy1/WLoW8x1tZMRD7/1ZfhWG/jcRQLOzV1k1rIODCpMgoBnar5QXshKJGV7vi0LXLNXPoFsM5Zg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="{{ asset('new-assets/vendor/jQuery-nice-select/js/jquery.nice-select.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/vendor/luxon/luxon.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 

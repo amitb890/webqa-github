@@ -364,10 +364,6 @@ function filterSidebarReports() {
     return;
   }
   
-  // Debug: Log the settings object to see what values are loaded
-  console.log('Report Settings loaded:', window.reportSettings);
-  console.log('Meta Title value:', window.reportSettings.meta_title, 'Type:', typeof window.reportSettings.meta_title);
-
   // Get all report list items with data-report-setting attribute
   const reportItems = document.querySelectorAll('[data-report-setting]');
   
@@ -402,15 +398,7 @@ function filterSidebarReports() {
       shouldHide = !Boolean(settingValue);
     }
     
-    // Debug log for meta_title (can be removed later)
-    if (settingKey === 'meta_title') {
-      console.log('Meta Title setting check:', {
-        key: settingKey,
-        value: settingValue,
-        type: typeof settingValue,
-        shouldHide: shouldHide
-      });
-    }
+
     
     if (shouldHide) {
       item.style.display = 'none';
@@ -2176,7 +2164,10 @@ featureChildPageSecSet();
 function sliderWebTracker(){
   const container = document.querySelector('.fcwt3-d2');
   const wrapper = document.querySelector('.fcwt3-d2-wrapper');
+  if (!container || !wrapper) return;
+
   const slides = Array.from(wrapper.querySelectorAll('.fcwt3-d2-slide'));
+  if (!slides.length) return;
 
   let current = 1; // middle slide active by default
 
