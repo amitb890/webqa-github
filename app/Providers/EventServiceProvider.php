@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\SendPasswordUpdatedEmail;
+use App\Listeners\SendWelcomeEmail;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -19,6 +20,7 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+            SendWelcomeEmail::class,
         ],
         PasswordReset::class => [
             SendPasswordUpdatedEmail::class,

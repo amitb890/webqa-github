@@ -57,7 +57,7 @@
                             <input type="password" placeholder="Password" id="login_pass">
                         </div>
                         <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
-                        <a href="#" class="login_forgetPass">Forgotten your password?</a>
+                        <a href="{{ route('password.request') }}" class="login_forgetPass">Forgotten your password?</a>
                         <div class="loginOr">
                             <span>Or</span>
                         </div>

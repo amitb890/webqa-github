@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\File;
 use DOMDocument;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
-use App\Models\User; // Make sure to import your User model
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 
 class LoginController extends Controller
 {
@@ -63,10 +64,9 @@ public function handleGoogleCallback()
         $user = User::create([
             'name' => $socialiteUser->getName(),
             'email' => $socialiteUser->getEmail(),
-            // 'password' => bcrypt('123456'),
-
-            // Add any other necessary fields
         ]);
+
+        event(new Registered($user));
     }
     // Log in the user
     auth()->login($user);

@@ -1,5 +1,11 @@
 <?php
 
+$mailEncryption = env('MAIL_ENCRYPTION');
+if ($mailEncryption === null || $mailEncryption === '' || $mailEncryption === 'null') {
+    $mailPort = (int) env('MAIL_PORT', 587);
+    $mailEncryption = $mailPort === 465 ? 'ssl' : ($mailPort === 587 ? 'tls' : null);
+}
+
 return [
 
     /*
@@ -13,7 +19,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_MAILER', env('MAIL_DRIVER', 'smtp')),
 
     /*
     |--------------------------------------------------------------------------
@@ -38,7 +44,7 @@ return [
             'transport' => 'smtp',
             'host' => env('MAIL_HOST', 'smtp.mailgun.org'),
             'port' => env('MAIL_PORT', 587),
-            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'encryption' => $mailEncryption,
             'username' => env('MAIL_USERNAME'),
             'password' => env('MAIL_PASSWORD'),
             'timeout' => null,
@@ -92,8 +98,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('MAIL_FROM_ADDRESS', 'support@webqa.co'),
+        'name' => env('MAIL_FROM_NAME', 'WebQA'),
     ],
 
     /*

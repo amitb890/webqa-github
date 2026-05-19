@@ -15,13 +15,14 @@ class SendPasswordUpdatedEmail
         $user = $event->user;
 
         try {
-            Mail::to($user->email)->send(new PasswordUpdatedMail(
+            Mail::to($user->email)->queue(new PasswordUpdatedMail(
                 UserDisplayName::firstName($user->name)
             ));
         } catch (\Throwable $e) {
-            Log::warning('Password updated email failed: '.$e->getMessage(), [
+            Log::error('Password updated email failed to queue', [
                 'user_id' => $user->id,
                 'email' => $user->email,
+                'message' => $e->getMessage(),
             ]);
         }
     }

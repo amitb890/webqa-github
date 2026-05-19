@@ -62,12 +62,15 @@ class User extends Authenticatable
         $firstName = UserDisplayName::firstName($this->name);
 
         try {
-            Mail::to($this->email)->send(new ForgotPasswordMail($firstName, $resetUrl));
+            Mail::to($this->email)->queue(new ForgotPasswordMail($firstName, $resetUrl));
         } catch (\Throwable $e) {
-            Log::warning('Password reset email failed: '.$e->getMessage(), [
+            Log::error('Password reset email failed to queue', [
                 'user_id' => $this->id,
                 'email' => $this->email,
+                'message' => $e->getMessage(),
             ]);
+
+            throw $e;
         }
     }
 }

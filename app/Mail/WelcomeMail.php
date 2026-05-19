@@ -24,7 +24,7 @@ class WelcomeMail extends Mailable
 
     public function build()
     {
-        $subject = "Welcome to WebQA - Let’s find and fix issues on your website";
+        $subject = 'Welcome to WebQA - Let\'s find and fix issues on your website';
 
         return $this
             ->subject($subject)
