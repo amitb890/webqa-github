@@ -134,6 +134,22 @@ $(document).ready(function () {
       .replace(/"/g, "&quot;")
   }
 
+  /** Project settings_sub once per tracker load (not duplicated on every URL row). */
+  function resolveTrackerProjectSettings(apiPayload, results) {
+    if (apiPayload && apiPayload.settings) {
+      const sub = apiPayload.settings.settings_sub || apiPayload.settings.settingsSub
+      if (sub) {
+        return convertObjToIntVal(sub)
+      }
+    }
+    const first = results && results.meta_title && results.meta_title[0]
+    if (first && first.settings) {
+      return convertObjToIntVal(first.settings)
+    }
+
+    return {}
+  }
+
   /** Map cached_tracker_details JSON to the shape buildTableBody expects. */
   function normalizeTrackerResult(type, result) {
     if (!result || typeof result !== "object") return result
@@ -141,12 +157,16 @@ $(document).ready(function () {
     // Rows saved with tracker field names (lengthClass, isExists, httpCode, …) — use as-is.
     if (
       result.lengthClass !== undefined ||
-      result.isExists !== undefined ||
       result.httpCode !== undefined ||
       result.headingArray !== undefined ||
       result.robots_txt_url !== undefined ||
       result.totalBrokenLinks !== undefined ||
-      (result.settings && result.fileExists !== undefined)
+      (result.settings && result.fileExists !== undefined) ||
+      (type === "robots" && result.isExists !== undefined) ||
+      (type === "url_slug" && result.content !== undefined) ||
+      (type === "favicon" && result.content !== undefined) ||
+      (type === "meta_viewport" && result.isExists !== undefined) ||
+      (type === "doctype" && result.isExists !== undefined)
     ) {
       if (result.content != null && result.length == null && typeof result.content === "string") {
         result.length = result.content.length
@@ -719,7 +739,7 @@ $(document).ready(function () {
             }
             const labelDbName = trackerTypeToLabelDb[type] || type
             const labelConfig = Controls.getActiveLabel(labelDbName)
-            projectSettings = data[0]?.settings ?? {}
+            projectSettings = settings && Object.keys(settings).length ? settings : (data[0]?.settings ?? {})
             const displayName =
               Controls.getLabelDisplayName(labelConfig) ||
               (data[0] && data[0].label && Controls.getLabelDisplayName(data[0].label)) ||
@@ -1218,7 +1238,7 @@ $(document).ready(function () {
         const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
         let time
         const { DateTime } = luxon;
-        const projectSettings = dataSetting ? dataSetting[0].settings : null;
+        const projectSettings = settings || (dataSetting && dataSetting[0] ? dataSetting[0].settings : null);
 
         if(window.location.href.includes("/reports")){
           if(!result){
@@ -1593,7 +1613,9 @@ $(document).ready(function () {
                         td.innerHTML += `<td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td>`;
                         break;
                       }
-                      const rawUrl = (result.settings && result.settings[valKey]) ? String(result.settings[valKey]) : "";
+                      const rawUrl = (result.settings && result.settings[valKey])
+                        ? String(result.settings[valKey])
+                        : (projectSettings && projectSettings[valKey] ? String(projectSettings[valKey]) : "");
                       const hrefEsc = rawUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
                       const excluded = /excluded/i.test(result.message || "");
                       const fileCell = excluded ? "—" : (result.fileExists ? "Yes" : "No");
@@ -2430,61 +2452,59 @@ $(document).ready(function () {
       }
 
 
-      static buildTable(data, updatedUrls){
-          // build num rows dropdown
+      static buildTable(data, updatedUrls, projectSettings){
           const test = data.meta_title
-          const testSettings  = test[0].settings
           const nums = splitNParts(test.length + updatedUrls.length, 5)
           UI.buildRowsTable(nums)
         
           const options = UI.initTable(test.length)
-          const settings = convertObjToIntVal(testSettings)
+          const settings = projectSettings || {}
           Controls.buildTableHeader(options, data, settings, updatedUrls)
           Controls.buildTableBody(options, data, settings, updatedUrls)
           Controls.buildTableHeaderTop(options)
 
       }
-      static calculateColspan(title, data){
+      static calculateColspan(title, data, projectSettings){
+         const settings = projectSettings || (data[0] && data[0].settings) || {}
          let rowspanCal = 0;
          if(title == 'meta-title') {
 
-           if(data[0].settings.max_title_length == 1) {
+           if(settings.max_title_length == 1) {
             rowspanCal += 1;
            }
-           if(data[0].settings.meta_title == 1) {
+           if(settings.meta_title == 1) {
             rowspanCal += 1;
            }
-           if(data[0].settings.is_title_equal_h1 == 1) {
+           if(settings.is_title_equal_h1 == 1) {
             rowspanCal += 1;
            }
-           if(data[0].settings.title_casing_both == 1 || data[0].settings.title_casing_camel == 1 || data[0].settings.title_casing_sentence == 1) { 
+           if(settings.title_casing_both == 1 || settings.title_casing_camel == 1 || settings.title_casing_sentence == 1) { 
             rowspanCal += 1;
            }
-          //  title_casing_camel
          
          }
 
          if(title == 'url-slug') {
-          if (data[0].settings.max_url_length == 1 || data[0].settings.min_url_length == 1) {
+          if (settings.max_url_length == 1 || settings.min_url_length == 1) {
             rowspanCal += 1;
           }
-          if(data[0].settings.url_no_numbers == 1) {
+          if(settings.url_no_numbers == 1) {
            rowspanCal += 1;
           }
-          if(data[0].settings.url_no_special == 1) {
+          if(settings.url_no_special == 1) {
            rowspanCal += 1;
           }
-          if(data[0].settings.url_slug_lowercase == 1) {
+          if(settings.url_slug_lowercase == 1) {
            rowspanCal += 1;
           }
-          if(data[0].settings.url_casing_only_hyphens == 1) { 
+          if(settings.url_casing_only_hyphens == 1) { 
            rowspanCal += 1;
           }
 
-          if(data[0].settings.url_casing_only_underscores == 1) { 
+          if(settings.url_casing_only_underscores == 1) { 
             rowspanCal += 1;
            }
-           if(data[0].settings.url_stop_words ==  1) { 
+           if(settings.url_stop_words ==  1) { 
             rowspanCal += 1;
            }
            rowspanCal += 1;
@@ -2495,18 +2515,16 @@ $(document).ready(function () {
       }
      
 
-      static buildTableReports(data, updatedUrls){
-        // build num rows dropdown
+      static buildTableReports(data, updatedUrls, projectSettings){
         const test = data.meta_title
-        const testSettings  = test[0].settings
         const nums = splitNParts(test.length, 5)
         UI.buildRowsTableReports(nums)
 
         const options = UI.initTable(test.length)
-        const settings = convertObjToIntVal(testSettings)
+        const settings = projectSettings || {}
         
         if(page[1] === "meta-title"){
-         const rowspanCal = this.calculateColspan('meta-title', data.meta_title);
+         const rowspanCal = this.calculateColspan('meta-title', data.meta_title, settings);
           UI.buildTableHeader("title", data.meta_title, rowspanCal, options, settings, "seo", data.meta_title)
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
@@ -2616,7 +2634,7 @@ $(document).ready(function () {
             })
           })
         } else if(page[1] === "url-slug"){
-          const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
+          const rowspanCal = this.calculateColspan('url-slug', data.url_slug, settings);
           UI.buildTableHeader("url_slug", data.url_slug, rowspanCal, options, settings, "seo")
           updatedUrls.forEach(el=>{
             UI.buildRootURLElement(el)
@@ -3386,8 +3404,8 @@ $(document).ready(function () {
 
       static buildTableHeader(options, data, settings, testDetailsLighthouse){
         let rowspanCalHeader = 0;
-          rowspanCalHeader  = this.calculateColspan('meta-title', data.meta_title);
-          UI.buildTableHeader("title", data.meta_title, 4, options, settings, "seo")
+          rowspanCalHeader  = this.calculateColspan('meta-title', data.meta_title, settings);
+          UI.buildTableHeader("title", data.meta_title, rowspanCalHeader || 4, options, settings, "seo")
           UI.buildTableHeader("description", data.meta_desc, 2, options, settings, "seo")
           UI.buildTableHeader("robots", data.robots_meta, 2, options, settings, "seo")
           UI.buildTableHeader("robot_text_test", data.robot_text_test, 3, options, settings, "seo")
@@ -3395,7 +3413,7 @@ $(document).ready(function () {
           UI.buildTableHeader("canonical", data.canonical_url, 2, options, settings, "seo")
           UI.buildTableHeader("open_graph_tags", data.open_graph_tags, 12, options, settings, "seo")
           UI.buildTableHeader("twitter_tags", data.twitter_tags, 8, options, settings, "seo")
-           rowspanCalHeader = this.calculateColspan('url-slug', data.meta_title);
+           rowspanCalHeader = this.calculateColspan('url-slug', data.url_slug, settings);
 
           UI.buildTableHeader("url_slug", data.url_slug, rowspanCalHeader, options, settings, "seo")
           // UI.buildTableHeader("images", data.images, 9, options, settings, "seo")
@@ -3507,13 +3525,14 @@ $(document).ready(function () {
        */
       static renderTestDataTable(data, options = {}){
           const testDetails = data.results
+          const projectSettings = resolveTrackerProjectSettings(data, testDetails)
 
           allUrls = Controls.getAllUrls(testDetails)
           const updatedUrls = groupUrlsBySubfolder(allUrls)
           if (page.includes("reports")) {
-            Controls.buildTableReports(testDetails, updatedUrls)
+            Controls.buildTableReports(testDetails, updatedUrls, projectSettings)
           } else {
-            Controls.buildTable(testDetails, updatedUrls)
+            Controls.buildTable(testDetails, updatedUrls, projectSettings)
           }
           firstRow = $('.reports-table-header tr:eq(0)').clone().html()
           secondRow = $('.reports-table-header tr:eq(1)').clone().html()

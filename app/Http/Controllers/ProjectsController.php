@@ -306,7 +306,7 @@ class ProjectsController extends Controller
             }
         }
 
-        $payload = DashboardTestDataService::buildTestDataPayload($projectId, $project, $dashboardTest);
+        $payload = DashboardTestDataService::buildTrackerTestDataPayload($projectId, $project, $dashboardTest);
 
         return response()->json($payload);
     }

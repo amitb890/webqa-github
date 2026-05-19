@@ -17,12 +17,17 @@ use Illuminate\Support\Facades\Schema;
 
 class DashboardTrackerCacheService
 {
-    /** Not exposed as tests in the app; keep out of cache tables. */
-    private const OMITTED_CACHE_WIDGET_KEYS = [
+    /** Dashboard summary cache only (no per-card tiles); tracker still stores per-URL rows for these. */
+    private const DASHBOARD_OMITTED_CACHE_WIDGET_KEYS = [
         'url_slug',
         'meta_viewport',
         'doctype',
         'favicon',
+        'page_size',
+    ];
+
+    /** Per-URL tracker cache keys to drop (not used on website-tracker). */
+    private const TRACKER_OMITTED_CACHE_WIDGET_KEYS = [
         'page_size',
     ];
 
@@ -53,6 +58,10 @@ class DashboardTrackerCacheService
         'meta_desc',
         'robots_meta',
         'canonical_url',
+        'url_slug',
+        'meta_viewport',
+        'doctype',
+        'favicon',
         'http_status_code',
         'xml_sitemap',
         'html_sitemap',
@@ -259,10 +268,6 @@ class DashboardTrackerCacheService
             ->orderBy('id', 'DESC')
             ->first();
 
-        $settingsSub = ($settings && $settings->settingsSub)
-            ? $settings->settingsSub->toArray()
-            : [];
-
         $urls = self::orderedTrackerUrls($dashboardTest->id, $projectId);
         if ($urls === []) {
             return null;
@@ -280,7 +285,7 @@ class DashboardTrackerCacheService
         }
 
         $results = self::emptyTrackerAggregatedResults();
-        $legacyOnlyKeys = ['url_slug', 'meta_viewport', 'doctype', 'favicon', 'page_size'];
+        $legacyOnlyKeys = [];
 
         foreach ($urls as $url) {
             $urlCells = $cacheByUrl[$url] ?? [];
@@ -296,7 +301,6 @@ class DashboardTrackerCacheService
                     : self::sanitizeTrackerWidgetPayload($widgetKey, $cell);
                 $payload = self::trackerAggregatedRowPayload(
                     $slimCell !== [] ? $slimCell : null,
-                    $settingsSub,
                     $url
                 );
                 self::appendTrackerAggregatedRow($results, $widgetKey, $payload);
@@ -306,7 +310,7 @@ class DashboardTrackerCacheService
                 if (! isset($results[$legacyKey])) {
                     continue;
                 }
-                $results[$legacyKey][] = self::trackerAggregatedRowPayload(null, $settingsSub, $url);
+                $results[$legacyKey][] = self::trackerAggregatedRowPayload(null, $url);
             }
         }
 
@@ -363,21 +367,19 @@ class DashboardTrackerCacheService
 
     /**
      * @param  array<string, mixed>|null  $cell
-     * @param  array<string, mixed>  $settingsSub
      * @return array<string, mixed>
      */
-    private static function trackerAggregatedRowPayload(?array $cell, array $settingsSub, string $url): array
+    private static function trackerAggregatedRowPayload(?array $cell, string $url): array
     {
-        $base = [
-            'settings' => $settingsSub,
-            'tested_url' => $url,
-        ];
-
-        if ($cell === null) {
-            return $base;
+        if ($cell === null || $cell === []) {
+            return ['tested_url' => $url];
         }
 
-        return array_merge($cell, $base);
+        unset($cell['settings'], $cell['label']);
+
+        $cell['tested_url'] = $url;
+
+        return $cell;
     }
 
     /**
@@ -419,7 +421,6 @@ class DashboardTrackerCacheService
             'meta_viewport' => [],
             'doctype' => [],
             'favicon' => [],
-            'page_size' => [],
             'xml_sitemap' => [],
             'html_sitemap' => [],
             'images' => [],
@@ -449,7 +450,6 @@ class DashboardTrackerCacheService
                 'gzip_compression' => [],
                 'nested_tables' => [],
                 'frameset' => [],
-                'page_size' => [],
                 'css_caching_enable' => [],
                 'js_caching_enable' => [],
             ],
@@ -619,12 +619,16 @@ class DashboardTrackerCacheService
         }
 
         foreach ($decoded as $testKey => $value) {
-            $decodedValue = json_decode((string) $value, true);
-            if ($decodedValue === null && json_last_error() !== JSON_ERROR_NONE) {
+            if (is_array($value)) {
                 $decodedValue = $value;
+            } else {
+                $decodedValue = json_decode((string) $value, true);
+                if (! is_array($decodedValue) && $value !== null && $value !== '') {
+                    $decodedValue = $value;
+                }
             }
 
-            if (array_key_exists($testKey, $result)) {
+            if (array_key_exists($testKey, $result) && is_array($decodedValue)) {
                 $result[$testKey] = $decodedValue;
             }
         }
@@ -708,6 +712,18 @@ class DashboardTrackerCacheService
                 break;
             case 'h1_heading_tag':
                 $payload = self::trackerH1Row($row);
+                break;
+            case 'url_slug':
+                $payload = self::trackerUrlSlugRow($row);
+                break;
+            case 'favicon':
+                $payload = self::trackerFaviconRow($row);
+                break;
+            case 'meta_viewport':
+                $payload = self::trackerMetaViewportRow($row);
+                break;
+            case 'doctype':
+                $payload = self::trackerDoctypeRow($row);
                 break;
             case 'xml_sitemap':
             case 'html_sitemap':
@@ -888,6 +904,65 @@ class DashboardTrackerCacheService
     }
 
     /** @param  array<string, mixed>  $row */
+    private static function trackerUrlSlugRow(array $row): array
+    {
+        return self::trackerCopyFields($row, [
+            'tested_at',
+            'status',
+            'testerrorcaught',
+            'content',
+            'lengthClass',
+            'statusNumbers',
+            'statusSpecial',
+            'statusLowercase',
+            'statusHyphens',
+            'statusUnderscore',
+            'statusStopWords',
+            'contentLengthUnits',
+        ]);
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private static function trackerFaviconRow(array $row): array
+    {
+        return self::trackerCopyFields($row, [
+            'tested_at',
+            'status',
+            'testerrorcaught',
+            'content',
+        ]);
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private static function trackerMetaViewportRow(array $row): array
+    {
+        $payload = self::trackerCopyFields($row, [
+            'tested_at',
+            'status',
+            'testerrorcaught',
+            'isExists',
+            'content',
+        ]);
+        $payload['isExists'] = self::trackerBool($payload['isExists'] ?? $row['isExists'] ?? false);
+
+        return $payload;
+    }
+
+    /** @param  array<string, mixed>  $row */
+    private static function trackerDoctypeRow(array $row): array
+    {
+        $payload = self::trackerCopyFields($row, [
+            'tested_at',
+            'status',
+            'testerrorcaught',
+            'isExists',
+        ]);
+        $payload['isExists'] = self::trackerBool($payload['isExists'] ?? $row['isExists'] ?? false);
+
+        return $payload;
+    }
+
+    /** @param  array<string, mixed>  $row */
     private static function trackerSitemapRow(array $row, string $widgetKey): array
     {
         $settings = self::decodeTrackerMixedToArray($row['settings'] ?? null);
@@ -896,8 +971,14 @@ class DashboardTrackerCacheService
         $slimSettings = $url !== '' ? [$valKey => $url] : [];
 
         $payload = self::trackerCopyFields($row, [
-            'tested_at', 'fileExists', 'status', 'message', 'testerrorcaught',
+            'tested_at',
+            'fileExists',
+            'status',
+            'message',
+            'testerrorcaught',
         ]);
+        $payload['fileExists'] = self::trackerBool($payload['fileExists'] ?? $row['fileExists'] ?? false);
+        $payload['status'] = self::trackerBool($payload['status'] ?? false);
         if ($slimSettings !== []) {
             $payload['settings'] = $slimSettings;
         }
@@ -1127,7 +1208,18 @@ class DashboardTrackerCacheService
      */
     private static function finalizeTrackerPayload(array $payload): array
     {
-        return self::trackerStripRunTestBloat($payload);
+        $payload = self::trackerStripRunTestBloat($payload);
+
+        if (isset($payload['settings']) && is_array($payload['settings'])) {
+            $keys = array_keys($payload['settings']);
+            $sitemapOnly = $keys !== [] && count(array_diff($keys, ['xml_sitemap_val', 'html_sitemap_val'])) === 0;
+
+            if (! $sitemapOnly) {
+                unset($payload['settings']);
+            }
+        }
+
+        return $payload;
     }
 
     /**
@@ -1390,13 +1482,15 @@ class DashboardTrackerCacheService
         DB::table('cached_dashboard_details')
             ->where('project_id', $projectId)
             ->where('user_id', $userId)
-            ->whereIn('widget_key', self::OMITTED_CACHE_WIDGET_KEYS)
+            ->whereIn('widget_key', self::DASHBOARD_OMITTED_CACHE_WIDGET_KEYS)
             ->delete();
 
-        DB::table('cached_tracker_details')
-            ->where('project_id', $projectId)
-            ->where('user_id', $userId)
-            ->whereIn('widget_key', self::OMITTED_CACHE_WIDGET_KEYS)
-            ->delete();
+        if (self::TRACKER_OMITTED_CACHE_WIDGET_KEYS !== []) {
+            DB::table('cached_tracker_details')
+                ->where('project_id', $projectId)
+                ->where('user_id', $userId)
+                ->whereIn('widget_key', self::TRACKER_OMITTED_CACHE_WIDGET_KEYS)
+                ->delete();
+        }
     }
 }
