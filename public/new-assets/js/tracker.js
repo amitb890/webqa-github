@@ -514,25 +514,15 @@ $(document).ready(function () {
               $(this).attr("colspan", currentColspan + 1)
             }
           })
+        } else if (Controls.isPerformanceReportPage()) {
+          const $lastHeaderTd = $('#reportTable .table-header td:last')
+          const currentColspan = parseInt($lastHeaderTd.attr('colspan'), 10)
+          if (Number.isFinite(currentColspan)) {
+            $lastHeaderTd.attr('colspan', currentColspan + 1)
+          }
         } else {
           const consistsType = Controls.getReportTableConsistsType()
           if (!consistsType) {
-            return
-          }
-
-          const performanceReportConsistsTypes = [
-            'google_overall',
-            'google_lighthouse',
-            'core_web_vitals',
-            'mobile_friendly',
-          ]
-
-          if (performanceReportConsistsTypes.includes(consistsType)) {
-            const $lastHeaderTd = $('#reportTable .table-header td:last')
-            const currentColspan = parseInt($lastHeaderTd.attr('colspan'), 10)
-            if (Number.isFinite(currentColspan)) {
-              $lastHeaderTd.attr('colspan', currentColspan + 1)
-            }
             return
           }
 
@@ -3588,6 +3578,19 @@ $(document).ready(function () {
           await Controls.recheckStart()
           e.preventDefault()
         })
+      }
+
+      /** Performance report pages (headers built via buildPerformanceTableHeader, no data-consists). */
+      static isPerformanceReportPage(){
+        if (!page.includes("reports")) {
+          return false
+        }
+        return [
+          "google-page-speed-insights",
+          "google-page-speed-lighthouse",
+          "google-page-speed-core-web-vitals",
+          "mobile-friendliness",
+        ].includes(page[1])
       }
 
       /** Report slug → buildTableHeader `type` / `data-consists` value (reports table layout only). */
