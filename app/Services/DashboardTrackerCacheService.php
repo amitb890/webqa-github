@@ -302,13 +302,16 @@ class DashboardTrackerCacheService
                 }
 
                 $cell = $urlCells[$widgetKey] ?? null;
-                $slimCell = ($cell === null || $cell === [])
-                    ? []
-                    : self::sanitizeTrackerWidgetPayload($widgetKey, $cell);
-                $payload = self::trackerAggregatedRowPayload(
-                    $slimCell !== [] ? $slimCell : null,
-                    $url
-                );
+                if ($cell === null || $cell === []) {
+                    continue;
+                }
+
+                $slimCell = self::sanitizeTrackerWidgetPayload($widgetKey, $cell);
+                if ($slimCell === []) {
+                    continue;
+                }
+
+                $payload = self::trackerAggregatedRowPayload($slimCell, $url);
                 self::appendTrackerAggregatedRow($results, $widgetKey, $payload);
             }
 

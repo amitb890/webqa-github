@@ -150,6 +150,44 @@ $(document).ready(function () {
     return {}
   }
 
+  /** True when a tracker cell has real test output (not a cache placeholder with only tested_url). */
+  function hasTrackerMetricData(result) {
+    if (!result || typeof result !== "object") {
+      return false
+    }
+    const dataKeys = [
+      "tested_at",
+      "content",
+      "status",
+      "exists",
+      "httpCode",
+      "code",
+      "headingArray",
+      "totalBrokenLinks",
+      "fileExists",
+      "isExists",
+      "problems",
+      "length",
+      "lengthClass",
+      "robots_txt_url",
+      "desktop",
+      "mobile",
+    ]
+    return dataKeys.some((key) => {
+      const value = result[key]
+      if (value === undefined || value === null || value === "") {
+        return false
+      }
+      if (Array.isArray(value)) {
+        return value.length > 0
+      }
+      if (typeof value === "object") {
+        return Object.keys(value).length > 0
+      }
+      return true
+    })
+  }
+
   /** Map cached_tracker_details JSON to the shape buildTableBody expects. */
   function normalizeTrackerResult(type, result) {
     if (!result || typeof result !== "object") return result
@@ -1247,7 +1285,7 @@ $(document).ready(function () {
         const projectSettings = settings || (dataSetting && dataSetting[0] ? dataSetting[0].settings : null);
 
         if(window.location.href.includes("/reports")){
-          if(!result){
+          if(!result || !hasTrackerMetricData(result)){
             return
           }
         }
@@ -2532,479 +2570,168 @@ $(document).ready(function () {
         if(page[1] === "meta-title"){
          const rowspanCal = this.calculateColspan('meta-title', data.meta_title, settings);
           UI.buildTableHeader("title", data.meta_title, rowspanCal, options, settings, "seo", data.meta_title)
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.meta_title[originalIndex]){
-                urlsList.push(url)
-              }
-              
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "title", data.meta_title[originalIndex], options, url, settings, "seo", data.meta_title)
+                    Controls.renderReportMetricRows(data.meta_title, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "title", data.meta_title[originalIndex], options, url, settings, "seo", data.meta_title)
             })
-          })
 
         }else if(page[1] === "meta-description"){
           UI.buildTableHeader("description", data.meta_desc, 2, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.meta_desc[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "description", data.meta_desc[originalIndex], options, url, settings, "seo")
+                    Controls.renderReportMetricRows(data.meta_desc, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "description", data.meta_desc[originalIndex], options, url, settings, "seo")
             })
-          })
         }else if(page[1] === "http-status-code"){
           UI.buildTableHeader("http_status_code", data.http_status_code, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.http_status_code[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "http_status_code", data.http_status_code[originalIndex], options, url, settings, "seo", data.meta_title)
+                    Controls.renderReportMetricRows(data.http_status_code, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "http_status_code", data.http_status_code[originalIndex], options, url, settings, "seo", data.meta_title)
             })
-          })
         }else if(page[1] === "broken-links"){
           UI.buildTableHeader("broken_links", data.broken_links, 4, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.broken_links[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "broken_links", data.broken_links[originalIndex], options, url, settings, "seo", data.meta_title)
+                    Controls.renderReportMetricRows(data.broken_links, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "broken_links", data.broken_links[originalIndex], options, url, settings, "seo", data.meta_title)
             })
-          })
         }else if(page[1] === "xml-sitemap"){
           UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 4, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.xml_sitemap[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "xml_sitemap", data.xml_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
+                    Controls.renderReportMetricRows(data.xml_sitemap, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "xml_sitemap", data.xml_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
             })
-          })
         }else if(page[1] === "html-sitemap"){
           UI.buildTableHeader("html_sitemap", data.html_sitemap, 4, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.html_sitemap[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "html_sitemap", data.html_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
+                    Controls.renderReportMetricRows(data.html_sitemap, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "html_sitemap", data.html_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
             })
-          })
         } else if(page[1] === "url-slug"){
           const rowspanCal = this.calculateColspan('url-slug', data.url_slug, settings);
           UI.buildTableHeader("url_slug", data.url_slug, rowspanCal, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.url_slug[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "url_slug", data.url_slug[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.url_slug, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "url_slug", data.url_slug[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         } else if(page[1] === "canonical"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("canonical", data.canonical_url, 2, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.canonical_url[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "canonical", data.canonical_url[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.canonical_url, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "canonical", data.canonical_url[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "robots-meta"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("robots", data.robots_meta, 2, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.robots_meta[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "robots", data.robots_meta[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.robots_meta, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "robots", data.robots_meta[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         } else if(page[1] === "robotstxt"){
           UI.buildTableHeader("robot_text_test", data.robot_text_test, 3, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.robot_text_test[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "robot_text_test", data.robot_text_test[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.robot_text_test, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "robot_text_test", data.robot_text_test[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         } else if(page[1] === "headings"){
           UI.buildTableHeader("h1_heading_tag", data.h1_heading_tag, 4, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.h1_heading_tag[originalIndex]){
-                urlsList.push(url)
-              }
-
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "h1_heading_tag", data.h1_heading_tag[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.h1_heading_tag, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "h1_heading_tag", data.h1_heading_tag[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         } else if(page[1] === "doctype"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("doctype", data.doctype, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.doctype[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "doctype", data.doctype[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.doctype, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "doctype", data.doctype[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
        
         else if(page[1] === "meta-viewport"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("meta_viewport", data.meta_viewport, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.meta_viewport[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "meta_viewport", data.meta_viewport[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.meta_viewport, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "meta_viewport", data.meta_viewport[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "favicon"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("favicon", data.favicon, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.favicon[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "favicon", data.favicon[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.favicon, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "favicon", data.favicon[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         
         
         else if(page[1] === "images"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("images", data.images, 10, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.images[originalIndex]){
-                urlsList.push(url)
-              }
-      
-             
-              const problems =  data.images[originalIndex].problems;
-              problems.forEach((problemsVar, index) => {
-                const options = UI.initTableBody(el.id)
-              UI.buildTableBodyImages(problemsVar, el.id, "images", data.images[originalIndex], options, url, settings, "seo", data.url_slug, index)
+          Controls.renderReportMetricRows(data.images, (url, originalIndex, options, folderId) => {
+              const cell = data.images[originalIndex]
+              if (!cell || !cell.problems || !cell.problems.length) return
+              urlsList.push(url)
+              cell.problems.forEach((problemsVar, index) => {
+                UI.buildTableBodyImages(problemsVar, folderId, "images", cell, options, url, settings, "seo", data.url_slug, index)
+              })
             })
-            })
-          })
         }
 
 
         else if(page[1] === "gzip-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("gzip_compression", data.cbp_labels.gzip_compression, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.gzip_compression[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "gzip_compression", data.cbp_labels.gzip_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.gzip_compression, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "gzip_compression", data.cbp_labels.gzip_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "css-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("css_compression", data.cbp_labels.css_compression, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.css_compression[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "css_compression", data.cbp_labels.css_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.css_compression, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "css_compression", data.cbp_labels.css_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "js-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("js_compression", data.cbp_labels.js_compression, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.js_compression[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "js_compression", data.cbp_labels.js_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.js_compression, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "js_compression", data.cbp_labels.js_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "html-compression"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("html_compression", data.cbp_labels.html_compression, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.html_compression[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "html_compression", data.cbp_labels.html_compression[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.html_compression, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "html_compression", data.cbp_labels.html_compression[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
     
         else if(page[1] === "css-caching"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("css_caching_enable", data.cbp_labels.css_caching_enable, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.css_caching_enable[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "css_caching_enable", data.cbp_labels.css_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.css_caching_enable, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "css_caching_enable", data.cbp_labels.css_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "js-caching"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("js_caching_enable", data.cbp_labels.js_caching_enable, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.js_caching_enable[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "js_caching_enable", data.cbp_labels.js_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.js_caching_enable, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "js_caching_enable", data.cbp_labels.js_caching_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "page-size"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.page_size[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.page_size, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "nested-tables"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("nested_tables", data.cbp_labels.nested_tables, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.nested_tables[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "nested_tables", data.cbp_labels.nested_tables[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.nested_tables, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "nested_tables", data.cbp_labels.nested_tables[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "frameset"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("frameset", data.cbp_labels.frameset, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.cbp_labels.frameset[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "frameset", data.cbp_labels.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.cbp_labels.frameset, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "frameset", data.cbp_labels.frameset[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
 
@@ -3012,320 +2739,131 @@ $(document).ready(function () {
         else if(page[1] === "safe-browsing"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("is_safe_browsing", data.security_labels.is_safe_browsing, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.is_safe_browsing[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "is_safe_browsing", data.security_labels.is_safe_browsing[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.is_safe_browsing, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "is_safe_browsing", data.security_labels.is_safe_browsing[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "unsafe-cross-origin-links"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("cross_origin_links", data.security_labels.cross_origin_links, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.cross_origin_links[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "cross_origin_links", data.security_labels.cross_origin_links[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.cross_origin_links, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "cross_origin_links", data.security_labels.cross_origin_links[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "protocol-relative-resource"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("protocol_relative_resource", data.security_labels.protocol_relative_resource, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.protocol_relative_resource[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "protocol_relative_resource", data.security_labels.protocol_relative_resource[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.protocol_relative_resource, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "protocol_relative_resource", data.security_labels.protocol_relative_resource[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "content-security-policy-header"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("content_security_policy_header", data.security_labels.content_security_policy_header, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.content_security_policy_header[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "content_security_policy_header", data.security_labels.content_security_policy_header[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.content_security_policy_header, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "content_security_policy_header", data.security_labels.content_security_policy_header[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
 
         else if(page[1] === "hsts-header"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("hsts_header", data.security_labels.hsts_header, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{ 
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.hsts_header[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "hsts_header", data.security_labels.hsts_header[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.hsts_header, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "hsts_header", data.security_labels.hsts_header[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "bad-content-type"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("bad_content_type", data.security_labels.bad_content_type, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.bad_content_type[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "bad_content_type", data.security_labels.bad_content_type[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.bad_content_type, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "bad_content_type", data.security_labels.bad_content_type[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "ssl-certificate"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("ssl_certificate_enable", data.security_labels.ssl_certificate_enable, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.ssl_certificate_enable[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "ssl_certificate_enable", data.security_labels.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.ssl_certificate_enable, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "ssl_certificate_enable", data.security_labels.ssl_certificate_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
 
         else if(page[1] === "directory-browsing"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("folder_browsing_enable", data.security_labels.folder_browsing_enable, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.folder_browsing_enable[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "folder_browsing_enable", data.security_labels.folder_browsing_enable[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.folder_browsing_enable, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "folder_browsing_enable", data.security_labels.folder_browsing_enable[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "x-frame-options-header"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("x_frame_options_header", data.security_labels.x_frame_options_header, 1, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.security_labels.x_frame_options_header[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "x_frame_options_header", data.security_labels.x_frame_options_header[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.security_labels.x_frame_options_header, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "x_frame_options_header", data.security_labels.x_frame_options_header[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "og-tags"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("open_graph_tags", data.open_graph_tags, 12, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.open_graph_tags[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "open_graph_tags", data.open_graph_tags[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.open_graph_tags, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "open_graph_tags", data.open_graph_tags[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
 
         else if(page[1] === "twitter-tags"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
           UI.buildTableHeader("twitter_tags", data.twitter_tags, 8, options, settings, "seo")
-          updatedUrls.forEach(el=>{
-            UI.buildRootURLElement(el)
-
-            const urls = el.urls
-            urls.forEach(urlEl=>{
-              const url = urlEl.url
-              const originalIndex = urlEl.original_index
-
-              if(data.twitter_tags[originalIndex]){
-                urlsList.push(url)
-              }
-      
-              const options = UI.initTableBody(el.id)
-              UI.buildTableBody(el.id, "twitter_tags", data.twitter_tags[originalIndex], options, url, settings, "seo", data.url_slug)
+                    Controls.renderReportMetricRows(data.twitter_tags, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "twitter_tags", data.twitter_tags[originalIndex], options, url, settings, "seo", data.url_slug)
             })
-          })
         }
         else if(page[1] === "google-page-speed-insights"){
           UI.buildTableHeader("google_overall", testDetailsLighthouse, 2, options, settings, "performance")
 
-         updatedUrls.forEach(el=>{
-           UI.buildRootURLElement(el)
-
-           const urls = el.urls
-           urls.forEach(urlEl=>{
-             const url = urlEl.url
-             const originalIndex = urlEl.original_index
-
-             const googleData = Controls.getGoogleDataByUrl(url)
-             if(googleData){
-               urlsList.push(url)
-             }
-             const options = UI.initTableBody(el.id)
-             UI.buildTableBody(el.id, "google_overall", googleData, options, url, settings, "performance", data.url_slug)
-           })
-         })
+          Controls.renderReportMetricRows(Controls.getLighthouseUrlMetricArray(), (url, originalIndex, options, folderId) => {
+              const googleData = Controls.getGoogleDataByUrl(url)
+              if (!googleData) return
+              UI.buildTableBody(folderId, "google_overall", googleData, options, url, settings, "performance", data.url_slug)
+            })
        }
        
        
        else if(page[1] === "google-page-speed-lighthouse"){
          UI.buildTableHeader("google_lighthouse", testDetailsLighthouse, 8, options, settings, "performance")
 
-        updatedUrls.forEach(el=>{
-          UI.buildRootURLElement(el)
-
-          const urls = el.urls
-          urls.forEach(urlEl=>{
-            const url = urlEl.url
-            const originalIndex = urlEl.original_index
-
-            const googleData = Controls.getGoogleDataByUrl(url)
-            if(googleData){
-              urlsList.push(url)
-            }
-            const options = UI.initTableBody(el.id)
-            UI.buildTableBody(el.id, "google_lighthouse", googleData, options, url, settings, "performance", data.url_slug)
-          })
-        })
+          Controls.renderReportMetricRows(Controls.getLighthouseUrlMetricArray(), (url, originalIndex, options, folderId) => {
+              const googleData = Controls.getGoogleDataByUrl(url)
+              if (!googleData) return
+              UI.buildTableBody(folderId, "google_lighthouse", googleData, options, url, settings, "performance", data.url_slug)
+            })
       }
 
       
       else if(page[1] === "google-page-speed-core-web-vitals"){
        UI.buildTableHeader("core_web_vitals", testDetailsLighthouse, 14, options, settings, "performance")
 
-      updatedUrls.forEach(el=>{
-        UI.buildRootURLElement(el)
-
-        const urls = el.urls
-        urls.forEach(urlEl=>{
-          const url = urlEl.url
-          const originalIndex = urlEl.original_index
-
-          const googleData = Controls.getGoogleDataByUrl(url)
-          if(googleData){
-            urlsList.push(url)
-          }
-          const options = UI.initTableBody(el.id)
-          UI.buildTableBody(el.id, "core_web_vitals", googleData, options, url, settings, "performance", data.url_slug)
-        })
-      })
-    }
-
-    else if(page[1] === "mobile-friendliness"){
+          Controls.renderReportMetricRows(Controls.getLighthouseUrlMetricArray(), (url, originalIndex, options, folderId) => {
+              const googleData = Controls.getGoogleDataByUrl(url)
+              if (!googleData) return
+              UI.buildTableBody(folderId, "core_web_vitals", googleData, options, url, settings, "performance", data.url_slug)
+            })
+    } else if(page[1] === "mobile-friendliness"){
      UI.buildTableHeader("mobile_friendly", data.mobile_friendly, 1, options, settings, "performance")
 
-    updatedUrls.forEach(el=>{
-      UI.buildRootURLElement(el)
-
-      const urls = el.urls
-      urls.forEach(urlEl=>{
-        const url = urlEl.url
-        const originalIndex = urlEl.original_index
-
-        if(data.mobile_friendly[originalIndex]){
-          urlsList.push(url)
-        }
-        const options = UI.initTableBody(el.id)
-        UI.buildTableBody(el.id, "mobile_friendly", data.mobile_friendly[originalIndex], options, url, settings, "performance", data.url_slug)
-      })
-    })
-  }
+              Controls.renderReportMetricRows(data.mobile_friendly, (url, originalIndex, options, folderId) => {
+              UI.buildTableBody(folderId, "mobile_friendly", data.mobile_friendly[originalIndex], options, url, settings, "performance", data.url_slug)
+            })
     }
+
+      }
 
       static buildTableHeaderTop(){
 
@@ -3460,10 +2998,72 @@ $(document).ready(function () {
 
       static getAllUrls(data){
           const urls = []
-          data.meta_title.forEach(el=>{
-              urls.push(el.tested_url)
+          ;(data.meta_title || []).forEach((el) => {
+              if (el && el.tested_url && hasTrackerMetricData(el)) {
+                urls.push(el.tested_url)
+              }
           })
           return urls
+      }
+
+      static groupUrlsByMetricArray(metricArray) {
+        const groupedUrls = {}
+        ;(metricArray || []).forEach((cell, originalIndex) => {
+          if (!hasTrackerMetricData(cell) || !cell.tested_url) {
+            return
+          }
+          const url = cell.tested_url
+          let urlObj
+          try {
+            urlObj = new URL(url)
+          } catch (e) {
+            return
+          }
+          const path = urlObj.pathname.trim()
+          const segments = path.split("/").filter(Boolean)
+          const groupName = segments.length < 2 ? "Root" : capitalize(segments[0])
+          const groupId = segments.length < 2 ? "root" : segments[0].toLowerCase()
+          if (!groupedUrls[groupId]) {
+            groupedUrls[groupId] = {
+              name: groupName,
+              id: groupId,
+              urls: [],
+            }
+          }
+          groupedUrls[groupId].urls.push({ url, original_index: originalIndex })
+        })
+        return Object.values(groupedUrls)
+      }
+
+      static getLighthouseUrlMetricArray() {
+        const byUrl = {}
+        ;(testDetailsLighthouse || []).forEach((item) => {
+          if (!item || !item.url) {
+            return
+          }
+          const googleData = Controls.getGoogleDataByUrl(item.url)
+          if (!googleData || (!googleData.desktop && !googleData.mobile)) {
+            return
+          }
+          if (!byUrl[item.url]) {
+            byUrl[item.url] = { tested_url: item.url, status: true }
+          }
+        })
+        return Object.values(byUrl)
+      }
+
+      static renderReportMetricRows(metricArray, renderRow) {
+        if (!Array.isArray(metricArray)) {
+          return
+        }
+        Controls.groupUrlsByMetricArray(metricArray).forEach((folder) => {
+          UI.buildRootURLElement(folder)
+          folder.urls.forEach((urlEl) => {
+            const rowOptions = UI.initTableBody(folder.id)
+            urlsList.push(urlEl.url)
+            renderRow(urlEl.url, urlEl.original_index, rowOptions, folder.id)
+          })
+        })
       }
 
       static getLabelDbName(label) {
