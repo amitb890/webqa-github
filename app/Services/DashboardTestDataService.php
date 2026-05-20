@@ -17,6 +17,28 @@ class DashboardTestDataService
         'page_size',
     ];
 
+    /**
+     * dashboard_tests_details.data values may be JSON strings or already-decoded arrays.
+     */
+    public static function decodeDetailTestValue(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+
+        if (is_object($value)) {
+            return (array) $value;
+        }
+
+        if (! is_string($value) || trim($value) === '') {
+            return $value;
+        }
+
+        $decoded = json_decode($value, true);
+
+        return json_last_error() === JSON_ERROR_NONE ? $decoded : $value;
+    }
+
     private static function raiseMemoryLimitForAggregation(): ?string
     {
         $prev = ini_get('memory_limit');
@@ -98,18 +120,20 @@ class DashboardTestDataService
             }
 
             foreach ($decoded as $testKey => $value) {
+                $cell = self::decodeDetailTestValue($value);
+
                 if (isset($obj['security_labels'][$testKey])) {
-                    $obj['security_labels'][$testKey][] = json_decode($value, true);
+                    $obj['security_labels'][$testKey][] = $cell;
                     continue;
                 }
 
                 if (isset($obj['cbp_labels'][$testKey])) {
-                    $obj['cbp_labels'][$testKey][] = json_decode($value, true);
+                    $obj['cbp_labels'][$testKey][] = $cell;
                     continue;
                 }
 
                 if (isset($obj[$testKey])) {
-                    $obj[$testKey][] = json_decode($value, true);
+                    $obj[$testKey][] = $cell;
                     continue;
                 }
             }
@@ -142,20 +166,20 @@ class DashboardTestDataService
                     continue;
                 }
 
-                $decoded = self::stripTrackerRowSettings(json_decode($value, true));
+                $cell = self::stripTrackerRowSettings(self::decodeDetailTestValue($value));
 
                 if (isset($obj['security_labels'][$testKey])) {
-                    $obj['security_labels'][$testKey][] = $decoded;
+                    $obj['security_labels'][$testKey][] = $cell;
                     continue;
                 }
 
                 if (isset($obj['cbp_labels'][$testKey])) {
-                    $obj['cbp_labels'][$testKey][] = $decoded;
+                    $obj['cbp_labels'][$testKey][] = $cell;
                     continue;
                 }
 
                 if (isset($obj[$testKey])) {
-                    $obj[$testKey][] = $decoded;
+                    $obj[$testKey][] = $cell;
                 }
             }
         }

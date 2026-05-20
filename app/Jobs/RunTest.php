@@ -560,13 +560,21 @@ class RunTest implements ShouldQueue
                 ->update(['status' => $allSucceeded ? 'completed' : 'failed']);
 
             if ($allSucceeded) {
-                DashboardTrackerCacheService::finalizeDashboardTestAndRefreshCaches(
-                    (int) $projectId,
-                    (int) $this->user_id,
-                    (int) $this->dashboardTestId,
-                    (string) $this->type,
-                    (string) $this->recheck_label
-                );
+                try {
+                    DashboardTrackerCacheService::finalizeDashboardTestAndRefreshCaches(
+                        (int) $projectId,
+                        (int) $this->user_id,
+                        (int) $this->dashboardTestId,
+                        (string) $this->type,
+                        (string) $this->recheck_label
+                    );
+                } catch (\Throwable $cacheException) {
+                    Log::error('RunTest cache finalize failed: ' . $cacheException->getMessage(), [
+                        'project_id' => $projectId,
+                        'dashboard_test_id' => $this->dashboardTestId,
+                        'type' => $this->type,
+                    ]);
+                }
 
                 // create success alert
                 if($this->type != "single_recheck"){

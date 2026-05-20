@@ -13,6 +13,7 @@ use App\Models\projectSettings;
 use App\Models\UrlsList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 
 class DashboardTrackerCacheService
@@ -357,7 +358,7 @@ class DashboardTrackerCacheService
         }
 
         return UrlsList::query()
-            ->where('project_id', $projectId)
+            ->where('projects_id', $projectId)
             ->orderBy('id')
             ->pluck('url')
             ->map(static function ($url) {
@@ -474,22 +475,37 @@ class DashboardTrackerCacheService
         ?string $recheckLabel = null
     ): void
     {
-        self::markProjectDashboardFullyTested($projectId);
-
         if (! self::canUseCacheTables()) {
             return;
         }
 
-        DB::transaction(function () use ($projectId, $userId, $dashboardTestId, $testType, $recheckLabel) {
+        try {
+            DB::transaction(function () use ($projectId, $userId, $dashboardTestId, $testType, $recheckLabel) {
             $dashboardTest = DashboardTests::find($dashboardTestId);
             $targetUrls = self::extractRunTargetUrls($dashboardTest);
+            $scopeToRunUrls = in_array($testType, ['recheck', 'single_recheck'], true) && $targetUrls !== [];
 
-            $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
-                ->whereNotNull('data')
-                ->when(! empty($targetUrls), function ($query) use ($targetUrls) {
-                    $query->whereIn('url', $targetUrls);
-                })
-                ->get(['url', 'data']);
+            $detailsQuery = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
+                ->whereNotNull('data');
+
+            if ($scopeToRunUrls) {
+                $detailsQuery->whereIn('url', $targetUrls);
+            }
+
+            $details = $detailsQuery->get(['url', 'data']);
+
+            // Fallback: batch URL list out of sync with detail rows (e.g. mixed deploy / URL format drift).
+            if ($details->isEmpty()) {
+                $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
+                    ->whereNotNull('data')
+                    ->get(['url', 'data']);
+            }
+
+            if ($details->isEmpty()) {
+                throw new \RuntimeException(
+                    "No dashboard_tests_details rows with data for test #{$dashboardTestId} (project {$projectId})."
+                );
+            }
 
             $aggregated = DashboardTestDataService::buildAggregatedResults($details);
             $now = now();
@@ -542,16 +558,55 @@ class DashboardTrackerCacheService
                 }
             }
 
-            foreach (array_chunk($trackerRows, 500) as $rowsChunk) {
+            self::upsertTrackerCacheRows($trackerRows);
+
+            self::deleteOmittedWidgetCacheRows($projectId, $userId);
+
+            self::markProjectDashboardFullyTested($projectId);
+        });
+        } catch (\Throwable $e) {
+            Log::error('Dashboard cache finalize failed: ' . $e->getMessage(), [
+                'project_id' => $projectId,
+                'dashboard_test_id' => $dashboardTestId,
+                'test_type' => $testType,
+                'recheck_label' => $recheckLabel,
+            ]);
+            throw $e;
+        }
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $trackerRows
+     */
+    private static function upsertTrackerCacheRows(array $trackerRows): void
+    {
+        if ($trackerRows === []) {
+            return;
+        }
+
+        $hasUrlHash = Schema::hasColumn('cached_tracker_details', 'url_hash');
+
+        foreach (array_chunk($trackerRows, 500) as $rowsChunk) {
+            if ($hasUrlHash) {
                 DB::table('cached_tracker_details')->upsert(
                     $rowsChunk,
                     ['project_id', 'user_id', 'url_hash', 'widget_key'],
                     ['url', 'widget_data_json', 'updated_at']
                 );
-            }
+            } else {
+                $legacyChunk = array_map(static function (array $row) {
+                    unset($row['url_hash']);
 
-            self::deleteOmittedWidgetCacheRows($projectId, $userId);
-        });
+                    return $row;
+                }, $rowsChunk);
+
+                DB::table('cached_tracker_details')->upsert(
+                    $legacyChunk,
+                    ['project_id', 'user_id', 'url', 'widget_key'],
+                    ['widget_data_json', 'updated_at']
+                );
+            }
+        }
     }
 
     public static function finalizeGoogleWidgetsCache(int $projectId, int $userId, int $lighthouseTestId): void
