@@ -2829,9 +2829,9 @@ function getAllTestLabels(type, label = "default"){
             displayName: "Meta Description",
             name: "description",
             dbName: "meta_desc",
-            url: "/test/description",
-            urlDetails: "/test-details/description",
-            reportsUrl: "/reports/description",
+            url: "/test/meta-description",
+            urlDetails: "/test-details/meta-description",
+            reportsUrl: "/reports/meta-description",
             parent: "seo",
         },
         {

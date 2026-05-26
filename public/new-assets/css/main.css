@@ -7345,11 +7345,14 @@ h6 {
   max-width: 385px;
   width: 100%;
 }
+
+.login_modal_form{
+  margin-top: 20px;
+}
 .login_modal_form form input{
   width: 100%;
   border: 1px solid var(--border-gray);
   border-radius: 7px;
-  margin-top: 15px;
   padding: 10px 15px 10px 20px;
   font-size: 16px;
 }

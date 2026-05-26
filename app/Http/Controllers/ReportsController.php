@@ -129,8 +129,18 @@ class ReportsController extends Controller
         // Download the PDF
         return $pdf->download('Meta Title Report - ' .$activeProject->name.'.pdf');
     }
-    public function show($slug)
+    public function show(Request $request, $slug)
     {
+        if ($request->filled('project_id')) {
+            $requestedProject = Projects::where('id', $request->input('project_id'))
+                ->where('user_id', Auth::id())
+                ->first();
+
+            if ($requestedProject) {
+                session(['active_project_id' => $requestedProject->id]);
+            }
+        }
+
         $activeProject = $this->getActiveProjects();
         $projectId = $activeProject ? $activeProject->id : 1;
         $projectsController = new ProjectsController();

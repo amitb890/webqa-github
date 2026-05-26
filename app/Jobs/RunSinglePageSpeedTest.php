@@ -149,7 +149,10 @@ class RunSinglePageSpeedTest implements ShouldQueue
             $urls = json_decode($test->urls, true);
             $urlCount = is_array($urls) ? count($urls) : 0;
 
-            $reportUrl = URL::route('dashboard');
+            $reportUrl = URL::to('/reports/google-page-speed-insights');
+            if ($project) {
+                $reportUrl .= '?project_id='.$project->id;
+            }
 
             try {
                 Mail::to($user->email)->send(new PageSpeedCompletedMail(

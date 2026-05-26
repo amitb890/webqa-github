@@ -8,9 +8,7 @@
       <div class="inner_content">
         <div class="container-fluid">
           <div class="login_banner_area login-page">
-                    @if(session('status'))
-                    <span class="feedback text-success mb-2">Your password has been changed successfully, please login with your new password.</span>
-                    @endif
+                  
              <!-- Modal -->
           <div class="logIn_modal_area">
             <div class="login_modal">
@@ -20,6 +18,10 @@
                   @if (session('session_expired')) 
                   <h1 class="modal-title">Welcome Back</h1>
                   @else
+
+
+          
+
                   <h1 class="modal-title">Login</h1>
                   @endif
                   <button type="button" class="btn-close login_close_btn"></button>
@@ -51,6 +53,10 @@
 
 
                       <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
+
+                      @if(session('status'))
+                      <span class="feedback text-success mb-2">Your password has been updated successfully.</span>
+                      @endif
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}" class="login_forgetPass">{{ __('Forgot your password?') }}</a>
