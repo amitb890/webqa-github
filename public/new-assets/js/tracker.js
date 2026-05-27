@@ -2,10 +2,11 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 2000, recheckSingleMax = 2000, urls, urlsToCheck = 10, originalUrls
+  var recheckMax = 1, recheckSingleMax = 5, urls, urlsToCheck = 10, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId
+  const TRACKER_RECHECK_NOTICE_STORAGE_KEY = "tracker_recheck_notice_v1"
   let obj = {
     meta_title: [],
     meta_desc: [],
@@ -409,6 +410,78 @@ $(document).ready(function () {
   class UI{
       static deleteURL(){
         activeOptionsElement.remove()
+      }
+
+      static getStoredRecheckNotice() {
+        try {
+          const raw = sessionStorage.getItem(TRACKER_RECHECK_NOTICE_STORAGE_KEY)
+          return raw ? JSON.parse(raw) : null
+        } catch (_) {
+          return null
+        }
+      }
+
+      static setStoredRecheckNotice(notice) {
+        try {
+          sessionStorage.setItem(TRACKER_RECHECK_NOTICE_STORAGE_KEY, JSON.stringify(notice))
+        } catch (_) {}
+      }
+
+      static clearStoredRecheckNotice() {
+        try {
+          sessionStorage.removeItem(TRACKER_RECHECK_NOTICE_STORAGE_KEY)
+        } catch (_) {}
+      }
+
+      static storePendingRecheckNotice(notice) {
+        this.setStoredRecheckNotice({
+          ...notice,
+          status: "pending",
+        })
+      }
+
+      static completeStoredRecheckNotice() {
+        const notice = this.getStoredRecheckNotice()
+        if (!notice || notice.path !== window.location.pathname) {
+          return
+        }
+        this.setStoredRecheckNotice({
+          ...notice,
+          status: "completed",
+        })
+      }
+
+      static buildStoredRecheckNoticeMessage(notice) {
+        if (!notice) return ""
+
+        if (notice.type === "report") {
+          const label = Controls.getActiveLabel(notice.labelDbName)
+          const displayName = Controls.getLabelDisplayName(label) || Controls.formatTrackerColumnTitle(notice.labelDbName)
+          return `${displayName} report is updated for <b>${notice.urlCount} URLs</b>.`
+        }
+
+        return `Your dashboard has been rechecked for <b>${notice.urlCount} Urls</b>.`
+      }
+
+      static showStoredRecheckNotice() {
+        const notice = this.getStoredRecheckNotice()
+        if (!notice || notice.status !== "completed" || notice.path !== window.location.pathname) {
+          return
+        }
+
+        const msg = this.buildStoredRecheckNoticeMessage(notice)
+        if (!msg) {
+          this.clearStoredRecheckNotice()
+          return
+        }
+
+        displayAlert(".analysis-content-body-message", {
+          status: 3,
+          msg: msg,
+          notHide: true
+        })
+        $(".analysis-content-body-message").show()
+        this.clearStoredRecheckNotice()
       }
 
       static updateRecheckButtonState(isDisabled) {
@@ -3149,6 +3222,7 @@ $(document).ready(function () {
           UI.toggleTrackerElements()
           UI.updateTableDesign()
           removeLoader()
+          UI.showStoredRecheckNotice()
           if (options.resumeDashboardRecheckAfterLoad) {
             UI.buildRecheckLoader()
             Controls.pollDashboardRecheckUntilComplete()
@@ -3453,6 +3527,7 @@ $(document).ready(function () {
         if (document.querySelector(".main-tricker-progress")) {
           document.querySelector(".main-tricker-progress").remove()
         }
+        UI.completeStoredRecheckNotice()
         ;(async function waitThenReload() {
           // Give backend a short window to finalize status/data writes before rebuilding table.
           for (let i = 0; i < 10; i++) {
@@ -3486,8 +3561,16 @@ $(document).ready(function () {
                 const reportLabel = Controls.getReportRecheckLabel()
                 const runSingleReportRecheck = !!reportLabel
                 const maxBatch = runSingleReportRecheck ? recheckSingleMax : recheckMax
+                const totalUrlCount = Array.isArray(data) ? data.length : 0
                 urls = data.slice(0, maxBatch)
                 urlsToCheck = maxBatch
+
+                UI.storePendingRecheckNotice({
+                  type: runSingleReportRecheck ? "report" : "full",
+                  labelDbName: reportLabel,
+                  urlCount: totalUrlCount,
+                  path: window.location.pathname,
+                })
 
                 removeLoader()
                 UI.buildRecheckLoader()
@@ -3551,6 +3634,7 @@ $(document).ready(function () {
                     console.error('Recheck start failed:', err)
                     recheckAllowed = true
                     UI.updateRecheckButtonState(false)
+                    UI.clearStoredRecheckNotice()
                     if (document.querySelector(".main-tricker-progress")) {
                       document.querySelector(".main-tricker-progress").remove()
                     }
