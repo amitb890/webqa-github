@@ -3796,14 +3796,13 @@ $(document).ready(function () {
                 const reportLabel = Controls.getReportRecheckLabel()
                 const runSingleReportRecheck = !!reportLabel
                 const maxBatch = runSingleReportRecheck ? recheckSingleMax : recheckMax
-                const totalUrlCount = Array.isArray(data) ? data.length : 0
                 urls = data.slice(0, maxBatch)
                 urlsToCheck = maxBatch
 
                 UI.storePendingRecheckNotice({
                   type: runSingleReportRecheck ? "report" : "full",
                   labelDbName: reportLabel,
-                  urlCount: totalUrlCount,
+                  urlCount: urls.length,
                   path: window.location.pathname,
                 })
 
