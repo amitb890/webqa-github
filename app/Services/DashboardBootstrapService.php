@@ -10,6 +10,7 @@ use App\Models\Projects;
 use App\Models\projectSettings;
 use App\Models\UrlsList;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 
 class DashboardBootstrapService
@@ -130,6 +131,37 @@ class DashboardBootstrapService
             'dashboardStatus' => $dashboardStatus,
             'details_progress' => $detailsStatus,
         ];
+    }
+
+    public static function activeRecheckCacheKey(int $projectId): string
+    {
+        return "active_dashboard_recheck:{$projectId}";
+    }
+
+    /**
+     * @param  'full'|'report'  $scope
+     */
+    public static function setActiveRecheck(int $projectId, string $scope, ?string $label = null): void
+    {
+        Cache::put(self::activeRecheckCacheKey($projectId), [
+            'scope' => $scope,
+            'label' => $label,
+        ], now()->addDay());
+    }
+
+    /**
+     * @return array{scope: string, label: string|null}|null
+     */
+    public static function getActiveRecheck(int $projectId): ?array
+    {
+        $data = Cache::get(self::activeRecheckCacheKey($projectId));
+
+        return is_array($data) ? $data : null;
+    }
+
+    public static function clearActiveRecheck(int $projectId): void
+    {
+        Cache::forget(self::activeRecheckCacheKey($projectId));
     }
 
     public static function testsAppearRunning(int $projectId): bool

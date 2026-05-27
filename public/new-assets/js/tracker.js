@@ -6,7 +6,7 @@ $(document).ready(function () {
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId, currentRenderUrls = [], initialReportTableHtml = ""
-  let trackerCachedData = null, trackerTotalUrls = 0, maxUrlsLoaded = 0, currentUrlLimit = 0
+  let trackerCachedData = null, trackerTotalUrls = 0, maxUrlsLoaded = 0, currentUrlLimit = 0, trackerShowRecheckUi = false
   const TRACKER_RECHECK_NOTICE_STORAGE_KEY = "tracker_recheck_notice_v1"
   let obj = {
     meta_title: [],
@@ -134,6 +134,22 @@ $(document).ready(function () {
     return Number.isFinite(n) ? n : 0
   }
 
+  /** Per-URL broken link counts: total is always internal + external for that URL only. */
+  function trackerBrokenLinkCounts(result) {
+    if (!result || typeof result !== "object") {
+      return { total: 0, internal: 0, external: 0 }
+    }
+
+    const internal = trackerBrokenLinkSubsetCount(result.totalBrokenInternal ?? result.internal)
+    const external = trackerBrokenLinkSubsetCount(result.totalBrokenExternal ?? result.external)
+
+    return {
+      total: internal + external,
+      internal,
+      external,
+    }
+  }
+
   function trackerEscapeHtml(s) {
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;")
@@ -199,6 +215,19 @@ $(document).ready(function () {
   /** Map cached_tracker_details JSON to the shape buildTableBody expects. */
   function normalizeTrackerResult(type, result) {
     if (!result || typeof result !== "object") return result
+
+    if (type === "broken_links") {
+      const counts = trackerBrokenLinkCounts(result)
+
+      return {
+        ...result,
+        totalBrokenLinks: counts.total,
+        totalBrokenInternal: result.totalBrokenInternal ?? result.internal,
+        totalBrokenExternal: result.totalBrokenExternal ?? result.external,
+        testerrorcaught: result.testerrorcaught ?? !!result.error,
+        status_url: result.status_url !== undefined ? result.status_url : !result.error,
+      }
+    }
 
     // Rows saved with tracker field names (lengthClass, isExists, httpCode, …) — use as-is.
     if (
@@ -273,9 +302,15 @@ $(document).ready(function () {
         }
         break
       case "broken_links":
-        if (result.total !== undefined) {
+        if (
+          result.total !== undefined
+          || result.internal !== undefined
+          || result.external !== undefined
+        ) {
+          const counts = trackerBrokenLinkCounts(result)
+
           return {
-            totalBrokenLinks: result.total,
+            totalBrokenLinks: counts.total,
             totalBrokenInternal: result.internal,
             totalBrokenExternal: result.external,
             status: !!result.status,
@@ -443,6 +478,7 @@ $(document).ready(function () {
       static storePendingRecheckNotice(notice) {
         this.setStoredRecheckNotice({
           ...notice,
+          projectId: notice.projectId || projectId,
           status: "pending",
         })
       }
@@ -1737,14 +1773,12 @@ $(document).ready(function () {
                         td.innerHTML += `<td class="${hid}">—</td><td class="${hid}">—</td><td class="${hid}">—</td><td class="${hid}">—</td>`;
                         break;
                       }
-                      const inC = trackerBrokenLinkSubsetCount(result.totalBrokenInternal);
-                      const exC = trackerBrokenLinkSubsetCount(result.totalBrokenExternal);
-                      const total = Number(result.totalBrokenLinks) || inC + exC;
+                      const brokenCounts = trackerBrokenLinkCounts(result);
                       const passClass = result.status ? "result_pass" : "result_fail";
                       td.innerHTML += `
-                      <td class="${hid}">${total}</td>
-                      <td class="${hid}">${inC}</td>
-                      <td class="${hid}">${exC}</td>
+                      <td class="${hid}">${brokenCounts.total}</td>
+                      <td class="${hid}">${brokenCounts.internal}</td>
+                      <td class="${hid}">${brokenCounts.external}</td>
                       <td class="${passClass} ${hid}">${result.status ? "PASS" : "FAIL"}</td>`;
                       break;
                     }
@@ -3230,7 +3264,7 @@ $(document).ready(function () {
         buildLoader()
         Controls.loadData(projectId, {
           maxUrls: requestedMaxUrls,
-          resumeDashboardRecheckAfterLoad: !recheckAllowed,
+          resumeDashboardRecheckAfterLoad: trackerShowRecheckUi && !recheckAllowed,
         })
       }
 
@@ -3550,12 +3584,54 @@ $(document).ready(function () {
         return map[slug] || null
       }
 
+      /**
+       * Whether this tracker/reports page should show the recheck progress loader on load.
+       * Full / website-tracker rechecks apply everywhere; single-report rechecks only on that report.
+       */
+      static shouldResumeRecheckUiOnThisPage(dashboardStatus, statusPayload){
+        if (dashboardStatus !== 2 && dashboardStatus !== 3) {
+          return false
+        }
+
+        const activeRecheck = statusPayload && statusPayload.activeRecheck
+        const notice = UI.getStoredRecheckNotice()
+        const scope = (activeRecheck && activeRecheck.scope)
+          || (notice && notice.type === "report" ? "report" : notice && notice.type === "full" ? "full" : null)
+        const label = (activeRecheck && activeRecheck.label) || (notice && notice.labelDbName) || null
+        const isWebsiteTrackerPage = page[0] === "website-tracker"
+        const isReportsPage = page.includes("reports")
+
+        if (!scope && !notice) {
+          return true
+        }
+
+        if (notice && String(notice.projectId) !== String(projectId)) {
+          return false
+        }
+
+        if (scope === "full") {
+          return true
+        }
+
+        if (scope === "report") {
+          if (isWebsiteTrackerPage) {
+            return false
+          }
+          if (isReportsPage) {
+            return Controls.getReportRecheckLabel() === label
+          }
+          return false
+        }
+
+        return true
+      }
+
       static getReportRecheckLabel(){
         if (!page.includes("reports")) return null
         const slug = page[1]
         const map = {
           "meta-title": "meta_title",
-          "description": "meta_desc",
+          "meta-description": "meta_desc",
           "http-status-code": "http_status_code",
           "broken-links": "broken_links",
           "xml-sitemap": "xml_sitemap",
@@ -3804,6 +3880,7 @@ $(document).ready(function () {
                   labelDbName: reportLabel,
                   urlCount: urls.length,
                   path: window.location.pathname,
+                  projectId: projectId,
                 })
 
                 removeLoader()
@@ -3896,6 +3973,7 @@ $(document).ready(function () {
           trackerTotalUrls = 0
           maxUrlsLoaded = 0
           currentUrlLimit = 0
+          trackerShowRecheckUi = false
           buildLoader()
           projectId = getActiveProjectId()
 
@@ -3906,26 +3984,28 @@ $(document).ready(function () {
           DB.getDashboardShowStatus(projectId)
           .done(function(data) {
               const ds = Number(data.dashboardStatus)
+              const showRecheckUi = Controls.shouldResumeRecheckUiOnThisPage(ds, data)
+              trackerShowRecheckUi = showRecheckUi
 
-              // 1 = tests completed (same as dashboard)
-              if (ds === 1) {
-                function runLiveTrackerLoad(loadOptions) {
-                  ;(async function checkStatus() {
-                    const response = await fetch(`/api/check-status/${projectId}`)
-                    const { status, results } = await response.json()
+              function runLiveTrackerLoad(loadOptions) {
+                ;(async function checkStatus() {
+                  const response = await fetch(`/api/check-status/${projectId}`)
+                  const { status, results } = await response.json()
 
-                    if (status === 'completed') {
-                      lighthouseStatus = true
-                      testDetailsLighthouse = results
-                    }
+                  if (status === 'completed') {
+                    lighthouseStatus = true
+                    testDetailsLighthouse = results
+                  }
 
-                    Controls.loadData(projectId, loadOptions || {})
-                  })()
-                }
+                  Controls.loadData(projectId, loadOptions || {})
+                })()
+              }
 
+              // 1 = tests completed; also load normally when another report is rechecking
+              if (ds === 1 || ((ds === 2 || ds === 3) && !showRecheckUi)) {
                 runLiveTrackerLoad({ maxUrls: 10 })
               } else if (ds === 2 || ds === 3) {
-                // Full recheck (2) or single-tile refresh (3) in progress — keep loader UX after refresh (dashboard.js parity)
+                // Full recheck or this report's single recheck — show recheck progress after table load
                 recheckAllowed = false
                 UI.updateRecheckButtonState(true)
                 DB.getUrlsList(projectId).done(function(urlData) {

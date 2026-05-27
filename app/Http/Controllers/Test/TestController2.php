@@ -20,6 +20,7 @@ use App\Models\DashboardTestsDetails;
 use App\Models\projectSettings;
 use App\Models\SettingsSub;
 use App\Models\ProjectTestDetails;
+use App\Services\DashboardBootstrapService;
 use App\Services\DashboardTrackerCacheService;
 use App\Mail\EmailReportMail;
 use Helper;
@@ -204,6 +205,16 @@ class TestController2 extends Controller
             dispatch((new RunTest($result->id, $project_id, $type, $dashboardTest->id, $recheck_label, count($targetUrls), $userId))
                 ->onQueue($userQueue));
 
+        }
+
+        if ($type === 'single_recheck') {
+            DashboardBootstrapService::setActiveRecheck(
+                $project_id,
+                'report',
+                ($recheck_label !== null && $recheck_label !== 'na') ? (string) $recheck_label : null
+            );
+        } elseif ($type === 'recheck') {
+            DashboardBootstrapService::setActiveRecheck($project_id, 'full', null);
         }
     
         return response()->json(['testId' => $testId]);

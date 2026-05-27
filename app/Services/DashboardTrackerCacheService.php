@@ -958,7 +958,7 @@ class DashboardTrackerCacheService
     /** @param  array<string, mixed>  $row */
     private static function trackerBrokenLinksRow(array $row): array
     {
-        return self::trackerCopyFields($row, [
+        $payload = self::trackerCopyFields($row, [
             'tested_at',
             'status',
             'testerrorcaught',
@@ -968,6 +968,29 @@ class DashboardTrackerCacheService
             'totalBrokenExternal',
             'totalBrokenWebPages',
         ]);
+
+        $internalCount = self::trackerBrokenLinkSubsetCount($payload['totalBrokenInternal'] ?? null);
+        $externalCount = self::trackerBrokenLinkSubsetCount($payload['totalBrokenExternal'] ?? null);
+        $payload['totalBrokenLinks'] = $internalCount + $externalCount;
+
+        return $payload;
+    }
+
+    private static function trackerBrokenLinkSubsetCount(mixed $value): int
+    {
+        if (is_array($value)) {
+            return count($value);
+        }
+
+        if ($value === null || $value === '') {
+            return 0;
+        }
+
+        if (is_numeric($value)) {
+            return (int) $value;
+        }
+
+        return 0;
     }
 
     /** @param  array<string, mixed>  $row */

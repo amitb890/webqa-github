@@ -252,12 +252,18 @@ class ProjectsController extends Controller
         }
 
         $state = DashboardBootstrapService::dashboardShowState($project);
+        $activeRecheck = null;
+
+        if (in_array($state['details_progress'], ['recheck', 'recheck-single'], true)) {
+            $activeRecheck = DashboardBootstrapService::getActiveRecheck((int) $id);
+        }
 
         return response()->json([
             'status' => 1,
             'msg' => 'Success.',
             'dashboardStatus' => $state['dashboardStatus'],
             'details_progress' => $state['details_progress'],
+            'activeRecheck' => $activeRecheck,
         ]);
     }
     

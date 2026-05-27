@@ -19,6 +19,7 @@ use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 use Illuminate\Support\Facades\Auth;
 use App\Models\DashboardTestsDetails;
+use App\Services\DashboardBootstrapService;
 use App\Services\DashboardTrackerCacheService;
 
 ini_set('max_execution_time', 180000);
@@ -558,6 +559,10 @@ class RunTest implements ShouldQueue
             $allSucceeded = ($completed === $total);
             DashboardTests::where('id', $this->dashboardTestId)
                 ->update(['status' => $allSucceeded ? 'completed' : 'failed']);
+
+            if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
+                DashboardBootstrapService::clearActiveRecheck((int) $projectId);
+            }
 
             if ($allSucceeded) {
                 try {
