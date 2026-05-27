@@ -93,7 +93,7 @@ class DashboardBootstrapService
             'testData' => null,
         ];
 
-        if (in_array($dashboardState['dashboardStatus'], [1, 3], true)) {
+        if (in_array($dashboardState['dashboardStatus'], [1, 2, 3], true)) {
             $cachedTestData = self::buildCachedTestDataIfReady($projectId, $project);
             if ($cachedTestData !== null) {
                 $bootstrap['testData'] = $cachedTestData;
@@ -187,9 +187,8 @@ class DashboardBootstrapService
     public static function buildCachedTestDataIfReady(int $projectId, Projects $project): ?array
     {
         if (
-            !DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()
-            || (int) $project->dashboard_fully_tested !== 1
-            || !Schema::hasTable('cached_dashboard_details')
+            !DashboardTrackerCacheService::shouldServeCompletedCacheSnapshot($project)
+            || !DashboardTrackerCacheService::projectHasDashboardCache($projectId, (int) $project->user_id)
         ) {
             return null;
         }

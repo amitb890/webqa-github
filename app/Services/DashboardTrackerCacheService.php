@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Http\Controllers\TestDetailsController;
+use App\Models\CachedDashboardDetail;
 use App\Models\CachedTrackerDetail;
 use App\Models\DashboardTests;
 use App\Models\DashboardTestsDetails;
@@ -166,6 +167,56 @@ class DashboardTrackerCacheService
     public static function canUseCacheTables(): bool
     {
         return Schema::hasTable('cached_dashboard_details') && Schema::hasTable('cached_tracker_details');
+    }
+
+    public static function projectHasTrackerCache(int $projectId, int $userId): bool
+    {
+        if (! Schema::hasTable('cached_tracker_details')) {
+            return false;
+        }
+
+        return CachedTrackerDetail::query()
+            ->where('project_id', $projectId)
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
+    public static function projectHasDashboardCache(int $projectId, int $userId): bool
+    {
+        if (! Schema::hasTable('cached_dashboard_details')) {
+            return false;
+        }
+
+        return CachedDashboardDetail::query()
+            ->where('project_id', $projectId)
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
+    /**
+     * Use the last completed cache snapshot while a recheck is running; use live tables only
+     * when there is no prior cache or after the new snapshot is written at recheck completion.
+     */
+    public static function shouldServeCompletedCacheSnapshot(Projects $project): bool
+    {
+        if (! self::canUseCacheTables() || ! self::hasProjectDashboardFullyTestedColumn()) {
+            return false;
+        }
+
+        $projectId = (int) $project->id;
+        $userId = (int) $project->user_id;
+
+        if ((int) $project->dashboard_fully_tested === 1) {
+            return true;
+        }
+
+        $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
+        if (! $dashboardTest || ! in_array($dashboardTest->status, ['recheck', 'recheck-single'], true)) {
+            return false;
+        }
+
+        return self::projectHasTrackerCache($projectId, $userId)
+            || self::projectHasDashboardCache($projectId, $userId);
     }
 
     /** @var list<string> */

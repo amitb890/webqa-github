@@ -185,9 +185,8 @@ class ProjectsController extends Controller
         $urlLimit = $this->resolveTrackerUrlLimit(request()->query('limit'));
 
         if (
-            DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()
-            && (int) $project->dashboard_fully_tested === 1
-            && Schema::hasTable('cached_tracker_details')
+            DashboardTrackerCacheService::shouldServeCompletedCacheSnapshot($project)
+            && DashboardTrackerCacheService::projectHasTrackerCache($projectId, (int) $project->user_id)
         ) {
             $cachedPayload = DashboardTrackerCacheService::buildTrackerTestDataPayloadFromCache(
                 $projectId,
