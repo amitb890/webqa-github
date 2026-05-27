@@ -318,8 +318,12 @@ class DashboardTestDataService
         }
     }
 
-    public static function buildTrackerTestDataPayload(int $projectId, Projects $project, DashboardTests $dashboardTest): array
-    {
+    public static function buildTrackerTestDataPayload(
+        int $projectId,
+        Projects $project,
+        DashboardTests $dashboardTest,
+        ?int $urlLimit = null
+    ): array {
         $prevMem = self::raiseMemoryLimitForAggregation();
 
         try {
@@ -329,10 +333,23 @@ class DashboardTestDataService
                 ->get()
                 ->first();
 
-            $cursor = DashboardTestsDetails::query()
+            $allUrls = DashboardTrackerCacheService::getOrderedTrackerUrls($dashboardTest->id, $projectId);
+            $totalUrls = count($allUrls);
+            $urlsForQuery = $allUrls;
+
+            if ($urlLimit !== null && $urlLimit > 0) {
+                $urlsForQuery = array_slice($allUrls, 0, $urlLimit);
+            }
+
+            $detailsQuery = DashboardTestsDetails::query()
                 ->where('dashboard_test_id', $dashboardTest->id)
-                ->orderBy('id')
-                ->cursor();
+                ->orderBy('id');
+
+            if ($urlLimit !== null && $urlLimit > 0 && $urlsForQuery !== []) {
+                $detailsQuery->whereIn('url', $urlsForQuery);
+            }
+
+            $cursor = $detailsQuery->cursor();
 
             $results = self::buildTrackerAggregatedResults($cursor);
 
@@ -343,6 +360,8 @@ class DashboardTestDataService
                 'dashboard_status' => $dashboardTest->status,
                 'results' => $results,
                 'settings' => $settings ? $settings->toArray() : null,
+                'total_urls' => $totalUrls,
+                'loaded_urls' => count($urlsForQuery),
             ];
         } finally {
             self::restoreMemoryLimit($prevMem);

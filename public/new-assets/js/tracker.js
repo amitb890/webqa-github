@@ -2,10 +2,11 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 1, recheckSingleMax = 5, urls, urlsToCheck = 10, originalUrls
+  var recheckMax = 1, recheckSingleMax = 15, urls, urlsToCheck = 10, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
-  let firstRow, secondRow, allUrls, recheckAllowed = true, projectId
+  let firstRow, secondRow, allUrls, recheckAllowed = true, projectId, currentRenderUrls = [], initialReportTableHtml = ""
+  let trackerCachedData = null, trackerTotalUrls = 0, maxUrlsLoaded = 0, currentUrlLimit = 0
   const TRACKER_RECHECK_NOTICE_STORAGE_KEY = "tracker_recheck_notice_v1"
   let obj = {
     meta_title: [],
@@ -102,14 +103,20 @@ $(document).ready(function () {
           });
       }
 
-      static returnData(projectId){
+      static returnData(projectId, urlLimit){
+          const params = {
+              "_token": $('meta[name="csrf-token"]').attr('content'),
+          }
+
+          if (urlLimit !== undefined && urlLimit !== null) {
+              params.limit = urlLimit
+          }
+
           return $.ajax({
               url : `/get-test-data-tracker/${projectId}`,
               type : 'get',
               aysnc: false,
-              data: {
-                  "_token": $('meta[name="csrf-token"]').attr('content'),
-              },       
+              data: params,
               success: function(data) {
                 
               },error: function(data){
@@ -692,37 +699,60 @@ $(document).ready(function () {
         document.querySelector(".reports-table-body").appendChild(tr)
       }
 
-      static buildRowsTable(nums){
-          nums.forEach(num=>{
-              const opt = document.createElement("option")
-              opt.innerHTML = `${num}`
-              opt.setAttribute("value", num)
-              document.querySelector("#rowsTable").appendChild(opt)
+      static buildRowsTable(totalUrls, selectedValue = 10){
+          const select = document.querySelector("#rowsTable")
+          if (!select) {
+            return
+          }
+
+          const total = Number(totalUrls) || 0
+          const uniqueOptions = []
+          const baseOptions = [10, 30, 50, 100, 500]
+
+          select.innerHTML = ""
+
+          baseOptions.forEach((value) => {
+            if (value < total) {
+              uniqueOptions.push(value)
+            }
           })
-          const opt = document.createElement("option")
-          opt.innerHTML = `All`
-          opt.setAttribute("value", nums[nums.length-1])
-          document.querySelector("#rowsTable").appendChild(opt)
+
+          if (total > 0 && !uniqueOptions.includes(total)) {
+            uniqueOptions.push(total)
+          }
+
+          if (!uniqueOptions.length && total > 0) {
+            uniqueOptions.push(total)
+          }
+
+          uniqueOptions.forEach((value) => {
+            const opt = document.createElement("option")
+            opt.innerHTML = `${value}`
+            opt.setAttribute("value", value)
+            select.appendChild(opt)
+          })
+
+          if (total > 10) {
+            const allOption = document.createElement("option")
+            allOption.innerHTML = "All"
+            allOption.setAttribute("value", -1)
+            select.appendChild(allOption)
+          }
+
+          if (String(selectedValue) === "-1" && total > 10) {
+            select.value = "-1"
+            return
+          }
+
+          if (total > 0) {
+            const fallbackValue = Math.min(Number(selectedValue) > 0 ? Number(selectedValue) : 10, total)
+            select.value = String(uniqueOptions.includes(fallbackValue) ? fallbackValue : uniqueOptions[uniqueOptions.length - 1])
+          }
       }
 
-      static buildRowsTableReports() {
-        const options = [10, 30, 50, 100, 500];
-        const select = document.querySelector("#rowsTable");
-        select.innerHTML = ""; // Clear existing options
-    
-        options.forEach(optValue => {
-            const opt = document.createElement("option");
-            opt.innerHTML = optValue;
-            opt.setAttribute("value", optValue);
-            select.appendChild(opt);
-        });
-    
-        // Add "All" option with value -1
-        const allOption = document.createElement("option");
-        allOption.innerHTML = "All";
-        allOption.setAttribute("value", -1);
-        select.appendChild(allOption);
-    }
+      static buildRowsTableReports(totalUrls, selectedValue = 10) {
+        UI.buildRowsTable(totalUrls, selectedValue)
+      }
 
       static initTable(length){
        
@@ -2227,7 +2257,7 @@ $(document).ready(function () {
         }
       }
 
-      static initDataTable(){
+      static initDataTable(pageLength = 11){
           const $reportTable = $("#reportTable")
           if ($reportTable.length && $.fn.DataTable && $.fn.DataTable.isDataTable($reportTable[0])) {
             try {
@@ -2263,7 +2293,7 @@ $(document).ready(function () {
                 return data != null ? JSON.parse(data) : null;
               },
             },
-            pageLength: 11,
+            pageLength: pageLength,
             autoWidth: false,
             colReorder: true,
             colReorder: {
@@ -2295,7 +2325,7 @@ $(document).ready(function () {
           UI.updateCloneTable()
           let table = new DataTable("#reportTable", styles);
 
-          $("#downloadCSV").on('click', function() {
+          $("#downloadCSV").off('click.trackerTable').on('click.trackerTable', function() {
             if($('.website-tracker-csv').length){ 
               Controls.buildCSVTracker()
             }  else {
@@ -2326,21 +2356,20 @@ $(document).ready(function () {
             urlOptionModalOpenStatus = true
         });
 
-          $('#tableNext').on('click', function() {
+          $('#tableNext').off('click.trackerTable').on('click.trackerTable', function() {
               table.page('next').draw('page');
           });
 
-          $('#tablePrev').on('click', function() {
+          $('#tablePrev').off('click.trackerTable').on('click.trackerTable', function() {
               table.page('previous').draw('page');
           });
 
            // Event listener for dropdown change
-          $('#rowsTable').on('change', function () {
-              const recordsPerPage = parseInt($(this).val()); // Get the selected value and parse as integer
-              table.page.len(recordsPerPage).draw();
+          $('#rowsTable').off('change.trackerTable').on('change.trackerTable', function () {
+              Controls.onRowsTableChange(parseInt($(this).val(), 10))
           });
 
-          $(".left-menu-check .form-check-input").on("change", function () {
+          $(".left-menu-check .form-check-input").off("change.trackerTable").on("change.trackerTable", function () {
             // Get the state of the "All" checkbox
             var isChecked = $(this).prop("checked");
         
@@ -2348,7 +2377,7 @@ $(document).ready(function () {
             $("td:first-child .form-check-input").prop("checked", isChecked);
           });
 
-          $("#reportTable").on("click", function (e) {
+          $("#reportTable").off("click.trackerToggleColumn").on("click.trackerToggleColumn", function (e) {
               const target = e.target;
               const hideBtn = target.closest("#hide-col-btn");
               const showBtn = target.closest("#show-col-btn");
@@ -2375,7 +2404,7 @@ $(document).ready(function () {
               }
           });
 
-          $(".t-search-url input").on("input", function (e) {
+          $(".t-search-url input").off("input.trackerTable").on("input.trackerTable", function (e) {
               $(".alert-no-records").remove()
               const val = table.column(0).search($(this).val()).draw();
               const length = table.page.info().recordsDisplay;
@@ -2425,7 +2454,7 @@ $(document).ready(function () {
             }
           })
 
-          $("#reportTable").on("click", function (e) {
+          $("#reportTable").off("click.trackerHiddenElements").on("click.trackerHiddenElements", function (e) {
             if(e.target.parentElement.classList.contains("show-hidden-elements")){
               const element = e.target.parentElement.parentElement.parentElement
               const currentElement = element.getAttribute("data-consists")
@@ -2571,9 +2600,6 @@ $(document).ready(function () {
 
       static buildTable(data, updatedUrls, projectSettings){
           const test = data.meta_title
-          const nums = splitNParts(test.length + updatedUrls.length, 5)
-          UI.buildRowsTable(nums)
-        
           const options = UI.initTable(test.length)
           const settings = projectSettings || {}
           Controls.buildTableHeader(options, data, settings, updatedUrls)
@@ -2634,9 +2660,6 @@ $(document).ready(function () {
 
       static buildTableReports(data, updatedUrls, projectSettings){
         const test = data.meta_title
-        const nums = splitNParts(test.length, 5)
-        UI.buildRowsTableReports(nums)
-
         const options = UI.initTable(test.length)
         const settings = projectSettings || {}
         
@@ -3079,6 +3102,194 @@ $(document).ready(function () {
           return urls
       }
 
+      static getMetricUrls(metricArray){
+        const urls = []
+        const seenUrls = new Set()
+
+        ;(metricArray || []).forEach((el) => {
+          if (!el || !el.tested_url || !hasTrackerMetricData(el) || seenUrls.has(el.tested_url)) {
+            return
+          }
+
+          seenUrls.add(el.tested_url)
+          urls.push(el.tested_url)
+        })
+
+        return urls
+      }
+
+      static getMetricArrayByPath(data, path){
+        if (!path) {
+          return []
+        }
+
+        return path.split(".").reduce((carry, key) => {
+          return carry && carry[key] !== undefined ? carry[key] : []
+        }, data)
+      }
+
+      static getCurrentMetricArray(data, allowedUrls = null){
+        if (!page.includes("reports")) {
+          return data.meta_title || []
+        }
+
+        const slug = page[1]
+        const reportMetricMap = {
+          "meta-title": "meta_title",
+          "meta-description": "meta_desc",
+          "http-status-code": "http_status_code",
+          "broken-links": "broken_links",
+          "xml-sitemap": "xml_sitemap",
+          "html-sitemap": "html_sitemap",
+          "url-slug": "url_slug",
+          "canonical": "canonical_url",
+          "robots-meta": "robots_meta",
+          "robotstxt": "robot_text_test",
+          "headings": "h1_heading_tag",
+          "doctype": "doctype",
+          "meta-viewport": "meta_viewport",
+          "favicon": "favicon",
+          "images": "images",
+          "gzip-compression": "cbp_labels.gzip_compression",
+          "css-compression": "cbp_labels.css_compression",
+          "js-compression": "cbp_labels.js_compression",
+          "html-compression": "cbp_labels.html_compression",
+          "css-caching": "cbp_labels.css_caching_enable",
+          "js-caching": "cbp_labels.js_caching_enable",
+          "page-size": "cbp_labels.page_size",
+          "nested-tables": "cbp_labels.nested_tables",
+          "frameset": "cbp_labels.frameset",
+          "safe-browsing": "security_labels.is_safe_browsing",
+          "unsafe-cross-origin-links": "security_labels.cross_origin_links",
+          "protocol-relative-resource": "security_labels.protocol_relative_resource",
+          "content-security-policy-header": "security_labels.content_security_policy_header",
+          "hsts-header": "security_labels.hsts_header",
+          "bad-content-type": "security_labels.bad_content_type",
+          "ssl-certificate": "security_labels.ssl_certificate_enable",
+          "directory-browsing": "security_labels.folder_browsing_enable",
+          "x-frame-options-header": "security_labels.x_frame_options_header",
+          "og-tags": "open_graph_tags",
+          "twitter-tags": "twitter_tags",
+          "mobile-friendliness": "mobile_friendly",
+        }
+
+        if ([
+          "google-page-speed-insights",
+          "google-page-speed-lighthouse",
+          "google-page-speed-core-web-vitals",
+        ].includes(slug)) {
+          return Controls.getLighthouseUrlMetricArray(allowedUrls)
+        }
+
+        return Controls.getMetricArrayByPath(data, reportMetricMap[slug] || "meta_title")
+      }
+
+      static getVisibleUrls(data, maxUrls){
+        const allMetricUrls = Controls.getMetricUrls(Controls.getCurrentMetricArray(data, null))
+
+        if (Number(maxUrls) === -1) {
+          return allMetricUrls
+        }
+
+        const urlLimit = Number(maxUrls) > 0 ? Number(maxUrls) : 10
+        return allMetricUrls.slice(0, urlLimit)
+      }
+
+      static resolveRequestedUrlCount(maxUrls, data){
+        const testDetails = data && data.results ? data.results : data
+        const totalUrlCount = Number(data && data.total_urls) > 0
+          ? Number(data.total_urls)
+          : (trackerTotalUrls > 0
+            ? trackerTotalUrls
+            : Controls.getMetricUrls(Controls.getCurrentMetricArray(testDetails, null)).length)
+
+        if (Number(maxUrls) === -1) {
+          return totalUrlCount
+        }
+
+        const requested = Number(maxUrls) > 0 ? Number(maxUrls) : 10
+        return Math.min(requested, totalUrlCount)
+      }
+
+      static onRowsTableChange(requestedMaxUrls){
+        if (!trackerCachedData || !trackerCachedData.results) {
+          return
+        }
+
+        const requestedCount = Controls.resolveRequestedUrlCount(requestedMaxUrls, trackerCachedData)
+
+        if (requestedCount === currentUrlLimit) {
+          return
+        }
+
+        if (requestedCount <= maxUrlsLoaded) {
+          Controls.renderTestDataTable(trackerCachedData, { maxUrls: requestedMaxUrls })
+          return
+        }
+
+        buildLoader()
+        Controls.loadData(projectId, {
+          maxUrls: requestedMaxUrls,
+          resumeDashboardRecheckAfterLoad: !recheckAllowed,
+        })
+      }
+
+      static filterResultsCollectionByUrls(collection, allowedUrlSet){
+        if (Array.isArray(collection)) {
+          return collection.filter((item) => {
+            if (!item || typeof item !== "object" || !item.tested_url) {
+              return true
+            }
+
+            return allowedUrlSet.has(item.tested_url)
+          })
+        }
+
+        if (collection && typeof collection === "object") {
+          const filteredCollection = {}
+
+          Object.keys(collection).forEach((key) => {
+            filteredCollection[key] = Controls.filterResultsCollectionByUrls(collection[key], allowedUrlSet)
+          })
+
+          return filteredCollection
+        }
+
+        return collection
+      }
+
+      static resetTableState(){
+        seoColspan = 0
+        performanceColspan = 0
+        bestPracticesColspan = 0
+        securityColspan = 0
+        totalTests = 1
+        urlsList = []
+        hiddenColumns = []
+        firstRow = ""
+        secondRow = ""
+      }
+
+      static resetTableMarkup(){
+        const $reportTable = $("#reportTable")
+
+        if ($reportTable.length && $.fn.DataTable && $.fn.DataTable.isDataTable($reportTable[0])) {
+          try {
+            $reportTable.DataTable().destroy()
+          } catch (e) {
+            console.warn("DataTable destroy failed:", e)
+          }
+        }
+
+        if (initialReportTableHtml) {
+          $reportTable.html(initialReportTableHtml)
+        }
+
+        if ($("#reportTableClone").length) {
+          $("#reportTableClone").html("")
+        }
+      }
+
       static groupUrlsByMetricArray(metricArray) {
         const groupedUrls = {}
         ;(metricArray || []).forEach((cell, originalIndex) => {
@@ -3108,10 +3319,17 @@ $(document).ready(function () {
         return Object.values(groupedUrls)
       }
 
-      static getLighthouseUrlMetricArray() {
+      static getLighthouseUrlMetricArray(allowedUrls) {
+        const effectiveAllowedUrls = allowedUrls === undefined ? currentRenderUrls : allowedUrls
+        const allowedUrlSet = Array.isArray(effectiveAllowedUrls) && effectiveAllowedUrls.length
+          ? new Set(effectiveAllowedUrls)
+          : null
         const byUrl = {}
         ;(testDetailsLighthouse || []).forEach((item) => {
           if (!item || !item.url) {
+            return
+          }
+          if (allowedUrlSet && !allowedUrlSet.has(item.url)) {
             return
           }
           const googleData = Controls.getGoogleDataByUrl(item.url)
@@ -3205,19 +3423,35 @@ $(document).ready(function () {
       static renderTestDataTable(data, options = {}){
           const testDetails = data.results
           const projectSettings = resolveTrackerProjectSettings(data, testDetails)
+          const visibleUrls = Controls.getVisibleUrls(testDetails, options.maxUrls)
+          const totalUrlCount = Number(data.total_urls) > 0
+            ? Number(data.total_urls)
+            : Controls.getMetricUrls(Controls.getCurrentMetricArray(testDetails, null)).length
+          trackerTotalUrls = totalUrlCount
+          const selectedRowsValue = Number(options.maxUrls) === -1 ? -1 : visibleUrls.length
+          const filteredResults = Controls.filterResultsCollectionByUrls(testDetails, new Set(visibleUrls))
 
-          allUrls = Controls.getAllUrls(testDetails)
+          currentRenderUrls = visibleUrls
+          Controls.resetTableState()
+          Controls.resetTableMarkup()
+          UI.buildRowsTable(totalUrlCount, selectedRowsValue)
+
+          allUrls = Controls.getAllUrls(filteredResults)
           const updatedUrls = groupUrlsBySubfolder(allUrls)
           if (page.includes("reports")) {
-            Controls.buildTableReports(testDetails, updatedUrls, projectSettings)
+            Controls.buildTableReports(filteredResults, updatedUrls, projectSettings)
           } else {
-            Controls.buildTable(testDetails, updatedUrls, projectSettings)
+            Controls.buildTable(filteredResults, updatedUrls, projectSettings)
           }
           firstRow = $('.reports-table-header tr:eq(0)').clone().html()
           secondRow = $('.reports-table-header tr:eq(1)').clone().html()
 
-          Controls.initDataTable()
+          Controls.initDataTable(Math.max(document.querySelectorAll("#reportTable tbody tr").length, 1))
           Controls.activateEvents()
+
+          const limitForTracking = Controls.resolveRequestedUrlCount(options.maxUrls, data)
+          maxUrlsLoaded = Math.max(maxUrlsLoaded, limitForTracking)
+          currentUrlLimit = limitForTracking
 
           UI.toggleTrackerElements()
           UI.updateTableDesign()
@@ -3231,15 +3465,16 @@ $(document).ready(function () {
 
       /**
        * @param {string|number} loadDataParam - project id
-       * @param {{ resumeDashboardRecheckAfterLoad?: boolean }} [options]
+       * @param {{ resumeDashboardRecheckAfterLoad?: boolean, maxUrls?: number }} [options]
        */
       static loadData(loadDataParam, options = {}){
-          DB.returnData(loadDataParam)
+          DB.returnData(loadDataParam, options.maxUrls)
           .done(function(data){
             useCachedTrackerData = data.use_cached_tracker === true
             if (useCachedTrackerData) {
               console.log("Tracker finished (cached)")
             }
+            trackerCachedData = data
             Controls.renderTestDataTable(data, options)
           })
   
@@ -3657,6 +3892,11 @@ $(document).ready(function () {
       static init(){
           allLabels = getAllTestLabels("dashboard").allLabels
           page = location.pathname.split('/').slice(1)
+          initialReportTableHtml = $("#reportTable").html()
+          trackerCachedData = null
+          trackerTotalUrls = 0
+          maxUrlsLoaded = 0
+          currentUrlLimit = 0
           buildLoader()
           projectId = getActiveProjectId()
 
@@ -3684,7 +3924,7 @@ $(document).ready(function () {
                   })()
                 }
 
-                runLiveTrackerLoad({})
+                runLiveTrackerLoad({ maxUrls: 10 })
               } else if (ds === 2 || ds === 3) {
                 // Full recheck (2) or single-tile refresh (3) in progress — keep loader UX after refresh (dashboard.js parity)
                 recheckAllowed = false
@@ -3704,7 +3944,7 @@ $(document).ready(function () {
                     } catch (e) {
                       console.error(e)
                     }
-                    Controls.loadData(projectId, { resumeDashboardRecheckAfterLoad: true })
+                    Controls.loadData(projectId, { maxUrls: 10, resumeDashboardRecheckAfterLoad: true })
                   })()
                 })
               } else {

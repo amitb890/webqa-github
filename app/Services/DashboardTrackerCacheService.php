@@ -263,7 +263,8 @@ class DashboardTrackerCacheService
     public static function buildTrackerTestDataPayloadFromCache(
         int $projectId,
         Projects $project,
-        DashboardTests $dashboardTest
+        DashboardTests $dashboardTest,
+        ?int $urlLimit = null
     ): ?array {
         if (! self::canUseCacheTables()) {
             return null;
@@ -274,16 +275,28 @@ class DashboardTrackerCacheService
             ->orderBy('id', 'DESC')
             ->first();
 
-        $urls = self::orderedTrackerUrls($dashboardTest->id, $projectId);
-        if ($urls === []) {
+        $allUrls = self::getOrderedTrackerUrls($dashboardTest->id, $projectId);
+        if ($allUrls === []) {
             return null;
         }
 
+        $totalUrls = count($allUrls);
+        $urls = $allUrls;
+
+        if ($urlLimit !== null && $urlLimit > 0) {
+            $urls = array_slice($allUrls, 0, $urlLimit);
+        }
+
         $cacheByUrl = [];
-        $cacheRows = CachedTrackerDetail::query()
+        $cacheQuery = CachedTrackerDetail::query()
             ->where('project_id', $projectId)
-            ->where('user_id', (int) $project->user_id)
-            ->get(['url', 'widget_key', 'widget_data_json']);
+            ->where('user_id', (int) $project->user_id);
+
+        if ($urls !== $allUrls && $urls !== []) {
+            $cacheQuery->whereIn('url', $urls);
+        }
+
+        $cacheRows = $cacheQuery->get(['url', 'widget_key', 'widget_data_json']);
 
         foreach ($cacheRows as $row) {
             $decoded = json_decode((string) $row->widget_data_json, true);
@@ -331,7 +344,17 @@ class DashboardTrackerCacheService
             'results' => $results,
             'settings' => $settings ? $settings->toArray() : null,
             'use_cached_tracker' => true,
+            'total_urls' => $totalUrls,
+            'loaded_urls' => count($urls),
         ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    public static function getOrderedTrackerUrls(int $dashboardTestId, int $projectId): array
+    {
+        return self::orderedTrackerUrls($dashboardTestId, $projectId);
     }
 
     /**

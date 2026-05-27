@@ -182,6 +182,8 @@ class ProjectsController extends Controller
             return response()->json(['error' => 'Test not found'], 404);
         }
 
+        $urlLimit = $this->resolveTrackerUrlLimit(request()->query('limit'));
+
         if (
             DashboardTrackerCacheService::hasProjectDashboardFullyTestedColumn()
             && (int) $project->dashboard_fully_tested === 1
@@ -190,7 +192,8 @@ class ProjectsController extends Controller
             $cachedPayload = DashboardTrackerCacheService::buildTrackerTestDataPayloadFromCache(
                 $projectId,
                 $project,
-                $dashboardTest
+                $dashboardTest,
+                $urlLimit
             );
 
             if ($cachedPayload !== null) {
@@ -198,9 +201,27 @@ class ProjectsController extends Controller
             }
         }
 
-        $payload = DashboardTestDataService::buildTrackerTestDataPayload($projectId, $project, $dashboardTest);
+        $payload = DashboardTestDataService::buildTrackerTestDataPayload($projectId, $project, $dashboardTest, $urlLimit);
 
         return response()->json($payload);
+    }
+
+    /**
+     * @param  mixed  $limit
+     */
+    private function resolveTrackerUrlLimit($limit): ?int
+    {
+        if ($limit === null || $limit === '') {
+            return null;
+        }
+
+        $parsed = (int) $limit;
+
+        if ($parsed === -1) {
+            return null;
+        }
+
+        return max(1, $parsed);
     }
 
 
