@@ -7,6 +7,8 @@ use App\Jobs\RunLighthouseTest;
 use App\Models\LighthouseResult;
 use App\Models\LighthouseTest;
 use App\Services\DashboardTrackerCacheService;
+use App\Services\LighthouseCompletionNotifier;
+use App\Support\LighthouseUrlParser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -29,20 +31,26 @@ class LighthouseController extends Controller
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
 
+        $normalizedUrls = LighthouseUrlParser::fromRequestList($urls);
+
+        if ($normalizedUrls === []) {
+            return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
+        }
+
         // updating google tests status
         $projectsController->updateGoogleStatus($project_id);
 
         $testId = Str::uuid();
 
-        $sendCompletionEmail = $request->boolean('send_completion_notification', true);
-
+        // Always notify when a page-speed run finishes (initial prep or recheck).
         $test = LighthouseTest::create([
             'test_id' => $testId,
             'project_id' => $request->project_id,
             'user_id' => $userId,
-            'urls' => json_encode($request->urls),
+            'urls' => json_encode($normalizedUrls),
             'status' => 'in_progress',
-            'send_completion_email' => $sendCompletionEmail,
+            'send_completion_email' => true,
+            'completion_email_sent_at' => null,
         ]);
 
         $index = ($userId - 1) % count($lighthouseQueues);
@@ -50,12 +58,13 @@ class LighthouseController extends Controller
 
         dispatch(new RunLighthouseTest($test->id, Auth::id()))->onQueue($userQueue);
 
-        $urlCount = count($request->urls);
+        $urlCount = count($normalizedUrls);
 
         return response()->json([
             'message' => 'Test started successfully',
             'test_id' => $test->id,
             'url_count' => $urlCount,
+            'expected_results' => $urlCount * 2,
         ]);
 
 
@@ -96,20 +105,22 @@ class LighthouseController extends Controller
             ->get();
 
         
-        $completedCount = 0;
+        $finishedCount = $details->count();
+        $totalResults = $detailsTotal->count();
 
-        foreach ($details as $detail) {
-            if (in_array($detail->status, ['completed', 'failed'])) {
-                $completedCount++;
-            }
-        }
-    
+        $urlList = LighthouseUrlParser::fromStoredJson($lighthouseTest->urls);
+        $urlCount = count($urlList);
+        $expectedResults = max($urlCount * 2, $totalResults);
+        $percent = $expectedResults > 0
+            ? min(100, (int) round(($finishedCount / $expectedResults) * 100))
+            : 0;
+
         // Determine main dashboard test status
         $status = 'in_progress';
-        if ($details->count() > 0 && $completedCount === $detailsTotal->count()) {
+        if ($totalResults > 0 && $finishedCount === $totalResults) {
             $status = 'completed';
         }
-    
+
         // Optionally update the main DashboardTests status in DB
         $lighthouseTest->update(['status' => $status]);
 
@@ -119,11 +130,19 @@ class LighthouseController extends Controller
                 (int) $lighthouseTest->user_id,
                 (int) $lighthouseTest->id
             );
+
+            LighthouseCompletionNotifier::maybeSend((int) $lighthouseTest->id);
         }
-    
+
         return response()->json([
             'status' => $status,
-            'results' => $details
+            'results' => $details,
+            'progress' => [
+                'url_count' => $urlCount,
+                'expected_results' => $expectedResults,
+                'completed' => $finishedCount,
+                'percent' => $percent,
+            ],
         ]);
     }
 }

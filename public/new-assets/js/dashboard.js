@@ -1,8 +1,12 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 2000, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 2, recheckGoogle = 2, recheckSingleMax = 2, urlsGoogleFinal = 0
+  /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
+  var googleProgressIsRecheck = false
+  /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */
+  var googleProgressExpectedResults = 0
   var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
   var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
@@ -145,17 +149,19 @@ $(document).ready(function () {
       });
     }
 
-    static async startGoogleTests(urlsGoogle) {
+    static async startGoogleTests(urlsGoogle, isRecheck = false) {
+      const urlsForTest = Controls.normalizeUrlsForTest(originalUrls).slice(0, urlsGoogle)
       const response = await fetch('/api/start-tests', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' ,
-            "_token": $('meta[name="csrf-token"]').attr('content'),
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
           },
-          body: JSON.stringify({ 
-            "_token": $('meta[name="csrf-token"]').attr('content'),
-            "urls":originalUrls.slice(0, urlsGoogle), 
-            "project_id": projectId,
-            "send_completion_notification": true
+          body: JSON.stringify({
+            urls: urlsForTest,
+            project_id: projectId,
+            send_completion_notification: true,
+            is_recheck: !!isRecheck,
           })
       });
 
@@ -2611,6 +2617,7 @@ $(document).ready(function () {
 
             if (status === 'completed') {
               Controls.endTest()
+              googleProgressIsRecheck = false
               setTimeout(() => {
                 recheckAllowed = true
                 UI.updateRecheckButtonState(false)
@@ -2688,13 +2695,20 @@ $(document).ready(function () {
     }
 
 
-    static updateGoogleCards(results, refreshState = false){
-  
+    static updateGoogleCards(results, refreshState = false, statusPayload = null){
+      if (statusPayload && statusPayload.progress) {
+        const p = statusPayload.progress
+        if (p.expected_results) {
+          googleProgressExpectedResults = p.expected_results
+        }
+      }
 
-
-      const progress = Controls.getGoogleCurrentProgress(results, refreshState)
-
-      const pct = Math.round(progress || 0);
+      let pct = 0
+      if (statusPayload && statusPayload.progress && statusPayload.progress.percent !== undefined) {
+        pct = Math.min(100, Math.round(statusPayload.progress.percent))
+      } else {
+        pct = Math.min(100, Math.round(Controls.getGoogleCurrentProgress(results, refreshState) || 0))
+      }
 
       if(document.querySelectorAll(".page_speed_content").length > 0){
         $("#card_google_overall .dashboard-page-speed-progress, #card_google_lighthouse .dashboard-page-speed-progress, #card_core_web_vitals .dashboard-page-speed-progress").css({width: pct + "%"})
@@ -2716,52 +2730,89 @@ $(document).ready(function () {
     }
 
     static getGoogleCurrentProgress(results, refreshState){
-      let resultsTotal, total
+      let resultsTotal
 
-      // refreshState true = recheck flow (recheckGoogle URLs), false = initial load (googleUrlsToCheck URLs)
-      if(refreshState){
-        total = recheckGoogle
-      }else{
-        total = googleUrlsToCheck
+      let total = googleProgressExpectedResults
+      if (!total) {
+        const useRecheckTotal = refreshState || googleProgressIsRecheck
+        const urlCount = useRecheckTotal ? recheckGoogle : googleUrlsToCheck
+        total = urlCount * 2
       }
-      total = total * 2  // each URL has 2 results (desktop + mobile)
 
-      if(results){
+      if (results) {
         resultsTotal = Array.isArray(results) ? results.length : Object.keys(results).length
-      }else{
+      } else {
         resultsTotal = 0
       }
 
       return getReportProgress(resultsTotal, total, false)
     }
+
+    static async resetGoogleStatusForProject() {
+      const response = await fetch(`/reset-google-status/${projectId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+      })
+
+      return response.json()
+    }
+
+    static async runGooglePageSpeedTests(refreshState) {
+      const urlCount = refreshState ? recheckGoogle : googleUrlsToCheck
+      const result = await DB.startGoogleTests(urlCount, !!refreshState)
+      if (result && result.error === undefined) {
+        if (result.expected_results) {
+          googleProgressExpectedResults = result.expected_results
+        } else if (result.url_count !== undefined) {
+          googleProgressExpectedResults = result.url_count * 2
+        }
+        if (result.url_count !== undefined) {
+          UI.showPageSpeedInitiatedBanner(result.url_count)
+        }
+      }
+
+      return result
+    }
+
+    static async startGooglePageSpeedRecheck(options) {
+      options = options || {}
+      const skipReset = options.skipReset === true
+      googleProgressIsRecheck = true
+      googleProgressExpectedResults = 0
+      if (!skipReset) {
+        await Controls.resetGoogleStatusForProject()
+      }
+
+      return Controls.runGooglePageSpeedTests(true)
+    }
+
     static buildGoogleElements(refreshState = false, options){
       options = options || {}
       var skipStartTests = options.skipStartTests === true
-      // CHECKING IF GOOGLE ELEMENTS WERE STARTED OR NOT
-      DB.getGoogleShowStatus(projectId)
-      .done(function(data) {
-          if(skipStartTests){
-              return
-          }
-          if(data.googleStatus){
-              
-          }else{
+      googleProgressIsRecheck = !!refreshState
 
-            (async () => {
-              urlsGoogleFinal
-              if(refreshState){
-                urlsGoogleFinal = recheckGoogle
-              }else{
-                urlsGoogleFinal = googleUrlsToCheck
-              }
-              const result = await DB.startGoogleTests(urlsGoogleFinal)
-              if (result && result.error === undefined && result.url_count !== undefined) {
-                UI.showPageSpeedInitiatedBanner(result.url_count)
-              }
+      if (skipStartTests) {
+        return Promise.resolve()
+      }
 
-            })()
+      if (refreshState) {
+        return Controls.startGooglePageSpeedRecheck(options)
+      }
+
+      return new Promise((resolve) => {
+        DB.getGoogleShowStatus(projectId)
+        .done(function(data) {
+          if (data.googleStatus) {
+            resolve()
+            return
           }
-      });
+
+          Controls.runGooglePageSpeedTests(false).then(resolve)
+        })
+      })
     }
 
     static finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels){
@@ -2844,6 +2895,7 @@ $(document).ready(function () {
         }else{
         // Now proceed with recheck
         recheckAllowed = false
+        googleProgressIsRecheck = true
         
         // Update button state to show recheck is starting
         UI.updateRecheckButtonState(true)
@@ -2935,6 +2987,7 @@ $(document).ready(function () {
             
                         if (status === 'completed') {
                             Controls.endTest();
+                            googleProgressIsRecheck = false
                             setTimeout(() => {
                                 recheckAllowed = true;
                                 UI.updateRecheckButtonState(false); // re-enable button
@@ -3188,11 +3241,12 @@ $(document).ready(function () {
             urls = originalUrls.slice(0, recheckMax)
             urlsToCheck = recheckMax
             UI.buildRecheckLoader()
+            googleProgressIsRecheck = true
           }else if(dashboardStatus === 3){
 
           }
 
-          Controls.buildGoogleElements()
+          Controls.buildGoogleElements(dashboardStatus === 2)
         })
       }
 
@@ -3250,8 +3304,9 @@ $(document).ready(function () {
       async function checkStatus() {
           const interval = setInterval(async () => {
               const response = await fetch(`/api/check-status/${projectId}`);
-              const { status, results } = await response.json();
-              Controls.updateGoogleCards(results)
+              const statusPayload = await response.json();
+              const { status, results } = statusPayload;
+              Controls.updateGoogleCards(results, googleProgressIsRecheck, statusPayload)
 
               const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
@@ -3260,6 +3315,8 @@ $(document).ready(function () {
 
                 clearInterval(interval);
                 Controls.finalizeGoogleElements(results)
+                googleProgressIsRecheck = false
+                googleProgressExpectedResults = 0
                 
                 // Re-enable recheck button after Google tests completion
                 UI.updateRecheckButtonState(false)
@@ -3425,6 +3482,7 @@ $(document).ready(function () {
     }
 
     static refreshTileGoogle(dbName, target){
+      googleProgressIsRecheck = true
       // Disable recheck button when refreshing Google tiles
       UI.updateRecheckButtonState(true)
       
@@ -3440,40 +3498,47 @@ $(document).ready(function () {
           }
         }
       });
-      // Reset Google status in backend first
-      fetch(`/reset-google-status/${projectId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
+      Controls.startGooglePageSpeedRecheck().then(() => {
+        Controls.pollGooglePageSpeedStatus({
+          onComplete(results, googleTiles) {
+            handleGoogleResults(results, googleTiles)
+            Controls.finalizeGoogleElements(results)
+            googleProgressIsRecheck = false
+            googleProgressExpectedResults = 0
+            UI.updateRecheckButtonState(false)
+            DB.updateGoogleRecheckActiveUrls()
+          },
+        })
       })
-      .then(response => response.json())
-      .then(data => {
-        Controls.buildGoogleElements(true)
-        async function checkStatus() {
-          const interval = setInterval(async () => {
-              const response = await fetch(`/api/check-status/${projectId}`);
-              const { status, results } = await response.json();
-              Controls.updateGoogleCards(results, true)
+    }
 
-              // Handle Google error logic
-              const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
-              if (status === 'completed') {
-                handleGoogleResults(results, googleTiles)
+    static pollGooglePageSpeedStatus(options) {
+      options = options || {}
+      const refreshState = options.refreshState !== false
+      const intervalMs = options.intervalMs || 5000
 
-                  clearInterval(interval);
-                  Controls.finalizeGoogleElements(results)
-                  
-                  // Re-enable recheck button after Google tile refresh completion
-                  UI.updateRecheckButtonState(false)
+      const interval = setInterval(async () => {
+        try {
+          const response = await fetch(`/api/check-status/${projectId}`)
+          if (!response.ok) {
+            return
+          }
 
-                  DB.updateGoogleRecheckActiveUrls()
-              }
-          }, 5000); // Check every 5 seconds
+          const statusPayload = await response.json()
+          const { status, results } = statusPayload
+          Controls.updateGoogleCards(results, refreshState, statusPayload)
+
+          if (status === 'completed') {
+            clearInterval(interval)
+            const googleTiles = ['google_overall', 'google_lighthouse', 'core_web_vitals']
+            if (typeof options.onComplete === 'function') {
+              options.onComplete(results, googleTiles)
+            }
+          }
+        } catch (e) {
+          console.error('Page speed status poll failed:', e)
         }
-        checkStatus()
-      });
+      }, intervalMs)
     }
 
     static refreshTile(dbName, target){

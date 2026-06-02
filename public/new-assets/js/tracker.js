@@ -2,7 +2,7 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 2000, recheckSingleMax = 2000, urls, urlsToCheck = 2000, originalUrls
+  var recheckMax = 5, recheckSingleMax = 5, urls, urlsToCheck = 2000, originalUrls
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId, currentRenderUrls = [], initialReportTableHtml = ""

@@ -2,8 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Models\LighthouseTest;
 use App\Models\LighthouseResult;
+use App\Models\LighthouseTest;
+use App\Support\LighthouseUrlParser;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,15 +31,15 @@ class RunLighthouseTest implements ShouldQueue
     public function handle()
     {
         $test = LighthouseTest::findOrFail($this->testId);
-        $urls = json_decode($test->urls, true);
+        $urls = LighthouseUrlParser::fromStoredJson($test->urls);
         $userId = $this->userId;
         $lighthouseQueues = ['lighthouse_1','lighthouse_2','lighthouse_3','lighthouse_4','lighthouse_5'];
 
-        foreach ($urls as $urlIndex => $url) {
+        foreach ($urls as $urlIndex => $urlString) {
             foreach (['desktop', 'mobile'] as $strategyIndex => $strategy) {
                 $result = LighthouseResult::create([
                     'test_id' => $test->id,
-                    'url' => $url['url'],
+                    'url' => $urlString,
                     'strategy' => $strategy,
                     'status' => 'pending',
                 ]);
