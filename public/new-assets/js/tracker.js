@@ -2,7 +2,9 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 5, recheckSingleMax = 5, urls, urlsToCheck = 2000, originalUrls
+  var recheckMax = 5, recheckSingleMax = 5, recheckGoogle = 1, googleUrlsToCheck = 1, urls, urlsToCheck = 2000, originalUrls
+  var googleProgressIsRecheck = false, googleProgressExpectedResults = 0
+  const GOOGLE_PAGE_SPEED_REPORT_LABELS = ['google_overall', 'google_lighthouse', 'core_web_vitals']
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
   let hiddenColumns = [], urlsList = []
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId, currentRenderUrls = [], initialReportTableHtml = ""
@@ -101,6 +103,41 @@ $(document).ready(function () {
             },error: function(data){
             }
           });
+      }
+
+      static async startGoogleTests(urlsGoogle, isRecheck = false) {
+        const urlsForTest = Controls.normalizeUrlsForTest(originalUrls).slice(0, urlsGoogle)
+        const response = await fetch('/api/start-tests', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+          },
+          body: JSON.stringify({
+            urls: urlsForTest,
+            project_id: projectId,
+            send_completion_notification: true,
+            is_recheck: !!isRecheck,
+          }),
+        })
+
+        return response.json()
+      }
+
+      static async updateGoogleRecheckActiveUrls() {
+        const response = await fetch('/api/update-google-recheck-active-urls', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+          },
+          body: JSON.stringify({
+            urls_count: recheckGoogle,
+            project_id: projectId,
+          }),
+        })
+
+        return response.json()
       }
 
       static returnData(projectId, urlLimit){
@@ -497,6 +534,12 @@ $(document).ready(function () {
       static buildStoredRecheckNoticeMessage(notice) {
         if (!notice) return ""
 
+        if (notice.type === "google_page_speed") {
+          const label = Controls.getActiveLabel(notice.labelDbName)
+          const displayName = Controls.getLabelDisplayName(label) || "Page Speed"
+          return `${displayName} report is updated for <b>${notice.urlCount || recheckGoogle} URLs</b>.`
+        }
+
         if (notice.type === "report") {
           const label = Controls.getActiveLabel(notice.labelDbName)
           const displayName = Controls.getLabelDisplayName(label) || Controls.formatTrackerColumnTitle(notice.labelDbName)
@@ -518,12 +561,13 @@ $(document).ready(function () {
           return
         }
 
-        displayAlert(".analysis-content-body-message", {
+        const alertSelector = page.includes("reports") ? ".alert-section" : ".analysis-content-body-message"
+        displayAlert(alertSelector, {
           status: 3,
           msg: msg,
           notHide: true
         })
-        $(".analysis-content-body-message").show()
+        $(alertSelector).show()
         this.clearStoredRecheckNotice()
       }
 
@@ -614,27 +658,43 @@ $(document).ready(function () {
         })
       }
 
-      static buildRecheckLoader(){
+      static buildRecheckLoader(options){
+        options = options || {}
+        const isPageSpeed = options.pageSpeed === true
+        const urlTotal = isPageSpeed ? (options.urlCount || recheckGoogle) : (urls ? urls.length : 0)
+        const heading = isPageSpeed ? "Rechecking page speed..." : "Recheking pages..."
         const area = document.querySelector(".dashboard_recheck_area")
         if (!area) return
         area.querySelectorAll(".main-tricker-progress").forEach((el) => el.remove())
         const div = document.createElement("div")
         div.classList.add("main-tricker-progress")
+        if (isPageSpeed) {
+          div.classList.add("main-tricker-progress--page-speed")
+        }
         div.innerHTML = `
                 <div class="gif-loader">
                   <img src="/new-assets/assets/images/preloader1.gif" alt="icon">
                 </div>
                 <div class="single-tricker-progress">
                   <div class="rechecking-page">
-                    <span class="primary-span">Recheking pages... <span id="urlRecheckedProgressText">0%</span></span>
+                    <span class="primary-span">${heading} <span id="urlRecheckedProgressText">0%</span></span>
                     <span class="dark-span" id="urlRechecked">0</span>
-                    <span>/${urls.length}</span>
+                    <span id="urlRecheckTotal">/${urlTotal}</span>
                   </div>
                   <div class="progress">
                     <div id="urlRecheckedProgressBar" class="progress-bar tricker-progress" role="progressbar" aria-label="Success example" style="width: 0%;" aria-valuenow="70" title="" aria-valuemin="0" aria-valuemax="100"> </div>
                   </div>
                 </div>`
         area.prepend(div)
+      }
+
+      static showPageSpeedInitiatedBanner(urlCount) {
+        const n = parseInt(urlCount, 10) || 0
+        displayAlert(".alert-section", {
+          status: 1,
+          msg: "Initiated page speed checks for " + n + " urls, we will notify you by email once the checks are completed",
+          notHide: true,
+        })
       }
 
       
@@ -3491,7 +3551,11 @@ $(document).ready(function () {
           UI.updateTableDesign()
           removeLoader()
           UI.showStoredRecheckNotice()
-          if (options.resumeDashboardRecheckAfterLoad) {
+          if (options.resumeGooglePageSpeedRecheckAfterLoad) {
+            UI.buildRecheckLoader({ pageSpeed: true, urlCount: recheckGoogle })
+            googleProgressIsRecheck = true
+            Controls.pollGooglePageSpeedRecheckUntilComplete()
+          } else if (options.resumeDashboardRecheckAfterLoad) {
             UI.buildRecheckLoader()
             Controls.pollDashboardRecheckUntilComplete()
           }
@@ -3589,6 +3653,10 @@ $(document).ready(function () {
        * Full / website-tracker rechecks apply everywhere; single-report rechecks only on that report.
        */
       static shouldResumeRecheckUiOnThisPage(dashboardStatus, statusPayload){
+        if (Controls.shouldResumeGooglePageSpeedRecheck()) {
+          return false
+        }
+
         if (dashboardStatus !== 2 && dashboardStatus !== 3) {
           return false
         }
@@ -3671,6 +3739,177 @@ $(document).ready(function () {
           "mobile-friendly": "mobile_friendly",
         }
         return map[slug] || null
+      }
+
+      static isGooglePageSpeedReportLabel(labelDbName) {
+        return GOOGLE_PAGE_SPEED_REPORT_LABELS.includes(labelDbName)
+      }
+
+      static isGooglePageSpeedReportPage() {
+        const label = Controls.getReportRecheckLabel()
+        return !!label && Controls.isGooglePageSpeedReportLabel(label)
+      }
+
+      static shouldResumeGooglePageSpeedRecheck() {
+        const notice = UI.getStoredRecheckNotice()
+        if (!notice || notice.type !== "google_page_speed") {
+          return false
+        }
+        if (String(notice.projectId) !== String(projectId)) {
+          return false
+        }
+        if (page.includes("reports")) {
+          return Controls.getReportRecheckLabel() === notice.labelDbName
+        }
+        return false
+      }
+
+      static normalizeUrlsForTest(urlList) {
+        if (!Array.isArray(urlList)) {
+          return []
+        }
+        return urlList.map((u) => {
+          if (typeof u === "string") {
+            return u.trim()
+          }
+          if (u && typeof u.url === "string") {
+            return u.url.trim()
+          }
+          return ""
+        }).filter(Boolean)
+      }
+
+      static async resetGoogleStatusForProject() {
+        const response = await fetch(`/reset-google-status/${projectId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+          },
+        })
+
+        return response.json()
+      }
+
+      static async runGooglePageSpeedTests(refreshState) {
+        const urlCount = refreshState ? recheckGoogle : googleUrlsToCheck
+        const result = await DB.startGoogleTests(urlCount, !!refreshState)
+        if (result && result.error === undefined) {
+          if (result.expected_results) {
+            googleProgressExpectedResults = result.expected_results
+          } else if (result.url_count !== undefined) {
+            googleProgressExpectedResults = result.url_count * 2
+          }
+          if (result.url_count !== undefined) {
+            UI.showPageSpeedInitiatedBanner(result.url_count)
+          }
+        }
+
+        return result
+      }
+
+      static async startGooglePageSpeedRecheck() {
+        googleProgressIsRecheck = true
+        googleProgressExpectedResults = 0
+        await Controls.resetGoogleStatusForProject()
+
+        return Controls.runGooglePageSpeedTests(true)
+      }
+
+      static updateGooglePageSpeedRecheckProgress(statusPayload) {
+        const p = statusPayload && statusPayload.progress
+        if (!p) {
+          return
+        }
+
+        if (p.expected_results) {
+          googleProgressExpectedResults = p.expected_results
+        }
+
+        const pct = Math.min(100, Math.round(p.percent || 0))
+        const urlCount = p.url_count || recheckGoogle
+        const urlsDone = Math.min(urlCount, Math.floor((p.completed || 0) / 2))
+        const totalEl = document.querySelector("#urlRecheckTotal")
+        if (totalEl) {
+          totalEl.textContent = "/" + urlCount
+        }
+        UI.updateRecheckProgressBar(urlsDone, pct)
+      }
+
+      static pollGooglePageSpeedRecheckUntilComplete() {
+        const intervalMs = 5000
+
+        const interval = setInterval(async () => {
+          try {
+            const response = await fetch(`/api/check-status/${projectId}`)
+            if (!response.ok) {
+              return
+            }
+
+            const statusPayload = await response.json()
+            const { status, results } = statusPayload
+            Controls.updateGooglePageSpeedRecheckProgress(statusPayload)
+
+            if (status === "completed") {
+              clearInterval(interval)
+              Controls.endTestGooglePageSpeedRecheck(results)
+            }
+          } catch (e) {
+            console.error("Page speed recheck status poll failed:", e)
+          }
+        }, intervalMs)
+      }
+
+      static endTestGooglePageSpeedRecheck(results) {
+        if (document.querySelector(".main-tricker-progress")) {
+          document.querySelector(".main-tricker-progress").remove()
+        }
+        UI.completeStoredRecheckNotice()
+        lighthouseStatus = true
+        testDetailsLighthouse = results || []
+        googleProgressIsRecheck = false
+        googleProgressExpectedResults = 0
+        recheckAllowed = true
+        UI.updateRecheckButtonState(false)
+        DB.updateGoogleRecheckActiveUrls()
+
+        const limit = currentUrlLimit > 0 ? currentUrlLimit : 10
+        Controls.loadData(projectId, { maxUrls: limit })
+      }
+
+      static async recheckGooglePageSpeedReport() {
+        const reportLabel = Controls.getReportRecheckLabel()
+        recheckAllowed = false
+        UI.updateRecheckButtonState(true)
+
+        UI.storePendingRecheckNotice({
+          type: "google_page_speed",
+          labelDbName: reportLabel,
+          urlCount: recheckGoogle,
+          path: window.location.pathname,
+          projectId: projectId,
+        })
+
+        removeLoader()
+        UI.buildRecheckLoader({ pageSpeed: true, urlCount: recheckGoogle })
+
+        try {
+          await Controls.startGooglePageSpeedRecheck()
+          Controls.pollGooglePageSpeedRecheckUntilComplete()
+        } catch (err) {
+          console.error("Page speed report recheck failed:", err)
+          recheckAllowed = true
+          UI.updateRecheckButtonState(false)
+          UI.clearStoredRecheckNotice()
+          if (document.querySelector(".main-tricker-progress")) {
+            document.querySelector(".main-tricker-progress").remove()
+          }
+          displayAlert(".alert-section", {
+            status: 0,
+            msg: "Could not start page speed recheck. Please try again.",
+            notHide: true,
+          })
+        }
       }
 
       static async checkIfTestsAreRunning() {
@@ -3862,29 +4101,36 @@ $(document).ready(function () {
           if (testsRunning) {
             UI.showWaitingMessage()
             await Controls.waitForTestsToComplete()
-          } else {
-            recheckAllowed = false
-            UI.updateRecheckButtonState(true)
+          }
 
-            DB.getUrlsList(projectId)
-              .done(function(data){
-                originalUrls = data
-                const reportLabel = Controls.getReportRecheckLabel()
-                const runSingleReportRecheck = !!reportLabel
-                const maxBatch = runSingleReportRecheck ? recheckSingleMax : recheckMax
-                urls = data.slice(0, maxBatch)
-                urlsToCheck = maxBatch
+          recheckAllowed = false
+          UI.updateRecheckButtonState(true)
 
-                UI.storePendingRecheckNotice({
-                  type: runSingleReportRecheck ? "report" : "full",
-                  labelDbName: reportLabel,
-                  urlCount: urls.length,
-                  path: window.location.pathname,
-                  projectId: projectId,
-                })
+          DB.getUrlsList(projectId)
+            .done(function(data){
+              originalUrls = data
+              const reportLabel = Controls.getReportRecheckLabel()
+              const runSingleReportRecheck = !!reportLabel
 
-                removeLoader()
-                UI.buildRecheckLoader()
+              if (runSingleReportRecheck && Controls.isGooglePageSpeedReportLabel(reportLabel)) {
+                Controls.recheckGooglePageSpeedReport()
+                return
+              }
+
+              const maxBatch = runSingleReportRecheck ? recheckSingleMax : recheckMax
+              urls = Controls.normalizeUrlsForTest(data).slice(0, maxBatch)
+              urlsToCheck = maxBatch
+
+              UI.storePendingRecheckNotice({
+                type: runSingleReportRecheck ? "report" : "full",
+                labelDbName: reportLabel,
+                urlCount: urls.length,
+                path: window.location.pathname,
+                projectId: projectId,
+              })
+
+              removeLoader()
+              UI.buildRecheckLoader()
                 obj = {
                   meta_title: [],
                   meta_desc: [],
@@ -3958,7 +4204,6 @@ $(document).ready(function () {
                   }
                 })()
               })
-          }
         }
       }
 
@@ -3985,7 +4230,22 @@ $(document).ready(function () {
           .done(function(data) {
               const ds = Number(data.dashboardStatus)
               const showRecheckUi = Controls.shouldResumeRecheckUiOnThisPage(ds, data)
-              trackerShowRecheckUi = showRecheckUi
+              const resumeGooglePageSpeed = Controls.shouldResumeGooglePageSpeedRecheck()
+              trackerShowRecheckUi = showRecheckUi || resumeGooglePageSpeed
+
+              if (resumeGooglePageSpeed) {
+                recheckAllowed = false
+                UI.updateRecheckButtonState(true)
+                DB.getUrlsList(projectId).done(function(urlData) {
+                  originalUrls = urlData
+                  googleProgressIsRecheck = true
+                  Controls.loadData(projectId, {
+                    maxUrls: currentUrlLimit > 0 ? currentUrlLimit : 10,
+                    resumeGooglePageSpeedRecheckAfterLoad: true,
+                  })
+                })
+                return
+              }
 
               function runLiveTrackerLoad(loadOptions) {
                 ;(async function checkStatus() {
