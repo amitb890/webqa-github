@@ -557,8 +557,10 @@ class RunTest implements ShouldQueue
      
          if ($total > 0 && $total === $done) {
             $allSucceeded = ($completed === $total);
+            // Parent dashboard_tests.status has no "failed" enum value; per-URL outcomes
+            // live on dashboard_tests_details.status (completed | failed).
             DashboardTests::where('id', $this->dashboardTestId)
-                ->update(['status' => $allSucceeded ? 'completed' : 'failed']);
+                ->update(['status' => 'completed']);
 
             if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
                 DashboardBootstrapService::clearActiveRecheck((int) $projectId);
@@ -5087,11 +5089,35 @@ class RunTest implements ShouldQueue
             'exception' => $exception->getMessage(),
             'trace' => $exception->getTraceAsString()
         ]);
-        
-        // You can add additional failure handling here, such as:
-        // - Sending notifications
-        // - Updating database status
-        // - Cleaning up resources
+
+        try {
+            $result = DashboardTestsDetails::find($this->resultId);
+            if ($result && $result->status === 'pending') {
+                $result->update([
+                    'status' => 'failed',
+                    'error_message' => $exception->getMessage(),
+                ]);
+            }
+
+            $total = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)->count();
+            $done = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
+                ->whereIn('status', ['completed', 'failed'])
+                ->count();
+
+            if ($total > 0 && $total === $done) {
+                DashboardTests::where('id', $this->dashboardTestId)
+                    ->update(['status' => 'completed']);
+
+                if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
+                    DashboardBootstrapService::clearActiveRecheck((int) $this->projectId);
+                }
+            }
+        } catch (\Throwable $cleanupException) {
+            Log::error('RunTest failed() cleanup error: ' . $cleanupException->getMessage(), [
+                'dashboard_test_id' => $this->dashboardTestId,
+                'result_id' => $this->resultId,
+            ]);
+        }
     }
 
 }
