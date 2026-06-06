@@ -20,6 +20,7 @@ use Exception;
 use Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
+use App\Services\TestContextService;
 
 class TestController extends Controller
 {
@@ -100,6 +101,8 @@ class TestController extends Controller
                 }
             }
 
+            $defaultSettingsForContext = null;
+
             if($data["project"] === "default"){
                 $settings = $this->resolveCollectSettingsForDefaultProject();
                 if (!$settings || !$settings->settingsSub) {
@@ -108,9 +111,13 @@ class TestController extends Controller
                         'msg' => 'We could not load default test settings. Create at least one project (with saved settings), then try again.',
                     ]);
                 }
+                $defaultSettingsForContext = $settings;
                 Session::put('settings', json_encode($settings));
             }else if($data["project"] === "bulk" || $data["project"] === "analysis"){
-                $settings = $data["settingsVal"];
+                $normalizedSub = $this->testContextService()->normalizeSnapshot(
+                    $data["settingsVal"]["settings_sub"] ?? []
+                );
+                $settings = ['settings_sub' => $normalizedSub];
                 Session::put('settings', json_encode($settings));
                 if(isset($data["bulkUrl"])) {
                     Session::put('bulkUrl', $data["bulkUrl"]);
@@ -147,7 +154,10 @@ class TestController extends Controller
                 Session::put('settings', json_encode($settings));
             }
 
-           
+            $testContext = $this->testContextService()->resolveCollectContext(
+                $data,
+                $defaultSettingsForContext
+            );
 
             if(!in_array($statusCode, $failedStatus)){
                 
@@ -202,24 +212,7 @@ class TestController extends Controller
 
 
                   if(isset($data["saveInDB"])){
-                    // Get the latest test_key from cached_tests table (ordered by numeric value)
-                    $latestCachedTest = TestResults::orderByRaw('CAST(ref_id AS UNSIGNED) DESC')->first();
-                    
-                    if($latestCachedTest && $latestCachedTest->ref_id){
-                        // If records exist, get latest test_key and increment by 1
-                        $ref_id = (int)$latestCachedTest->ref_id + 1;
-                        
-                        // Check if this ref_id already exists, if so keep incrementing
-                        while(TestResults::where('ref_id', (string)$ref_id)->exists()){
-                            $ref_id++;
-                        }
-                    } else {
-                        // If it's the first record in cached_tests, start with 100001
-                        $ref_id = 100001;
-                    }
-                    
-                    // Convert to string to match test_key format
-                    $ref_id = (string)$ref_id;
+                    $ref_id = $this->persistTestRun($data, $meta, $html, $testContext);
 
                     // saving ref_id as a cookie
                     if(isset($data["page"])){
@@ -228,19 +221,13 @@ class TestController extends Controller
                         }
                     }
 
-                    $test = new TestResults();
-                    $test->url = $data["urlValue"];
-                    $test->testLabels = $data["testLabels"];
-                    $test->ref_id = $ref_id;
-                    $test->data = json_encode($meta);
-                    $test->html_code = $html;
-                    $test->http_user_agent = '';
-                    $test->save();
                     return response()->json(['status'=>1,'ref_id'=>$ref_id]);
                 }else{
+                    $ref_id = $this->persistTestRun($data, $meta, $html, $testContext);
                     $result =  [
                         'status' => 1,
                         'response' => $meta,
+                        'ref_id' => $ref_id,
                     ];
                     echo json_encode($result);
                 }
@@ -280,7 +267,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
 
         $noNested = $settings->settings_sub->no_nested_tables;
@@ -324,7 +311,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $httpCode = session()->get('http_status_code');
         $httpCodeName = $helpers->getHttpStatusName($httpCode);
@@ -369,7 +356,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -414,7 +401,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $xFrameVal = $internalResponse->getHeader('X-Frame-Options');
@@ -459,7 +446,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $hstsVal = $internalResponse->getHeader('Strict-Transport-Security');
@@ -503,7 +490,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentLength = $helpers->convertBytesToKb($internalResponse->getHeader('Content-Length')); // converting bytes to KBs
@@ -551,7 +538,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
 
         $isDoctype = $settings->settings_sub->doctype;
@@ -594,7 +581,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $isFrameset = $settings->settings_sub->no_frameset;
 
@@ -636,7 +623,7 @@ class TestController extends Controller
         $isExists = true;
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $isViewport = $settings->settings_sub->meta_viewport;
 
@@ -680,7 +667,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $isTitle = $settings->settings_sub->meta_title;
         $isMax = $settings->settings_sub->max_title_length;
@@ -766,7 +753,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $isDesc = $settings->settings_sub->meta_desc;
         $isMax = $settings->settings_sub->max_desc_length;
@@ -839,7 +826,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
 
         $isCanonical = $settings->settings_sub->canonical_url;
@@ -900,7 +887,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $pageType = "live";
 
@@ -959,7 +946,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $urlValue = $data["urlValue"];
         $urlSlugLowercase = $settings->settings_sub->url_slug_lowercase;
@@ -1129,7 +1116,7 @@ class TestController extends Controller
 
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
@@ -1450,7 +1437,7 @@ class TestController extends Controller
 
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $isTitle = $settings->settings_sub->twitter_title;
         $isMax = $settings->settings_sub->max_twitter_title_length;
@@ -1684,7 +1671,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
@@ -1821,7 +1808,7 @@ class TestController extends Controller
         isset($data["sitemapContent"]) ? $statusSitemapGetValues = $data["sitemapContent"] : 0;
 
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
@@ -1903,7 +1890,7 @@ class TestController extends Controller
         isset($data["sitemapContent"]) ? $statusSitemapGetValues = $data["sitemapContent"] : 0;
     
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
@@ -2019,7 +2006,7 @@ class TestController extends Controller
         // If URL does not belong to project (e.g. setmore.com vs project lexreception.com), skip list check and run schema test.
         // Bulk tool (no project/session): this block is skipped and test runs for the given URL.
         try {
-            $settings = json_decode(\Session::get('settings'));
+            $settings = $this->resolveTestSettings($request);
             $project = json_decode(\Session::get('project'));
             $urlBelongsToProject = false;
             if($project && isset($project->homepage) && $project->homepage){
@@ -2103,7 +2090,7 @@ class TestController extends Controller
         $requireJsonLd = true;
         $requireNoErrors = true;
         try {
-            $settings = json_decode(\Session::get('settings'));
+            $settings = $this->resolveTestSettings($request);
             if($settings && isset($settings->settings_sub)){
                 $requireJsonLd = isset($settings->settings_sub->schema_require_json_ld) ? (int)$settings->settings_sub->schema_require_json_ld === 1 : true;
                 $requireNoErrors = isset($settings->settings_sub->schema_no_errors) ? (int)$settings->settings_sub->schema_no_errors === 1 : true;
@@ -2202,7 +2189,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
@@ -2274,7 +2261,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
 
         $images = isset($data["links"]) ? $data["links"] : [];
         $urlValue = $data["urlValue"];
@@ -2531,7 +2518,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
 
         $urlValue = $data["urlValue"];
@@ -2591,7 +2578,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
 
         $urlValue = $data["urlValue"];
@@ -2639,7 +2626,7 @@ class TestController extends Controller
         $data = $request->input('data');
         $files = isset($data["links"]) ? $data["links"] : [];
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
 
         $urlValue = $data["urlValue"];
@@ -2693,7 +2680,7 @@ class TestController extends Controller
         $data = $request->input('data');
         $files = isset($data["links"]) ? $data["links"] : [];
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
 
         $urlValue = $data["urlValue"];
@@ -2753,7 +2740,7 @@ class TestController extends Controller
             'google_insights_desktop_val' => 90,
             'google_insights_mobile' => 1,
             'google_insights_mobile_val' => 90,
-        ]);
+        ], $request);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
@@ -2872,7 +2859,7 @@ class TestController extends Controller
             'google_seo_desktop_val' => 90,
             'google_seo_mobile' => 1,
             'google_seo_mobile_val' => 90,
-        ]);
+        ], $request);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
@@ -3116,7 +3103,7 @@ class TestController extends Controller
             'google_speed_index_desktop_val' => 4,
             'google_speed_index_mobile' => 1,
             'google_speed_index_mobile_val' => 4,
-        ]);
+        ], $request);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
@@ -3412,7 +3399,7 @@ class TestController extends Controller
 
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
         $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
@@ -3498,7 +3485,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $internalResponse = session()->get('internal_response');
         $title = "SSL Cetificate enable";
         $description = "A viewport title, also known as a title tag, refers to the text that is displayed on search engine result pages and browser tabs to indicate the topic of a webpage";
@@ -3573,7 +3560,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $title = "Directory Browsing";
@@ -3618,7 +3605,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -3674,7 +3661,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -3722,7 +3709,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -3773,7 +3760,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $title = "Safe Browsing";
@@ -3815,7 +3802,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -3862,7 +3849,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -3912,7 +3899,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -4021,7 +4008,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -4107,7 +4094,7 @@ class TestController extends Controller
         $problems = [];
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
-        $settings = json_decode(Session::get('settings'));
+        $settings = $this->resolveTestSettings($request);
         $html = session()->get('html_code');
         $internalResponse = session()->get('internal_response');
         $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
@@ -4160,35 +4147,87 @@ class TestController extends Controller
     }
 
     /**
-     * Merge session settings.settings_sub with defaults (DB migration defaults) when session is empty or malformed.
+     * Resolve settings wrapper ({ settings_sub }) from ref_id test context or session fallback.
+     *
+     * @return object{settings_sub: object}
+     */
+    protected function resolveTestSettings(Request $request): object
+    {
+        return $this->testContextService()->resolveSettingsWrapper($request);
+    }
+
+    protected function testContextService(): TestContextService
+    {
+        return app(TestContextService::class);
+    }
+
+    /**
+     * @param  array<string, mixed>  $meta
+     * @param  array{mode: string, project_id: ?int, snapshot: ?array<string, mixed>}  $testContext
+     */
+    protected function persistTestRun(array $data, array $meta, string $html, array $testContext): string
+    {
+        $refId = $this->generateNextRefId();
+        $testLabels = $data['testLabels'] ?? [];
+
+        $test = new TestResults();
+        $test->url = $data['urlValue'];
+        $test->testLabels = is_string($testLabels) ? $testLabels : json_encode($testLabels);
+        $test->ref_id = $refId;
+        $test->data = json_encode($meta);
+        $test->html_code = $html;
+        $test->http_user_agent = '';
+        $test->settings_mode = $testContext['mode'];
+        $test->project_id = $testContext['project_id'];
+        $test->settings_snapshot = $testContext['snapshot'] ? json_encode($testContext['snapshot']) : null;
+        $test->save();
+
+        return $refId;
+    }
+
+    protected function generateNextRefId(): string
+    {
+        $latestCachedTest = TestResults::orderByRaw('CAST(ref_id AS UNSIGNED) DESC')->first();
+
+        if ($latestCachedTest && $latestCachedTest->ref_id) {
+            $refId = (int) $latestCachedTest->ref_id + 1;
+
+            while (TestResults::where('ref_id', (string) $refId)->exists()) {
+                $refId++;
+            }
+        } else {
+            $refId = 100001;
+        }
+
+        return (string) $refId;
+    }
+
+    /**
+     * Merge resolved settings.settings_sub with defaults (DB migration defaults) when context is empty or malformed.
      *
      * @param  array<string, mixed>  $defaults
      */
-    protected function sessionSettingsSubOrDefaults(array $defaults): object
+    protected function sessionSettingsSubOrDefaults(array $defaults, ?Request $request = null): object
     {
-        $base = (object) $defaults;
-        $raw = Session::get('settings');
-        if ($raw === null || $raw === '') {
-            return $base;
-        }
-        $settings = is_string($raw) ? json_decode($raw) : $raw;
-        if (! is_object($settings) || ! isset($settings->settings_sub)) {
-            return $base;
-        }
-        $sub = $settings->settings_sub;
+        $request = $request ?? request();
+        $settings = $this->resolveTestSettings($request);
+        $sub = $settings->settings_sub ?? null;
+
         if (is_array($sub)) {
             $sub = (object) $sub;
         }
+
         if (! is_object($sub)) {
-            return $base;
-        }
-        foreach (array_keys($defaults) as $key) {
-            if (property_exists($sub, $key)) {
-                $base->{$key} = $sub->{$key};
-            }
+            return (object) array_merge($this->testContextService()->columnDefaults(), $defaults);
         }
 
-        return $base;
+        $merged = array_merge(
+            $this->testContextService()->columnDefaults(),
+            $defaults,
+            (array) $sub
+        );
+
+        return (object) $merged;
     }
 
     /**

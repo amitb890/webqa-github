@@ -389,7 +389,8 @@ $( document ).ready(function() {
     let activeUpdateStatusElement
     let url_list, url_list_length, obj_settings, obj, settingsVal, activeURL = "", settings
     let errorStatus = false, resultsError = []
-    /** Wall-clock start for current URL (collect + runTest share one minute budget). */
+    /** Current collect ref_id — set after each successful /test/collect for this URL. */
+    let bulkRefId = null
     let bulkCurrentUrlStartTs = 0
     var updateStatusModal = new bootstrap.Modal(document.getElementById('updateStatusModal'), {
         keyboard: false
@@ -825,6 +826,9 @@ function toggleTestResultAreaVisibility() {
                     resultsError.push(data)
                     checkFinished()
                 }else{
+                    if (data.ref_id) {
+                        bulkRefId = data.ref_id
+                    }
                     if(data.response){
                         data = data.response
                         let test = getTest(data, label)
@@ -937,6 +941,7 @@ function toggleTestResultAreaVisibility() {
             timeout: runTestTimeout,
             data: {
                 "data": test,
+                "ref_id": bulkRefId,
                 "_method": 'POST',
                 "_token": $('meta[name="csrf-token"]').attr('content'),
             },       
