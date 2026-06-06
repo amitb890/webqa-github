@@ -2,7 +2,7 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 5, recheckSingleMax = 5, recheckGoogle = 1, googleUrlsToCheck = 1, urls, urlsToCheck = 2000, originalUrls
+  var recheckMax = 2000, recheckSingleMax = 2000, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
   var googleProgressIsRecheck = false, googleProgressExpectedResults = 0
   const GOOGLE_PAGE_SPEED_REPORT_LABELS = ['google_overall', 'google_lighthouse', 'core_web_vitals']
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
