@@ -486,6 +486,28 @@ $(document).ready(function () {
     return result
   }
 
+  function parseLighthouseStoredData(raw) {
+    if (raw == null || raw === "") {
+      return null
+    }
+    try {
+      const parsed = typeof raw === "object" ? raw : JSON.parse(raw)
+      return parsed && typeof parsed === "object" ? parsed : null
+    } catch (_) {
+      return null
+    }
+  }
+
+  function lighthousePayloadsFromResult(result) {
+    if (!result) {
+      return { desktopData: null, mobileData: null }
+    }
+    return {
+      desktopData: result.desktop ? parseLighthouseStoredData(result.desktop.data) : null,
+      mobileData: result.mobile ? parseLighthouseStoredData(result.mobile.data) : null,
+    }
+  }
+
   class UI{
       static deleteURL(){
         activeOptionsElement.remove()
@@ -1938,11 +1960,14 @@ $(document).ready(function () {
                       `
                       break;
 
-                  case "google_overall":
-                    if(result.desktop && result.mobile){
-                      const desktopData = JSON.parse(result.desktop.data)
-                      const mobileData = JSON.parse(result.mobile.data)
-
+                  case "google_overall": {
+                    const { desktopData, mobileData } = lighthousePayloadsFromResult(result)
+                    if (
+                      desktopData
+                      && mobileData
+                      && desktopData.performance_score != null
+                      && mobileData.performance_score != null
+                    ) {
                       const desktopScore = getRoundedNumber(desktopData.performance_score);
                       const mobileScore = getRoundedNumber(mobileData.performance_score);
 
@@ -1959,20 +1984,22 @@ $(document).ready(function () {
                       <td></td>
                       `
                     }
-              
                     break;
-                  case "google_lighthouse":
-                    if(result.desktop && result.mobile){
-                      const desktopData = JSON.parse(result.desktop.data)
-                      const mobileData = JSON.parse(result.mobile.data)
+                  }
+                  case "google_lighthouse": {
+                    const { desktopData, mobileData } = lighthousePayloadsFromResult(result)
 
-                      const addMetric = (val) => {
-                        const score = getRoundedNumber(val);
-                        const color = getGoogleInsightsColorByScore(score);
-                        const className = color === "success" ? "result_pass" : "result_fail";
-                        return `<td class="${className}">${score}</td>`;
-                      };
+                    const addMetric = (val) => {
+                      if (val == null || val === "") {
+                        return `<td>-</td>`
+                      }
+                      const score = getRoundedNumber(val);
+                      const color = getGoogleInsightsColorByScore(score);
+                      const className = color === "success" ? "result_pass" : "result_fail";
+                      return `<td class="${className}">${score}</td>`;
+                    };
 
+                    if (desktopData && mobileData) {
                       td.innerHTML +=
                       addMetric(desktopData.performance_score) +
                       addMetric(mobileData.performance_score) +
@@ -1995,18 +2022,21 @@ $(document).ready(function () {
                       `
                     }
                     break;
-                  case "core_web_vitals":
-                    if(result.desktop && result.mobile){
-                      const desktopData = JSON.parse(result.desktop.data)
-                      const mobileData = JSON.parse(result.mobile.data)
+                  }
+                  case "core_web_vitals": {
+                    const { desktopData, mobileData } = lighthousePayloadsFromResult(result)
 
-                      const addMetric = (val, type) => {
-                        const score = getRoundedNumber(val);
-                        const color = getGoogleCWVColorByScore(score, type);
-                        const className = color === "success" ? "result_pass" : "result_fail";
-                        return `<td class="${className}">${score}</td>`;
-                      };
-                    
+                    const addMetric = (val, type) => {
+                      if (val == null || val === "") {
+                        return `<td>-</td>`
+                      }
+                      const score = getRoundedNumber(val);
+                      const color = getGoogleCWVColorByScore(score, type);
+                      const className = color === "success" ? "result_pass" : "result_fail";
+                      return `<td class="${className}">${score}</td>`;
+                    };
+
+                    if (desktopData && mobileData) {
                       td.innerHTML +=
                         addMetric(desktopData.largest_contentful_paint, "lcp") +
                         addMetric(mobileData.largest_contentful_paint, "lcp") +
@@ -2046,8 +2076,8 @@ $(document).ready(function () {
                       <td></td>   
                       `
                     }
-             
                     break;
+                  }
                  case "mobile_friendly":
                     if (!result) {
                       td.innerHTML+=`
@@ -2317,14 +2347,15 @@ $(document).ready(function () {
           mobile: null
         };
 
-      testDetailsLighthouse.forEach(item => {
-          if (item.url === url) {
-              if (item.strategy === "desktop") {
-                  result.desktop = item;
-              }
-              if (item.strategy === "mobile") {
-                  result.mobile = item;
-              }
+      ;(testDetailsLighthouse || []).forEach(item => {
+          if (!item || item.url !== url) {
+            return
+          }
+          if (item.strategy === "desktop") {
+            result.desktop = item
+          }
+          if (item.strategy === "mobile") {
+            result.mobile = item
           }
       });
 
