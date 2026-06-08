@@ -21,6 +21,8 @@ use Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cookie;
 use App\Services\TestContextService;
+use App\Services\PageSpeedService;
+use Illuminate\Support\Facades\Log;
 
 class TestController extends Controller
 {
@@ -2728,101 +2730,118 @@ class TestController extends Controller
     }
 
 
-    public function googleInsights(Request $request){
-        $status = true;
-        $statusDesktop = true;
-        $statusMobile = true;
+    public function prefetchPageSpeed(Request $request)
+    {
+        set_time_limit(300);
 
-        $data = $request->input('data');
-        $project = json_decode(Session::get('project'));
+        $url = $request->input('url');
+
+        if (! $url) {
+            return response()->json(['status' => 0, 'msg' => 'URL is required.']);
+        }
+
+        try {
+            if ($this->pageSpeedService()->isCached()) {
+                return response()->json(['status' => 1, 'cached' => true]);
+            }
+
+            $this->pageSpeedService()->fetchAndCache($url, true);
+
+            return response()->json(['status' => 1, 'cached' => false]);
+        } catch (\Throwable $e) {
+            Log::error("PageSpeed prefetch failed for {$url}: " . $e->getMessage());
+
+            return response()->json(['status' => 0, 'msg' => $e->getMessage()]);
+        }
+    }
+
+    public function googleInsights(Request $request){
         $settingsSub = $this->sessionSettingsSubOrDefaults([
             'google_insights_desktop' => 1,
             'google_insights_desktop_val' => 90,
             'google_insights_mobile' => 1,
             'google_insights_mobile_val' => 90,
         ], $request);
-        $urlValue = $data["urlValue"];
-        $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
-        $googleInsightsDesktop = $settingsSub->google_insights_desktop;
-        $googleInsightsDesktopVal = $settingsSub->google_insights_desktop_val;
-        $googleInsightsMobile = $settingsSub->google_insights_mobile;
-        $googleInsightsMobileVal = $settingsSub->google_insights_mobile_val;
- 
-        $title = "Google Page Speed Overall Score";
-        $titleDesktop = "Google Page Speed (Desktop)";
-        $titleMobile = "Google Page Speed (Mobile)";
+        try {
+            $status = true;
+            $statusDesktop = true;
+            $statusMobile = true;
 
-        $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
+            $data = $request->input('data');
+            $urlValue = $data["urlValue"];
 
-        $message = "Google Page Speed Insights check excluded.";
-        $messageDesktop = "Google Page Speed Insights check excluded.";
-        $messageMobile = "Google Page Speed Insights check excluded.";
-        $dataDesktop = Session::get("google_page_speed_desktop");
-        $dataMobile = Session::get("google_page_speed_mobile");
-        if(!$dataDesktop || !$dataMobile){
-            $dataDesktop = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&screenshot=true&strategy=desktop&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
-            $dataMobile = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&screenshot=true&strategy=mobile&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
+            $googleInsightsDesktop = $settingsSub->google_insights_desktop;
+            $googleInsightsDesktopVal = $settingsSub->google_insights_desktop_val;
+            $googleInsightsMobile = $settingsSub->google_insights_mobile;
+            $googleInsightsMobileVal = $settingsSub->google_insights_mobile_val;
+     
+            $title = "Google Page Speed Overall Score";
+            $titleDesktop = "Google Page Speed (Desktop)";
+            $titleMobile = "Google Page Speed (Mobile)";
 
-            Session::put('google_page_speed_desktop', json_encode($dataDesktop));
-            Session::put('google_page_speed_mobile', json_encode($dataMobile));
-        }else{
-            $dataDesktop = json_decode($dataDesktop);
-            $dataMobile = json_decode($dataMobile);
-        }
+            $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
 
-        $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
-        $scoreMobile = floatval($dataMobile->lighthouseResult->categories->performance->score * 100);
+            $message = "Google Page Speed Insights check excluded.";
+            $messageDesktop = "Google Page Speed Insights check excluded.";
+            $messageMobile = "Google Page Speed Insights check excluded.";
 
-        // screenshots
-        // Retrieve screenshot image data 
-        $screenshotDataDesktop = $dataDesktop->lighthouseResult->audits->{'final-screenshot'}->details->data; 
-        $screenshotDataMobile = $dataMobile->lighthouseResult->audits->{'final-screenshot'}->details->data; 
+            $pageSpeedData = $this->resolvePageSpeedData($urlValue, true);
+            $dataDesktop = $pageSpeedData['desktop'];
+            $dataMobile = $pageSpeedData['mobile'];
 
+            $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
+            $scoreMobile = floatval($dataMobile->lighthouseResult->categories->performance->score * 100);
 
-        if($googleInsightsDesktop){
-            $messageDesktop = "Google Page Speed Insights Score for Desktop is meeting quality reqruirements.";
-            if($scoreDesktop < $googleInsightsDesktopVal){
-                $messageDesktop = "Google Page Speed Insights Score for Desktop is not meeting quality reqruirements.";
-                $status = false;
-                $statusDesktop = false;
+            $screenshotDataDesktop = $dataDesktop->lighthouseResult->audits->{'final-screenshot'}->details->data ?? null;
+            $screenshotDataMobile = $dataMobile->lighthouseResult->audits->{'final-screenshot'}->details->data ?? null;
+
+            if($googleInsightsDesktop){
+                $messageDesktop = "Google Page Speed Insights Score for Desktop is meeting quality reqruirements.";
+                if($scoreDesktop < $googleInsightsDesktopVal){
+                    $messageDesktop = "Google Page Speed Insights Score for Desktop is not meeting quality reqruirements.";
+                    $status = false;
+                    $statusDesktop = false;
+                }
             }
-        }
-      
-        
-        if($googleInsightsMobile){
-            $messageMobile = "Google Page Speed Insights Score for Mobile is meeting quality reqruirements.";
-            if($scoreMobile < $googleInsightsMobileVal){
-                $messageMobile = "Google Page Speed Insights Score for Mobile is not meeting quality reqruirements.";
-                $status = false;
-                $statusMobile = false;
+          
+            if($googleInsightsMobile){
+                $messageMobile = "Google Page Speed Insights Score for Mobile is meeting quality reqruirements.";
+                if($scoreMobile < $googleInsightsMobileVal){
+                    $messageMobile = "Google Page Speed Insights Score for Mobile is not meeting quality reqruirements.";
+                    $status = false;
+                    $statusMobile = false;
+                }
             }
-        }
 
-        $object = new \stdClass();
-        $object->status = $status;
-        $object->statusDesktop = $statusDesktop;
-        $object->statusMobile = $statusMobile;
-        $object->title = $title;
-        $object->titleDesktop = $titleDesktop;
-        $object->titleMobile = $titleMobile;
-        $object->message = $message;
-        $object->messageDesktop = $messageDesktop;
-        $object->messageMobile = $messageMobile;
-        $object->description = $description;
-        $object->scoreDesktop = $scoreDesktop;
-        $object->scoreMobile = $scoreMobile;
-        $object->screenshotDataDesktop = $screenshotDataDesktop;
-        $object->screenshotDataMobile = $screenshotDataMobile;
-        $object->googleInsightsDesktop = $googleInsightsDesktop;
-        $object->googleInsightsMobile = $googleInsightsMobile;
-        $object->learnMoreURL = "https://setmore.com/";
-        $object->tagName = "insights";
-        $object->name = "google_check";
-        $object->parentCard = "performance";
-        
-        $object->settings = $settingsSub;
-        echo json_encode($object);
+            $object = new \stdClass();
+            $object->status = $status;
+            $object->statusDesktop = $statusDesktop;
+            $object->statusMobile = $statusMobile;
+            $object->title = $title;
+            $object->titleDesktop = $titleDesktop;
+            $object->titleMobile = $titleMobile;
+            $object->message = $message;
+            $object->messageDesktop = $messageDesktop;
+            $object->messageMobile = $messageMobile;
+            $object->description = $description;
+            $object->scoreDesktop = $scoreDesktop;
+            $object->scoreMobile = $scoreMobile;
+            $object->screenshotDataDesktop = $screenshotDataDesktop;
+            $object->screenshotDataMobile = $screenshotDataMobile;
+            $object->googleInsightsDesktop = $googleInsightsDesktop;
+            $object->googleInsightsMobile = $googleInsightsMobile;
+            $object->learnMoreURL = "https://setmore.com/";
+            $object->tagName = "insights";
+            $object->name = "google_check";
+            $object->parentCard = "performance";
+            $object->settings = $settingsSub;
+            $object->testerrorcaught = false;
+            echo json_encode($object);
+        } catch (\Throwable $e) {
+            Log::error("Error in googleInsights: " . $e->getMessage());
+            echo json_encode($this->buildPageSpeedErrorResponse('insights', $settingsSub, $e->getMessage()));
+        }
     }
 
     public function googleLighthouse(Request $request){
@@ -2861,7 +2880,6 @@ class TestController extends Controller
             'google_seo_mobile_val' => 90,
         ], $request);
         $urlValue = $data["urlValue"];
-        $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
         $googlePerformanceDesktop = $settingsSub->google_performance_desktop;
         $googlePerformanceDesktopVal = $settingsSub->google_performance_desktop_val;
@@ -2897,19 +2915,15 @@ class TestController extends Controller
         $message = "Lighthouse audit check excluded.";
         $messageDesktop = "Lighthouse audit for dekstop is meeting quality reqruirements.";
         $messageMobile = "Lighthouse audit for mobile is meeting quality reqruirements.";
-        
-        $dataDesktop = Session::get("google_page_speed_desktop");
-        $dataMobile = Session::get("google_page_speed_mobile");
-        
-        if(!$dataDesktop || !$dataMobile){
-            $dataDesktop = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&strategy=desktop&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
-            $dataMobile = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&strategy=mobile&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
 
-            Session::put('google_page_speed_desktop', json_encode($dataDesktop));
-            Session::put('google_page_speed_mobile', json_encode($dataMobile));
-        }else{
-            $dataDesktop = json_decode($dataDesktop);
-            $dataMobile = json_decode($dataMobile);
+        try {
+            $pageSpeedData = $this->resolvePageSpeedData($urlValue, true);
+            $dataDesktop = $pageSpeedData['desktop'];
+            $dataMobile = $pageSpeedData['mobile'];
+        } catch (\Throwable $e) {
+            Log::error("Error in googleLighthouse: " . $e->getMessage());
+            echo json_encode($this->buildPageSpeedErrorResponse('lighthouse', $settingsSub, $e->getMessage()));
+            return;
         }
 
         $scoreDesktop = floatval($dataDesktop->lighthouseResult->categories->performance->score * 100);
@@ -3046,6 +3060,7 @@ class TestController extends Controller
         $object->name = "google_check";
         $object->parentCard = "performance";
         $object->settings = $settingsSub;
+        $object->testerrorcaught = false;
         echo json_encode($object);
     }
 
@@ -3105,7 +3120,6 @@ class TestController extends Controller
             'google_speed_index_mobile_val' => 4,
         ], $request);
         $urlValue = $data["urlValue"];
-        $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
         $googleLCPDesktop = $settingsSub->google_lcp_desktop;
         $googleLCPDesktopVal = $settingsSub->google_lcp_desktop_val;
@@ -3154,19 +3168,15 @@ class TestController extends Controller
         $message = "Core web vitals check excluded";
         $messageDesktop = "Core web vitals for dekstop is meeting quality reqruirements.";
         $messageMobile = "Core web vitals for mobile is meeting quality reqruirements.";
-        
-        $dataDesktop = Session::get("google_page_speed_desktop");
-        $dataMobile = Session::get("google_page_speed_mobile");
-        
-        if(!$dataDesktop || !$dataMobile){
-            $dataDesktop = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&strategy=desktop&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
-            $dataMobile = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&strategy=mobile&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
 
-            Session::put('google_page_speed_desktop', json_encode($dataDesktop));
-            Session::put('google_page_speed_mobile', json_encode($dataMobile));
-        }else{
-            $dataDesktop = json_decode($dataDesktop);
-            $dataMobile = json_decode($dataMobile);
+        try {
+            $pageSpeedData = $this->resolvePageSpeedData($urlValue, true);
+            $dataDesktop = $pageSpeedData['desktop'];
+            $dataMobile = $pageSpeedData['mobile'];
+        } catch (\Throwable $e) {
+            Log::error("Error in googleCoreWebVitals: " . $e->getMessage());
+            echo json_encode($this->buildPageSpeedErrorResponse('core_web_vitals', $settingsSub, $e->getMessage()));
+            return;
         }
 
         $clsDesktop = floatval($dataDesktop->lighthouseResult->audits->{"cumulative-layout-shift"}->numericValue);
@@ -3389,6 +3399,7 @@ class TestController extends Controller
         $object->name = "google_check";
         $object->parentCard = "performance";
         $object->settings = $settingsSub;
+        $object->testerrorcaught = false;
         echo json_encode($object);
     }
 
@@ -3398,31 +3409,37 @@ class TestController extends Controller
         $status = true;
 
         $data = $request->input('data');
-        $project = json_decode(Session::get('project'));
         $settings = $this->resolveTestSettings($request);
         $urlValue = $data["urlValue"];
-        $key = "AIzaSyCKPTSNwVnuuHkMvKmzZO3UDUb6q79JxRY";
 
         $googleMobileFriendly = $settings->settings_sub->mobile_friendly;
 
-
- 
         $title = "Google Mobile Friendly Test";
         $description = "Google PageSpeed Insights (PSI) reports on the performance of a page on both mobile and desktop devices, and provides suggestions on how that page may be improved in terms of performance, accessibility, speed and SEO.<br><br>";
         $message = "Google Mobile Friendly check excluded.";
         $message_secondary = "";
 
-  
-        $dataMobile = Session::get("google_page_speed_mobile");
-        
-        if(!$dataMobile){
-            $dataMobile = json_decode(file_get_contents("https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=$urlValue&strategy=mobile&category=performance&category=best-practices&category=accessibility&category=seo&key=$key"));
-
-            Session::put('google_page_speed_mobile', json_encode($dataMobile));
-        }else{
-            $dataMobile = json_decode($dataMobile);
+        try {
+            $pageSpeedData = $this->resolvePageSpeedData($urlValue, true);
+            $dataMobile = $pageSpeedData['mobile'];
+        } catch (\Throwable $e) {
+            Log::error("Error in mobileFriendly: " . $e->getMessage());
+            $object = new \stdClass();
+            $object->status = false;
+            $object->title = $title;
+            $object->message = "An error occurred while testing mobile friendliness.";
+            $object->message_secondary = $e->getMessage();
+            $object->description = $description;
+            $object->tagName = "mobile_friendly";
+            $object->name = "mobile_friendly";
+            $object->parentCard = "performance";
+            $object->settings = $settings->settings_sub;
+            $object->testerrorcaught = true;
+            echo json_encode($object);
+            return;
         }
-        $screenshotDataMobile = $dataMobile->lighthouseResult->audits->{'final-screenshot'}->details->data;
+
+        $screenshotDataMobile = $dataMobile->lighthouseResult->audits->{'final-screenshot'}->details->data ?? null;
         $mobileAudits = ['viewport', 'font-size', 'tap-targets', 'content-width'];
         $failedReasons = [];
 
@@ -4261,5 +4278,70 @@ class TestController extends Controller
             ->whereHas('settingsSub')
             ->orderBy('id')
             ->first();
+    }
+
+    protected function pageSpeedService(): PageSpeedService
+    {
+        return app(PageSpeedService::class);
+    }
+
+    /**
+     * @return array{desktop: object, mobile: object}
+     */
+    protected function resolvePageSpeedData(string $url, bool $screenshot = false): array
+    {
+        set_time_limit(300);
+
+        return $this->pageSpeedService()->getOrFetch($url, $screenshot);
+    }
+
+    protected function buildPageSpeedErrorResponse(string $tagName, object $settingsSub, string $errorMessage): object
+    {
+        $object = new \stdClass();
+        $object->status = false;
+        $object->statusDesktop = false;
+        $object->statusMobile = false;
+        $object->message = "An error occurred while running the page speed test. The test will continue with remaining checks.";
+        $object->messageDesktop = "Page speed data could not be retrieved for desktop.";
+        $object->messageMobile = "Page speed data could not be retrieved for mobile.";
+        $object->description = "Google PageSpeed Insights test failed: " . $errorMessage;
+        $object->scoreDesktop = 0;
+        $object->scoreMobile = 0;
+        $object->accessibilityDesktop = 0;
+        $object->accessibilityMobile = 0;
+        $object->bestPracticesDesktop = 0;
+        $object->bestPracticesMobile = 0;
+        $object->seoDesktop = 0;
+        $object->seoMobile = 0;
+        $object->clsDesktop = 0;
+        $object->clsMobile = 0;
+        $object->fcpDesktop = 0;
+        $object->fcpMobile = 0;
+        $object->lcpDesktop = 0;
+        $object->lcpMobile = 0;
+        $object->fidDesktop = 0;
+        $object->fidMobile = 0;
+        $object->tbtDesktop = 0;
+        $object->tbtMobile = 0;
+        $object->ttiDesktop = 0;
+        $object->ttiMobile = 0;
+        $object->siDesktop = 0;
+        $object->siMobile = 0;
+        $object->screenshotDataDesktop = null;
+        $object->screenshotDataMobile = null;
+        $object->googleLighthouseCheckDesktop = false;
+        $object->googleLighthouseCheckMobile = false;
+        $object->googleLighthouseCheckOverall = false;
+        $object->googleCoreCheckDesktop = false;
+        $object->googleCoreCheckMobile = false;
+        $object->googleCoreCheckOverall = false;
+        $object->learnMoreURL = "https://setmore.com/";
+        $object->tagName = $tagName;
+        $object->name = "google_check";
+        $object->parentCard = "performance";
+        $object->settings = $settingsSub;
+        $object->testerrorcaught = true;
+
+        return $object;
     }
 }

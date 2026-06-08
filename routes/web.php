@@ -294,6 +294,7 @@ Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/css-compression', [App\Http\Controllers\Test\TestController::class, 'cssCompression'])->name('test.css-compression');
     Route::post('/js-compression', [App\Http\Controllers\Test\TestController::class, 'jsCompression'])->name('test.js-compression');
     Route::post('/gzip-compression', [App\Http\Controllers\Test\TestController::class, 'gzipCompression'])->name('test.gzip-compression');
+    Route::post('/prefetch-page-speed', [App\Http\Controllers\Test\TestController::class, 'prefetchPageSpeed'])->name('test.prefetch-page-speed');
     Route::post('/google-page-speed-insights', [App\Http\Controllers\Test\TestController::class, 'googleInsights'])->name('test.google-page-speed-insights');
     Route::post('/google-page-speed-lighthouse', [App\Http\Controllers\Test\TestController::class, 'googleLighthouse'])->name('test.google-page-speed-lighthouse');
     Route::post('/google-page-speed-core-web-vitals', [App\Http\Controllers\Test\TestController::class, 'googleCoreWebVitals'])->name('test.google-page-speed-core-web-vitals');

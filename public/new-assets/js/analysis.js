@@ -794,39 +794,131 @@ $( document ).ready(function() {
       });
     }
 
-    static testRequest(results, testLabels, testKey, resultsByLabel = {}){
+    static PAGE_SPEED_LABELS = new Set([
+      'page_speed_google',
+      'page_speed_google_lighthouse',
+      'page_speed_google_core',
+      'mobile_friendly',
+      'google_overall',
+      'google_lighthouse',
+      'core_web_vitals',
+    ])
+
+    static isPageSpeedLabel(label) {
+      if (!label) return false
+      return Controls.PAGE_SPEED_LABELS.has(label.name) ||
+        (label.url && label.url.includes('page-speed')) ||
+        label.url === '/test/mobile-friendly'
+    }
+
+    static prefetchPageSpeed(url) {
+      if (!url) {
+        return Promise.resolve()
+      }
+
+      return $.ajax({
+        url: '/test/prefetch-page-speed',
+        type: 'POST',
+        timeout: 300000,
+        data: {
+          url: url,
+          _method: 'POST',
+          _token: $('meta[name="csrf-token"]').attr('content'),
+        },
+      }).catch(function() {
+        // Prefetch failure is non-fatal; individual tests will retry fetching.
+      })
+    }
+
+    static buildFailedTestResult(label, status, err) {
+      const errorMsg = status === 'timeout'
+        ? 'The test timed out. Results may be incomplete for this check.'
+        : ('Test request failed' + (err ? ': ' + err : ''))
+
+      const base = {
+        status: false,
+        message: errorMsg,
+        description: errorMsg,
+        parentCard: label.parent || 'performance',
+        tagName: label.name,
+        name: label.name,
+        testerrorcaught: true,
+        label: label,
+      }
+
+      if (Controls.isPageSpeedLabel(label)) {
+        return Object.assign(base, {
+          statusDesktop: false,
+          statusMobile: false,
+          title: label.displayName || label.display_name || 'Page Speed',
+          messageDesktop: errorMsg,
+          messageMobile: errorMsg,
+          scoreDesktop: 0,
+          scoreMobile: 0,
+          tagName: label.name === 'page_speed_google' ? 'insights'
+            : label.name === 'page_speed_google_lighthouse' ? 'lighthouse'
+            : label.name === 'page_speed_google_core' ? 'core_web_vitals'
+            : 'mobile_friendly',
+          name: 'google_check',
+        })
+      }
+
+      return base
+    }
+
+    static continueTestChain(results, testLabels, testKey, resultsByLabel) {
+      if (testLabels.length === resultsData.length) {
+        window.setTimeout(function() {
+          endTest(testLabels)
+          Controls.saveCachedTestResult(testKey, resultsByLabel, testLabels)
+        }, 3000)
+      } else {
+        Controls.testRequest(results, testLabels, testKey, resultsByLabel)
+      }
+    }
+
+    static testRequest(results, testLabels, testKey, resultsByLabel = {}, retryCount = 0){
       const label = testLabels[testIndex]
       testIndex++;
 
       const test = Controls.buildTestInformation(results, label)
       UI.updateLoaderCurrentTestStatus(label)
+
+      const isPageSpeed = Controls.isPageSpeedLabel(label)
+      const maxRetries = isPageSpeed ? 3 : 2
+      const timeout = isPageSpeed ? 300000 : 120000
+
       $.ajax({
           url : `${label.url}`,
           type : 'POST',
-          aysnc: false,
+          timeout: timeout,
           data: {
               "data": test,
               "ref_id": testKey,
               "_method": 'POST',
-              "aysnc": false,
               "_token": $('meta[name="csrf-token"]').attr('content'),
-          },       
+          },
           success: function(data) {
             Controls.buildTest(data, label, testLabels)
             resultsByLabel[label.name] = data;
-            if(testLabels.length === resultsData.length){
-              window.setTimeout(function(){
-                endTest(testLabels)
-
-                // When the test is done, save the result
-                // You may need to adjust this if your test is async
-                Controls.saveCachedTestResult(testKey, resultsByLabel, testLabels);
-              }, 3000)
-            }else{
-              Controls.testRequest(results, testLabels, testKey, resultsByLabel)              
+            Controls.continueTestChain(results, testLabels, testKey, resultsByLabel)
+          },
+          error: function(xhr, status, err) {
+            if (retryCount < maxRetries) {
+              testIndex--
+              const delay = Math.min(3000 * (retryCount + 1), 10000)
+              window.setTimeout(function() {
+                Controls.testRequest(results, testLabels, testKey, resultsByLabel, retryCount + 1)
+              }, delay)
+              return
             }
+
+            const fallback = Controls.buildFailedTestResult(label, status, err)
+            Controls.buildTest(JSON.stringify(fallback), label, testLabels)
+            resultsByLabel[label.name] = fallback
+            Controls.continueTestChain(results, testLabels, testKey, resultsByLabel)
           }
-          });
+      });
     }
 
 
@@ -4538,7 +4630,7 @@ $( document ).ready(function() {
               const results = JSON.parse(data.data)
               Controls.updatePageTitleDesc(results)
 
-
+              Controls.prefetchPageSpeed(projectUrl)
               Controls.testRequest(results, testLabels, testKey)
             }, 1000);
           }
