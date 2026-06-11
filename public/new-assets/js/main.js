@@ -1574,61 +1574,6 @@ $(function () {
 
 /* ====================Feedback==================== */
 $(function () {
-  const options = {
-    colResize: {
-      isEnabled: () => $(window).width() > 768,
-      hoverClass: "dt-colresizable-hover",
-      hasBoundCheck: true,
-      minBoundClass: "dt-colresizable-bound-min",
-      maxBoundClass: "dt-colresizable-bound-max",
-      saveState: true,
-      isResizable: function (column) {
-        return column.idx !== 0;
-      },
-      onResize: function (column) {
-        //console.log('...resizing...');
-      },
-      onResizeEnd: function (column, columns) {
-        //console.log('...resize end...');
-        // console.log(column);
-        // console.log(columns);
-      },
-      stateSaveCallback: function (settings, data) {
-        let stateStorageName = window.location.pathname + "/colResizeStateData";
-        localStorage.setItem(stateStorageName, JSON.stringify(data));
-      },
-      stateLoadCallback: function (settings) {
-        let stateStorageName = window.location.pathname + "/colResizeStateData",
-          data = localStorage.getItem(stateStorageName);
-        return data != null ? JSON.parse(data) : null;
-      },
-    },
-    info: false,
-    ordering: false,
-    paging: false,
-    autoWidth: false,
-    fixedColumns: {
-      leftColumns: 1,
-    },
-    // responsive: true,
-    select: {
-      style: "multi",
-      selector: "td:first-child .form-check-input",
-    },
-  };
-
-  
-  $(".left-menu-check .form-check-input").on("change", function () {
-    // Get the state of the "All" checkbox
-    var isChecked = $(this).prop("checked");
-
-    // Set the state of all individual checkboxes based on the "All" checkbox
-    $("td:first-child .form-check-input").prop("checked", isChecked);
-
-    // Update DataTables selection
-    table.rows().select(isChecked);
-  });
-
   $(".form-single-text").on("click", function (e) {
     if(e.target.classList.contains("load-more-sitemap-dropdown")){
       $(".sitemap-link").removeClass("d-none")
@@ -1651,38 +1596,6 @@ $(function () {
 
     e.preventDefault()
   })
-  
-
-  $("#reportTable").on("click", function (e) {
-    const target = e.target;
-    const hideBtn = target.closest("#hide-col-btn");
-    const showBtn = target.closest("#show-col-btn");
-    if (hideBtn) {
-      // hide the first column
-      table.column(0).visible(!table.column(0).visible());
-      $(this).find(".table-header").prepend(`<td>
-        <button
-          type="button"
-          class="first-col-toggle-btn"
-          id="show-col-btn"
-        >
-          <img
-            src="assets/images/table-collapse.png"
-            alt="icon"
-          />
-        </button>`);
-    }
-
-    if (showBtn) {
-      // show the first column
-      table.column(0).visible(!table.column(0).visible());
-      $(showBtn).remove();
-    }
-  });
-
-  $(".t-search-url input").on("input", function () {
-    table.search($(this).val()).draw();
-  });
 });
 /* ====================Feedback==================== */
 
