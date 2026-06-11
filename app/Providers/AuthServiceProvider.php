@@ -26,5 +26,8 @@ class AuthServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->registerPolicies();
+
+        // Keep users signed in across long idle periods (Gmail-style persistence).
+        Auth::guard('web')->setRememberDuration(525600 * 5);
     }
 }

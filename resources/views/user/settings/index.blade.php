@@ -6510,8 +6510,8 @@ function saveAjax(obj){
                 scrollToTop();
             },
             error: function(data){
-                if(!checkIfAuthenticated(data.responseJSON)){
-                    window.location = "/login"
+                if (handleAjaxSessionError(data)) {
+                    return;
                 }
             }
         });

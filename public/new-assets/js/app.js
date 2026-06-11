@@ -300,11 +300,8 @@ $( document ).ready(function() {
                         }
                         document.cookie = 'test_cookie_' + $('#login_user_id').val() + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';                    },
                     error: function(data){
-                        if(!checkIfAuthenticated(data.responseJSON)){
-                            window.location = "/login"
-                        }
-                        if (data.status === 419) {
-                            window.location = "/login"
+                        if (handleAjaxSessionError(data)) {
+                            return;
                         }
                         removeLoader()
                         buildLoaderFailed(obj, testLabels)

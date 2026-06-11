@@ -68,10 +68,9 @@ public function handleGoogleCallback()
 
         event(new Registered($user));
     }
-    // Log in the user
-    auth()->login($user);
+    auth()->login($user, true);
+    request()->session()->regenerate();
 
-    // Redirect to the home page or wherever you want
     return redirect('/dashboard');
 }
 

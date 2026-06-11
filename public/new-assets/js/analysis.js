@@ -4636,8 +4636,8 @@ $( document ).ready(function() {
           }
       },
       error: function(data){
-          if(!checkIfAuthenticated(data.responseJSON)){
-              window.location = "/login"
+          if (handleAjaxSessionError(data)) {
+              return;
           }
           removeLoader()
           displayAlert({

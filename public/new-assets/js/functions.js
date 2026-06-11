@@ -1452,6 +1452,24 @@ function checkIfAuthenticated(data) {
     return 1;
 }
 
+function handleAjaxSessionError(xhr) {
+    if (!xhr || !xhr.status) {
+        return false;
+    }
+
+    if (xhr.status === 419) {
+        window.location.reload();
+        return true;
+    }
+
+    if (xhr.status === 401 && !checkIfAuthenticated(xhr.responseJSON)) {
+        window.location = "/login";
+        return true;
+    }
+
+    return false;
+}
+
 function getAllValues(className){
     const inputs = document.querySelector(className).querySelectorAll("input,textarea,select")
     let obj = {}
