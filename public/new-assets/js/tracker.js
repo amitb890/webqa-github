@@ -2,7 +2,7 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 2000, recheckSingleMax = 2000, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
+  var recheckMax = 10, recheckSingleMax = 10, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
   var googleProgressIsRecheck = false, googleProgressExpectedResults = 0
   const GOOGLE_PAGE_SPEED_REPORT_LABELS = ['google_overall', 'google_lighthouse', 'core_web_vitals']
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
@@ -916,7 +916,7 @@ $(document).ready(function () {
                         />
                       </div>
                     </th>
-                    <th scope="col">Date Added</th>
+                    <th scope="col">Last Checked</th>
           `
 
 
@@ -1458,7 +1458,7 @@ $(document).ready(function () {
             <td scope="row">
                 <div class="form-check input-pt-pb">
                     <input class="form-check-input" type="checkbox" value=""/>
-                    <label class="form-check-label">${url}</label>
+                    <label class="form-check-label" title="${url}">${url}</label>
                 </div>
                 <button class="dropdown-toggle show-url-options-modal" type="button">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">

@@ -3017,6 +3017,10 @@ h6 {
   box-sizing: border-box;
   color: var(--text-gray);
   margin-left: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 220px;
+  text-overflow: ellipsis;
 }
 
 .td-size tr td {
@@ -18425,7 +18429,7 @@ display:none !important;
 }
 
  #urlOptionsModal{
-  position: absolute;
+  /* position: absolute; */
 }
 
 #urlOptionsModal .modal-dialog-imran{

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Webqa - My Account')
 @section("content")
 
 

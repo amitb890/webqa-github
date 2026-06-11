@@ -1,4 +1,6 @@
-@extends('layouts.app') @section('title', 'Webqa - Settings') @section("content")
+@extends('layouts.app') 
+@section('title', 'Webqa - Settings')
+@section("content")
 
 
 
