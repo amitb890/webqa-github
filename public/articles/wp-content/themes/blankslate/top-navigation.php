@@ -74,7 +74,7 @@
   <div class="blog-menu">
     <nav style="display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap;">
       <a href="https://webqa.co/articles/" class="blog-home">
-        <img src="https://webqa.co/raw-files/assets/images/blog/home.svg" alt="home" style="width:20px;height:20px;">
+        <img src="https://webqa.co/new-assets/assets/images/blog/home.svg" alt="home" style="width:20px;height:20px;">
       </a>
 
       <ul style="display:flex;list-style:none;gap:15px;margin:0;padding:0;">
@@ -87,7 +87,7 @@
 
       <!-- Search icon that becomes input -->
       <a href="#" id="searchIcon">
-        <img src="https://webqa.co/raw-files/assets/images/blog/search.svg" alt="search" style="width:20px;height:20px;cursor:pointer;">
+        <img src="https://webqa.co/new-assets/assets/images/blog/search.svg" alt="search" style="width:20px;height:20px;cursor:pointer;">
       </a>
 
       <button id="blog_menuBtn" class="blog_menu_btn" type="button" style="background:none;border:none;cursor:pointer;">

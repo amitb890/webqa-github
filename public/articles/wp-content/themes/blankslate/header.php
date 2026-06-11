@@ -31,11 +31,11 @@
 
 
 <!-- bootstrap styles -->
-<link rel="stylesheet" href="https://webqa.co/public/articles/wp-content/themes/theme-assets/bootstrap.min.css" />
+<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/bootstrap.min.css" />
 <!-- custom styles -->
-<link rel="stylesheet" href="https://webqa.co/public/articles/wp-content/themes/theme-assets/font-styles.css" />
-<link rel="stylesheet" href="https://webqa.co/public/articles/wp-content/themes/theme-assets/main.css" />
-<link rel="stylesheet" href="https://webqa.co/public/articles/wp-content/themes/theme-assets/main.res.css" />
+<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/font-styles.css" />
+<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/main.css" />
+<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/main.res.css" />
 	
 	
 	

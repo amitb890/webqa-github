@@ -1282,9 +1282,9 @@ function aboutUsFaqFunctionality(){
 
     // Change arrow source smoothly
     if (card.classList.contains("active")) {
-      arrow.src = "../raw-files/assets/images/aboutUs/up-arrow.svg";
+      arrow.src = "https://webqa.co/new-assets/assets/images/aboutUs/up-arrow.svg";
     } else {
-      arrow.src = "../raw-files/assets/images/aboutUs/down-arrow.svg";
+      arrow.src = "https://webqa.co/new-assets/assets/images/aboutUs/down-arrow.svg";
     }
   });
 });
@@ -1528,11 +1528,11 @@ function featureChildPageSettingsFaq(){
 
       // arrow change
       if (card.classList.contains("active")) {
-        arrow.src = "../raw-files/assets/images/aboutUs/up-arrow.svg";
+        arrow.src = "https://webqa.co/new-assets/assets/images/aboutUs/up-arrow.svg";
         heading.style.color = "#2b56a5";
         card.style.background = "#f1f4f9";
       } else {
-        arrow.src = "../raw-files/assets/images/aboutUs/down-arrow.svg";
+        arrow.src = "https://webqa.co/new-assets/assets/images/aboutUs/down-arrow.svg";
         heading.style.color = "";
         card.style.background = "";
       }

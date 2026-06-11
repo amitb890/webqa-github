@@ -47,13 +47,13 @@
     <!-- Footer Area End -->
 
 <!-- jQuery -->
-    <script src="https://webqa.co/public/articles/wp-content/themes/theme-assets/jquery-3.6.1.min.js"></script>
+    <script src="https://webqa.co/articles/wp-content/themes/theme-assets/jquery-3.6.1.min.js"></script>
     <!-- bootstrap scripts -->
-    <script src="https://webqa.co/public/articles/wp-content/themes/theme-assets/bootstrap.bundle.min.js"></script>
+    <script src="https://webqa.co/articles/wp-content/themes/theme-assets/bootstrap.bundle.min.js"></script>
     <!-- font awesome scripts -->
-    <script src="https://webqa.co/public/articles/wp-content/themes/theme-assets/all.min.js" async defer></script>
+    <script src="https://webqa.co/articles/wp-content/themes/theme-assets/all.min.js" async defer></script>
     <!-- custom scripts -->
-    <script src=https://webqa.co/public/articles/wp-content/themes/theme-assets/main.js"></script>
+    <script src="https://webqa.co/articles/wp-content/themes/theme-assets/main.js"></script>
   </body>
 </html>
 

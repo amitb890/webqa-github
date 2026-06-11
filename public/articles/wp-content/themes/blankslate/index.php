@@ -94,7 +94,7 @@ if ( $all_posts_query->have_posts() ) : ?>
             if ( has_post_thumbnail() ) {
                 the_post_thumbnail('medium', array('alt' => get_the_title()));
             } else {
-                echo '<img src="https://webqa.co/raw-files/assets/images/blog/default-thumb.png" alt="blog">';
+                echo '<img src="https://webqa.co/new-assets/assets/images/blog/default-thumb.png" alt="blog">';
             }
             ?>
           </a>

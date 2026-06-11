@@ -22,7 +22,7 @@ get_header();
                   'style' => 'width:100%; height:auto; border-radius:8px;'
                 ));
               } else {
-                echo '<img src="https://webqa.co/raw-files/assets/images/blog/default-thumb.png" alt="blog" style="width:100%; height:auto; border-radius:8px;">';
+                echo '<img src="https://webqa.co/new-assets/assets/images/blog/default-thumb.png" alt="blog" style="width:100%; height:auto; border-radius:8px;">';
               } ?>
             </a>
           </div>
