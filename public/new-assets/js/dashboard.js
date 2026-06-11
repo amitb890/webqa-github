@@ -812,8 +812,8 @@ $(document).ready(function () {
                 </div>
                 <div class="deshboard_inner_description border_bottom">
                     <p class="text_14_bld">Length</p>
-                    <p>Long title tag content (>65 characters)<span class="${data.lengthOver > 0 ? 'danger' : 'success'}">${data.lengthOver}</span></p>
-                    <p>Short title tag content (<30 characters)<span class="${data.lengthBelow > 0 ? 'danger' : 'success'}">${data.lengthBelow}</span></p>
+                    <p>Long title tag content <span class="${data.lengthOver > 0 ? 'danger' : 'success'}">${data.lengthOver}</span></p>
+                    <p>Short title tag content <span class="${data.lengthBelow > 0 ? 'danger' : 'success'}">${data.lengthBelow}</span></p>
                 </div>
                 <div class="deshboard_inner_description mb-4">
                     <p class="text_14_bld">Casing</p>
@@ -833,8 +833,8 @@ $(document).ready(function () {
                 </div>
                 <div class="deshboard_inner_description border_bottom">
                     <p class="text_14_bld">Length</p>
-                    <p>Long meta description content (>160 characters)<span class="${data.lengthOver > 0 ? 'danger' : 'success'}">${data.lengthOver}</span></p>
-                    <p>Short meta description content (<30 characters)<span class="${data.lengthBelow > 0 ? 'danger' : 'success'}">${data.lengthBelow}</span></p>
+                    <p>Long meta description content <span class="${data.lengthOver > 0 ? 'danger' : 'success'}">${data.lengthOver}</span></p>
+                    <p>Short meta description content <span class="${data.lengthBelow > 0 ? 'danger' : 'success'}">${data.lengthBelow}</span></p>
                 </div>
                 <div class="inner_dashboard_footer">
                     <a href="${reportsUrl}">View Report</a>

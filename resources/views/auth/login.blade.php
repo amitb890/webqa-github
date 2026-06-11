@@ -13,6 +13,13 @@
           <div class="logIn_modal_area">
             <div class="login_modal">
               <div class="modal-content">
+
+                @if(session('status'))
+                <span class="feedback text-success mb-2">Your password has been updated successfully.</span>
+                @endif
+
+
+
                 <div class="modal-header">
                   
                   @if (session('session_expired')) 
@@ -54,9 +61,7 @@
 
                       <input class="btn btn_primary rounded-pill login_modal_btn" type="submit" value="Login">
 
-                      @if(session('status'))
-                      <span class="feedback text-success mb-2">Your password has been updated successfully.</span>
-                      @endif
+            
 
                         @if (Route::has('password.request'))
                             <a href="{{ route('password.request') }}" class="login_forgetPass">{{ __('Forgot your password?') }}</a>

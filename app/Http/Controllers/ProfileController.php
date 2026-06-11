@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rules\Password;
 use App\Models\DeletedFeedback;
 
 class ProfileController extends Controller
@@ -85,8 +86,8 @@ class ProfileController extends Controller
                         }
                     },
                 ],
-                'new_password'=>'required',
-                'c_new_password'=>'required|same:new_password'
+                'new_password' => ['required', Password::defaults()],
+                'c_new_password' => 'required|same:new_password',
             ],[
                 'current_password.required'=>'Enter your current password',
                 'new_password.required'=>'Enter new password',

@@ -1,4 +1,5 @@
 @extends('layouts.guest')
+@section('body-class', 'forgot-password-page')
 @section('title', 'Reset Your Password | Webqa')
 @section('meta-description', 'This is forgot-password page meta description.')
 @section("content")

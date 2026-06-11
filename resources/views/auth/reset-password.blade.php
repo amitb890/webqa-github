@@ -1,4 +1,5 @@
 @extends('layouts.guest')
+@section('body-class', 'forgot-password-page')
 @section('title', 'Set a new password | Webqa')
 @section('meta-description', 'Choose a new password for your WebQA account.')
 @section("content")
@@ -36,7 +37,7 @@
                       @endif
                     </div>
 
-                    <div class="input-wrap mb-24">
+                    <div class="input-wrap input-wrap-first mb-24">
                       <label for="password_confirmation" class="form-label label-bold">Confirm new password</label>
                       <input type="password" class="form-control h-5 {{ $errors->has('password_confirmation') ? 'invalid' : '' }}" name="password_confirmation" id="password_confirmation" autocomplete="new-password">
                       @if ($errors->has('password_confirmation'))

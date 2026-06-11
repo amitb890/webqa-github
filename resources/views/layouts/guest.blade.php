@@ -32,7 +32,7 @@
           })(window,document,'script','dataLayer','GTM-NRZQHZTZ');</script>
         @yield("css")
     </head>
-    <body class="authentication-page">
+    <body class="authentication-page @yield('body-class')">
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NRZQHZTZ"
         height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
