@@ -29,7 +29,14 @@ class RunSinglePageSpeedTest implements ShouldQueue
 
     public function handle()
     {
-        $result = LighthouseResult::findOrFail($this->resultId);
+        $result = LighthouseResult::find($this->resultId);
+        if (! $result) {
+            Log::warning('RunSinglePageSpeedTest skipped: lighthouse_results row no longer exists (stale queue job).', [
+                'result_id' => $this->resultId,
+            ]);
+
+            return;
+        }
 
         try {
             $data = $this->fetchPageSpeedResults($result->url, $result->strategy);

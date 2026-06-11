@@ -3783,7 +3783,7 @@ $(document).ready(function () {
 
       static shouldResumeGooglePageSpeedRecheck() {
         const notice = UI.getStoredRecheckNotice()
-        if (!notice || notice.type !== "google_page_speed") {
+        if (!notice || notice.type !== "google_page_speed" || notice.status !== "pending") {
           return false
         }
         if (String(notice.projectId) !== String(projectId)) {

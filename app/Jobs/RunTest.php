@@ -155,9 +155,20 @@ class RunTest implements ShouldQueue
 
      public function handle()
      {
-  
-         $result = DashboardTestsDetails::findOrFail($this->resultId);
-     
+         $result = DashboardTestsDetails::find($this->resultId);
+         if (! $result) {
+             Log::warning('RunTest skipped: dashboard_tests_details row no longer exists (stale queue job).', [
+                 'result_id' => $this->resultId,
+                 'dashboard_test_id' => $this->dashboardTestId,
+                 'project_id' => $this->projectId,
+                 'type' => $this->type,
+                 'recheck_label' => $this->recheck_label,
+             ]);
+             $this->finalizeParentDashboardTest($this->projectId, null);
+
+             return;
+         }
+
          $helpers = new Helper();
          $projectsController = new ProjectsController();
          $allResults = [];
@@ -543,57 +554,58 @@ class RunTest implements ShouldQueue
 
 
      
-         // --------------------------------------------
-         // ✅ UPDATE PARENT DASHBOARD TEST STATUS
-         // --------------------------------------------
-     
+         $this->finalizeParentDashboardTest($projectId, $DB_MSG);
+     }
+
+     /**
+      * Mark the parent dashboard test complete when all URL rows are done.
+      */
+     protected function finalizeParentDashboardTest(int $projectId, ?string $dbMsg): void
+     {
          $total = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)->count();
-         $done  = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
+         $done = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
              ->whereIn('status', ['completed', 'failed'])
              ->count();
          $completed = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
              ->where('status', 'completed')
              ->count();
-     
+
          if ($total > 0 && $total === $done) {
-            $allSucceeded = ($completed === $total);
-            // Parent dashboard_tests.status has no "failed" enum value; per-URL outcomes
-            // live on dashboard_tests_details.status (completed | failed).
-            DashboardTests::where('id', $this->dashboardTestId)
-                ->update(['status' => 'completed']);
+             $allSucceeded = ($completed === $total);
+             DashboardTests::where('id', $this->dashboardTestId)
+                 ->update(['status' => 'completed']);
 
-            if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
-                DashboardBootstrapService::clearActiveRecheck((int) $projectId);
-            }
+             if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
+                 DashboardBootstrapService::clearActiveRecheck($projectId);
+             }
 
-            if ($allSucceeded) {
-                try {
-                    DashboardTrackerCacheService::finalizeDashboardTestAndRefreshCaches(
-                        (int) $projectId,
-                        (int) $this->user_id,
-                        (int) $this->dashboardTestId,
-                        (string) $this->type,
-                        (string) $this->recheck_label
-                    );
-                } catch (\Throwable $cacheException) {
-                    Log::error('RunTest cache finalize failed: ' . $cacheException->getMessage(), [
-                        'project_id' => $projectId,
-                        'dashboard_test_id' => $this->dashboardTestId,
-                        'type' => $this->type,
-                    ]);
-                }
+             if ($allSucceeded && $dbMsg !== null) {
+                 try {
+                     DashboardTrackerCacheService::finalizeDashboardTestAndRefreshCaches(
+                         $projectId,
+                         (int) $this->user_id,
+                         (int) $this->dashboardTestId,
+                         (string) $this->type,
+                         (string) $this->recheck_label
+                     );
+                 } catch (\Throwable $cacheException) {
+                     Log::error('RunTest cache finalize failed: ' . $cacheException->getMessage(), [
+                         'project_id' => $projectId,
+                         'dashboard_test_id' => $this->dashboardTestId,
+                         'type' => $this->type,
+                     ]);
+                 }
 
-                // create success alert
-                if($this->type != "single_recheck"){
-                    $alert = new Alerts();
-                    $alert->user_id = $this->user_id;
-                    $alert->project_id = $projectId;
-                    $alert->message = $DB_MSG;
-                    $alert->page = "dashboard";
-                    $alert->status = 1;
-                    $alert->save();
-                }
-            }
+                 if ($this->type != 'single_recheck') {
+                     $alert = new Alerts();
+                     $alert->user_id = $this->user_id;
+                     $alert->project_id = $projectId;
+                     $alert->message = $dbMsg;
+                     $alert->page = 'dashboard';
+                     $alert->status = 1;
+                     $alert->save();
+                 }
+             }
          }
      }
      
@@ -5099,19 +5111,7 @@ class RunTest implements ShouldQueue
                 ]);
             }
 
-            $total = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)->count();
-            $done = DashboardTestsDetails::where('dashboard_test_id', $this->dashboardTestId)
-                ->whereIn('status', ['completed', 'failed'])
-                ->count();
-
-            if ($total > 0 && $total === $done) {
-                DashboardTests::where('id', $this->dashboardTestId)
-                    ->update(['status' => 'completed']);
-
-                if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
-                    DashboardBootstrapService::clearActiveRecheck((int) $this->projectId);
-                }
-            }
+            $this->finalizeParentDashboardTest((int) $this->projectId, null);
         } catch (\Throwable $cleanupException) {
             Log::error('RunTest failed() cleanup error: ' . $cleanupException->getMessage(), [
                 'dashboard_test_id' => $this->dashboardTestId,

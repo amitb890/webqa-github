@@ -145,9 +145,9 @@ class ReportsController extends Controller
         $projectId = $activeProject ? $activeProject->id : 1;
         $projectsController = new ProjectsController();
         $labels = json_decode(json_encode($projectsController->getLabels($projectId)))->original->all_labels;
+        
 
         $helpers = new Helper();
-        $data = $helpers->getAllTests();
         $newSlug = "/reports/" . $slug;
 
         foreach ($labels as $label) {

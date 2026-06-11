@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class RunLighthouseTest implements ShouldQueue
 {
@@ -30,7 +31,16 @@ class RunLighthouseTest implements ShouldQueue
 
     public function handle()
     {
-        $test = LighthouseTest::findOrFail($this->testId);
+        $test = LighthouseTest::find($this->testId);
+        if (! $test) {
+            Log::warning('RunLighthouseTest skipped: lighthouse_tests row no longer exists (stale queue job).', [
+                'test_id' => $this->testId,
+                'user_id' => $this->userId,
+            ]);
+
+            return;
+        }
+
         $urls = LighthouseUrlParser::fromStoredJson($test->urls);
         $userId = $this->userId;
         $lighthouseQueues = ['lighthouse_1','lighthouse_2','lighthouse_3','lighthouse_4','lighthouse_5'];

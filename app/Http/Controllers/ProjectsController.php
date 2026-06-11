@@ -275,8 +275,13 @@ class ProjectsController extends Controller
 
     public function resetGoogleStatus($projectId){
         Projects::where('id', $projectId)->update(['google_show_status'=>0]);
-        \App\Models\LighthouseTest::where('project_id', $projectId)->delete();
-        return response()->json(['status' => 1, 'msg' => 'Google status reset to 0 and previous Lighthouse results deleted.']);
+        // Do not hard-delete lighthouse rows while Horizon may still have queued jobs
+        // referencing them. Mark active runs as failed; checkStatus uses latest() only.
+        LighthouseTest::where('project_id', $projectId)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->update(['status' => 'failed']);
+
+        return response()->json(['status' => 1, 'msg' => 'Google status reset and in-flight page speed runs marked failed.']);
     }
 
     /**
