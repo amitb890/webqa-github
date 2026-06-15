@@ -46,6 +46,7 @@
                     </a>
 
                     <ul class="dropdown-menu dropdown-menu-end header-dropdown dropdown-menu-projects">
+                        @if ($userProjects->count() > 1)
                         <div class="header-dropdown-list">
                             @foreach ($userProjects as $project)
                                 @php
@@ -70,7 +71,8 @@
                                 @endif
                             @endforeach
                         </div>
-                        <div class="drop-header-but">
+                        @endif
+                        <div class="drop-header-but{{ $userProjects->count() > 1 ? ' has-multiple-projects' : '' }}">
                             <button><a class="{{ \Request::route()->getName() === 'projects.index' ? 'active' : '' }}"
                                     href="{{ route('projects.index') }}">My Projects</a></button>
                             <button><a class="{{ \Request::route()->getName() === 'projects.create' ? 'active' : '' }}"

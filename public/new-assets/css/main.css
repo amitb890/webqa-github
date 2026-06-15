@@ -18035,7 +18035,7 @@ right: -50px !important;
 .drop-header-but{
   position:relative;
 }
-.drop-header-but::after{
+.drop-header-but.has-multiple-projects::after{
   position:absolute;
   content:"";
   height:1px;

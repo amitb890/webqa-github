@@ -47,7 +47,13 @@ $(document).on("click", ".deleteProject", function () {
           $('#projectCount').val(data.projectsCount)
           if (data.status == 3 || data.status == 1) {
             if (data.status == 3) {
-              activeProject(data.data)
+              updateActiveProjectHeader(data.data);
+            }
+            if (data.projectsCount <= 1) {
+              $('.header-dropdown-list').remove();
+              $('.drop-header-but').removeClass('has-multiple-projects');
+            } else {
+              $(`.select-project[data-val="project-${projectId}"]`).closest('li').remove();
             }
             row.remove(); // Remove the <tr> element
             displayAlert('.project_area', 'Project <b>' + projectName +'</b> has been deleted successfully.')
@@ -63,30 +69,31 @@ $(document).on("click", ".deleteProject", function () {
     $('.toastDelete').addClass('hide');
   });
   
-  function activeProject(data) {
-    // Create the new li element
+  function ensureHeaderDropdownList() {
+    if ($('.header-dropdown-list').length === 0) {
+      $('.dropdown-menu-projects').prepend('<div class="header-dropdown-list"></div>');
+    }
+    $('.drop-header-but').addClass('has-multiple-projects');
+  }
+
+  function updateActiveProjectHeader(data) {
     var activeFavicon = '';
     if (data.favicon == "default" || data.favicon == "") {
       activeFavicon = "/new-assets/assets/images/amazon.png";
     } else {
       activeFavicon = data.favicon;
     }
-    var newLi = '<li><a id="projectLi" class="dropdown-item select-project" href="#" data-favicon="/new-assets/assets/images/amazon.png" data-val="project-' + data.id + '" data-name="' + data.name + '">\
-                  <img src="' + activeFavicon + '" alt="icon">\
-                  '+ data.name + '</a></li>';
-  
-    // Append the new li element to the div
-    $('.header-dropdown-list').append(newLi);
+
     $("#activeProject").attr("data-val", 'project-' + data.id);
     $("#activeProject").attr("data-name", data.name);
+    $("#activeProject").attr("data-favicon", activeFavicon);
     $("#activeProject").text(data.name);
     $("#activeFavicon").attr("src", activeFavicon);
-  
+
     setCookie('activeProject', data.id, 7);
     setCookie('activeProjectName', data.name, 7);
-    setCookie('activeProjectFavicon', $('#projectLi').attr('data-favicon'), 7);
-    
-    // Also update the session with the new active project
+    setCookie('activeProjectFavicon', activeFavicon, 7);
+
     $.ajax({
       url: '/set-active-project',
       method: 'POST',
@@ -103,8 +110,24 @@ $(document).on("click", ".deleteProject", function () {
         console.error('Error updating active project in session:', error);
       }
     });
-    
-    updateSidebarSettingsLink()
+
+    updateSidebarSettingsLink();
+  }
+
+  function activeProject(data) {
+    var activeFavicon = '';
+    if (data.favicon == "default" || data.favicon == "") {
+      activeFavicon = "/new-assets/assets/images/amazon.png";
+    } else {
+      activeFavicon = data.favicon;
+    }
+    var newLi = '<li><a id="projectLi" class="dropdown-item select-project" href="#" data-favicon="' + activeFavicon + '" data-val="project-' + data.id + '" data-name="' + data.name + '">\
+                  <img src="' + activeFavicon + '" alt="icon">\
+                  '+ data.name + '</a></li>';
+
+    ensureHeaderDropdownList();
+    $('.header-dropdown-list').append(newLi);
+    updateActiveProjectHeader(data);
   }
   // Get Cookie
   function getCookie(name) {

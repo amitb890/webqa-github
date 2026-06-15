@@ -199,6 +199,7 @@ if (!empty($activeProjectFavicon)) {
               </a>
 
               <ul class="dropdown-menu dropdown-menu-end header-dropdown dropdown-menu-projects header-dropdown-imran" style="padding-top: 0px">
+                @if($userProjects->count() > 1)
                 <div class="header-dropdown-list">
                     @foreach($userProjects as $project)
                       @php
@@ -222,7 +223,8 @@ if (!empty($activeProjectFavicon)) {
 
                       @endforeach
                 </div>
-                <div class="drop-header-but">
+                @endif
+                <div class="drop-header-but{{ $userProjects->count() > 1 ? ' has-multiple-projects' : '' }}">
                   <button><a class="{{\Request::route()->getName() === 'projects.index' ? 'active' : '' }}" href="{{ route('projects.index') }}">My Projects</a></button>
                   <button><a class="{{\Request::route()->getName() === 'projects.create' ? 'active' : '' }}" href="{{ route('projects.create') }}">Create a new Project</a></button>
                 </div>

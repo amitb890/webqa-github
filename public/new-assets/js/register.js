@@ -100,4 +100,27 @@ $( document ).ready(function() {
             $passwordInputConfirm.attr('type', 'password');
         }
     });
+
+    $(document).on('click', '.login_forgetPass', function(e) {
+        const href = $(this).attr('href');
+        if (!href) return;
+
+        const $form = $(this).closest('form');
+        let email = '';
+
+        if ($form.length) {
+            const $emailInput = $form.find('input[name="email"], input[data-name="email"], input[type="email"]').first();
+            email = ($emailInput.val() || '').trim();
+        }
+
+        if (!email) {
+            email = ($('#emailLogin').val() || $('#email').val() || '').trim();
+        }
+
+        if (email && typeof validateEmail === 'function' && validateEmail(email)) {
+            e.preventDefault();
+            const baseUrl = href.split('?')[0];
+            window.location.href = baseUrl + '?email=' + encodeURIComponent(email);
+        }
+    });
 })

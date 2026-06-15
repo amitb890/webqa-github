@@ -949,6 +949,25 @@ class RunTest implements ShouldQueue
                 }
             };
 
+            $casing = '';
+            $casingClass = 'result_pass';
+            if ($casingStatus) {
+                $casingResult = Helper::applyTextCasingChecks(
+                    (string) $content,
+                    $excludedWordsVal,
+                    (bool) $titleCasingCamel,
+                    (bool) $titleCasingBoth,
+                    (bool) $titleCasingSentence,
+                    'Title Tag'
+                );
+                $casing = $casingResult['casing'];
+                $casingClass = $casingResult['casingClass'];
+                if ($casingResult['failed']) {
+                    $status = false;
+                    $problems = array_merge($problems, $casingResult['problems']);
+                }
+            }
+
             $object = new \stdClass();
             $object->status = $status;
             $object->title = $title;
@@ -962,6 +981,8 @@ class RunTest implements ShouldQueue
             $object->showSnippet = $showSnippet;
             $object->tagStatus = $tagStatus;
             $object->casingStatus = $casingStatus;
+            $object->casing = $casing;
+            $object->casingClass = $casingClass;
             $object->lengthClass = $lengthClass;
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "Title Tag";
@@ -990,6 +1011,8 @@ class RunTest implements ShouldQueue
             $object->showSnippet = false;
             $object->tagStatus = false;
             $object->casingStatus = false;
+            $object->casing = '';
+            $object->casingClass = 'result_fail';
             $object->lengthClass = "result_fail";
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "Title Tag";
@@ -1727,6 +1750,26 @@ class RunTest implements ShouldQueue
             }
         }
 
+        $casing = '';
+        $casingClass = 'result_pass';
+        if ($casingStatus) {
+            $casingResult = Helper::applyTextCasingChecks(
+                (string) $content,
+                $excludedWordsVal,
+                (bool) $titleCasingCamel,
+                (bool) $titleCasingBoth,
+                (bool) $titleCasingSentence,
+                'OG Title Tag'
+            );
+            $casing = $casingResult['casing'];
+            $casingClass = $casingResult['casingClass'];
+            if ($casingResult['failed']) {
+                $status = false;
+                $statusTitle = false;
+                $problems = array_merge($problems, $casingResult['problems']);
+            }
+        }
+
         // desc
         $isDesc = $settings->settings_sub->og_desc;
         $isMaxDesc = $settings->settings_sub->max_og_desc_length;
@@ -1925,6 +1968,8 @@ class RunTest implements ShouldQueue
         $object->showContent = $showContent;
         $object->tagStatus = $tagStatus;
         $object->casingStatus = $casingStatus;
+        $object->casing = $casing;
+        $object->casingClass = $casingClass;
         $object->lengthClass = $lengthClass;
         $object->isEqualClass = $isEqualClass;
         $object->learnMoreURL = "https://setmore.com/";
@@ -1973,6 +2018,8 @@ class RunTest implements ShouldQueue
             $object->showImage = false;
             $object->tagStatus = false;
             $object->casingStatus = false;
+            $object->casing = '';
+            $object->casingClass = 'result_fail';
             $object->lengthClass = "result_fail";
             $object->isEqualClass = "result_fail";
             $object->lengthDescClass = "result_fail";
@@ -2118,6 +2165,26 @@ class RunTest implements ShouldQueue
                     $isEqualClass = "result_fail";
                     array_push($problems, "Twitter Title is not exactly the same with the title.");
                 }    
+            }
+        }
+
+        $casing = '';
+        $casingClass = 'result_pass';
+        if ($casingStatus) {
+            $casingResult = Helper::applyTextCasingChecks(
+                (string) $content,
+                $excludedWordsVal,
+                (bool) $titleCasingCamel,
+                (bool) $titleCasingBoth,
+                (bool) $titleCasingSentence,
+                'Twitter Title Tag'
+            );
+            $casing = $casingResult['casing'];
+            $casingClass = $casingResult['casingClass'];
+            if ($casingResult['failed']) {
+                $status = false;
+                $statusTitle = false;
+                $problems = array_merge($problems, $casingResult['problems']);
             }
         }
 
@@ -2297,6 +2364,8 @@ class RunTest implements ShouldQueue
         $object->showContent = $showContent;
         $object->tagStatus = $tagStatus;
         $object->casingStatus = $casingStatus;
+        $object->casing = $casing;
+        $object->casingClass = $casingClass;
         $object->lengthClass = $lengthClass;
         $object->isEqualClass = $isEqualClass;
         $object->learnMoreURL = "https://setmore.com/";
@@ -2338,6 +2407,8 @@ class RunTest implements ShouldQueue
             $object->lengthClass = "result_fail";
             $object->isEqualClass = "result_fail";
             $object->casingStatus = false;
+            $object->casing = '';
+            $object->casingClass = 'result_fail';
             $object->showContent = false;
             $object->tagStatus = false;
             $object->lengthImage = 0;

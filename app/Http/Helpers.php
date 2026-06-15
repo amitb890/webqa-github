@@ -2101,6 +2101,162 @@ public function getContentType($response)
     }
 
     /**
+     * Words skipped during title casing checks (mirrors functions.js `data` array).
+     *
+     * @return list<string>
+     */
+    public static function getCasingSkipWords(string $excludedWordsVal = ''): array
+    {
+        $skipWords = ['.', '|', ':', '-', '&', ' ', '+', ','];
+
+        if ($excludedWordsVal === '') {
+            return $skipWords;
+        }
+
+        foreach (explode(',', $excludedWordsVal) as $segment) {
+            foreach (preg_split('/\s+/', trim($segment)) ?: [] as $word) {
+                if ($word !== '') {
+                    $skipWords[] = $word;
+                }
+            }
+        }
+
+        return $skipWords;
+    }
+
+    /** Mirrors functions.js hasSpecialCharacters2(). */
+    public static function hasSpecialCharacters2(string $str): bool
+    {
+        return (bool) preg_match('/[@#$%^&*()_+\=\[\]{};"\\\\<>+]+/', $str);
+    }
+
+    /**
+     * Mirrors functions.js isCamelCase().
+     * Returns null when no evaluable words were found.
+     */
+    public static function isCamelCase(string $str, string $excludedWordsVal = ''): ?bool
+    {
+        $skipWords = self::getCasingSkipWords($excludedWordsVal);
+        $words = explode(' ', $str);
+        $ans = null;
+
+        foreach ($words as $element) {
+            if (self::hasNumbers($element) || in_array($element, $skipWords, true)) {
+                continue;
+            }
+
+            $first = substr($element, 0, 1);
+            if (! self::hasUppercase($first)) {
+                return false;
+            }
+
+            if (self::hasSpecialCharacters2($element)) {
+                return false;
+            }
+
+            $remainder = substr($element, 1);
+            if (self::hasUppercase($remainder)) {
+                return false;
+            }
+
+            $ans = true;
+        }
+
+        return $ans;
+    }
+
+    /**
+     * Mirrors functions.js isSentenceCase().
+     * Returns null when no evaluable words were found.
+     */
+    public static function isSentenceCase(string $str, string $excludedWordsVal = ''): ?bool
+    {
+        $skipWords = self::getCasingSkipWords($excludedWordsVal);
+        $words = explode(' ', $str);
+        $ans = null;
+
+        foreach ($words as $index => $element) {
+            if (self::hasNumbers($element) || in_array($element, $skipWords, true)) {
+                continue;
+            }
+
+            $first = substr($element, 0, 1);
+            if ($index === 0) {
+                if (! self::hasUppercase($first)) {
+                    return false;
+                }
+            } else {
+                if (self::hasSpecialCharacters2($element)) {
+                    return false;
+                }
+
+                if (self::hasUppercase($element)) {
+                    return false;
+                }
+
+                $ans = true;
+            }
+        }
+
+        return $ans;
+    }
+
+    /**
+     * Detect casing label and validate enabled casing rules (mirrors analysis.js buildTest()).
+     *
+     * @return array{casing: string, casingClass: string, problems: list<string>, failed: bool}
+     */
+    public static function applyTextCasingChecks(
+        string $content,
+        string $excludedWordsVal,
+        bool $titleCasingCamel,
+        bool $titleCasingBoth,
+        bool $titleCasingSentence,
+        string $tagName = 'Title Tag'
+    ): array {
+        $problems = [];
+        $casingClass = 'result_pass';
+        $failed = false;
+
+        if (self::isCamelCase($content, $excludedWordsVal)) {
+            $casing = 'Camel Casing';
+        } elseif (self::isSentenceCase($content, $excludedWordsVal)) {
+            $casing = 'Sentence Casing';
+        } else {
+            $casing = 'Neither Camel Case nor Sentence Case';
+        }
+
+        if ($titleCasingCamel && ! self::isCamelCase($content, $excludedWordsVal)) {
+            $problems[] = "{$tagName} does not follow Camel casing";
+            $failed = true;
+            $casingClass = 'result_fail';
+        }
+
+        if ($titleCasingSentence && ! self::isSentenceCase($content, $excludedWordsVal)) {
+            $problems[] = "{$tagName} does not follow Sentence casing";
+            $failed = true;
+            $casingClass = 'result_fail';
+        }
+
+        if (
+            $titleCasingBoth
+            && ! self::isCamelCase($content, $excludedWordsVal)
+            && ! self::isSentenceCase($content, $excludedWordsVal)
+        ) {
+            $problems[] = "{$tagName} does not follow Camel casing or Sentence casing";
+            $failed = true;
+            $casingClass = 'result_fail';
+        }
+
+        return [
+            'casing' => $casing,
+            'casingClass' => $casingClass,
+            'problems' => $problems,
+            'failed' => $failed,
+        ];
+    }
+
+    /**
      * Generate a cache-busting parameter for assets
      * @return string
      */

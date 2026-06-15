@@ -66,6 +66,7 @@
 
         <!-- custom scripts -->
         <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+        <script src="{{ asset('new-assets/js/register.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
         <script src="{{ asset('new-assets/js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
         <script src="{{ asset('new-assets/js/imran.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 

@@ -14,9 +14,14 @@ class PasswordResetLinkController extends Controller
      *
      * @return \Illuminate\View\View
      */
-    public function create()
+    public function create(Request $request)
     {
-        return view('auth.forgot-password');
+        $email = $request->query('email');
+        if (!is_string($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $email = null;
+        }
+
+        return view('auth.forgot-password', compact('email'));
     }
 
     /**

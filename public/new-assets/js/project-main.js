@@ -621,6 +621,13 @@ $(document).ready(function () {
   updateSidebarSettingsLink()
   updateSliders()
 });
+function ensureHeaderDropdownList() {
+  if ($('.header-dropdown-list').length === 0) {
+    $('.dropdown-menu-projects').prepend('<div class="header-dropdown-list"></div>');
+  }
+  $('.drop-header-but').addClass('has-multiple-projects');
+}
+
 function activeProject(data, action) {
   // Create the new li element
   if (data.id == getCookie('activeProject') || action == 'create') {
@@ -637,7 +644,7 @@ function activeProject(data, action) {
     <img src="' + getCookie('activeProjectFavicon') + '" alt="icon">\
     '+ getCookie('activeProjectName') + '</a></li>';
 
-    // Append the new li element to the div
+    ensureHeaderDropdownList();
     $('.header-dropdown-list').append(oldLi);
     $("#activeProject").attr("data-val", 'project-' + data.id);
     $("#activeProject").attr("data-name", data.name);
