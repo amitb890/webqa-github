@@ -1187,11 +1187,31 @@ function hasUppercaseCase(str) {
 
 
 function isValidURL(str) {
-    var count = (str.match(/http/g) || []).length;
-    if(count > 1){
-        return false
+    if (!str || typeof str !== 'string') {
+        return false;
     }
-    return (/(http|https):\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*)/i.test(str));
+
+    str = str.trim();
+
+    if (str.startsWith('@') || str.includes('@http')) {
+        return false;
+    }
+
+    try {
+        const urlObj = new URL(str);
+
+        if (!['http:', 'https:'].includes(urlObj.protocol)) {
+            return false;
+        }
+
+        if (!urlObj.hostname || urlObj.hostname.trim() === '' || urlObj.hostname === 'www.') {
+            return false;
+        }
+
+        return urlObj.hostname.includes('.');
+    } catch (e) {
+        return false;
+    }
 }
 
 // data array (takes the brandname argument and splits it to words, splits first by "," and then by " ")
@@ -1573,7 +1593,7 @@ function getTest(data, label){
         if(label.name === "a" || label.name === "img" || label.name === "stylesheet" || label.name === "script" || label.name === "table"){
             if(name === "a"){
                 arr.push(el)
-            }else if(name === "img"){
+            }else if(name === "img" || name === "svg"){
                 arr2.push(el)
             }else if(name === "stylesheet"){
                 arr3.push(el)

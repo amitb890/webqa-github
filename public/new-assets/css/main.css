@@ -17210,7 +17210,7 @@ background-color:#f5f8ff !important;
   /* Regular */
   @font-face {
     font-family: 'Opensauceone';
-    src: url('https://webqa.co/public/new-assets/assets/fonts/Opensauceone/OpenSauceOne-Regular.ttf') format('truetype');
+    src: url('../assets/fonts/Opensauceone/OpenSauceOne-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
   }
@@ -17218,7 +17218,7 @@ background-color:#f5f8ff !important;
   /* Bold */
   @font-face {
     font-family: 'Opensauceone';
-    src: url('https://webqa.co/public/new-assets/assets/fonts/Opensauceone/OpenSauceOne-Bold.ttf') format('truetype');
+    src: url('../assets/fonts/Opensauceone/OpenSauceOne-Bold.ttf') format('truetype');
     font-weight: 800; /* or 800 if that file is extra-bold */
     font-style: normal;
   }

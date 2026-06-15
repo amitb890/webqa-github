@@ -261,7 +261,7 @@ class RunTest implements ShouldQueue
              $internalResponse = $goutteClient->getInternalResponse();
      
              // Extract HTML components
-            $meta = $crawler->filter("table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,link[rel='stylesheet'],script")->each(function($node) {
+            $meta = $crawler->filter($helpers->pageMetaElementFilter())->each(function($node) use ($helpers) {
                 $name = $node->attr('name');
                 $content = $node->attr('content');
 
@@ -285,10 +285,11 @@ class RunTest implements ShouldQueue
                 }
 
                 if($name === "img"){
-                    $content = [
-                        'src' => $node->attr('src') != "" ? $node->attr('src') : $node->attr('data-src'),
-                        'alt' => $node->attr('alt')
-                    ];
+                    $content = $helpers->extractImgElementContent($node);
+                }
+
+                if($name === "svg"){
+                    $content = $helpers->extractSvgElementContent($node);
                 }
 
                 if($name === "script"){
@@ -2791,6 +2792,16 @@ class RunTest implements ShouldQueue
             if(count($images) > 0){
                 $message = "All the Images used in the page meet quality requirements";
                 foreach($images as $image){
+                    $normalized = $helpers->normalizeImageForTest($image, $testedUrl, $domain);
+                    if ($normalized === null) {
+                        continue;
+                    }
+
+                    $imageSrc = $normalized['imageSrc'];
+                    $imageName = $normalized['imageName'];
+                    $imageAlt = $normalized['imageAlt'];
+                    $isInlineSvg = $normalized['isInlineSvg'];
+
                     // getting all values again
                     $imageLengthStatus = true;
                     $imageMaxSize = $settings->settings_sub->image_max_size;
@@ -2813,23 +2824,7 @@ class RunTest implements ShouldQueue
                     $imageSpecialStatus = true;
                     $imageAltSpacesStatus = true;
 
-                    $content = $image["src"];
-                    $imageAlt = $image["alt"];
-                    $imageSrc = $helpers->removeParams($content);
-                    $imageSrc = $helpers->getAbsolutePath($imageSrc, $domain);
-                    $imageName = substr($imageSrc, strrpos($imageSrc, '/') + 1);
-                    // if($helpers->isSVG($imageName)){
-                    //     $imageAltDB = false;
-                    //     $imageNameOnlyHyphens = false;
-                    //     $imageNameNoUppercase = false;
-                    //     $imageNameNoSpecial = false;
-                    //     $imageNameMaxCharacters = false;
-                    //     $imageLengthStatus = false;
-                    //     $imageName = "Since it's an SVG, there is no file name.";
-                    // }
-
-
-                    $imageNameLength = strlen($imageName);
+                $imageNameLength = strlen($imageName);
                     $imageNameClass = "result_pass";
                     $imageAltClass = "result_pass";
                     $imageSizeClass = "result_pass";
@@ -2860,21 +2855,11 @@ class RunTest implements ShouldQueue
 
 
                     
-                    if($imageMaxSize){
-                        $imgDetails = @get_headers($imageSrc, 1);
-                        // Check if headers were successfully retrieved
-                        if ($imgDetails === false) {
-                            continue;
-                        }
-                        if(isset($imgDetails["Content-Length"])){
-                            $imgSize = (int)$imgDetails["Content-Length"];
-                            if($imgSize > 0){
-                                $imgSize = round($imgSize / 1024, 2);
-                            }
-                        }else{
+                    if($imageMaxSize && !$isInlineSvg){
+                        $imgSize = $helpers->getRemoteFileSizeKb($imageSrc);
+                        if ($imgSize === null) {
                             $imgSize = 0;
                         }
-                        // $imgSize = 1000;
 
                         if($imgSize > $imageMaxSizeVal){
                             $imageStatus = false;
@@ -2977,7 +2962,9 @@ class RunTest implements ShouldQueue
                         'imageLengthStatus' => $imageLengthStatus,
                     ];
 
-                    $imageDetail["imageSizeValue"] = $imageMaxSize ? $imgSize . " KB" : "File size check excluded.";
+                    $imageDetail["imageSizeValue"] = $isInlineSvg
+                        ? "Inline SVG (size not applicable)."
+                        : ($imageMaxSize ? $imgSize . " KB" : "File size check excluded.");
               
                     array_push($problems, $imageDetail);
                 }

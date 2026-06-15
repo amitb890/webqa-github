@@ -101,7 +101,22 @@ class Helpers{
 
 
     function isUrl($value){
-        return preg_match("/(http|https):\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&=]*)/i", $value);
+        if (!is_string($value)) {
+            return false;
+        }
+
+        $value = trim($value);
+        if ($value === '' || str_starts_with($value, '@') || str_contains($value, '@http')) {
+            return false;
+        }
+
+        $parsed = parse_url($value);
+        if (!isset($parsed['scheme']) || !in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
+            return false;
+        }
+
+        $host = $parsed['host'] ?? '';
+        return $host !== '' && $host !== 'www.' && str_contains($host, '.');
     }
 
     function isLinkSameAsOrigin($url, $origin){
@@ -553,6 +568,148 @@ class Helpers{
         }
 
         return false;
+    }
+
+    function pageMetaElementFilter(): string
+    {
+        return "table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,svg,link[rel='stylesheet'],script";
+    }
+
+    function extractImgElementContent($node): array
+    {
+        $src = $node->attr('src') ?? '';
+        if ($src === '') {
+            $src = $node->attr('data-src') ?? $node->attr('data-lazy-src') ?? '';
+        }
+        if ($src === '' || str_starts_with($src, 'data:')) {
+            $srcset = $node->attr('srcset') ?? $node->attr('data-srcset') ?? '';
+            if ($srcset !== '') {
+                $firstCandidate = trim(explode(',', $srcset)[0]);
+                $src = trim(explode(' ', $firstCandidate)[0]);
+            }
+        }
+
+        return [
+            'src' => $src,
+            'alt' => $node->attr('alt'),
+        ];
+    }
+
+    function extractSvgElementContent($node): array
+    {
+        $src = '';
+        try {
+            if ($node->filter('image')->count() > 0) {
+                $imageNode = $node->filter('image')->first();
+                $src = $imageNode->attr('href') ?: $imageNode->attr('xlink:href') ?: '';
+            }
+        } catch (\Exception $e) {
+        }
+
+        $alt = $node->attr('aria-label') ?: $node->attr('alt') ?: '';
+        if ($alt === '') {
+            try {
+                if ($node->filter('title')->count() > 0) {
+                    $alt = trim($node->filter('title')->first()->text());
+                }
+            } catch (\Exception $e) {
+            }
+        }
+
+        return [
+            'src' => $src,
+            'alt' => $alt,
+            'inline' => $src === '',
+            'id' => $node->attr('id') ?: '',
+        ];
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    function resolveImageRecord(array $image): ?array
+    {
+        if (isset($image['content']) && is_array($image['content'])) {
+            return $image['content'];
+        }
+
+        if (isset($image['src'])) {
+            return $image;
+        }
+
+        return null;
+    }
+
+    /**
+     * @return array{imageSrc: string, imageName: string, imageAlt: mixed, isInlineSvg: bool}|null
+     */
+    function normalizeImageForTest(array $image, string $testedUrl, string $domain): ?array
+    {
+        $record = $this->resolveImageRecord($image);
+        if ($record === null) {
+            return null;
+        }
+
+        $isInlineSvg = !empty($record['inline']);
+        $content = $record['src'] ?? '';
+        if (!$isInlineSvg && ($content === '' || $content === null)) {
+            return null;
+        }
+
+        $imageAlt = $record['alt'] ?? null;
+        if ($isInlineSvg) {
+            $imageSrc = $testedUrl . '#inline-svg';
+            $id = $record['id'] ?? '';
+            $imageName = $id !== '' ? $id . '.svg' : 'inline-svg.svg';
+        } else {
+            $imageSrc = $this->removeParams($content);
+            $imageSrc = $this->getAbsolutePath($imageSrc, $domain);
+            $imageName = substr($imageSrc, strrpos($imageSrc, '/') + 1);
+        }
+
+        return [
+            'imageSrc' => $imageSrc,
+            'imageName' => $imageName,
+            'imageAlt' => $imageAlt,
+            'isInlineSvg' => $isInlineSvg,
+        ];
+    }
+
+    function getRemoteFileSizeKb(?string $url): ?float
+    {
+        if (!$url || str_starts_with($url, 'data:') || str_contains($url, '#inline-svg')) {
+            return null;
+        }
+
+        $imgDetails = @get_headers($url, 1);
+        if ($imgDetails !== false && isset($imgDetails['Content-Length'])) {
+            $bytes = (int) $imgDetails['Content-Length'];
+            return $bytes > 0 ? round($bytes / 1024, 2) : 0.0;
+        }
+
+        if (!function_exists('curl_init')) {
+            return null;
+        }
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_NOBODY => true,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 10,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (compatible; WebQA/1.0)',
+        ]);
+        curl_exec($ch);
+        $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
+        curl_close($ch);
+
+        if (is_numeric($size) && $size > 0) {
+            return round($size / 1024, 2);
+        }
+
+        return null;
     }
 
     function formatSizeUnits($bytes){
@@ -1182,7 +1339,7 @@ private function checkUserAgent($urlArray, $url, $type, $secondaryBlockedUserAge
 
             if($name === "a"){
                 array_push($obj["links"], $content);
-            }else if($name === "img"){
+            }else if($name === "img" || $name === "svg"){
                 array_push($obj["images"], $content);
             }else if($name === "script"){
                 array_push($obj["script"], $content);

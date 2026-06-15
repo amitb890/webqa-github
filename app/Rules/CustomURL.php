@@ -36,8 +36,21 @@ class CustomURL implements Rule
             return false;
         }
         
-        // Updated regex pattern that handles trailing slashes and spaces better
-        return preg_match("/(http|https):\/\/[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}([-a-zA-Z0-9@:%_\+.~#?&=]*)/i", $value);
+        if (str_starts_with($value, '@') || str_contains($value, '@http')) {
+            return false;
+        }
+
+        $parsed = parse_url($value);
+        if (!isset($parsed['scheme']) || !in_array(strtolower($parsed['scheme']), ['http', 'https'], true)) {
+            return false;
+        }
+
+        $host = $parsed['host'] ?? '';
+        if ($host === '' || $host === 'www.' || !str_contains($host, '.')) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

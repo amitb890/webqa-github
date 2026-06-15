@@ -169,7 +169,7 @@ class TestController extends Controller
                 $internalResponse = $statusCode = $goutteClient->getInternalResponse();
                 Session::put('internal_response', $internalResponse);
 
-                $meta = $crawler->filter("table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,link[rel='stylesheet'],script")->each(function($node) {
+                $meta = $crawler->filter($helpers->pageMetaElementFilter())->each(function($node) use ($helpers) {
                     $name = $node->attr('name');
                     $content = $node->attr('content');
                     if($name === null){
@@ -192,10 +192,11 @@ class TestController extends Controller
                     }
 
                     if($name === "img"){
-                        $content = [
-                            'src' => $node->attr('src') != "" ? $node->attr('src') : $node->attr('data-src'),
-                            'alt' => $node->attr('alt')
-                        ];
+                        $content = $helpers->extractImgElementContent($node);
+                    }
+
+                    if($name === "svg"){
+                        $content = $helpers->extractSvgElementContent($node);
                     }
 
                     if($name === "script"){
@@ -2292,6 +2293,16 @@ class TestController extends Controller
         if(count($images) > 0){
             $totalImages = count($images);
             foreach($images as $image){
+                $normalized = $helpers->normalizeImageForTest($image, $urlValue, $domain);
+                if ($normalized === null) {
+                    continue;
+                }
+
+                $imageSrc = $normalized['imageSrc'];
+                $imageName = $normalized['imageName'];
+                $imageAlt = $normalized['imageAlt'];
+                $isInlineSvg = $normalized['isInlineSvg'];
+
                 // getting all values again
                 $imageLengthStatus = true;
                 $imageMaxSize = $settings->settings_sub->image_max_size;
@@ -2313,22 +2324,6 @@ class TestController extends Controller
                 $imageUppercaseStatus = true;
                 $imageSpecialStatus = true;
                 $imageAltSpacesStatus = true;
-
-                $content = $image["content"];
-                $imageAlt = $content["alt"];
-                $imageSrc = $helpers->removeParams($content["src"]);
-                $imageSrc = $helpers->getAbsolutePath($imageSrc, $domain);
-                $imageName = substr($imageSrc, strrpos($imageSrc, '/') + 1);
-                // if($helpers->isSVG($imageName)){
-                //     $imageAltDB = false;
-                //     $imageNameOnlyHyphens = false;
-                //     $imageNameNoUppercase = false;
-                //     $imageNameNoSpecial = false;
-                //     $imageNameMaxCharacters = false;
-                //     $imageLengthStatus = false;
-                //     $imageName = "Since it's an SVG, there is no file name.";
-                // }
-
 
                 $imageNameLength = strlen($imageName);
                 $imageNameClass = "result_pass";
@@ -2361,21 +2356,11 @@ class TestController extends Controller
 
 
                 
-                if($imageMaxSize){
-                    $imgDetails = @get_headers($imageSrc, 1);
-                    // Check if headers were successfully retrieved
-                    if ($imgDetails === false) {
-                        continue;
-                    }
-                    if(isset($imgDetails["Content-Length"])){
-                        $imgSize = (int)$imgDetails["Content-Length"];
-                        if($imgSize > 0){
-                            $imgSize = round($imgSize / 1024, 2);
-                        }
-                    }else{
+                if($imageMaxSize && !$isInlineSvg){
+                    $imgSize = $helpers->getRemoteFileSizeKb($imageSrc);
+                    if ($imgSize === null) {
                         $imgSize = 0;
                     }
-                    // $imgSize = 1000;
 
                     if($imgSize > $imageMaxSizeVal){
                         $imageStatus = false;
@@ -2479,7 +2464,9 @@ class TestController extends Controller
                     'imageLengthStatus' => $imageLengthStatus,
                 ];
 
-                $imageDetail["imageSizeValue"] = $imageMaxSize ? $imgSize . " KB" : "File size check excluded.";
+                $imageDetail["imageSizeValue"] = $isInlineSvg
+                    ? "Inline SVG (size not applicable)."
+                    : ($imageMaxSize ? $imgSize . " KB" : "File size check excluded.");
                 $existingSrcs = array_column($problems, 'imageSrc');
 
                 if (!in_array($imageSrc, $existingSrcs)) {

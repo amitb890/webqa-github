@@ -843,7 +843,7 @@ function toggleTestResultAreaVisibility() {
                                 content: "",
                             }
                         }
-                        if(label.name === "a" || label.name === "img" || label.name === "stylesheet" || label.name === "script"){
+                        if(label.name === "a" || label.name === "img" || label.name === "svg" || label.name === "stylesheet" || label.name === "script"){
                             test = {
                                 links: test,
                                 label: label,
