@@ -2935,9 +2935,9 @@ $(document).ready(function () {
 
         else if(page[1] === "page-size"){
           // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "seo")
+          UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "best-practices")
                     Controls.renderReportMetricRows(data.cbp_labels.page_size, (url, originalIndex, options, folderId) => {
-              UI.buildTableBody(folderId, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "seo", data.url_slug)
+              UI.buildTableBody(folderId, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "best-practices", data.url_slug)
             })
         }
         else if(page[1] === "nested-tables"){
@@ -3148,7 +3148,7 @@ $(document).ready(function () {
             UI.buildTableBody(el.id, "js_compression", data.cbp_labels.js_compression[originalIndex], options, url, settings, "best-practices")
             UI.buildTableBody(el.id, "css_caching_enable", data.cbp_labels.css_caching_enable[originalIndex], options, url, settings, "best-practices")
             UI.buildTableBody(el.id, "js_caching_enable", data.cbp_labels.js_caching_enable[originalIndex], options, url, settings, "best-practices")
-            // UI.buildTableBody(el.id, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "best-practices")
+            UI.buildTableBody(el.id, "page_size", data.cbp_labels.page_size[originalIndex], options, url, settings, "best-practices")
             UI.buildTableBody(el.id, "nested_tables", data.cbp_labels.nested_tables[originalIndex], options, url, settings, "best-practices")
             UI.buildTableBody(el.id, "frameset", data.cbp_labels.frameset[originalIndex], options, url, settings, "best-practices")
 
@@ -3201,7 +3201,7 @@ $(document).ready(function () {
           UI.buildTableHeader("js_compression", data.cbp_labels.js_compression, 1, options, settings, "best-practices")
           UI.buildTableHeader("css_caching_enable", data.cbp_labels.css_caching_enable, 1, options, settings, "best-practices")
           UI.buildTableHeader("js_caching_enable", data.cbp_labels.js_caching_enable, 1, options, settings, "best-practices")
-          // UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "best-practices")
+          UI.buildTableHeader("page_size", data.cbp_labels.page_size, 1, options, settings, "best-practices")
           UI.buildTableHeader("nested_tables", data.cbp_labels.nested_tables, 1, options, settings, "best-practices")
           UI.buildTableHeader("frameset", data.cbp_labels.frameset, 1, options, settings, "best-practices")
 

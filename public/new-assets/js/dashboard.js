@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 2000, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 10, recheckGoogle = 10, recheckSingleMax = 30, urlsGoogleFinal = 0
   /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
   var googleProgressIsRecheck = false
   /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */
@@ -719,7 +719,6 @@ $(document).ready(function () {
         "meta_viewport",
         "doctype",
         "favicon",
-        "page_size",
         "google_overall",
         "google_lighthouse",
         "core_web_vitals"
@@ -791,11 +790,11 @@ $(document).ready(function () {
                     <h3>${data.totalUrls}</h3>
                   </div>
                   <div class="single_mobile_friendly">
-                    <p>URLS with page size (<${settings.page_size_val} KB)</p>
+                    <p>URLS with page size within limit</p>
                     <h3 class="${data.pageSizePassed > 0 ? 'success' : 'danger'}">${data.pageSizePassed}</h3>
                   </div>
                   <div class="single_mobile_friendly">
-                    <p>URLS with page size (>${settings.page_size_val} KB)</p>
+                    <p>URLS with page size exceeding limit</p>
                     <h3 class="${data.pageSizeFailed > 0 ? 'danger' : 'success'}">${data.pageSizeFailed}</h3>
                   </div>
                 </div>

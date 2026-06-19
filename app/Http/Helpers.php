@@ -536,6 +536,28 @@ class Helpers{
     function convertBytesToKb($bytes){
         return number_format($bytes / 1024, 2);
     }
+
+    function resolveHtmlPageSizeBytes($internalResponse, $html): int
+    {
+        $headerBytes = null;
+
+        if ($internalResponse && method_exists($internalResponse, 'getHeader')) {
+            $contentLength = $internalResponse->getHeader('Content-Length');
+            if (is_array($contentLength)) {
+                $contentLength = reset($contentLength);
+            }
+
+            if (is_numeric($contentLength) && (int) $contentLength > 0) {
+                $headerBytes = (int) $contentLength;
+            }
+        }
+
+        if ($headerBytes !== null) {
+            return $headerBytes;
+        }
+
+        return is_string($html) ? strlen($html) : 0;
+    }
       
     function nestedTablesExist($array){
         if(count($array) < 1){

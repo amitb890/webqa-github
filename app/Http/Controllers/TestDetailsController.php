@@ -621,11 +621,16 @@ class TestDetailsController extends Controller
 
     public function pageSize(Request $request){
         $elements = json_decode($request->input("data"));
+        if (! is_array($elements) && ! is_object($elements)) {
+            $elements = [];
+        }
+
+        $elements = array_values((array) $elements);
         $pageSizePassed = 0;
         $pageSizeFailed = 0;
 
         foreach($elements as $element){
-            if(!$element->testerrorcaught){
+            if(empty($element->testerrorcaught)){
                 if($element->status){
                     $pageSizePassed++;
                 }else{
@@ -635,7 +640,7 @@ class TestDetailsController extends Controller
         }
 
         $object = new \stdClass();
-        $object->settings = $elements[0]->settings;
+        $object->settings = $elements[0]->settings ?? null;
         $object->totalUrls = count($elements);
         $object->pageSizePassed = $pageSizePassed;
         $object->pageSizeFailed = $pageSizeFailed;

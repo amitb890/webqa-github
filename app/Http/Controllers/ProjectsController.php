@@ -227,7 +227,7 @@ class ProjectsController extends Controller
     public function getTestDataSingle($id, $label){
         $project = Projects::find($id);
         $security_labels = ["is_safe_browsing", "cross_origin_links", "protocol_relative_resource", "content_security_policy_header", "x_frame_options_header", "hsts_header", "bad_content_type", "ssl_certificate_enable", "folder_browsing_enable"];
-        $cbp_labels = ["html_compression", "css_compression", "js_compression", "gzip_compression", "nested_tables", "frameset", "css_caching_enable", "js_caching_enable", "frameset"];
+        $cbp_labels = ["html_compression", "css_compression", "js_compression", "gzip_compression", "nested_tables", "frameset", "page_size", "css_caching_enable", "js_caching_enable"];
 
         if($label === "security_labels"){
             $details = ProjectTestDetails::where("project_id", $id)->whereIn("test_title", $security_labels)->get();

@@ -30,12 +30,10 @@ class DashboardTrackerCacheService
         'meta_viewport',
         'doctype',
         'favicon',
-        'page_size',
     ];
 
     /** Per-URL tracker cache keys to drop (not used on website-tracker). */
     private const TRACKER_OMITTED_CACHE_WIDGET_KEYS = [
-        'page_size',
     ];
 
     private const DASHBOARD_WIDGET_KEYS = [
@@ -52,6 +50,7 @@ class DashboardTrackerCacheService
         'broken_links',
         'robot_text_test',
         'h1_heading_tag',
+        'page_size',
         'security_labels',
         'cbp_labels',
         'google_overall',
@@ -69,6 +68,7 @@ class DashboardTrackerCacheService
         'meta_viewport',
         'doctype',
         'favicon',
+        'page_size',
         'http_status_code',
         'xml_sitemap',
         'html_sitemap',
@@ -240,6 +240,7 @@ class DashboardTrackerCacheService
         'gzip_compression',
         'nested_tables',
         'frameset',
+        'page_size',
         'css_caching_enable',
         'js_caching_enable',
     ];
@@ -480,6 +481,10 @@ class DashboardTrackerCacheService
         if (in_array($widgetKey, self::TRACKER_CBP_WIDGET_KEYS, true)) {
             $obj['cbp_labels'][$widgetKey][] = $payload;
 
+            if ($widgetKey === 'page_size' && isset($obj['page_size']) && is_array($obj['page_size'])) {
+                $obj['page_size'][] = $payload;
+            }
+
             return;
         }
 
@@ -504,6 +509,7 @@ class DashboardTrackerCacheService
             'meta_viewport' => [],
             'doctype' => [],
             'favicon' => [],
+            'page_size' => [],
             'xml_sitemap' => [],
             'html_sitemap' => [],
             'images' => [],
@@ -533,6 +539,7 @@ class DashboardTrackerCacheService
                 'gzip_compression' => [],
                 'nested_tables' => [],
                 'frameset' => [],
+                'page_size' => [],
                 'css_caching_enable' => [],
                 'js_caching_enable' => [],
             ],
@@ -813,6 +820,7 @@ class DashboardTrackerCacheService
             'gzip_compression',
             'nested_tables',
             'frameset',
+            'page_size',
             'css_caching_enable',
             'js_caching_enable',
         ];
@@ -878,6 +886,9 @@ class DashboardTrackerCacheService
                 break;
             case 'doctype':
                 $payload = self::trackerDoctypeRow($row);
+                break;
+            case 'page_size':
+                $payload = self::trackerStatusOnlyRow($row);
                 break;
             case 'xml_sitemap':
             case 'html_sitemap':
@@ -1494,6 +1505,7 @@ class DashboardTrackerCacheService
             'broken_links' => 'brokenLinks',
             'robot_text_test' => 'robotTextTest',
             'h1_heading_tag' => 'headings',
+            'page_size' => 'pageSize',
             'security_labels' => 'securityHeaders',
             'cbp_labels' => 'codingBestPractices',
             'mobile_friendly' => 'mobileFriendly',
@@ -1615,6 +1627,14 @@ class DashboardTrackerCacheService
             ]);
         }
 
+        if ($widgetKey === 'page_size') {
+            return self::pickKeys($summary, [
+                'pageSizePassed',
+                'pageSizeFailed',
+                'totalUrls',
+            ]);
+        }
+
         return $summary;
     }
 
@@ -1650,6 +1670,7 @@ class DashboardTrackerCacheService
                 'gzip_compression',
                 'nested_tables',
                 'frameset',
+                'page_size',
                 'css_caching_enable',
                 'js_caching_enable',
             ];

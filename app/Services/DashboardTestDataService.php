@@ -14,7 +14,6 @@ class DashboardTestDataService
 {
     /** Keys stored in dashboard_tests_details but not loaded for tracker / website-tracker API. */
     private const TRACKER_OMITTED_TEST_KEYS = [
-        'page_size',
     ];
 
     /**
@@ -122,6 +121,12 @@ class DashboardTestDataService
             foreach ($decoded as $testKey => $value) {
                 $cell = self::decodeDetailTestValue($value);
 
+                if ($testKey === 'page_size') {
+                    $obj['page_size'][] = $cell;
+                    $obj['cbp_labels']['page_size'][] = $cell;
+                    continue;
+                }
+
                 if (isset($obj['security_labels'][$testKey])) {
                     $obj['security_labels'][$testKey][] = $cell;
                     continue;
@@ -149,7 +154,7 @@ class DashboardTestDataService
      */
     public static function buildTrackerAggregatedResults(iterable $detailsIterable): array
     {
-        $obj = self::emptyAggregatedResultsShell(includeTrackerOmitted: false);
+        $obj = self::emptyAggregatedResultsShell();
 
         foreach ($detailsIterable as $detail) {
             if (! $detail->data) {
@@ -167,6 +172,12 @@ class DashboardTestDataService
                 }
 
                 $cell = self::stripTrackerRowSettings(self::decodeDetailTestValue($value));
+
+                if ($testKey === 'page_size') {
+                    $obj['page_size'][] = $cell;
+                    $obj['cbp_labels']['page_size'][] = $cell;
+                    continue;
+                }
 
                 if (isset($obj['security_labels'][$testKey])) {
                     $obj['security_labels'][$testKey][] = $cell;

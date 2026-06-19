@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Http\AllLabels;
 use App\Models\projectSettings;
+use App\Models\Projects;
 use App\Models\TestLabel;
 
 class DashboardLabelsService
@@ -14,6 +16,8 @@ class DashboardLabelsService
      */
     public static function groupedLabelsForProject(int $projectId): array
     {
+        self::ensurePageSizeLabelExists($projectId);
+
         $activeSettingsLabels = [];
         $activeSettingsSeoLabels = [];
         $activeSettingsPerformanceLabels = [];
@@ -87,5 +91,27 @@ class DashboardLabelsService
             'cbp_labels' => $activeSettingsCbpLabels,
             'security_labels' => $activeSettingsSecurityLabels,
         ];
+    }
+
+    private static function ensurePageSizeLabelExists(int $projectId): void
+    {
+        if (TestLabel::where('project_id', $projectId)->where('db_name', 'page_size')->exists()) {
+            return;
+        }
+
+        $project = Projects::find($projectId);
+        if (! $project) {
+            return;
+        }
+
+        $labels = (new AllLabels())->getAllLabels($project->id, (int) $project->user_id);
+        foreach ($labels as $label) {
+            if (($label['db_name'] ?? null) !== 'page_size') {
+                continue;
+            }
+
+            TestLabel::create($label);
+            return;
+        }
     }
 }

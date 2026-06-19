@@ -5089,8 +5089,9 @@ class RunTest implements ShouldQueue
             $settings = json_decode($data["settings"]);
             $html = $data["html"];
             $internalResponse = $data["internal_response"];
-            $contentLength = $helpers->convertBytesToKb($internalResponse->getHeader('Content-Length')); // converting bytes to KBs
-            $contentLengthUnits = $helpers->formatSizeUnits($internalResponse->getHeader('Content-Length')); // converting bytes to units
+            $contentLengthBytes = $helpers->resolveHtmlPageSizeBytes($internalResponse, $html);
+            $contentLength = round($contentLengthBytes / 1024, 2);
+            $contentLengthUnits = $helpers->formatSizeUnits($contentLengthBytes);
         
             $isPageSize = $settings->settings_sub->page_size;
             $pageSizeVal = $settings->settings_sub->page_size_val;
@@ -5118,6 +5119,8 @@ class RunTest implements ShouldQueue
             $object->problems = $problems;
             $object->message = $message;
             $object->description = $description;
+            $object->contentLength = $contentLength;
+            $object->contentLengthBytes = $contentLengthBytes;
             $object->contentLengthUnits = $contentLengthUnits;
             $object->learnMoreURL = "https://setmore.com/";
             $object->tagName = "HTML Page Size";
