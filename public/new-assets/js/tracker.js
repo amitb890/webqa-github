@@ -2430,7 +2430,7 @@ $(document).ready(function () {
             //      "targets": [0, 1, 2, 3, 4], // Disable for the first row or irrelevant columns,
             //     }
             // ],
-            fixedHeader: true,
+            fixedHeader: false,
           
             select: {
               style: "multi",
