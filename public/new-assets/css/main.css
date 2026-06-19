@@ -3330,6 +3330,7 @@ h6 {
   width: 100% !important;
   background: #f7f7f7 !important;
   opacity: 1;
+  min-width: 287px;
 }
 
 .root-tr .form-check{
