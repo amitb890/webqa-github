@@ -81,11 +81,17 @@ class DashboardBootstrapService
         $urls = UrlsList::where('projects_id', $projectId)->get()->values()->all();
         $dashboardState = self::dashboardShowState($project);
         $testsRunning = self::testsAppearRunning($projectId);
+        $activeRecheck = null;
+
+        if (in_array($dashboardState['details_progress'], ['recheck', 'recheck-single'], true)) {
+            $activeRecheck = self::getActiveRecheck($projectId);
+        }
 
         $bootstrap = [
             'projectId' => $projectId,
             'dashboardStatus' => $dashboardState['dashboardStatus'],
             'details_progress' => $dashboardState['details_progress'],
+            'activeRecheck' => $activeRecheck,
             'dashboard_fully_tested' => (int) ($project->dashboard_fully_tested ?? 0),
             'testsRunning' => $testsRunning,
             'labels' => self::serializeLabels($labels),

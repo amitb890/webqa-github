@@ -468,6 +468,7 @@ $(document).ready(function () {
               </div>
               <button type="button" class="recheck-stop-btn" data-stop-google="0" aria-label="Stop recheck"></button>`
       document.querySelector(".dashboard_recheck_area").prepend(div)
+      UI.updateTileActionState("full")
     }
 
     static ensureStopRecheckModal(){
@@ -595,6 +596,38 @@ $(document).ready(function () {
           recheckHyperlink.title = "Recheck dashboard"
         }
       }
+    }
+
+    static updateTileActionState(state = "default", activeDbName = null) {
+      document.querySelectorAll(".single_dashboard_card_main").forEach((card) => {
+        const cardDbName = card.getAttribute("data-label")
+        const dropdown = card.querySelector(".dashboard_title .dropdown")
+        const refreshAction = card.querySelector(".dashboard-refresh-tile-action")
+        const removeAction = card.querySelector(".dashboard-remove-tile-action")
+        const stopAction = card.querySelector(".dashboard-stop-recheck-action")
+
+        if (!dropdown) return
+
+        if (state === "full") {
+          dropdown.classList.add("d-none")
+          return
+        }
+
+        dropdown.classList.remove("d-none")
+
+        if (state === "single") {
+          const isActiveCard = !!activeDbName && cardDbName === activeDbName
+          dropdown.classList.toggle("d-none", !isActiveCard)
+          if (refreshAction) refreshAction.classList.add("d-none")
+          if (removeAction) removeAction.classList.add("d-none")
+          if (stopAction) stopAction.classList.toggle("d-none", !isActiveCard)
+          return
+        }
+
+        if (refreshAction) refreshAction.classList.remove("d-none")
+        if (removeAction) removeAction.classList.remove("d-none")
+        if (stopAction) stopAction.classList.add("d-none")
+      })
     }
 
     static buildWidgetSidebar(){
@@ -2402,19 +2435,19 @@ $(document).ready(function () {
                 </a>
 
                 <ul class="dropdown-menu dropdown-menu-end" style="">
-                    <li>
+                    <li class="dashboard-refresh-tile-action">
                       <button class="refresh-tile">
                       <img src="/new-assets/assets/images/refresh.png" alt="icon">
                       Refresh Data
                       </button>
                     </li>
-                    <li>
+                    <li class="dashboard-stop-recheck-action d-none">
                       <button class="dashboard-stop-recheck-btn" data-stop-google="${ignore_tests.includes(label.db_name) ? "1" : "0"}">
                       <img src="/new-assets/assets/images/refresh.png" alt="icon">
                       Stop Recheck
                       </button>
                     </li>
-                    <li>
+                    <li class="dashboard-remove-tile-action">
                       <button class="remove-tile">
                       <img src="/new-assets/assets/images/delete.png" alt="icon">
                       Remove Tile
@@ -2642,6 +2675,10 @@ $(document).ready(function () {
     }
 
     static runDashboardInitBranch(statusData, preloadedTestData) {
+      if (statusData && statusData.activeRecheck && statusData.activeRecheck.label) {
+        refreshTileDbName = statusData.activeRecheck.label
+      }
+
       if(statusData.dashboardStatus === 1){
         Controls.buildDashboard(statusData.dashboardStatus, preloadedTestData)
       }else if(statusData.dashboardStatus === 2){
@@ -3146,6 +3183,7 @@ $(document).ready(function () {
                   console.error('Recheck start failed:', err);
                   recheckAllowed = true;
                   UI.updateRecheckButtonState(false);
+                  UI.updateTileActionState("default");
                   // Leave loader visible but show error so user knows something went wrong
                   displayAlert(".analysis-content-body-message", {
                     status: 0,
@@ -3379,7 +3417,9 @@ $(document).ready(function () {
             UI.buildRecheckLoader()
             googleProgressIsRecheck = true
           }else if(dashboardStatus === 3){
-
+            UI.updateTileActionState("single", refreshTileDbName)
+          }else{
+            UI.updateTileActionState("default")
           }
 
           Controls.buildGoogleElements(dashboardStatus === 2)
@@ -3656,6 +3696,7 @@ $(document).ready(function () {
       googleProgressIsRecheck = true
       // Disable recheck button when refreshing Google tiles
       UI.updateRecheckButtonState(true)
+      UI.updateTileActionState("single", dbName)
       
       const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
       // For each Google tile, build the loader
@@ -3677,6 +3718,7 @@ $(document).ready(function () {
             googleProgressIsRecheck = false
             googleProgressExpectedResults = 0
             UI.updateRecheckButtonState(false)
+            UI.updateTileActionState("default")
             DB.updateGoogleRecheckActiveUrls()
           },
         })
@@ -3775,6 +3817,7 @@ $(document).ready(function () {
         mobile_friendly: [],
       }
       UI.buildRefreshTileLoader(dbName, target, name)
+      UI.updateTileActionState("single", dbName)
       urls = Controls.normalizeUrlsForTest(originalUrls).slice(0, recheckSingleMax)
 
       async function checkStatusDashboard() {
@@ -3832,6 +3875,7 @@ $(document).ready(function () {
           refreshTileDisabled = false;
           recheckSingleIntervalStatus = false;
           UI.updateRecheckButtonState(false);
+          UI.updateTileActionState("default");
           if (document.querySelector(`.single_dashboard_card_main[data-label='${dbName}'] .dashboard-loader`)) {
             document.querySelector(`.single_dashboard_card_main[data-label='${dbName}'] .dashboard-loader`).remove();
           }
@@ -3953,6 +3997,7 @@ $(document).ready(function () {
 
       Controls.buildDashboard()
       UI.updateRecheckButtonState(false)
+      UI.updateTileActionState("default")
     }
     
 

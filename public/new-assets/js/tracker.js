@@ -625,6 +625,7 @@ $(document).ready(function () {
         const recheckHyperlink = document.querySelector("#recheckHyperlink")
         const trackerRecheckBtn = document.querySelector("#recheckTrackerBtn")
         const trackerSelectedRecheckBtn = document.querySelector("#recheckSelectedTrackerBtn")
+        const recheckMenu = document.querySelector(".menu-recheck-option")
         
         if (recheckBtn) {
           recheckBtn.disabled = isDisabled
@@ -649,6 +650,10 @@ $(document).ready(function () {
             recheckHyperlink.style.cursor = "pointer"
             recheckHyperlink.title = "Recheck dashboard"
           }
+        }
+
+        if (recheckMenu) {
+          recheckMenu.style.display = isDisabled ? "none" : ""
         }
 
         const recheckMenuToggle = document.querySelector(".menu-recheck-option > a.dropdown-toggle")
@@ -1445,7 +1450,6 @@ $(document).ready(function () {
                   const hid = hide ? "hidden-element-tracker" : "";
                   tr.innerHTML+= `
                   <th class="${hid} text-start">XML sitemap URL</th>
-                  <th class="${hid}">Sitemap reachable</th>
                   <th class="${hid}">URL listed</th>
                   <th class="${hid} text-start">Detail</th>`;
                   break;
@@ -2083,7 +2087,9 @@ $(document).ready(function () {
                       const hid = hide ? "hidden-element-tracker" : "";
                       const valKey = isXml ? "xml_sitemap_val" : "html_sitemap_val";
                       if (!result) {
-                        td.innerHTML += `<td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td>`;
+                        td.innerHTML += isXml
+                          ? `<td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td>`
+                          : `<td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td><td class="${hid}"></td>`;
                         break;
                       }
                       const rawUrl = (result.settings && result.settings[valKey])
@@ -2091,7 +2097,6 @@ $(document).ready(function () {
                         : (projectSettings && projectSettings[valKey] ? String(projectSettings[valKey]) : "");
                       const hrefEsc = rawUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
                       const excluded = /excluded/i.test(result.message || "");
-                      const fileCell = excluded ? "—" : (result.fileExists ? "Yes" : "No");
                       let listCell = "—";
                       let listClass = "";
                       if (!result.testerrorcaught && !excluded) {
@@ -2104,6 +2109,14 @@ $(document).ready(function () {
                       const urlCell = rawUrl
                         ? `<a href="${hrefEsc}" target="_blank" rel="noopener noreferrer">${trackerEscapeHtml(rawUrl)}</a>`
                         : "—";
+                      if (isXml) {
+                        td.innerHTML += `
+                        <td class="${hid} text-start">${urlCell}</td>
+                        <td class="${listClass} ${hid}">${listCell}</td>
+                        <td class="${hid} text-start">${detail}</td>`;
+                        break;
+                      }
+                      const fileCell = excluded ? "—" : (result.fileExists ? "Yes" : "No");
                       td.innerHTML += `
                       <td class="${hid} text-start">${urlCell}</td>
                       <td class="${hid}">${fileCell}</td>
@@ -3026,7 +3039,7 @@ $(document).ready(function () {
               UI.buildTableBody(folderId, "broken_links", data.broken_links[originalIndex], options, url, settings, "seo", data.meta_title)
             })
         }else if(page[1] === "xml-sitemap"){
-          UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 4, options, settings, "seo")
+          UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 3, options, settings, "seo")
                     Controls.renderReportMetricRows(data.xml_sitemap, (url, originalIndex, options, folderId) => {
               UI.buildTableBody(folderId, "xml_sitemap", data.xml_sitemap[originalIndex], options, url, settings, "seo", data.meta_title)
             })
@@ -3398,7 +3411,7 @@ $(document).ready(function () {
           UI.buildTableHeader("doctype", data.doctype, 1, options, settings, "seo")
           UI.buildTableHeader("http_status_code", data.http_status_code, 1, options, settings, "seo")
           UI.buildTableHeader("broken_links", data.broken_links, 4, options, settings, "seo")
-          UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 4, options, settings, "seo")
+          UI.buildTableHeader("xml_sitemap", data.xml_sitemap, 3, options, settings, "seo")
           UI.buildTableHeader("html_sitemap", data.html_sitemap, 4, options, settings, "seo")
 
           lighthouseStatus ? UI.buildTableHeader("google_overall", testDetailsLighthouse, 2, options, settings, "performance") : ""
