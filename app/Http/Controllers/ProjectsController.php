@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Projects;
+use App\Models\LighthouseResult;
 use App\Models\LighthouseTest;
 use App\Models\UrlsList;
 use App\Models\Alerts;
@@ -282,6 +283,54 @@ class ProjectsController extends Controller
             ->update(['status' => 'failed']);
 
         return response()->json(['status' => 1, 'msg' => 'Google status reset and in-flight page speed runs marked failed.']);
+    }
+
+    public function stopRecheck(Request $request)
+    {
+        $projectId = (int) $request->input('project_id');
+        $project = Projects::where('id', $projectId)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (! $project) {
+            return response()->json(['status' => 0, 'msg' => 'Project not found.'], 404);
+        }
+
+        $dashboardTest = DashboardTests::where('project_id', $projectId)->latest()->first();
+        if ($dashboardTest && in_array($dashboardTest->status, ['recheck', 'recheck-single'], true)) {
+            $targetUrls = DashboardTrackerCacheService::extractRunTargetUrls($dashboardTest);
+            $detailsQuery = DashboardTestsDetails::where('dashboard_test_id', $dashboardTest->id)
+                ->whereIn('status', ['pending', 'in_progress']);
+
+            if (! empty($targetUrls)) {
+                $detailsQuery->whereIn('url', $targetUrls);
+            }
+
+            $detailsQuery->update(['status' => 'completed']);
+            $dashboardTest->update(['status' => 'completed']);
+            DashboardBootstrapService::clearActiveRecheck($projectId);
+            DashboardTrackerCacheService::markProjectDashboardFullyTested($projectId);
+        }
+
+        LighthouseTest::where('project_id', $projectId)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->update([
+                'status' => 'failed',
+                'send_completion_email' => false,
+            ]);
+
+        LighthouseResult::whereHas('test', function ($query) use ($projectId) {
+            $query->where('project_id', $projectId);
+        })
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->update(['status' => 'failed']);
+
+        $project->update([
+            'dashboard_show_status' => 1,
+            'google_show_status' => 0,
+        ]);
+
+        return response()->json(['status' => 1, 'msg' => 'Recheck stopped.']);
     }
 
     /**

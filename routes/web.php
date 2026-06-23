@@ -177,6 +177,7 @@ Route::middleware('auth')->group(function () {
         Route::post('update-dashboard-status', [App\Http\Controllers\ProjectsController::class, 'updateDashboardStatus'])->name('updateDashboardStatus');
         Route::post('update-google-status', [App\Http\Controllers\ProjectsController::class, 'updateGoogleStatus'])->name('updateGoogleStatus');
         Route::post('reset-google-status/{id}', [App\Http\Controllers\ProjectsController::class, 'resetGoogleStatus'])->name('resetGoogleStatus');
+        Route::post('stop-recheck', [App\Http\Controllers\ProjectsController::class, 'stopRecheck'])->name('stopRecheck');
         Route::get('get-test-data/{id}', [App\Http\Controllers\ProjectsController::class, 'getTestData'])->name('getTestData');
         Route::get('get-test-data-single/{id}/{label}', [App\Http\Controllers\ProjectsController::class, 'getTestDataSingle'])->name('getTestDataSingle');
         Route::get('get-test-data-tracker/{id}', [App\Http\Controllers\ProjectsController::class, 'getTestDataTracker'])->name('getTestDataTracker');

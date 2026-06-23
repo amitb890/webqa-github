@@ -1,6 +1,25 @@
 $( document ).ready(function() {
 
-    function authenticateRequest(dataVal, request, element){
+    function getFieldValue($form, key, fallbackSelector){
+        const $field = $form.find(`[data-name="${key}"], [name="${key}"]`).first()
+        if($field.length){
+            return $field.val()
+        }
+
+        return $(fallbackSelector).val()
+    }
+
+    function appendError($form, key, error){
+        const alert = buildAlertNew(error)
+        const $field = $form.find(`[data-name="${key}"], [name="${key}"]`).first()
+        const target = $field.length ? $field.parent()[0] : $form[0]
+
+        target.appendChild(alert)
+    }
+
+    function authenticateRequest(dataVal, request, form){
+        const $form = $(form)
+
         $.ajax({
             method: 'post',
             processData: false,
@@ -12,11 +31,16 @@ $( document ).ready(function() {
                 window.location = "/dashboard"
             },
             error: function(data){
-                const errors = data.responseJSON.errors
+                const errors = data.responseJSON && data.responseJSON.errors
+
+                if(!errors){
+                    appendError($form, "", "Something went wrong. Please try again.")
+                    return
+                }
+
                 for (const key in errors) {
                     const error = errors[key][0]
-                    const alert = buildAlertNew(error)
-                    $(`#${element} [data-name=${key}]`)[0].parentElement.appendChild(alert)
+                    appendError($form, key, error)
                 }
                 
             }
@@ -25,41 +49,43 @@ $( document ).ready(function() {
 
 
     function submitLoginModal(e){
+        e.preventDefault()
         clearAlerts()
+        const $form = $(e.currentTarget)
         const dataVal = new FormData()
-        const email = $("#emailLogin").val()
-        const password = $("#passwordLogin").val()
+        const email = getFieldValue($form, "email", "#emailLogin")
+        const password = getFieldValue($form, "password", "#passwordLogin")
         const remember = $("#remember_me").val()
         dataVal.append("email", email)
         dataVal.append("password", password)
         dataVal.append("remember_me", remember)
         dataVal.append("_token", $('meta[name="csrf-token"]').attr('content'))
-        authenticateRequest(dataVal, "login", "loginModal")
-        e.preventDefault()
+        authenticateRequest(dataVal, "login", $form)
     }
 
     function submitRegisterModal(e){
+        e.preventDefault()
         clearAlerts()
+        const $form = $(e.currentTarget)
         const dataVal = new FormData()
-        const email = $("#emailRegister").val()
-        const password = $("#passwordRegister").val()
-        const passwordConfirm = $("#passwordConfirmationRegister").val()
-        const name = $("#nameRegister").val()
+        const email = getFieldValue($form, "email", "#emailRegister")
+        const password = getFieldValue($form, "password", "#passwordRegister")
+        const passwordConfirm = getFieldValue($form, "password_confirmation", "#passwordConfirmationRegister")
+        const name = getFieldValue($form, "name", "#nameRegister")
         dataVal.append("email", email)
         dataVal.append("name", name)
         dataVal.append("password", password)
         dataVal.append("password_confirmation", passwordConfirm)
         dataVal.append("_token", $('meta[name="csrf-token"]').attr('content'))
-        authenticateRequest(dataVal, "register", "registerModal")
-        e.preventDefault()
+        authenticateRequest(dataVal, "register", $form)
     }
 
     
-    $("#loginModal").on("submit", function(e){
+    $(`[data-auth-form="login"]`).on("submit", function(e){
         submitLoginModal(e)
     })
 
-    $("#registerModal").on("submit", function(e){
+    $(`[data-auth-form="register"]`).on("submit", function(e){
         submitRegisterModal(e)
     })
 
@@ -73,7 +99,7 @@ $( document ).ready(function() {
     })
 
 
-    $('#loginModal').on('keypress', function(event) {
+    $('[data-auth-form="login"]').on('keypress', function(event) {
         if (event.which === 13) { // 13 is the Enter key
             event.preventDefault(); // Prevent the default action
             $(this).submit(); // Submit the form

@@ -169,6 +169,22 @@ class RunTest implements ShouldQueue
              return;
          }
 
+         if (in_array($this->type, ['recheck', 'single_recheck'], true)) {
+             $dashboardTest = DashboardTests::find($this->dashboardTestId);
+             if (! $dashboardTest || $dashboardTest->status !== 'recheck' || $result->status !== 'pending') {
+                 Log::info('RunTest skipped: recheck was stopped before this job started.', [
+                     'result_id' => $this->resultId,
+                     'dashboard_test_id' => $this->dashboardTestId,
+                     'project_id' => $this->projectId,
+                     'type' => $this->type,
+                     'detail_status' => $result->status,
+                     'dashboard_status' => $dashboardTest->status ?? null,
+                 ]);
+
+                 return;
+             }
+         }
+
          $helpers = new Helper();
          $projectsController = new ProjectsController();
          $allResults = [];

@@ -22,7 +22,7 @@
                 <div class="modal-body">
                   <p>Get started - no credit card required</p>
                   <div class="login_modal_form">
-                  <form action="{{ route('register') }}" method="POST"   id="loginModal">
+                  <form action="{{ route('register') }}" method="POST" id="registerForm" data-auth-form="register">
                         @csrf
                         <div>
                             <input type="text" class="{{ $errors->has('name') ? 'invalid' : ''  }}" name="name" id="name" value="{{ old('name') }}" placeholder="Your Name">

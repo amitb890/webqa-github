@@ -2,7 +2,7 @@ $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 10, recheckGoogle = 10, recheckSingleMax = 100, urlsGoogleFinal = 0
+  var recheckMax = 10, recheckGoogle = 10, recheckSingleMax = 10, urlsGoogleFinal = 0
   /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
   var googleProgressIsRecheck = false
   /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */

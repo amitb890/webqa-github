@@ -9,7 +9,7 @@
         <div class="modal-body">
           <p>Get started - no credit card needed</p>
           <div class="login_modal_form">
-            <form id="loginModal">
+            <form id="registerForm" data-auth-form="register">
 
                <div>
                    <input id="nameRegister" data-name="name" type="text" placeholder="Name">
@@ -36,7 +36,7 @@
                     <img src="/new-assets/assets/images/eye.png" alt="icon" id="toggleConfirmPassword">
                   </span>
                 </label>
-                <input id="passwordConfirmationRegister"  type="password"  placeholder="Confirm Password">
+                <input id="passwordConfirmationRegister" data-name="password_confirmation" type="password" placeholder="Confirm Password">
               </div>
 
 

@@ -388,6 +388,8 @@ class DashboardTrackerCacheService
             }
         }
 
+        self::hydrateCachedImageRows($results, $dashboardTest->id, $urls);
+
         return [
             'status' => 1,
             'msg' => 'Success.',
@@ -902,7 +904,7 @@ class DashboardTrackerCacheService
                 break;
             case 'images':
                 $payload = self::trackerImagesRow($row);
-                break;
+                return self::finalizeTrackerPayload($payload, ['problems']);
             case 'google_overall':
                 $payload = self::trackerGoogleOverallRow($row);
                 break;
@@ -918,6 +920,67 @@ class DashboardTrackerCacheService
         }
 
         return self::finalizeTrackerPayload($payload);
+    }
+
+    /**
+     * Older cached image rows were saved after the generic bloat stripper removed
+     * `problems`, which is the actual image list for this widget. Fill those rows
+     * from the source dashboard_tests_details record when the cache is missing it.
+     *
+     * @param  array<string, mixed>  $results
+     * @param  list<string>  $urls
+     */
+    private static function hydrateCachedImageRows(array &$results, int $dashboardTestId, array $urls): void
+    {
+        if (empty($results['images']) || ! is_array($results['images'])) {
+            return;
+        }
+
+        $rowsByUrl = [];
+        foreach ($results['images'] as $index => $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $url = (string) ($row['tested_url'] ?? '');
+            if ($url === '' || ! empty($row['problems'])) {
+                continue;
+            }
+
+            $rowsByUrl[$url] = $index;
+        }
+
+        if ($rowsByUrl === []) {
+            return;
+        }
+
+        DashboardTestsDetails::query()
+            ->where('dashboard_test_id', $dashboardTestId)
+            ->whereIn('url', array_keys($rowsByUrl))
+            ->get(['url', 'data'])
+            ->each(static function (DashboardTestsDetails $detail) use (&$results, $rowsByUrl): void {
+                $url = (string) $detail->url;
+                if (! array_key_exists($url, $rowsByUrl)) {
+                    return;
+                }
+
+                $decoded = json_decode((string) $detail->data, true);
+                if (! is_array($decoded) || ! array_key_exists('images', $decoded)) {
+                    return;
+                }
+
+                $rawCell = DashboardTestDataService::decodeDetailTestValue($decoded['images']);
+                if (! is_array($rawCell)) {
+                    return;
+                }
+
+                $imagePayload = self::sanitizeTrackerWidgetPayload('images', $rawCell);
+                if (empty($imagePayload['problems'])) {
+                    return;
+                }
+
+                $results['images'][$rowsByUrl[$url]] = self::trackerAggregatedRowPayload($imagePayload, $url);
+            });
     }
 
     /**
@@ -1394,9 +1457,19 @@ class DashboardTrackerCacheService
      * @param  array<string, mixed>  $payload
      * @return array<string, mixed>
      */
-    private static function finalizeTrackerPayload(array $payload): array
+    private static function finalizeTrackerPayload(array $payload, array $preserveKeys = []): array
     {
+        $preserved = [];
+        foreach ($preserveKeys as $key) {
+            if (array_key_exists($key, $payload)) {
+                $preserved[$key] = $payload[$key];
+            }
+        }
+
         $payload = self::trackerStripRunTestBloat($payload);
+        foreach ($preserved as $key => $value) {
+            $payload[$key] = $value;
+        }
 
         if (isset($payload['settings']) && is_array($payload['settings'])) {
             $keys = array_keys($payload['settings']);

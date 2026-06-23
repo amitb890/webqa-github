@@ -9,7 +9,7 @@
                 <div class="modal-body">
                   <p>Enter your existing account details to Login</p>
                   <div class="login_modal_form">
-                    <form id="loginModal">
+                    <form id="loginForm" data-auth-form="login">
                         <div>
                             <input data-name="email" id="emailLogin" type="text" placeholder="Email">
                         </div>

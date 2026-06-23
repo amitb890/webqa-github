@@ -3468,6 +3468,28 @@ h6 {
   align-items: center;
 }
 
+.recheck-stop-btn {
+  width: 18px;
+  height: 18px;
+  border: 0;
+  border-radius: 3px;
+  background: #cf5a6a;
+  margin-left: 16px;
+  padding: 0;
+  flex: 0 0 auto;
+  cursor: pointer;
+}
+
+.recheck-stop-btn:hover,
+.recheck-stop-btn:focus {
+  background: #bd4d5d;
+}
+
+.recheck-stop-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 .gif-loader img {
   height: 24px;
   width: 24px;
@@ -18788,6 +18810,14 @@ table.dataTable>tbody>tr .amitBannerJi{
 .image-table-link a:hover::after {
     visibility: visible;
     opacity: 1;
+}
+
+.images-details-modal-dialog {
+  max-width: 1200px;
+}
+
+#imagesDetailsModalUrl {
+  word-break: break-word;
 }
 .result_fail-imran {
     text-align: center; 

@@ -2,13 +2,14 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 2000, recheckSingleMax = 2000, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
+  var recheckMax = 10, recheckSingleMax = 100, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
   var googleProgressIsRecheck = false, googleProgressExpectedResults = 0
   const GOOGLE_PAGE_SPEED_REPORT_LABELS = ['google_overall', 'google_lighthouse', 'core_web_vitals']
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
-  let hiddenColumns = [], urlsList = []
+  let hiddenColumns = [], urlsList = [], imageDetailsModalRows = {}
   let firstRow, secondRow, allUrls, recheckAllowed = true, projectId, currentRenderUrls = [], initialReportTableHtml = ""
   let trackerCachedData = null, trackerTotalUrls = 0, maxUrlsLoaded = 0, currentUrlLimit = 0, trackerShowRecheckUi = false
+  let recheckStopRequested = false, recheckStopInProgress = false, dashboardRecheckPollController = null, googlePageSpeedRecheckInterval = null
   const TRACKER_RECHECK_NOTICE_STORAGE_KEY = "tracker_recheck_notice_v1"
   let obj = {
     meta_title: [],
@@ -193,6 +194,32 @@ $(document).ready(function () {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;")
+  }
+
+  function trackerSettingEnabled(settings, key) {
+    return settings && (settings[key] === true || settings[key] === 1 || settings[key] === "1")
+  }
+
+  function trackerImageStatus(result) {
+    if (!result || result.testerrorcaught || result.status_url === false) {
+      return false
+    }
+    if (result.status !== undefined && result.status !== null) {
+      return !!result.status
+    }
+    const problems = Array.isArray(result.problems) ? result.problems : []
+    return problems.length > 0 && problems.every((prob) => prob && prob.status)
+  }
+
+  function trackerRegisterImageDetails(result, url, settings) {
+    const id = `images_${Object.keys(imageDetailsModalRows).length}_${Date.now()}`
+    imageDetailsModalRows[id] = {
+      url,
+      settings: settings || {},
+      result: result || {},
+      problems: result && Array.isArray(result.problems) ? result.problems : [],
+    }
+    return id
   }
 
   /** Project settings_sub once per tracker load (not duplicated on every URL row). */
@@ -706,8 +733,61 @@ $(document).ready(function () {
                   <div class="progress">
                     <div id="urlRecheckedProgressBar" class="progress-bar tricker-progress" role="progressbar" aria-label="Success example" style="width: 0%;" aria-valuenow="70" title="" aria-valuemin="0" aria-valuemax="100"> </div>
                   </div>
-                </div>`
+                </div>
+                <button type="button" class="recheck-stop-btn" id="stopRecheckBtn" aria-label="Stop recheck"></button>`
         area.prepend(div)
+      }
+
+      static ensureStopRecheckModal(){
+        let modalEl = document.getElementById("stopRecheckModal")
+        if (modalEl) return modalEl
+
+        modalEl = document.createElement("div")
+        modalEl.className = "modal fade"
+        modalEl.id = "stopRecheckModal"
+        modalEl.tabIndex = -1
+        modalEl.setAttribute("aria-hidden", "true")
+        modalEl.innerHTML = `
+          <div class="modal-dialog modal-dialog-centered analysis-profile-dialog">
+            <div class="modal-content">
+              <div class="modal-header analysis-profile-header">
+                <h1 class="modal-title fs-5">Stop recheck?</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p class="mb-0">This will stop the current recheck and restore the report to the state it was in before the recheck started.</p>
+              </div>
+              <div class="modal-footer analysis-footer-modal">
+                <button type="button" class="analysis-ignor-btn" data-bs-dismiss="modal">No</button>
+                <button type="button" class="btn btn_primary rounded-pill" id="confirmStopRecheckBtn">Yes, stop</button>
+              </div>
+            </div>
+          </div>`
+        document.body.appendChild(modalEl)
+        return modalEl
+      }
+
+      static showStopRecheckModal(){
+        const modalEl = UI.ensureStopRecheckModal()
+        if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+          let modal = bootstrap.Modal.getInstance(modalEl)
+          if (!modal) {
+            modal = new bootstrap.Modal(modalEl, { keyboard: false })
+          }
+          modal.show()
+          return
+        }
+
+        if (window.confirm("Stop the current recheck and restore the previous state?")) {
+          Controls.stopActiveRecheck()
+        }
+      }
+
+      static hideStopRecheckModal(){
+        const modalEl = document.getElementById("stopRecheckModal")
+        if (!modalEl || typeof bootstrap === "undefined" || !bootstrap.Modal) return
+        const modal = bootstrap.Modal.getInstance(modalEl)
+        if (modal) modal.hide()
       }
 
       static showPageSpeedInitiatedBanner(urlCount) {
@@ -774,6 +854,95 @@ $(document).ready(function () {
 
       static toggleTrackerElements(){
           $(".tracker-container").removeClass("d-none")
+      }
+
+      static getImageDetailsTable(resultData) {
+        const settings = resultData.settings || {}
+        const problems = Array.isArray(resultData.problems) ? resultData.problems : []
+        const colspanAlt = (trackerSettingEnabled(settings, "image_alt") ? 1 : 0)
+          + (trackerSettingEnabled(settings, "image_alt_only_spaces") ? 1 : 0)
+        const colspanName = 1
+          + (trackerSettingEnabled(settings, "image_name_max_characters") ? 1 : 0)
+          + (trackerSettingEnabled(settings, "image_name_only_hyphens") ? 1 : 0)
+          + (trackerSettingEnabled(settings, "image_name_no_uppercase") ? 1 : 0)
+          + (trackerSettingEnabled(settings, "image_name_no_special") ? 1 : 0)
+          + (trackerSettingEnabled(settings, "image_max_size") ? 1 : 0)
+
+        if (!problems.length) {
+          return `<p class="mb-0">No images were found for this URL.</p>`
+        }
+
+        const rows = problems.map((prob, index) => {
+          const imageSrc = trackerEscapeHtml(prob.imageSrc || "")
+          const imageAlt = trackerEscapeHtml(prob.imageAlt || "")
+          const imageName = trackerEscapeHtml(prob.imageName || "")
+          const imageNameLength = prob.imageName ? String(prob.imageName).length : "-"
+          return `
+            <tr>
+              <td class="text-center">${index + 1}</td>
+              <td class="content-td image-table-link text-center">${imageSrc ? `<a href="${imageSrc}" td-replace="${imageSrc}" target="_blank" rel="noopener noreferrer">Link</a>` : "-"}</td>
+              <td class="align-left ${trackerSettingEnabled(settings, "image_alt") ? "" : "d-none hidden-element"}">${imageAlt}</td>
+              <td class="text-center ${prob.imageAltSpacesClass || ""} ${trackerSettingEnabled(settings, "image_alt_only_spaces") ? "" : "d-none hidden-element"}">${prob.imageAltSpacesStatus ? "<span class='result_pass'>Yes</span>" : "<span class='result_fail'>No</span>"}</td>
+              <td class="align-left">${imageName}</td>
+              <td class="${prob.imageLengthClass || ""} ${trackerSettingEnabled(settings, "image_name_max_characters") ? "" : "d-none hidden-element"}">${prob.imageLengthStatus ? imageNameLength : "-"}</td>
+              <td class="text-center ${prob.imageHyphenClass || ""} ${trackerSettingEnabled(settings, "image_name_only_hyphens") ? "" : "d-none hidden-element"}">${prob.imageHyphenStatus ? "<span class='result_pass'>Yes</span>" : "<span class='result_fail'>No</span>"}</td>
+              <td class="text-center ${prob.imageUppercaseClass || ""} ${trackerSettingEnabled(settings, "image_name_no_uppercase") ? "" : "d-none hidden-element"}">${prob.imageUppercaseStatus ? "<span class='result_fail'>Yes</span>" : "<span class='result_pass'>No</span>"}</td>
+              <td class="text-center ${prob.imageSpecialClass || ""} ${trackerSettingEnabled(settings, "image_name_no_special") ? "" : "d-none hidden-element"}">${prob.imageSpecialStatus ? "<span class='result_fail'>Yes</span>" : "<span class='result_pass'>No</span>"}</td>
+              <td class="${prob.imageSizeClass || ""} ${trackerSettingEnabled(settings, "image_max_size") ? "" : "d-none hidden-element"}">${trackerEscapeHtml(prob.imageSizeValue || "-")}</td>
+              <td class="${prob.status ? "result_pass" : "result_fail"}">${prob.status ? "PASS" : "FAIL"}</td>
+            </tr>
+          `
+        }).join("")
+
+        return `
+          <div class="table-responsive">
+            <table class="table table-bordered bulk-table images-details-modal-table">
+              <thead class="result_data_header">
+                <tr style="white-space: nowrap;">
+                  <th class="transparent">#</th>
+                  <th class="transparent">Image Link</th>
+                  <th class="transparent ${colspanAlt > 0 ? "" : "d-none hidden-element"}" colspan="${Math.max(colspanAlt, 1)}">Alternate Text</th>
+                  <th class="transparent" colspan="${colspanName}">File Name</th>
+                  <th class="transparent">Result</th>
+                </tr>
+                <tr>
+                  <th></th>
+                  <th></th>
+                  <th class="align-left ${trackerSettingEnabled(settings, "image_alt") ? "" : "d-none hidden-element"}">Content</th>
+                  <th class="text-center ${trackerSettingEnabled(settings, "image_alt_only_spaces") ? "" : "d-none hidden-element"}">Spaces</th>
+                  <th class="align-left">File name</th>
+                  <th class="${trackerSettingEnabled(settings, "image_name_max_characters") ? "" : "d-none hidden-element"}" style="white-space: nowrap;">LEN</th>
+                  <th class="${trackerSettingEnabled(settings, "image_name_only_hyphens") ? "" : "d-none hidden-element"}">Words separated by hyphens?</th>
+                  <th class="text-center ${trackerSettingEnabled(settings, "image_name_no_uppercase") ? "" : "d-none hidden-element"}">Uppercase characters?</th>
+                  <th class="text-center ${trackerSettingEnabled(settings, "image_name_no_special") ? "" : "d-none hidden-element"}">Special characters?</th>
+                  <th class="${trackerSettingEnabled(settings, "image_max_size") ? "" : "d-none hidden-element"}">File Size</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody class="result_data_body">${rows}</tbody>
+            </table>
+          </div>
+        `
+      }
+
+      static showImageDetailsModal(detailsId) {
+        const resultData = imageDetailsModalRows[detailsId]
+        if (!resultData) return
+        const modalEl = document.getElementById("imagesDetailsModal")
+        const modalBody = document.getElementById("imagesDetailsModalBody")
+        const modalUrl = document.getElementById("imagesDetailsModalUrl")
+        if (!modalEl || !modalBody) return
+
+        if (modalUrl) {
+          modalUrl.textContent = resultData.url || ""
+        }
+        modalBody.innerHTML = UI.getImageDetailsTable(resultData)
+
+        let modal = bootstrap.Modal.getInstance(modalEl)
+        if (!modal) {
+          modal = new bootstrap.Modal(modalEl)
+        }
+        modal.show()
       }
 
       static initTableBody(id){
@@ -916,7 +1085,7 @@ $(document).ready(function () {
                         />
                       </div>
                     </th>
-                    <th scope="col">Last Checked</th>
+                    <th scope="col">${page && page.includes("reports") && page[1] === "images" ? "Date Added" : "Last Checked"}</th>
           `
 
 
@@ -1212,15 +1381,7 @@ $(document).ready(function () {
                   break;
                   case "images":
                     tr.innerHTML+= `
-                    <th class="text-start">Image Link</th>
-                    <th class="${settings.image_alt ? "" : "hidden-element-tracker"}">Alternate Text</th>
-                    <th class="${settings.image_alt_only_spaces ? "" : "hidden-element-tracker"}">Words separated by spaces?</th>
-                    <th class="">File name</th>
-                    <th class="${settings.image_name_max_characters ? "" : "hidden-element-tracker"}">LEN</th>
-                    <th class="${settings.image_name_only_hyphens ? "" : "hidden-element-tracker"}">Words separated by hyphens?</th>
-                    <th class="${settings.image_name_no_uppercase ? "" : "hidden-element-tracker"}">Uppercase characters?</th>
-                    <th class="${settings.image_name_no_special ? "" : "hidden-element-tracker"}">Special characters?</th>
-                    <th class="${settings.image_max_size ? "" : "hidden-element-tracker"}">File Size</th>
+                    <th class="text-start">Images Details</th>
                     <th>Result</th>
                   `
                   break;
@@ -1778,6 +1939,25 @@ $(document).ready(function () {
                             `;
                         }
                      break;
+                    case "images": {
+                      const emptyCells = `<td></td><td></td>`;
+                      if (!result) {
+                        td.innerHTML += emptyCells;
+                        break;
+                      }
+                      const detailsId = trackerRegisterImageDetails(result, url, settings);
+                      const imageCount = Array.isArray(result.problems) ? result.problems.length : 0;
+                      const pass = trackerImageStatus(result);
+                      td.innerHTML += `
+                      <td class="text-start">
+                        <button type="button" class="btn btn-link p-0 show-images-details-modal" data-image-details-id="${detailsId}">
+                          Images Details${imageCount ? ` (${imageCount})` : ""}
+                        </button>
+                      </td>
+                      <td class="${pass ? "result_pass" : "result_fail"}">${pass ? "PASS" : "FAIL"}</td>
+                      `;
+                      break;
+                    }
                     // case "images":
                     //   result.problems.forEach((prob, z)=>{
                     //     td.innerHTML += `
@@ -2874,15 +3054,11 @@ $(document).ready(function () {
         
         
         else if(page[1] === "images"){
-          // const rowspanCal = this.calculateColspan('url-slug', data.url_slug);
-          UI.buildTableHeader("images", data.images, 10, options, settings, "seo")
+          UI.buildTableHeader("images", data.images, 2, options, settings, "seo")
           Controls.renderReportMetricRows(data.images, (url, originalIndex, options, folderId) => {
               const cell = data.images[originalIndex]
-              if (!cell || !cell.problems || !cell.problems.length) return
-              urlsList.push(url)
-              cell.problems.forEach((problemsVar, index) => {
-                UI.buildTableBodyImages(problemsVar, folderId, "images", cell, options, url, settings, "seo", data.url_slug, index)
-              })
+              if (!cell || !hasTrackerMetricData(cell)) return
+              UI.buildTableBody(folderId, "images", cell, options, url, settings, "seo", data.url_slug)
             })
         }
 
@@ -3129,7 +3305,7 @@ $(document).ready(function () {
             UI.buildTableBody(el.id, "open_graph_tags", data.open_graph_tags[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "twitter_tags", data.twitter_tags[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "url_slug", data.url_slug[originalIndex], options, url, settings, "seo", data.url_slug)
-            // UI.buildTableBody(el.id, "images", data.images[originalIndex], options, url, settings, "seo")
+            UI.buildTableBody(el.id, "images", data.images[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "favicon", data.favicon[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "meta_viewport", data.meta_viewport[originalIndex], options, url, settings, "seo")
             UI.buildTableBody(el.id, "doctype", data.doctype[originalIndex], options, url, settings, "seo")
@@ -3181,7 +3357,7 @@ $(document).ready(function () {
            rowspanCalHeader = this.calculateColspan('url-slug', data.url_slug, settings);
 
           UI.buildTableHeader("url_slug", data.url_slug, rowspanCalHeader, options, settings, "seo")
-          // UI.buildTableHeader("images", data.images, 9, options, settings, "seo")
+          UI.buildTableHeader("images", data.images, 2, options, settings, "seo")
           UI.buildTableHeader("favicon", data.favicon, 1, options, settings, "seo")
           UI.buildTableHeader("meta_viewport", data.meta_viewport, 1, options, settings, "seo")
           UI.buildTableHeader("doctype", data.doctype, 1, options, settings, "seo")
@@ -3393,6 +3569,7 @@ $(document).ready(function () {
         hiddenColumns = []
         firstRow = ""
         secondRow = ""
+        imageDetailsModalRows = {}
       }
 
       static resetTableMarkup(){
@@ -3613,8 +3790,23 @@ $(document).ready(function () {
     
         // Events (delegated to survive table/menu redraws)
         $(document).off("click.trackerRecheck", "#recheckTrackerBtn").on("click.trackerRecheck", "#recheckTrackerBtn", async function(e){
-          await Controls.recheckStart()
           e.preventDefault()
+          await Controls.recheckStart()
+        })
+
+        $(document).off("click.stopRecheck", "#stopRecheckBtn").on("click.stopRecheck", "#stopRecheckBtn", function(e){
+          e.preventDefault()
+          UI.showStopRecheckModal()
+        })
+
+        $(document).off("click.confirmStopRecheck", "#confirmStopRecheckBtn").on("click.confirmStopRecheck", "#confirmStopRecheckBtn", async function(e){
+          e.preventDefault()
+          await Controls.stopActiveRecheck()
+        })
+
+        $(document).off("click.imageDetails", ".show-images-details-modal").on("click.imageDetails", ".show-images-details-modal", function(e){
+          e.preventDefault()
+          UI.showImageDetailsModal($(this).data("image-details-id"))
         })
       }
 
@@ -3867,10 +4059,83 @@ $(document).ready(function () {
         UI.updateRecheckProgressBar(urlsDone, pct)
       }
 
+      static async stopActiveRecheck() {
+        if (recheckStopInProgress) return
+
+        recheckStopInProgress = true
+        const stopBtn = document.querySelector("#stopRecheckBtn")
+        const confirmBtn = document.querySelector("#confirmStopRecheckBtn")
+        if (stopBtn) stopBtn.disabled = true
+        if (confirmBtn) {
+          confirmBtn.disabled = true
+          confirmBtn.textContent = "Stopping..."
+        }
+
+        try {
+          const response = await fetch("/stop-recheck", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            body: JSON.stringify({ project_id: projectId }),
+          })
+
+          if (!response.ok) {
+            throw new Error("Stop recheck request failed")
+          }
+
+          recheckStopRequested = true
+          if (googlePageSpeedRecheckInterval) {
+            clearInterval(googlePageSpeedRecheckInterval)
+            googlePageSpeedRecheckInterval = null
+          }
+          if (dashboardRecheckPollController) {
+            dashboardRecheckPollController.abort()
+            dashboardRecheckPollController = null
+          }
+
+          UI.hideStopRecheckModal()
+          UI.clearStoredRecheckNotice()
+          googleProgressIsRecheck = false
+          googleProgressExpectedResults = 0
+          recheckAllowed = true
+          UI.updateRecheckButtonState(false)
+
+          const progress = document.querySelector(".main-tricker-progress")
+          if (progress) progress.remove()
+          window.location.reload()
+        } catch (err) {
+          console.error("Stop recheck failed:", err)
+          displayAlert(".analysis-content-body-message", {
+            status: 0,
+            msg: "Could not stop the recheck. Please try again.",
+            notHide: true,
+          })
+          $(".analysis-content-body-message").show()
+        } finally {
+          recheckStopInProgress = false
+          if (stopBtn) stopBtn.disabled = false
+          if (confirmBtn) {
+            confirmBtn.disabled = false
+            confirmBtn.textContent = "Yes, stop"
+          }
+        }
+      }
+
       static pollGooglePageSpeedRecheckUntilComplete() {
         const intervalMs = 5000
+        if (googlePageSpeedRecheckInterval) {
+          clearInterval(googlePageSpeedRecheckInterval)
+        }
 
-        const interval = setInterval(async () => {
+        googlePageSpeedRecheckInterval = setInterval(async () => {
+          if (recheckStopRequested) {
+            clearInterval(googlePageSpeedRecheckInterval)
+            googlePageSpeedRecheckInterval = null
+            return
+          }
+
           try {
             const response = await fetch(`/api/check-status/${projectId}`)
             if (!response.ok) {
@@ -3882,7 +4147,8 @@ $(document).ready(function () {
             Controls.updateGooglePageSpeedRecheckProgress(statusPayload)
 
             if (status === "completed") {
-              clearInterval(interval)
+              clearInterval(googlePageSpeedRecheckInterval)
+              googlePageSpeedRecheckInterval = null
               Controls.endTestGooglePageSpeedRecheck(results)
             }
           } catch (e) {
@@ -3910,6 +4176,7 @@ $(document).ready(function () {
 
       static async recheckGooglePageSpeedReport() {
         const reportLabel = Controls.getReportRecheckLabel()
+        recheckStopRequested = false
         recheckAllowed = false
         UI.updateRecheckButtonState(true)
 
@@ -4059,15 +4326,13 @@ $(document).ready(function () {
       /** Resume polling after page refresh while dashboard recheck / single-tile recheck is in progress (dashboard.js parity). */
       static pollDashboardRecheckUntilComplete(){
         ;(async function checkStatusDashboard() {
-          let controller
-
-          while (true) {
-            if (controller) controller.abort()
-            controller = new AbortController()
+          while (!recheckStopRequested) {
+            if (dashboardRecheckPollController) dashboardRecheckPollController.abort()
+            dashboardRecheckPollController = new AbortController()
 
             try {
               const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-                signal: controller.signal
+                signal: dashboardRecheckPollController.signal
               })
 
               if (!response.ok) {
@@ -4100,6 +4365,8 @@ $(document).ready(function () {
 
             await new Promise(res => setTimeout(res, 1000))
           }
+
+          dashboardRecheckPollController = null
         })()
       }
 
@@ -4127,6 +4394,7 @@ $(document).ready(function () {
 
       static async recheckStart(){
         if(recheckAllowed){
+          recheckStopRequested = false
           const testsRunning = await Controls.checkIfTestsAreRunning()
 
           if (testsRunning) {

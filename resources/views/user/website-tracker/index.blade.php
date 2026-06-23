@@ -56,10 +56,30 @@
                     </ul>
                   </div>
       
-                  <div class="menu-recheck-option">
-                    <a class="dropdown-toggle p-2" href="#" id="recheckTrackerBtn">
-                      <span>Recheck</span>
+                  <div class="dropdown menu-recheck-option">
+                    <a
+                      class="dropdown-toggle p-2"
+                      href="#"
+                      role="button"
+                      data-bs-toggle="dropdown"
+                      aria-expanded="false"
+                    >
+                      <span class="icon check-reload">
+                        <img src="/new-assets/assets/images/reload.png" alt="icon" />
+                      </span>
+                      <span>Recheck Data</span>
                     </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item" href="#" id="recheckTrackerBtn">Recheck all</a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="#"
+                          >Recheck selected (3)</a
+                        >
+                      </li>
+                    </ul>
                   </div>
                 </div>
               </div>
@@ -164,6 +184,7 @@
 
 
     @include("components.url-options-modal")
+    @include("components.images-details-modal")
 
 
 

@@ -38,6 +38,18 @@ class RunSinglePageSpeedTest implements ShouldQueue
             return;
         }
 
+        $parentTest = LighthouseTest::find($result->test_id);
+        if (! $parentTest || $parentTest->status !== 'in_progress' || $result->status !== 'pending') {
+            Log::info('RunSinglePageSpeedTest skipped: page speed recheck was stopped.', [
+                'result_id' => $this->resultId,
+                'test_id' => $result->test_id,
+                'result_status' => $result->status,
+                'test_status' => $parentTest->status ?? null,
+            ]);
+
+            return;
+        }
+
         try {
             $data = $this->fetchPageSpeedResults($result->url, $result->strategy);
 

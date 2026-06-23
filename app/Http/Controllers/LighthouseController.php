@@ -116,13 +116,15 @@ class LighthouseController extends Controller
             : 0;
 
         // Determine main dashboard test status
-        $status = 'in_progress';
-        if ($totalResults > 0 && $finishedCount === $totalResults) {
+        $status = $lighthouseTest->status === 'failed' ? 'failed' : 'in_progress';
+        if ($status !== 'failed' && $totalResults > 0 && $finishedCount === $totalResults) {
             $status = 'completed';
         }
 
         // Optionally update the main DashboardTests status in DB
-        $lighthouseTest->update(['status' => $status]);
+        if ($lighthouseTest->status !== $status) {
+            $lighthouseTest->update(['status' => $status]);
+        }
 
         if ($status === 'completed') {
             DashboardTrackerCacheService::finalizeGoogleWidgetsCache(

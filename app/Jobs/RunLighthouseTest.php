@@ -41,6 +41,15 @@ class RunLighthouseTest implements ShouldQueue
             return;
         }
 
+        if ($test->status !== 'in_progress') {
+            Log::info('RunLighthouseTest skipped: test was stopped before result rows were queued.', [
+                'test_id' => $this->testId,
+                'status' => $test->status,
+            ]);
+
+            return;
+        }
+
         $urls = LighthouseUrlParser::fromStoredJson($test->urls);
         $userId = $this->userId;
         $lighthouseQueues = ['lighthouse_1','lighthouse_2','lighthouse_3','lighthouse_4','lighthouse_5'];
