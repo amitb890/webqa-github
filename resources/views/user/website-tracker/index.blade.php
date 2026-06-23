@@ -75,8 +75,8 @@
                         <a class="dropdown-item" href="#" id="recheckTrackerBtn">Recheck all</a>
                       </li>
                       <li>
-                        <a class="dropdown-item" href="#"
-                          >Recheck selected (3)</a
+                        <a class="dropdown-item" href="#" id="recheckSelectedTrackerBtn"
+                          >Recheck selected (<span class="selected-recheck-count">0</span>)</a
                         >
                       </li>
                     </ul>

@@ -11,6 +11,8 @@ $(document).ready(function () {
   var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
+  let dashboardStopRequested = false, googleStopRequested = false, recheckStopInProgress = false
+  let dashboardRecheckPollController = null, tileRecheckPollController = null, googlePageSpeedPollInterval = null
   let allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels;
   var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {     
     keyboard: false 
@@ -463,8 +465,62 @@ $(document).ready(function () {
                 <div class="progress">
                   <div id="urlRecheckedProgressBar" class="progress-bar tricker-progress" role="progressbar" aria-label="Success example" style="width: 0%;" aria-valuenow="70" title="" aria-valuemin="0" aria-valuemax="100"> </div>
                 </div>
-              </div>`
+              </div>
+              <button type="button" class="recheck-stop-btn" data-stop-google="0" aria-label="Stop recheck"></button>`
       document.querySelector(".dashboard_recheck_area").prepend(div)
+    }
+
+    static ensureStopRecheckModal(){
+      let modalEl = document.getElementById("stopRecheckModal")
+      if (modalEl) return modalEl
+
+      modalEl = document.createElement("div")
+      modalEl.className = "modal fade"
+      modalEl.id = "stopRecheckModal"
+      modalEl.tabIndex = -1
+      modalEl.setAttribute("aria-hidden", "true")
+      modalEl.innerHTML = `
+        <div class="modal-dialog modal-dialog-centered analysis-profile-dialog">
+          <div class="modal-content">
+            <div class="modal-header analysis-profile-header">
+              <h1 class="modal-title fs-5">Stop recheck?</h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p class="mb-0">This will stop the current recheck and restore the dashboard to the state it was in before the recheck started.</p>
+            </div>
+            <div class="modal-footer analysis-footer-modal">
+              <button type="button" class="analysis-ignor-btn" data-bs-dismiss="modal">No</button>
+              <button type="button" class="btn btn_primary rounded-pill" id="confirmStopRecheckBtn">Yes, stop</button>
+            </div>
+          </div>
+        </div>`
+      document.body.appendChild(modalEl)
+      return modalEl
+    }
+
+    static showStopRecheckModal(stopGoogle){
+      const modalEl = UI.ensureStopRecheckModal()
+      modalEl.dataset.stopGoogle = stopGoogle ? "1" : "0"
+      if (typeof bootstrap !== "undefined" && bootstrap.Modal) {
+        let modal = bootstrap.Modal.getInstance(modalEl)
+        if (!modal) {
+          modal = new bootstrap.Modal(modalEl, { keyboard: false })
+        }
+        modal.show()
+        return
+      }
+
+      if (window.confirm("Stop the current recheck and restore the previous state?")) {
+        Controls.stopActiveRecheck(stopGoogle)
+      }
+    }
+
+    static hideStopRecheckModal(){
+      const modalEl = document.getElementById("stopRecheckModal")
+      if (!modalEl || typeof bootstrap === "undefined" || !bootstrap.Modal) return
+      const modal = bootstrap.Modal.getInstance(modalEl)
+      if (modal) modal.hide()
     }
 
     static showPageSpeedInitiatedBanner(urlCount) {
@@ -2353,6 +2409,12 @@ $(document).ready(function () {
                       </button>
                     </li>
                     <li>
+                      <button class="dashboard-stop-recheck-btn" data-stop-google="${ignore_tests.includes(label.db_name) ? "1" : "0"}">
+                      <img src="/new-assets/assets/images/refresh.png" alt="icon">
+                      Stop Recheck
+                      </button>
+                    </li>
+                    <li>
                       <button class="remove-tile">
                       <img src="/new-assets/assets/images/delete.png" alt="icon">
                       Remove Tile
@@ -2598,16 +2660,14 @@ $(document).ready(function () {
     }
 
     static pollDashboardStatusRecheck() {
-      let controller
-
       async function checkStatusDashboard() {
-        while (true) {
-          if (controller) controller.abort()
-          controller = new AbortController()
+        while (!dashboardStopRequested) {
+          if (dashboardRecheckPollController) dashboardRecheckPollController.abort()
+          dashboardRecheckPollController = new AbortController()
 
           try {
             const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-              signal: controller.signal
+              signal: dashboardRecheckPollController.signal
             })
 
             const statusPayload = await response.json()
@@ -2629,6 +2689,8 @@ $(document).ready(function () {
 
           await new Promise(res => setTimeout(res, 1000))
         }
+
+        dashboardRecheckPollController = null
       }
 
       checkStatusDashboard()
@@ -2759,6 +2821,80 @@ $(document).ready(function () {
       return response.json()
     }
 
+    static async stopActiveRecheck(stopGoogle) {
+      if (recheckStopInProgress) return
+
+      recheckStopInProgress = true
+      const confirmBtn = document.querySelector("#confirmStopRecheckBtn")
+      const stopButtons = document.querySelectorAll(".recheck-stop-btn, .dashboard-stop-recheck-btn")
+      stopButtons.forEach((btn) => (btn.disabled = true))
+      if (confirmBtn) {
+        confirmBtn.disabled = true
+        confirmBtn.textContent = "Stopping..."
+      }
+
+      try {
+        const response = await fetch("/stop-recheck", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+          },
+          body: JSON.stringify({
+            project_id: projectId,
+            stop_google: !!stopGoogle,
+          }),
+        })
+
+        if (!response.ok) {
+          throw new Error("Stop recheck request failed")
+        }
+
+        dashboardStopRequested = true
+        if (stopGoogle) {
+          googleStopRequested = true
+          if (googlePageSpeedPollInterval) {
+            clearInterval(googlePageSpeedPollInterval)
+            googlePageSpeedPollInterval = null
+          }
+        }
+        if (dashboardRecheckPollController) {
+          dashboardRecheckPollController.abort()
+          dashboardRecheckPollController = null
+        }
+        if (tileRecheckPollController) {
+          tileRecheckPollController.abort()
+          tileRecheckPollController = null
+        }
+
+        UI.hideStopRecheckModal()
+        googleProgressIsRecheck = false
+        googleProgressExpectedResults = 0
+        recheckAllowed = true
+        refreshTileDisabled = false
+        recheckSingleIntervalStatus = false
+        UI.updateRecheckButtonState(false)
+
+        document.querySelectorAll(".main-tricker-progress, .page_speed_content").forEach((el) => el.remove())
+        window.location.reload()
+      } catch (err) {
+        console.error("Stop recheck failed:", err)
+        displayAlert(".analysis-content-body-message", {
+          status: 0,
+          msg: "Could not stop the recheck. Please try again.",
+          notHide: true,
+        })
+        $(".analysis-content-body-message").show()
+      } finally {
+        recheckStopInProgress = false
+        stopButtons.forEach((btn) => (btn.disabled = false))
+        if (confirmBtn) {
+          confirmBtn.disabled = false
+          confirmBtn.textContent = "Yes, stop"
+        }
+      }
+    }
+
     static async runGooglePageSpeedTests(refreshState) {
       const urlCount = refreshState ? recheckGoogle : googleUrlsToCheck
       const result = await DB.startGoogleTests(urlCount, !!refreshState)
@@ -2881,6 +3017,7 @@ $(document).ready(function () {
 
     static async recheckStart(){
       if(recheckAllowed){
+        dashboardStopRequested = false
         // First check if any tests are currently running
         const testsRunning = await Controls.checkIfTestsAreRunning();
         
@@ -2956,15 +3093,13 @@ $(document).ready(function () {
               // UI.recheckStartedAlert()
 
               async function checkStatusDashboard() {
-                let controller;
-            
-                while (true) {
-                    if (controller) controller.abort();
-                    controller = new AbortController();
+                while (!dashboardStopRequested) {
+                    if (dashboardRecheckPollController) dashboardRecheckPollController.abort();
+                    dashboardRecheckPollController = new AbortController();
             
                     try {
                         const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-                            signal: controller.signal
+                            signal: dashboardRecheckPollController.signal
                         });
 
                         // Ignore non-OK responses (e.g. 404 while test is spinning up)
@@ -2999,6 +3134,8 @@ $(document).ready(function () {
             
                     await new Promise(res => setTimeout(res, 1000));
                 }
+
+                dashboardRecheckPollController = null
               }
 
               (async function runRecheck() {
@@ -3294,6 +3431,29 @@ $(document).ready(function () {
         e.preventDefault()
       })
 
+      $(document).off("click.dashboardStopRecheck", ".dashboard-stop-recheck-btn, .dashboard_recheck_area .recheck-stop-btn").on("click.dashboardStopRecheck", ".dashboard-stop-recheck-btn, .dashboard_recheck_area .recheck-stop-btn", function(e){
+        e.preventDefault()
+        const fullDashboardRecheckActive = !!document.querySelector(".dashboard_recheck_area .main-tricker-progress")
+        const tileRecheckActive = !!this.closest(".single_dashboard_card")?.querySelector(".page_speed_content")
+        if (!fullDashboardRecheckActive && !tileRecheckActive) {
+          displayAlert(".analysis-content-body-message", {
+            status: 0,
+            msg: "There is no active recheck to stop.",
+            notHide: true,
+          })
+          $(".analysis-content-body-message").show()
+          return
+        }
+        const stopGoogle = !fullDashboardRecheckActive && ($(this).data("stop-google") === 1 || $(this).data("stop-google") === "1")
+        UI.showStopRecheckModal(stopGoogle)
+      })
+
+      $(document).off("click.dashboardConfirmStopRecheck", "#confirmStopRecheckBtn").on("click.dashboardConfirmStopRecheck", "#confirmStopRecheckBtn", async function(e){
+        e.preventDefault()
+        const modalEl = document.getElementById("stopRecheckModal")
+        await Controls.stopActiveRecheck(modalEl && modalEl.dataset.stopGoogle === "1")
+      })
+
       $(".alert-custom .btn-close").on("click", (e)=>{
         DB.updateAlertStatus()
         e.preventDefault()
@@ -3301,7 +3461,17 @@ $(document).ready(function () {
       
 
       async function checkStatus() {
-          const interval = setInterval(async () => {
+          if (googlePageSpeedPollInterval) {
+            clearInterval(googlePageSpeedPollInterval)
+          }
+
+          googlePageSpeedPollInterval = setInterval(async () => {
+              if (googleStopRequested) {
+                clearInterval(googlePageSpeedPollInterval)
+                googlePageSpeedPollInterval = null
+                return
+              }
+
               const response = await fetch(`/api/check-status/${projectId}`);
               const statusPayload = await response.json();
               const { status, results } = statusPayload;
@@ -3312,7 +3482,8 @@ $(document).ready(function () {
               if (status === 'completed') {
                 handleGoogleResults(results, googleTiles)
 
-                clearInterval(interval);
+                clearInterval(googlePageSpeedPollInterval);
+                googlePageSpeedPollInterval = null
                 Controls.finalizeGoogleElements(results)
                 googleProgressIsRecheck = false
                 googleProgressExpectedResults = 0
@@ -3481,6 +3652,7 @@ $(document).ready(function () {
     }
 
     static refreshTileGoogle(dbName, target){
+      googleStopRequested = false
       googleProgressIsRecheck = true
       // Disable recheck button when refreshing Google tiles
       UI.updateRecheckButtonState(true)
@@ -3516,7 +3688,17 @@ $(document).ready(function () {
       const refreshState = options.refreshState !== false
       const intervalMs = options.intervalMs || 5000
 
-      const interval = setInterval(async () => {
+      if (googlePageSpeedPollInterval) {
+        clearInterval(googlePageSpeedPollInterval)
+      }
+
+      googlePageSpeedPollInterval = setInterval(async () => {
+        if (googleStopRequested) {
+          clearInterval(googlePageSpeedPollInterval)
+          googlePageSpeedPollInterval = null
+          return
+        }
+
         try {
           const response = await fetch(`/api/check-status/${projectId}`)
           if (!response.ok) {
@@ -3528,7 +3710,8 @@ $(document).ready(function () {
           Controls.updateGoogleCards(results, refreshState, statusPayload)
 
           if (status === 'completed') {
-            clearInterval(interval)
+            clearInterval(googlePageSpeedPollInterval)
+            googlePageSpeedPollInterval = null
             const googleTiles = ['google_overall', 'google_lighthouse', 'core_web_vitals']
             if (typeof options.onComplete === 'function') {
               options.onComplete(results, googleTiles)
@@ -3541,6 +3724,7 @@ $(document).ready(function () {
     }
 
     static refreshTile(dbName, target){
+      dashboardStopRequested = false
       const name = target.querySelector(".dashboard_title p").textContent
       refreshTileDbName = dbName
       obj = {
@@ -3594,15 +3778,13 @@ $(document).ready(function () {
       urls = Controls.normalizeUrlsForTest(originalUrls).slice(0, recheckSingleMax)
 
       async function checkStatusDashboard() {
-        let controller;
-
-        while (true) {
-            if (controller) controller.abort();
-            controller = new AbortController();
+        while (!dashboardStopRequested) {
+            if (tileRecheckPollController) tileRecheckPollController.abort();
+            tileRecheckPollController = new AbortController();
 
             try {
                 const response = await fetch(`/api/check-status-dashboard/${projectId}`, {
-                    signal: controller.signal
+                    signal: tileRecheckPollController.signal
                 });
 
                 // Only use JSON body when response is OK (avoid treating 404/500 as valid data)
@@ -3637,6 +3819,8 @@ $(document).ready(function () {
 
             await new Promise(res => setTimeout(res, 1000));
         }
+
+        tileRecheckPollController = null
       }
 
       (async function runRefreshTile() {

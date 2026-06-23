@@ -11146,6 +11146,23 @@ table.bulk-table td:last-child {
   padding: 6px 23px;
 }
 
+/* .dashboard-stop-recheck-btn {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: #cf5a6a;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 16px;
+  text-align: left;
+}
+
+.dashboard-stop-recheck-btn:hover,
+.dashboard-stop-recheck-btn:focus {
+  background: #fff4f5;
+  color: #bd4d5d;
+} */
+
 .dashboard_recheck_area p {
   margin-bottom: 0px;
   color: #6e6e6e;

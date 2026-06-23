@@ -288,6 +288,7 @@ class ProjectsController extends Controller
     public function stopRecheck(Request $request)
     {
         $projectId = (int) $request->input('project_id');
+        $stopGoogle = $request->boolean('stop_google');
         $project = Projects::where('id', $projectId)
             ->where('user_id', Auth::id())
             ->first();
@@ -312,23 +313,30 @@ class ProjectsController extends Controller
             DashboardTrackerCacheService::markProjectDashboardFullyTested($projectId);
         }
 
-        LighthouseTest::where('project_id', $projectId)
-            ->whereIn('status', ['pending', 'in_progress'])
-            ->update([
-                'status' => 'failed',
-                'send_completion_email' => false,
-            ]);
+        if ($stopGoogle) {
+            LighthouseTest::where('project_id', $projectId)
+                ->whereIn('status', ['pending', 'in_progress'])
+                ->update([
+                    'status' => 'failed',
+                    'send_completion_email' => false,
+                ]);
 
-        LighthouseResult::whereHas('test', function ($query) use ($projectId) {
-            $query->where('project_id', $projectId);
-        })
-            ->whereIn('status', ['pending', 'in_progress'])
-            ->update(['status' => 'failed']);
+            LighthouseResult::whereHas('test', function ($query) use ($projectId) {
+                $query->where('project_id', $projectId);
+            })
+                ->whereIn('status', ['pending', 'in_progress'])
+                ->update(['status' => 'failed']);
+        }
 
-        $project->update([
+        $projectUpdates = [
             'dashboard_show_status' => 1,
-            'google_show_status' => 0,
-        ]);
+        ];
+
+        if ($stopGoogle) {
+            $projectUpdates['google_show_status'] = 0;
+        }
+
+        $project->update($projectUpdates);
 
         return response()->json(['status' => 1, 'msg' => 'Recheck stopped.']);
     }
