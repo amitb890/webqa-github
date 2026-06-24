@@ -2,7 +2,7 @@ $(document).ready(function () {
   let seoColspan = 0, performanceColspan = 0, bestPracticesColspan = 0, securityColspan = 0, totalTests = 1, lighthouseStatus = false, testDetailsLighthouse
   var useCachedTrackerData = false
   /** Match dashboard.js: batch sizes for recheck flows */
-  var recheckMax = 10, recheckSingleMax = 100, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
+  var recheckMax = 2000, recheckSingleMax = 2000, recheckGoogle = 10, googleUrlsToCheck = 1, urls, urlsToCheck = 10, originalUrls
   var googleProgressIsRecheck = false, googleProgressExpectedResults = 0
   const GOOGLE_PAGE_SPEED_REPORT_LABELS = ['google_overall', 'google_lighthouse', 'core_web_vitals']
   let page, activeOptionsModalUrl, activeOptionsElement, allLabels
@@ -4308,18 +4308,25 @@ $(document).ready(function () {
         }
       }
 
-      static async checkIfTestsAreRunning() {
+      static async checkIfTestsAreRunning(includeGoogle = true) {
         try {
           // Check dashboard tests status
           const dashboardResponse = await fetch(`/api/check-status-dashboard/${projectId}`);
           const dashboardData = await dashboardResponse.json();
-          
-          // Check Google tests status
-          const googleResponse = await fetch(`/api/check-status/${projectId}`);
-          const googleData = await googleResponse.json();
+
+          let googleData = null
+          if (includeGoogle) {
+            // Check Google tests status only for Google-specific flows.
+            const googleResponse = await fetch(`/api/check-status/${projectId}`);
+            googleData = await googleResponse.json();
+          }
           
           // If any test is still running, return true
-          if (dashboardData.status === 'pending' || dashboardData.status === 'in_progress' || googleData.status === 'pending' || googleData.status === 'in_progress') {
+          if (
+            dashboardData.status === 'pending'
+            || dashboardData.status === 'in_progress'
+            || (googleData && (googleData.status === 'pending' || googleData.status === 'in_progress'))
+          ) {
             return true;
           }
           
@@ -4331,10 +4338,10 @@ $(document).ready(function () {
         }
       }
 
-      static async waitForTestsToComplete() {
+      static async waitForTestsToComplete(includeGoogle = true) {
         return new Promise((resolve) => {
           const checkInterval = setInterval(async () => {
-            const testsRunning = await Controls.checkIfTestsAreRunning()
+            const testsRunning = await Controls.checkIfTestsAreRunning(includeGoogle)
 
             if (!testsRunning) {
               clearInterval(checkInterval)
@@ -4494,11 +4501,11 @@ $(document).ready(function () {
         if(recheckAllowed){
           const selectedUrlList = Controls.normalizeUrlsForTest(selectedUrls)
           recheckStopRequested = false
-          const testsRunning = await Controls.checkIfTestsAreRunning()
+          const testsRunning = await Controls.checkIfTestsAreRunning(false)
 
           if (testsRunning) {
             UI.showWaitingMessage()
-            await Controls.waitForTestsToComplete()
+            await Controls.waitForTestsToComplete(false)
           }
 
           recheckAllowed = false

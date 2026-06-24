@@ -229,6 +229,14 @@ class RunTest implements ShouldQueue
                     ->values()
                     ->toArray();
             }
+        } elseif ($typeOfTest === "recheck") {
+            $googleWidgetKeys = ['google_overall', 'google_lighthouse', 'core_web_vitals'];
+            $labels = collect($labels)
+                ->reject(function ($label) use ($googleWidgetKeys) {
+                    return in_array($label->db_name ?? null, $googleWidgetKeys, true);
+                })
+                ->values()
+                ->toArray();
         }
 
         

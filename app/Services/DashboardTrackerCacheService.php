@@ -59,6 +59,12 @@ class DashboardTrackerCacheService
         'mobile_friendly',
     ];
 
+    private const GOOGLE_WIDGET_KEYS = [
+        'google_overall',
+        'google_lighthouse',
+        'core_web_vitals',
+    ];
+
     private const TRACKER_WIDGET_KEYS = [
         'meta_title',
         'meta_desc',
@@ -1716,6 +1722,10 @@ class DashboardTrackerCacheService
      */
     private static function resolveTrackerWidgetKeysToUpdate(string $testType, ?string $recheckLabel): array
     {
+        if ($testType === 'recheck') {
+            return array_values(array_diff(self::TRACKER_WIDGET_KEYS, self::GOOGLE_WIDGET_KEYS));
+        }
+
         if ($testType !== 'single_recheck') {
             return self::TRACKER_WIDGET_KEYS;
         }
@@ -1758,6 +1768,10 @@ class DashboardTrackerCacheService
 
     private static function resolveDashboardWidgetKeysToUpdate(string $testType, ?string $recheckLabel): array
     {
+        if ($testType === 'recheck') {
+            return array_values(array_diff(self::DASHBOARD_WIDGET_KEYS, self::GOOGLE_WIDGET_KEYS));
+        }
+
         if ($testType !== 'single_recheck') {
             return self::DASHBOARD_WIDGET_KEYS;
         }

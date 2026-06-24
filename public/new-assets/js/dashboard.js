@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 10, recheckGoogle = 10, recheckSingleMax = 10, urlsGoogleFinal = 0
+  var recheckMax = 2000, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
   /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
   var googleProgressIsRecheck = false
   /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */
@@ -3008,18 +3008,25 @@ $(document).ready(function () {
       return label
     }
 
-    static async checkIfTestsAreRunning() {
+    static async checkIfTestsAreRunning(includeGoogle = true) {
       try {
         // Check dashboard tests status
         const dashboardResponse = await fetch(`/api/check-status-dashboard/${projectId}`);
         const dashboardData = await dashboardResponse.json();
-        
-        // Check Google tests status
-        const googleResponse = await fetch(`/api/check-status/${projectId}`);
-        const googleData = await googleResponse.json();
+
+        let googleData = null
+        if (includeGoogle) {
+          // Check Google tests status only for Google-specific flows.
+          const googleResponse = await fetch(`/api/check-status/${projectId}`);
+          googleData = await googleResponse.json();
+        }
         
         // If any test is still running, return true
-        if (dashboardData.status === 'pending' || dashboardData.status === 'in_progress' || googleData.status === 'pending' || googleData.status === 'in_progress') {
+        if (
+          dashboardData.status === 'pending'
+          || dashboardData.status === 'in_progress'
+          || (googleData && (googleData.status === 'pending' || googleData.status === 'in_progress'))
+        ) {
           return true;
         }
         
@@ -3031,10 +3038,10 @@ $(document).ready(function () {
       }
     }
 
-    static async waitForTestsToComplete() {
+    static async waitForTestsToComplete(includeGoogle = true) {
       return new Promise((resolve) => {
         const checkInterval = setInterval(async () => {
-          const testsRunning = await Controls.checkIfTestsAreRunning();
+          const testsRunning = await Controls.checkIfTestsAreRunning(includeGoogle);
           
           if (!testsRunning) {
             clearInterval(checkInterval);
@@ -3047,7 +3054,7 @@ $(document).ready(function () {
     static startTestStatusMonitoring() {
       // Monitor test status every 5 seconds and update recheck button state
       setInterval(async () => {
-        const testsRunning = await Controls.checkIfTestsAreRunning();
+        const testsRunning = await Controls.checkIfTestsAreRunning(false);
         UI.updateRecheckButtonState(testsRunning);
       }, 5000);
     }
@@ -3056,20 +3063,18 @@ $(document).ready(function () {
       if(recheckAllowed){
         dashboardStopRequested = false
         // First check if any tests are currently running
-        const testsRunning = await Controls.checkIfTestsAreRunning();
+        const testsRunning = await Controls.checkIfTestsAreRunning(false);
         
         if (testsRunning) {
           // Show message that we need to wait for tests to complete
           UI.showWaitingMessage();
           
           // Wait for all tests to complete
-          await Controls.waitForTestsToComplete();
+          await Controls.waitForTestsToComplete(false);
           
         }else{
         // Now proceed with recheck
         recheckAllowed = false
-        googleProgressIsRecheck = true
-        
         // Update button state to show recheck is starting
         UI.updateRecheckButtonState(true)
         
@@ -3415,14 +3420,13 @@ $(document).ready(function () {
             urls = originalUrls.slice(0, recheckMax)
             urlsToCheck = recheckMax
             UI.buildRecheckLoader()
-            googleProgressIsRecheck = true
           }else if(dashboardStatus === 3){
             UI.updateTileActionState("single", refreshTileDbName)
           }else{
             UI.updateTileActionState("default")
           }
 
-          Controls.buildGoogleElements(dashboardStatus === 2)
+          Controls.buildGoogleElements(false, { skipStartTests: dashboardStatus === 2 })
         })
       }
 
@@ -3587,19 +3591,20 @@ $(document).ready(function () {
     static async refreshSingleTile(e){
       const target = e.target.closest(".single_dashboard_card_main")
       const elementDbName = target ? target.getAttribute("data-label") : null
+      const isGoogleTile = elementDbName && ignore_tests.includes(elementDbName)
 
       if(elementDbName){
         UI.removeWidgetNotice(elementDbName)
       }
 
-      const testsRunning = await Controls.checkIfTestsAreRunning();
+      const testsRunning = await Controls.checkIfTestsAreRunning(!!isGoogleTile);
         
       if (testsRunning) {
         // Show message that we need to wait for tests to complete
         UI.showWaitingMessage();
         
         // Wait for all tests to complete
-        await Controls.waitForTestsToComplete();
+        await Controls.waitForTestsToComplete(!!isGoogleTile);
         
       }else{
         refreshTileDisabled = true
