@@ -20,18 +20,12 @@ Route::get('/login/google', [App\Http\Controllers\LoginController::class, 'redir
 Route::get('/login/google/callback', [App\Http\Controllers\LoginController::class, 'handleGoogleCallback']);
 
 Route::get('/logout', function() {
-    // Logout authenticated user if any
-    if (auth()->check()) {
-        auth()->logout();
+    if (auth('web')->check()) {
+        auth('web')->logout();
     }
+
+    session()->regenerateToken();
     
-    // Destroy all session data
-    session()->flush();
-    
-    // Regenerate session ID for security
-    session()->regenerate(true);
-    
-    // Redirect to home page
     return redirect('/')->with('message', 'You have been logged out successfully.');
 })->name('logout.get');
 
@@ -306,13 +300,16 @@ Route::namespace("Test")->prefix('test')->group(function(){
 // admin
 Route::namespace("Admin")->prefix('control')->group(function(){
     Route::namespace('Auth')->prefix('admin')->group(function(){
-        Route::get('/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'create'])->name('admin.login');
-        Route::post('/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'store'])->name('admin.store');
+        Route::get('/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'create'])->middleware('guest:admin')->name('admin.login');
+        Route::post('/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'store'])->middleware('guest:admin')->name('admin.store');
         Route::post('logout', [App\Http\Controllers\Admin\Auth\LoginController::class, 'destroy'])->name('admin.logout');
     });
 
     Route::middleware('admin')->group(function () {
         Route::get('/admin', [App\Http\Controllers\Admin\HomeController::class, 'index'])->name('admin.home');
+        Route::get('/admin/tests', [App\Http\Controllers\Admin\MonitoringController::class, 'tests'])->name('admin.tests');
+        Route::get('/admin/tests/{source}/{id}/error', [App\Http\Controllers\Admin\MonitoringController::class, 'error'])->name('admin.tests.error');
+        Route::get('/admin/activity', [App\Http\Controllers\Admin\MonitoringController::class, 'activity'])->name('admin.activity');
 
         Route::namespace("Users")->prefix('admin/users')->group(function(){
             Route::get('/', [App\Http\Controllers\Admin\Users\UsersController::class, 'view'])->name('admin.users.view');

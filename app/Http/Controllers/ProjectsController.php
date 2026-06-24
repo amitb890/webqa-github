@@ -32,6 +32,7 @@ use App\Services\DashboardBootstrapService;
 use App\Services\DashboardLabelsService;
 use App\Services\DashboardTestDataService;
 use App\Services\DashboardTrackerCacheService;
+use App\Services\UserActionEventLogger;
 
 class ProjectsController extends Controller
 {
@@ -282,6 +283,12 @@ class ProjectsController extends Controller
             ->whereIn('status', ['pending', 'in_progress'])
             ->update(['status' => 'failed']);
 
+        UserActionEventLogger::info('google_recheck_reset', 'Google status reset and in-flight page speed runs marked failed.', [
+            'source' => 'Dashboard / Recheck',
+            'subject_type' => Projects::class,
+            'subject_id' => (int) $projectId,
+        ], request());
+
         return response()->json(['status' => 1, 'msg' => 'Google status reset and in-flight page speed runs marked failed.']);
     }
 
@@ -294,6 +301,12 @@ class ProjectsController extends Controller
             ->first();
 
         if (! $project) {
+            UserActionEventLogger::failed('stop_recheck', 'Stop recheck failed because the project was not found for the current user.', [
+                'source' => 'Dashboard / Recheck',
+                'subject_type' => Projects::class,
+                'subject_id' => $projectId,
+            ], $request);
+
             return response()->json(['status' => 0, 'msg' => 'Project not found.'], 404);
         }
 
@@ -337,6 +350,13 @@ class ProjectsController extends Controller
         }
 
         $project->update($projectUpdates);
+
+        UserActionEventLogger::info('stop_recheck', 'User stopped an active recheck.', [
+            'source' => 'Dashboard / Recheck',
+            'subject_type' => Projects::class,
+            'subject_id' => $project->id,
+            'stop_google' => $stopGoogle,
+        ], $request);
 
         return response()->json(['status' => 1, 'msg' => 'Recheck stopped.']);
     }
@@ -435,6 +455,12 @@ class ProjectsController extends Controller
         ]);
 
         if (!$validator->passes()) {
+            UserActionEventLogger::failed('project_create', 'Project creation validation failed.', [
+                'source' => 'Onboarding / Project create',
+                'errors' => $validator->errors()->toArray(),
+                'homepage' => $request->input('homepage'),
+            ], $request);
+
             return response()->json(['status' => 0, 'msg' => $validator->errors()->toArray()]);
         } else {
 
@@ -516,6 +542,13 @@ class ProjectsController extends Controller
                         ]);
 
                         if (!$validatorN->passes()) {
+                            UserActionEventLogger::failed('project_create', 'Project creation failed because a submitted URL was invalid.', [
+                                'source' => 'Onboarding / Project create',
+                                'errors' => $validatorN->errors()->toArray(),
+                                'homepage' => $request->input('homepage'),
+                                'url' => $url,
+                            ], $request);
+
                             return response()->json(['status' => 0, 'msg' => $validatorN->errors()->toArray()]);
                         }
                     }
@@ -580,6 +613,12 @@ class ProjectsController extends Controller
             if ($projectState && $urlsListState && $settingsState && $settingsSubState) {
                 // Set the newly created project as the active project in session
                 session(['active_project_id' => $project->id]);
+                UserActionEventLogger::success('project_create', 'Project created successfully.', [
+                    'source' => 'Onboarding / Project create',
+                    'subject_type' => Projects::class,
+                    'subject_id' => $project->id,
+                    'homepage' => $project->homepage,
+                ], $request);
                 
                 $successMessage = 'Project "' . $project->name . '" created successfully with default settings. You can override the settings of the project <a href="' . route('settings.edit', $project->id) . '">here</a>.';
                 if ($request->input('route') != "projects.create") {
@@ -588,6 +627,15 @@ class ProjectsController extends Controller
                 }
                 return response()->json(['status' => 1, 'msg' => $successMessage, 'data' => $project]);
             } else {
+                UserActionEventLogger::failed('project_create', 'Project creation failed while saving project settings or URLs.', [
+                    'source' => 'Onboarding / Project create',
+                    'project_saved' => (bool) $projectState,
+                    'urls_saved' => (bool) $urlsListState,
+                    'settings_saved' => (bool) $settingsState,
+                    'settings_sub_saved' => (bool) $settingsSubState,
+                    'homepage' => $request->input('homepage'),
+                ], $request);
+
                 return response()->json(['status' => 3, 'msg' => 'There was an error while creating a new project, please try again later.']);
             }
         }

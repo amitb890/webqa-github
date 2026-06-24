@@ -22,6 +22,7 @@ use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
+use App\Services\UserActionEventLogger;
 
 class LoginController extends Controller
 {
@@ -53,6 +54,11 @@ public function handleGoogleCallback()
     try {
         $socialiteUser = Socialite::driver('google')->user();
     } catch (\Exception $e) {
+        UserActionEventLogger::failed('google_login', 'Google login failed before a user account was resolved.', [
+            'source' => 'Google login',
+            'error' => $e->getMessage(),
+        ], request());
+
         return redirect('/login')->with('error', 'Google login failed');
     }
 
@@ -67,6 +73,19 @@ public function handleGoogleCallback()
         ]);
 
         event(new Registered($user));
+        UserActionEventLogger::success('signup', 'User signed up successfully with Google.', [
+            'email' => $user->email,
+            'source' => 'Google login',
+            'subject_type' => User::class,
+            'subject_id' => $user->id,
+        ], request(), $user);
+    } else {
+        UserActionEventLogger::success('google_login', 'User logged in successfully with Google.', [
+            'email' => $user->email,
+            'source' => 'Google login',
+            'subject_type' => User::class,
+            'subject_id' => $user->id,
+        ], request(), $user);
     }
     auth()->login($user, true);
     request()->session()->regenerate();

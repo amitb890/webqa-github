@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use App\Services\UserActionEventLogger;
 
 class OnboardingController extends Controller
 {
@@ -62,6 +63,19 @@ class OnboardingController extends Controller
         // 3. Ensure unique sitemaps
         $sitemaps = array_values(array_unique($sitemaps));
 
+        if (empty($sitemaps)) {
+            UserActionEventLogger::failed('onboarding_sitemap_detection', 'No usable sitemap was detected for the submitted website.', [
+                'source' => 'Onboarding',
+                'url' => $rootUrl,
+            ], $request);
+        } else {
+            UserActionEventLogger::success('onboarding_sitemap_detection', 'Sitemaps detected during onboarding.', [
+                'source' => 'Onboarding',
+                'url' => $rootUrl,
+                'sitemap_count' => count($sitemaps),
+            ], $request);
+        }
+
         return response()->json([
             'sitemaps' => $sitemaps,
         ]);
@@ -91,6 +105,18 @@ class OnboardingController extends Controller
         }
 
         $urls = array_values($this->collected);
+
+        if (empty($urls)) {
+            UserActionEventLogger::failed('onboarding_url_fetch', 'No URLs were extracted from the selected sitemaps.', [
+                'source' => 'Onboarding',
+                'sitemaps' => $request->sitemaps,
+            ], $request);
+        } else {
+            UserActionEventLogger::success('onboarding_url_fetch', 'URLs extracted from selected sitemaps.', [
+                'source' => 'Onboarding',
+                'url_count' => count($urls),
+            ], $request);
+        }
 
         return response()->json([
             'count' => count($urls),

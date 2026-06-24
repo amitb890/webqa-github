@@ -22,6 +22,7 @@ use App\Models\SettingsSub;
 use App\Models\ProjectTestDetails;
 use App\Services\DashboardBootstrapService;
 use App\Services\DashboardTrackerCacheService;
+use App\Services\UserActionEventLogger;
 use App\Mail\EmailReportMail;
 use Helper;
 use Illuminate\Support\Facades\Http;
@@ -56,20 +57,43 @@ class TestController2 extends Controller
         }
 
         if (empty($project_id) || (is_string($project_id) && !strlen(trim($project_id)))) {
+            UserActionEventLogger::failed('dashboard_test_start', 'Dashboard test failed to start because project_id was missing.', [
+                'source' => 'Dashboard / Website Tracker',
+            ], $request);
+
             return response()->json(['error' => 'Missing or invalid project_id.'], 422);
         }
         $project_id = (int) $project_id;
 
         if (empty($urls) || !is_array($urls)) {
+            UserActionEventLogger::failed('dashboard_test_start', 'Dashboard test failed to start because no valid URL list was provided.', [
+                'source' => 'Dashboard / Website Tracker',
+                'subject_type' => Projects::class,
+                'subject_id' => $project_id,
+            ], $request);
+
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
         $targetUrls = DashboardTrackerCacheService::normalizeDashboardUrlList($urls);
         if ($targetUrls === []) {
+            UserActionEventLogger::failed('dashboard_test_start', 'Dashboard test failed to start because URL normalization produced no URLs.', [
+                'source' => 'Dashboard / Website Tracker',
+                'subject_type' => Projects::class,
+                'subject_id' => $project_id,
+                'urls' => $urls,
+            ], $request);
+
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
 
         $project = Projects::select('id')->find($project_id);
         if (! $project) {
+            UserActionEventLogger::failed('dashboard_test_start', 'Dashboard test failed to start because the project was not found.', [
+                'source' => 'Dashboard / Website Tracker',
+                'subject_type' => Projects::class,
+                'subject_id' => $project_id,
+            ], $request);
+
             return response()->json(['error' => 'Project not found.'], 404);
         }
 
@@ -206,6 +230,15 @@ class TestController2 extends Controller
                 ->onQueue($userQueue));
 
         }
+
+        UserActionEventLogger::success('dashboard_test_start', 'Dashboard test started successfully.', [
+            'source' => 'Dashboard / Website Tracker',
+            'subject_type' => Projects::class,
+            'subject_id' => $project_id,
+            'test_id' => $testId,
+            'test_type' => $type ?: 'default',
+            'url_count' => count($targetUrls),
+        ], $request);
 
         if ($type === 'single_recheck') {
             DashboardBootstrapService::setActiveRecheck(

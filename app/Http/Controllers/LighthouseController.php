@@ -8,6 +8,7 @@ use App\Models\LighthouseResult;
 use App\Models\LighthouseTest;
 use App\Services\DashboardTrackerCacheService;
 use App\Services\LighthouseCompletionNotifier;
+use App\Services\UserActionEventLogger;
 use App\Support\LighthouseUrlParser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,6 +19,10 @@ class LighthouseController extends Controller
     public function startTests(Request $request)
     {
         if (! Auth::check()) {
+            UserActionEventLogger::failed('lighthouse_test_start', 'Page-speed test failed to start because the request was unauthenticated.', [
+                'source' => 'Dashboard / PageSpeed',
+            ], $request);
+
             return response()->json(['error' => 'Unauthenticated'], 401);
         }
 
@@ -28,12 +33,23 @@ class LighthouseController extends Controller
         $lighthouseQueues = ['lighthouse_1','lighthouse_2','lighthouse_3','lighthouse_4','lighthouse_5'];
 
         if (empty($urls) || ! is_array($urls)) {
+            UserActionEventLogger::failed('lighthouse_test_start', 'Page-speed test failed to start because no valid URL list was provided.', [
+                'source' => 'Dashboard / PageSpeed',
+                'subject_id' => $project_id,
+            ], $request);
+
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
 
         $normalizedUrls = LighthouseUrlParser::fromRequestList($urls);
 
         if ($normalizedUrls === []) {
+            UserActionEventLogger::failed('lighthouse_test_start', 'Page-speed test failed to start because URL normalization produced no URLs.', [
+                'source' => 'Dashboard / PageSpeed',
+                'subject_id' => $project_id,
+                'urls' => $urls,
+            ], $request);
+
             return response()->json(['error' => 'Please provide a valid list of URLs.'], 400);
         }
 
@@ -59,6 +75,15 @@ class LighthouseController extends Controller
         dispatch(new RunLighthouseTest($test->id, Auth::id()))->onQueue($userQueue);
 
         $urlCount = count($normalizedUrls);
+
+        UserActionEventLogger::success('lighthouse_test_start', 'Page-speed test started successfully.', [
+            'source' => 'Dashboard / PageSpeed',
+            'subject_type' => LighthouseTest::class,
+            'subject_id' => $test->id,
+            'project_id' => $project_id,
+            'url_count' => $urlCount,
+            'expected_results' => $urlCount * 2,
+        ], $request);
 
         return response()->json([
             'message' => 'Test started successfully',

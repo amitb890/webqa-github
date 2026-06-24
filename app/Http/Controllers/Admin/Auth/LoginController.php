@@ -3,77 +3,36 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Projects;
-use App\Models\UrlsList;
-use App\Models\projectSettings;
-use App\Models\SettingsSub;
-use App\Rules\CustomURL;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\Storage;
-use Helper;
-use Illuminate\Support\Facades\Http;
-use Yajra\DataTables\DataTables; // Import the DataTables class
-use GuzzleHttp\Client;
-use Symfony\Component\DomCrawler\Crawler;
-use Illuminate\Support\Facades\File;
-use DOMDocument;
-use Illuminate\Support\Str;
-use Laravel\Socialite\Facades\Socialite;
-use App\Models\User; // Make sure to import your User model
 
 class LoginController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
-
-    public function redirectToGoogle()
+    public function create()
     {
-        return Socialite::driver('google')->redirect();
-    }
-//     public function handleGoogleCallback()
-// {
-//     $user = Socialite::driver('google')->user();
+        if (Auth::guard('admin')->check()) {
+            return redirect(RouteServiceProvider::ADMIN);
+        }
 
-//     // Check if the user already exists in your database or create a new user.
-
-//     // Log in the user.
-//     auth()->login($user);
-
-//     // Redirect to the home page or wherever you want.
-//     return redirect('/');
-// }
-public function handleGoogleCallback()
-{
-    try {
-        $socialiteUser = Socialite::driver('google')->user();
-    } catch (\Exception $e) {
-        return redirect('/login')->with('error', 'Google login failed');
+        return view('admin.auth.login');
     }
 
-    // Check if the user already exists in your database
-    $user = User::where('email', $socialiteUser->getEmail())->first();
-// dd($user);
-    // If the user doesn't exist, create a new user
-    if (!$user) {
-        $user = User::create([
-            'name' => $socialiteUser->getName(),
-            'email' => $socialiteUser->getEmail(),
-            'password' => bcrypt('123456'),
+    public function store(LoginRequest $request)
+    {
+        $request->adminAuthenticate();
+        $request->session()->regenerate();
 
-            // Add any other necessary fields
-        ]);
+        return redirect(RouteServiceProvider::ADMIN);
     }
-    // Log in the user
-    auth()->login($user);
 
-    // Redirect to the home page or wherever you want
-    return redirect('/');
-}
+    public function destroy(Request $request)
+    {
+        Auth::guard('admin')->logout();
 
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login');
+    }
 }

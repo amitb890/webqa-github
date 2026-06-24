@@ -15,7 +15,6 @@ class AdminSeeder extends Seeder
      */
     public function run()
     {
-        Admin::truncate();
         $admins = [
             [
             'name' => 'Admin',
@@ -26,9 +25,10 @@ class AdminSeeder extends Seeder
 
         foreach($admins as $admin)
         {
-            Admin::create([
-                'name' => $admin['name'],
+            Admin::updateOrCreate([
                 'email' => $admin['email'],
+            ], [
+                'name' => $admin['name'],
                 'password' => Hash::make($admin['password'])
             ]);
         }
