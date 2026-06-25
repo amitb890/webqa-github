@@ -23,6 +23,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use App\Services\UserActionEventLogger;
+use App\Providers\RouteServiceProvider;
 
 class LoginController extends Controller
 {
@@ -49,7 +50,7 @@ class LoginController extends Controller
 //     // Redirect to the home page or wherever you want.
 //     return redirect('/');
 // }
-public function handleGoogleCallback()
+public function handleGoogleCallback(Request $request)
 {
     try {
         $socialiteUser = Socialite::driver('google')->user();
@@ -87,10 +88,11 @@ public function handleGoogleCallback()
             'subject_id' => $user->id,
         ], request(), $user);
     }
-    auth()->login($user, true);
-    request()->session()->regenerate();
+    Auth::guard('admin')->logout();
+    Auth::guard('web')->login($user, true);
+    $request->session()->regenerate();
 
-    return redirect('/dashboard');
+    return redirect(RouteServiceProvider::USER);
 }
 
 }
