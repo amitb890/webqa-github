@@ -64,9 +64,7 @@
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >
-                      <span class="icon check-reload">
-                        <img src="/new-assets/assets/images/reload.png" alt="icon" />
-                      </span>
+                 
                       <span>Recheck Data</span>
                     </a>
 

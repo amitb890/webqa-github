@@ -140,10 +140,14 @@ class LighthouseController extends Controller
             ? min(100, (int) round(($finishedCount / $expectedResults) * 100))
             : 0;
 
-        // Determine main dashboard test status
-        $status = $lighthouseTest->status === 'failed' ? 'failed' : 'in_progress';
-        if ($status !== 'failed' && $totalResults > 0 && $finishedCount === $totalResults) {
-            $status = 'completed';
+        // Determine main dashboard test status. Failed rows still count as finished,
+        // so a run with partial PageSpeed failures must be terminal for the UI.
+        $isFinished = $totalResults > 0 && $finishedCount === $totalResults;
+        $status = 'in_progress';
+        if ($isFinished) {
+            $status = $lighthouseTest->status === 'failed' ? 'failed' : 'completed';
+        } elseif ($lighthouseTest->status === 'failed') {
+            $status = 'failed';
         }
 
         // Optionally update the main DashboardTests status in DB
@@ -151,7 +155,7 @@ class LighthouseController extends Controller
             $lighthouseTest->update(['status' => $status]);
         }
 
-        if ($status === 'completed') {
+        if ($isFinished) {
             DashboardTrackerCacheService::finalizeGoogleWidgetsCache(
                 (int) $projectId,
                 (int) $lighthouseTest->user_id,

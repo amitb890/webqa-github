@@ -65,13 +65,11 @@
                       data-bs-toggle="dropdown"
                       aria-expanded="false"
                     >
-                      <span class="icon check-reload">
-                        <img src="/new-assets/assets/images/reload.png" alt="icon" />
-                      </span>
+                   
                       <span>Recheck Data</span>
                     </a>
 
-                    <ul class="dropdown-menu dropdown-menu-end">
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-recheck">
                       <li>
                         <a class="dropdown-item" href="#" id="recheckTrackerBtn">Recheck all</a>
                       </li>

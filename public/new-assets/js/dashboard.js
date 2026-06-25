@@ -2792,6 +2792,10 @@ $(document).ready(function () {
       })
     }
 
+    static isGooglePageSpeedTerminalStatus(status){
+      return status === 'completed' || status === 'failed'
+    }
+
 
     static updateGoogleCards(results, refreshState = false, statusPayload = null){
       if (statusPayload && statusPayload.progress) {
@@ -3523,12 +3527,14 @@ $(document).ready(function () {
 
               const googleTiles = ["google_overall", "google_lighthouse", "core_web_vitals"];
 
-              if (status === 'completed') {
-                handleGoogleResults(results, googleTiles)
+              if (Controls.isGooglePageSpeedTerminalStatus(status)) {
+                const hasGoogleResults = handleGoogleResults(results, googleTiles)
 
                 clearInterval(googlePageSpeedPollInterval);
                 googlePageSpeedPollInterval = null
-                Controls.finalizeGoogleElements(results)
+                if (hasGoogleResults) {
+                  Controls.finalizeGoogleElements(results)
+                }
                 googleProgressIsRecheck = false
                 googleProgressExpectedResults = 0
                 
@@ -3718,8 +3724,10 @@ $(document).ready(function () {
       Controls.startGooglePageSpeedRecheck().then(() => {
         Controls.pollGooglePageSpeedStatus({
           onComplete(results, googleTiles) {
-            handleGoogleResults(results, googleTiles)
-            Controls.finalizeGoogleElements(results)
+            const hasGoogleResults = handleGoogleResults(results, googleTiles)
+            if (hasGoogleResults) {
+              Controls.finalizeGoogleElements(results)
+            }
             googleProgressIsRecheck = false
             googleProgressExpectedResults = 0
             UI.updateRecheckButtonState(false)
@@ -3756,7 +3764,7 @@ $(document).ready(function () {
           const { status, results } = statusPayload
           Controls.updateGoogleCards(results, refreshState, statusPayload)
 
-          if (status === 'completed') {
+          if (Controls.isGooglePageSpeedTerminalStatus(status)) {
             clearInterval(googlePageSpeedPollInterval)
             googlePageSpeedPollInterval = null
             const googleTiles = ['google_overall', 'google_lighthouse', 'core_web_vitals']
@@ -4203,13 +4211,14 @@ $(document).ready(function () {
 
 // Helper to handle Google results error logic
 function handleGoogleResults(results, googleTiles) {
+  results = results || {}
   let validUrls = [];
   let hasValid = false;
 
   for (const url in results) {
     const urlResult = results[url];
     // If the result is an error object at the top level
-    if (urlResult && urlResult.error) {
+    if (urlResult && (urlResult.error || urlResult.status === 'failed')) {
       continue;
     } else {
       hasValid = true;
@@ -4227,6 +4236,8 @@ function handleGoogleResults(results, googleTiles) {
       if (tileElem) {
         const cardContent = tileElem.querySelector('.single_dashboard_card_content');
         if (cardContent) cardContent.remove();
+        const pageSpeedLoader = tileElem.querySelector('.page_speed_content');
+        if (pageSpeedLoader) pageSpeedLoader.remove();
         const div = document.createElement('div');
         div.classList.add('single_dashboard_card_content');
         div.innerHTML = `<div class="google-error-message" style="padding: 20px; text-align: center; color: #b94a48;">

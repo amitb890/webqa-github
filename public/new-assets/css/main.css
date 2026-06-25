@@ -18667,6 +18667,10 @@ table.dataTable thead th[data-is-resizable="true"] {
   border-top:1px solid rgb(226, 224, 244);
 }
 
+.dropdown-menu-recheck{
+  width: unset !important;
+}
+
 
 .dropdown-menu-recheck-imran{
   width:110px !important;

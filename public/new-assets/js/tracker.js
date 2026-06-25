@@ -4078,6 +4078,7 @@ $(document).ready(function () {
       static getSelectedRecheckUrls() {
         const selectedUrls = []
         document.querySelectorAll("#reportTable tbody td:first-child .form-check-input:checked").forEach((checkbox) => {
+          if (checkbox.closest("tr.root-tr")) return
           const cell = checkbox.closest("td")
           const label = cell ? cell.querySelector(".form-check-label") : null
           const url = label ? (label.getAttribute("title") || label.textContent || "").trim() : ""
