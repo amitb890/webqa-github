@@ -2,7 +2,7 @@ $(document).ready(function () {
 
   var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 2000, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 10, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
   /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
   var googleProgressIsRecheck = false
   /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */
@@ -708,8 +708,7 @@ $(document).ready(function () {
             Dashboard
           </p>
           <form method="POST" id="submitIdeaForm">
-            <label for="submitIdeaWidgetMsg" class="form-label" style="font-size:13px;display:block;text-align:left;">Message</label>
-            <textarea id="submitIdeaWidgetMsg"></textarea>
+            <textarea placeholder="Message" id="submitIdeaWidgetMsg"></textarea>
             <span id="submitIdeaWidgetCounter">0/2000</span>
             <div class="dasboard_submit_btn">
               <button id="submitIdeaWidgetBtn" type="submit">Submit Idea</button>
@@ -2443,8 +2442,8 @@ $(document).ready(function () {
                     </li>
                     <li class="dashboard-stop-recheck-action d-none">
                       <button class="dashboard-stop-recheck-btn" data-stop-google="${ignore_tests.includes(label.db_name) ? "1" : "0"}">
-                      <img src="/new-assets/assets/images/refresh.png" alt="icon">
-                      Stop Recheck
+                      <span type="button" class="refresh-stop-btn"></span>
+                      Stop
                       </button>
                     </li>
                     <li class="dashboard-remove-tile-action">

@@ -1386,7 +1386,7 @@ $( document ).ready(function() {
       var tbodyBestPractices = document.createElement("tbody")
 
       theadBestPractices.innerHTML = `<tr>
-      <th># Coding Best Practices</th>
+      <th># Best Practices</th>
       <th>Type</th>
       <th>Status</th>
       <th>Message</th>
@@ -2055,7 +2055,7 @@ $( document ).ready(function() {
 
       <div class="card-custom show" id="cardCBP">
           <div class="card-custom-header align-items-center d-flex">
-              <h5 class="label-header">Coding Best Practices</h5>
+              <h5 class="label-header">Best Practices</h5>
               <div class="flex-grow-1 d-sm-block d-md-none"></div>
               <div class="progress-item mr-meta">
                   <p class="label-meta" id="CBPFailed">2 Failed</p>
@@ -4713,7 +4713,7 @@ $( document ).ready(function() {
       let performanceElement = resultsDataPerformance.length > 0 ? getNavTabElement("cardPerformance", "Performance", dataPassedPerformance.length, resultsDataPerformance.length) : ""
       div.innerHTML += performanceElement
 
-      let CBPElement = resultsDataBestPractices.length > 0 ? getNavTabElement("cardCBP", "Coding Best Practices", dataPassedCBP.length, resultsDataBestPractices.length) : ""
+      let CBPElement = resultsDataBestPractices.length > 0 ? getNavTabElement("cardCBP", "Best Practices", dataPassedCBP.length, resultsDataBestPractices.length) : ""
       div.innerHTML += CBPElement
 
       let securityElement = resultsDataSecurity.length > 0 ? getNavTabElement("cardSecurity", "Security", dataPassedSecurity.length, resultsDataSecurity.length) : ""

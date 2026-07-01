@@ -51,7 +51,7 @@
                       </li>
                       <li id="downloadCSV">
                         <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/csv-icon.svg" alt="icon" /> CSV</a
+                          ><img src="/new-assets/assets/images/csv_icon.png" alt="icon" /> CSV</a
                         >
                       </li>
                     </ul>

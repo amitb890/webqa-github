@@ -3361,7 +3361,8 @@ h6 {
 
 .dashboard-page .dropdown-menu li button {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
+  gap: 10px;
   align-items: center;
   width: 100%;
   background: none;
@@ -3468,16 +3469,19 @@ h6 {
   align-items: center;
 }
 
-.recheck-stop-btn {
-  width: 18px;
+.recheck-stop-btn, .refresh-stop-btn {
+  width: 18px!important;
   height: 18px;
-  border: 0;
+  border: 0!important;
   border-radius: 3px;
-  background: #cf5a6a;
+  background: #cf5a6a!important;
   margin-left: 16px;
-  padding: 0;
+  padding: 0!important;
   flex: 0 0 auto;
   cursor: pointer;
+}
+.dashboard-page .refresh-stop-btn {
+  margin-left: 0;
 }
 
 .recheck-stop-btn:hover,
@@ -11075,7 +11079,6 @@ table.bulk-table td:last-child {
   line-height: normal;
   padding-top: 22px;
   margin-bottom: 13px;
-  max-width: 269px;
 }
 
 .dashboard_submit_content textarea {
@@ -11090,6 +11093,7 @@ table.bulk-table td:last-child {
   font-style: normal;
   font-weight: 450;
   line-height: normal;
+  padding: 10px;
 }
 
 .dashboard_submit_content span {
@@ -11391,14 +11395,17 @@ canvas {
 }
 
 .page_speed_content {
-  max-width: 245px;
+  max-width: 345px;
   width: 100%;
   margin: auto;
   padding-top: 117px;
+  text-align: center;
 }
 
 .page_speed_content .progress {
   --bs-progress-height: 10px;
+  max-width: 245px;
+  margin: auto;
 }
 
 .dashboard-page-speed-progress {
@@ -13658,6 +13665,7 @@ nav .nav-tabs{
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   top:40px;
   margin-top: 5px !important;
+  padding: 0;
 }
 
 .dropdown-menu2{
@@ -18028,8 +18036,8 @@ textarea.auto-number.has-content {
 }
 
 /* Task 3 Code Starts */
-.form-check-input.input-check-all{
-  /* margin-left:-15px; */
+.element-main-area .form-check-input.input-check-all{
+  margin-left:-15px;
 }
 .element-check-title label {
   margin-left: 5px;
