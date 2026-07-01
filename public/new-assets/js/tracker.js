@@ -238,6 +238,19 @@ $(document).ready(function () {
     return {}
   }
 
+  /** Format tested_at for the Last Checked column (e.g. June 30, 2026 - 11:30 PM). */
+  function formatLastCheckedTime(testedAt) {
+    if (!testedAt) {
+      return ""
+    }
+    const { DateTime } = luxon
+    const dateTime = DateTime.fromSeconds(parseInt(testedAt, 10))
+    if (!dateTime.isValid) {
+      return ""
+    }
+    return dateTime.toFormat("MMMM d, yyyy - h:mm a")
+  }
+
   /** True when a tracker cell has real test output (not a cache placeholder with only tested_url). */
   function hasTrackerMetricData(result) {
     if (!result || typeof result !== "object") {
@@ -1641,10 +1654,8 @@ $(document).ready(function () {
       }
 
       static buildTableBodyImages(prob, id, type, result, options, url, settings, seo, dataSetting = null, index) {
-        const { DateTime } = luxon;
         const projectSettings = dataSetting ? dataSetting[0].project_settings : null;
-        let time = new DateTime.fromSeconds(parseInt(result.tested_at));
-        time = time.toLocaleString({ day: 'numeric', month: 'long', year: 'numeric' });
+        let time = formatLastCheckedTime(result.tested_at);
     
         let td = options.tableBody;
     
@@ -1697,7 +1708,6 @@ $(document).ready(function () {
       static buildTableBody(id, type, result, options, url, settings, seo, dataSetting=null){
         const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
         let time
-        const { DateTime } = luxon;
         const projectSettings = settings || (dataSetting && dataSetting[0] ? dataSetting[0].settings : null);
 
         if(window.location.href.includes("/reports")){
@@ -1711,15 +1721,12 @@ $(document).ready(function () {
           if(ignore_tests.includes(type)){
             time = "2025-03-28 08:08:23"
           }else if(result.tested_at){
-            time = new DateTime.fromSeconds(parseInt(result.tested_at))
+            time = formatLastCheckedTime(result.tested_at)
           }else{
             time = ""
           }
         }else{
           time = ""
-        }
-        if (time && typeof time.toLocaleString === "function") {
-          time = time.toLocaleString({day: 'numeric', month: 'long', year: 'numeric'});
         }
           let td = options.tableBody
           if(options.firstTimeStatus){
@@ -2727,6 +2734,9 @@ $(document).ready(function () {
         
             // Set the state of all individual checkboxes based on the "All" checkbox
             $("td:first-child .form-check-input").prop("checked", isChecked);
+            document.querySelectorAll("#reportTable tbody tr.root-tr td:first-child .form-check-input").forEach((folderCheckbox) => {
+              folderCheckbox.indeterminate = false
+            })
             Controls.updateSelectedRecheckCount()
           });
 
@@ -3853,7 +3863,7 @@ $(document).ready(function () {
         })
 
         $(document).off("change.trackerSelectedRows", "#reportTable tbody td:first-child .form-check-input").on("change.trackerSelectedRows", "#reportTable tbody td:first-child .form-check-input", function(){
-          Controls.updateSelectedRecheckCount()
+          Controls.onTableRowCheckboxChange(this)
         })
 
         $(document).off("click.stopRecheck", "#stopRecheckBtn").on("click.stopRecheck", "#stopRecheckBtn", function(e){
@@ -4073,6 +4083,53 @@ $(document).ready(function () {
         return urlList.filter((urlItem) => {
           return Controls.normalizeUrlsForTest([urlItem]).some((url) => selectedSet.has(url))
         })
+      }
+
+      static getFolderUrlCheckboxes(folderId) {
+        if (!folderId) {
+          return []
+        }
+        return Array.from(document.querySelectorAll(`#reportTable tbody tr[data-type="${folderId}"] td:first-child .form-check-input`))
+      }
+
+      static getFolderCheckbox(folderId) {
+        const folderRow = document.querySelector(`#reportTable tbody tr.root-tr[data-id="${folderId}"]`)
+        return folderRow ? folderRow.querySelector("td:first-child .form-check-input") : null
+      }
+
+      static setFolderUrlCheckboxes(folderId, isChecked) {
+        Controls.getFolderUrlCheckboxes(folderId).forEach((checkbox) => {
+          checkbox.checked = isChecked
+        })
+      }
+
+      static syncFolderCheckbox(folderId) {
+        const folderCheckbox = Controls.getFolderCheckbox(folderId)
+        if (!folderCheckbox) {
+          return
+        }
+        const urlCheckboxes = Controls.getFolderUrlCheckboxes(folderId)
+        if (!urlCheckboxes.length) {
+          folderCheckbox.checked = false
+          folderCheckbox.indeterminate = false
+          return
+        }
+        const checkedCount = urlCheckboxes.filter((checkbox) => checkbox.checked).length
+        folderCheckbox.checked = checkedCount === urlCheckboxes.length
+        folderCheckbox.indeterminate = checkedCount > 0 && checkedCount < urlCheckboxes.length
+      }
+
+      static onTableRowCheckboxChange(checkbox) {
+        const folderRow = checkbox.closest("tr.root-tr")
+        if (folderRow) {
+          Controls.setFolderUrlCheckboxes(folderRow.getAttribute("data-id"), checkbox.checked)
+        } else {
+          const urlRow = checkbox.closest("tr[data-type]")
+          if (urlRow) {
+            Controls.syncFolderCheckbox(urlRow.getAttribute("data-type"))
+          }
+        }
+        Controls.updateSelectedRecheckCount()
       }
 
       static getSelectedRecheckUrls() {
