@@ -770,13 +770,16 @@ $( document ).ready(function() {
 
 
     static fetchCachedTestResult(testKey) {
-      return fetch(`/api/cached-test?test_key=${testKey}`)
+      return fetch(`/api/cached-test?test_key=${testKey}`, {
+        credentials: 'same-origin',
+      })
         .then(res => res.json());
     }
 
     static saveCachedTestResult(testKey, result, testLabels) {
       return fetch('/api/cached-test', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content

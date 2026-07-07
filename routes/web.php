@@ -141,7 +141,7 @@ Route::get('/webtests', [App\Http\Controllers\PagesController::class, 'getResult
 
 
 
-Route::prefix('api')->middleware('auth')->group(function () {
+Route::prefix('api')->group(function () {
     Route::get('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'show']);
     Route::post('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'store']);
 });
