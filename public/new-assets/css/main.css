@@ -18700,8 +18700,10 @@ table.dataTable thead th[data-is-resizable="true"] {
   border-top:1px solid rgb(226, 224, 244);
 }
 
-.dropdown-menu-recheck{
+.dropdown-menu-recheck, .tracker_downloading_link-imran2{
   width: unset !important;
+  padding: 10px 0;
+  padding-bottom: 10px !important;
 }
 
 

@@ -3947,6 +3947,21 @@ $(document).ready(function () {
 
 
 
+    static async waitForRecheckBackendFinalize(){
+      for (let i = 0; i < 15; i++) {
+        try {
+          const statusData = await new Promise((resolve, reject) => {
+            DB.getDashboardShowStatus(projectId).done(resolve).fail(reject)
+          })
+          if (Number(statusData.dashboardStatus) === 1) {
+            await new Promise(res => setTimeout(res, 400))
+            return
+          }
+        } catch (_) {}
+        await new Promise(res => setTimeout(res, 500))
+      }
+    }
+
     static endTest(type = "na"){        
       if(type === "single_recheck"){
       const key = refreshTileDbName
@@ -4007,9 +4022,11 @@ $(document).ready(function () {
 
       }
 
-      Controls.buildDashboard()
-      UI.updateRecheckButtonState(false)
-      UI.updateTileActionState("default")
+      Controls.waitForRecheckBackendFinalize().then(() => {
+        Controls.buildDashboard()
+        UI.updateRecheckButtonState(false)
+        UI.updateTileActionState("default")
+      })
     }
     
 

@@ -604,7 +604,7 @@ class RunTest implements ShouldQueue
                  DashboardBootstrapService::clearActiveRecheck($projectId);
              }
 
-             if ($allSucceeded && $dbMsg !== null) {
+             if ($completed > 0) {
                  try {
                      DashboardTrackerCacheService::finalizeDashboardTestAndRefreshCaches(
                          $projectId,
@@ -620,16 +620,16 @@ class RunTest implements ShouldQueue
                          'type' => $this->type,
                      ]);
                  }
+             }
 
-                 if ($this->type != 'single_recheck') {
-                     $alert = new Alerts();
-                     $alert->user_id = $this->user_id;
-                     $alert->project_id = $projectId;
-                     $alert->message = $dbMsg;
-                     $alert->page = 'dashboard';
-                     $alert->status = 1;
-                     $alert->save();
-                 }
+             if ($allSucceeded && $dbMsg !== null && $this->type != 'single_recheck') {
+                 $alert = new Alerts();
+                 $alert->user_id = $this->user_id;
+                 $alert->project_id = $projectId;
+                 $alert->message = $dbMsg;
+                 $alert->page = 'dashboard';
+                 $alert->status = 1;
+                 $alert->save();
              }
          }
      }

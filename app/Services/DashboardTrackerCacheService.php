@@ -395,6 +395,7 @@ class DashboardTrackerCacheService
         }
 
         self::hydrateCachedImageRows($results, $dashboardTest->id, $urls);
+        self::hydrateCachedTrackerRowsFromLiveDetails($results, $dashboardTest->id, $urls);
 
         return [
             'status' => 1,
@@ -575,31 +576,34 @@ class DashboardTrackerCacheService
             DB::transaction(function () use ($projectId, $userId, $dashboardTestId, $testType, $recheckLabel) {
             $dashboardTest = DashboardTests::find($dashboardTestId);
             $targetUrls = self::extractRunTargetUrls($dashboardTest);
-            $scopeToRunUrls = in_array($testType, ['recheck', 'single_recheck'], true) && $targetUrls !== [];
+            $scopeTrackerToRunUrls = in_array($testType, ['recheck', 'single_recheck'], true) && $targetUrls !== [];
 
-            $detailsQuery = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
-                ->whereNotNull('data');
+            // Dashboard cards always summarize the full project; partial rechecks must not
+            // rebuild every widget from only the URLs in the current batch.
+            $allDetails = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
+                ->whereNotNull('data')
+                ->get(['url', 'data']);
 
-            if ($scopeToRunUrls) {
-                $detailsQuery->whereIn('url', $targetUrls);
-            }
-
-            $details = $detailsQuery->get(['url', 'data']);
-
-            // Fallback: batch URL list out of sync with detail rows (e.g. mixed deploy / URL format drift).
-            if ($details->isEmpty()) {
-                $details = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
-                    ->whereNotNull('data')
-                    ->get(['url', 'data']);
-            }
-
-            if ($details->isEmpty()) {
+            if ($allDetails->isEmpty()) {
                 throw new \RuntimeException(
                     "No dashboard_tests_details rows with data for test #{$dashboardTestId} (project {$projectId})."
                 );
             }
 
-            $aggregated = DashboardTestDataService::buildAggregatedResults($details);
+            $aggregated = DashboardTestDataService::buildAggregatedResults($allDetails);
+
+            $trackerDetailsQuery = DashboardTestsDetails::where('dashboard_test_id', $dashboardTestId)
+                ->whereNotNull('data');
+
+            if ($scopeTrackerToRunUrls) {
+                $trackerDetailsQuery->whereIn('url', $targetUrls);
+            }
+
+            $trackerDetails = $trackerDetailsQuery->get(['url', 'data']);
+
+            if ($trackerDetails->isEmpty()) {
+                $trackerDetails = $allDetails;
+            }
             $now = now();
             $dashboardKeysToUpdate = self::resolveDashboardWidgetKeysToUpdate($testType, $recheckLabel);
             $dashboardRows = [];
@@ -623,7 +627,7 @@ class DashboardTrackerCacheService
 
             $trackerKeysToUpdate = self::resolveTrackerWidgetKeysToUpdate($testType, $recheckLabel);
             $trackerRows = [];
-            foreach ($details as $detail) {
+            foreach ($trackerDetails as $detail) {
                 $decoded = json_decode((string) $detail->data, true);
                 if (! is_array($decoded)) {
                     continue;
@@ -632,18 +636,21 @@ class DashboardTrackerCacheService
                 $trackerData = self::extractTrackerDataFromSingleUrlResult($decoded);
                 foreach ($trackerKeysToUpdate as $widgetKey) {
                     $url = (string) $detail->url;
+                    $slimCell = self::sanitizeTrackerWidgetPayload(
+                        $widgetKey,
+                        $trackerData[$widgetKey] ?? []
+                    );
+                    if ($slimCell === []) {
+                        continue;
+                    }
+
                     $trackerRows[] = [
                         'project_id' => $projectId,
                         'user_id' => $userId,
                         'url' => $url,
                         'url_hash' => self::hashTrackerUrl($url),
                         'widget_key' => $widgetKey,
-                        'widget_data_json' => json_encode(
-                            self::sanitizeTrackerWidgetPayload(
-                                $widgetKey,
-                                $trackerData[$widgetKey] ?? []
-                            )
-                        ),
+                        'widget_data_json' => json_encode($slimCell),
                         'created_at' => $now,
                         'updated_at' => $now,
                     ];
@@ -936,6 +943,94 @@ class DashboardTrackerCacheService
      * @param  array<string, mixed>  $results
      * @param  list<string>  $urls
      */
+    /**
+     * Fill tracker cells missing from cache using live dashboard_tests_details rows.
+     *
+     * @param  array<string, mixed>  $results
+     * @param  list<string>  $urls
+     */
+    private static function hydrateCachedTrackerRowsFromLiveDetails(array &$results, int $dashboardTestId, array $urls): void
+    {
+        if ($urls === []) {
+            return;
+        }
+
+        $widgetKeys = array_values(array_diff(self::TRACKER_WIDGET_KEYS, self::GOOGLE_WIDGET_KEYS));
+        $detailsByUrl = DashboardTestsDetails::query()
+            ->where('dashboard_test_id', $dashboardTestId)
+            ->whereIn('url', $urls)
+            ->get(['url', 'data'])
+            ->keyBy(static fn (DashboardTestsDetails $detail) => (string) $detail->url);
+
+        foreach ($urls as $url) {
+            $detail = $detailsByUrl->get($url);
+            if (! $detail || ! $detail->data) {
+                continue;
+            }
+
+            $decoded = json_decode((string) $detail->data, true);
+            if (! is_array($decoded)) {
+                continue;
+            }
+
+            $trackerData = self::extractTrackerDataFromSingleUrlResult($decoded);
+
+            foreach ($widgetKeys as $widgetKey) {
+                if (self::trackerResultsHasUrlMetric($results, $widgetKey, $url)) {
+                    continue;
+                }
+
+                $slimCell = self::sanitizeTrackerWidgetPayload($widgetKey, $trackerData[$widgetKey] ?? []);
+                if ($slimCell === []) {
+                    continue;
+                }
+
+                self::appendTrackerAggregatedRow(
+                    $results,
+                    $widgetKey,
+                    self::trackerAggregatedRowPayload($slimCell, $url)
+                );
+            }
+        }
+    }
+
+    private static function trackerResultsHasUrlMetric(array $results, string $widgetKey, string $url): bool
+    {
+        if (in_array($widgetKey, self::TRACKER_SECURITY_WIDGET_KEYS, true)) {
+            $bucket = $results['security_labels'][$widgetKey] ?? [];
+
+            foreach ($bucket as $row) {
+                if (is_array($row) && ($row['tested_url'] ?? '') === $url) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        if (in_array($widgetKey, self::TRACKER_CBP_WIDGET_KEYS, true)) {
+            $bucket = $results['cbp_labels'][$widgetKey] ?? [];
+
+            foreach ($bucket as $row) {
+                if (is_array($row) && ($row['tested_url'] ?? '') === $url) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        $bucket = $results[$widgetKey] ?? [];
+
+        foreach ($bucket as $row) {
+            if (is_array($row) && ($row['tested_url'] ?? '') === $url) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static function hydrateCachedImageRows(array &$results, int $dashboardTestId, array $urls): void
     {
         if (empty($results['images']) || ! is_array($results['images'])) {

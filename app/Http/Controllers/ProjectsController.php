@@ -323,7 +323,6 @@ class ProjectsController extends Controller
             $detailsQuery->update(['status' => 'completed']);
             $dashboardTest->update(['status' => 'completed']);
             DashboardBootstrapService::clearActiveRecheck($projectId);
-            DashboardTrackerCacheService::markProjectDashboardFullyTested($projectId);
         }
 
         if ($stopGoogle) {
