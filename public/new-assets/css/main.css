@@ -5610,6 +5610,10 @@ h6 {
   color: var(--text-gray);
   font-size: 13px;
   font-weight: 400;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .meta-link-itemList li:nth-child(4) {
   color: var(--text-orange-red);
@@ -13747,31 +13751,64 @@ nav .nav-tabs{
   color: rgba(30, 99, 184, 1);
 }
 
-.previous-test .custom-dataTable td {
-    border: 1px solid #e0e0e0 !important;
-    padding: 12px 15px !important;
+.previous-test {
+    font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.previous-test .custom-dataTable thead th {
-    background-color: #dee8f8;
-    color: #333;
-    font-weight: 600;
+.previous-test .test_result_area h2,
+.previous-test .test_result_area p {
+    font-family: inherit;
 }
 
-.previous-test .custom-dataTable tbody td {
-    color: #555;
+.previous-test .analysis-table-image table,
+.previous-test .analysis-table-image th,
+.previous-test .analysis-table-image td,
+.previous-test #custom-search,
+.previous-test .table-pagination span,
+.previous-test .table-pagination input,
+.previous-test .table-pagination select {
+    font-family: var(--font-priamry), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
-.previous-test .report-icon {
-    width: 16px;
-    height: 16px;
-    margin-left: 5px;
+.previous-test .analysis-table-image thead th {
+    background-color: #f1f5ff;
+    color: #222222;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 9px 12px;
+    border-color: var(--border-gray);
+}
+
+.previous-test .analysis-table-image td {
+    color: var(--text-gray);
+    font-size: 13px;
+    font-weight: 400;
+    padding: 9px 12px;
+    border-color: var(--border-gray);
+}
+
+.previous-test .analysis-table-image .table-image-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--primary);
+}
+
+.previous-test .analysis-table-image .report-icon {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
 }
 
 .previous-test #custom-search {
-    border: 1px solid #ddd;
+    border: 1px solid var(--border-gray);
     border-radius: 4px;
     padding: 5px 10px;
+    font-size: 13px;
+    color: var(--text-gray);
 }
 
 .previous-test .show-row {
@@ -13794,20 +13831,8 @@ nav .nav-tabs{
 .previous-test .test_result_table {
           border-radius: 0px !important;
       }
-.previous-test .custom-dataTable tbody tr {
-    border-bottom: none !important;
-}
-.previous-test .custom-dataTable tbody tr td {
-    border-bottom: none !important;
-}
-.previous-test .custom-dataTable tbody tr td a {
-    text-decoration: none !important;
-}
-.previous-test .custom-dataTable thead th {
-    color: rgba(55, 55, 55, 1) !important;
-}
-.previous-test .custom-dataTable tbody tr td:nth-child(3) {
-    color: rgba(110, 110, 110, 1) !important;
+.previous-test .analysis-table-image tbody tr td a {
+    text-decoration: none;
 }
 
 .phone-frame { 

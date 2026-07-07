@@ -12,7 +12,7 @@ webqa - Previous Tests
 @endsection
 
 @section('content')
-        <main {{ Auth::check() ? '' : 'class="main-sections"  style=padding-block:58px;' }}>
+        <main style="{{ request()->path() == 'test-archive-web-app' ? 'padding-top: 60px;' : 'padding-top:88px;' }}">
 
         <div class="inner_content inner_content-tools previous-test">
             <div class="container-fluid">
@@ -20,7 +20,6 @@ webqa - Previous Tests
                 <!-- Test Result Area Start -->
                 <div class="test_result_area">
                     <h2>Previous Tests</h2><p>A list of all the previous tests made on the website.</p>
-                    <span class="failed-list"></span>
 
                     <div class="test_result_table">
                         <div class="table-responsive">
@@ -35,20 +34,43 @@ webqa - Previous Tests
 
 
                             <!-- Table -->
-                            <table class="table bulk-table table-bordered custom-dataTable">
-                                <thead class="">
-                                    <tr>
-                                        <th>#</th>
-                                        <th>URL</th>
-                                        <th>Date</th>
-                                        <th>Domain</th>
-                                        <th>Report</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="">
-                                    <!-- Data will be loaded via AJAX -->
-                                </tbody>
-                            </table>
+                            <div class="analysis-table-image">
+                                <table class="table table-bordered custom-dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center">#</th>
+                                            <th>URL</th>
+                                            <th>Date</th>
+                                            <th>Domain</th>
+                                            <th>Report</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($results as $result)
+                                            <tr>
+                                                <td class="text-center row-index"></td>
+                                                <td>
+                                                    <a href="{{ $result['projectUrl'] }}" target="_blank" class="table-image-link">
+                                                        {{ $result['projectUrl'] }}
+                                                    </a>
+                                                </td>
+                                                <td data-order="{{ $result['createdAtSort'] }}">{{ $result['createdAtFormatted'] }}</td>
+                                                <td>{{ $result['domain'] }}</td>
+                                                <td>
+                                                    <a href="{{ $result['reportUrl'] }}" target="_blank" class="table-image-link" title="Open report">
+                                                        <span>Open</span>
+                                                        <svg class="report-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                                            <polyline points="15 3 21 3 21 9"></polyline>
+                                                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                                                        </svg>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
 
                         </div>
 
@@ -96,68 +118,18 @@ webqa - Previous Tests
     <script>
         function initializeCustomDataTable(datatableClass) {
             var table = $('.' + datatableClass).DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('get.results') }}", // Set your route name here
-                    type: "GET",
-                    data: function(d) {
-                        // ✅ add the browser page URL to the request
-                        d.projectUrl = window.location.href;
-                    }
-                },
-                columns: [
-                    { data: null, render: (data, type, row, meta) => meta.row + meta.settings._iDisplayStart + 1, width: '30px', className: 'text-center',searchable: false, orderable: false },
-
-                    {
-                        data: 'projectUrl',
-                        render: function(data) {
-                            return '<a href="' + data + '" target="_blank" style="color: rgba(55, 55, 55, 1);">' + data + '</a>';
-                        },
-                        width: '40%',
-                        orderable: false
-                    },
-                    {
-                        data: 'created_at',
-                        render: function(data) {
-                            return new Date(data).toLocaleDateString('en-US', {
-                                day: 'numeric',
-                                month: 'short',
-                                year: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                            });
-                        },
-                        width: '150px',
-                        orderable: true
-                    },
-                    {
-                        data: 'projectUrl',
-                        render: function(data) {
-                            try {
-                                let url = new URL(data);
-                                return url.origin; // gives protocol + domain only
-                            } catch (e) {
-                                return data;
-                            }
-                        },
-                        width: '30%',
-                        orderable: false
-                    },
-
-                    {
-                        data: 'report',
-                        orderable: false,
-                        searchable: false,
-                        width: '80px'
-                    }
-                ],
+                processing: false,
+                serverSide: false,
                 pageLength: 10,
                 paging: true,
                 info: false,
                 searching: true,
                 ordering: true,
                 order: [[2, 'desc']], // Default sort on Date column (index 2) in descending order
+                columnDefs: [
+                    { targets: [0, 1, 3, 4], orderable: false },
+                    { targets: [0, 4], searchable: false }
+                ],
                 language: {
                     search: "",
                     searchPlaceholder: "Search..."
@@ -176,16 +148,29 @@ webqa - Previous Tests
             var $nextPage = $("#next-page");
             var $customSearchInput = $("#custom-search");
 
+            function updateRowIndex() {
+                var pageInfo = table.page.info();
+                table.rows({ page: 'current' }).every(function(rowIdx) {
+                    $(this.node()).find('.row-index').text(pageInfo.start + rowIdx + 1);
+                });
+            }
+
             function updatePaginationInfo() {
                 var pageInfo = table.page.info();
-                $paginationInfo.text(`Showing ${pageInfo.start + 1} - ${pageInfo.end} of ${pageInfo.recordsTotal}`);
+                if (pageInfo.recordsDisplay === 0) {
+                    $paginationInfo.text('Showing 0 - 0 of 0');
+                    return;
+                }
+                $paginationInfo.text(`Showing ${pageInfo.start + 1} - ${pageInfo.end} of ${pageInfo.recordsDisplay}`);
             }
 
             // Update on page load
+            updateRowIndex();
             updatePaginationInfo();
 
             // Update when table redraws
             table.on('draw', function() {
+                updateRowIndex();
                 updatePaginationInfo();
             });
 

@@ -271,8 +271,38 @@ class PagesController extends Controller
 
         return view("user.analysis.index", compact("data"));
     }
-    public function testResults(Request $request){
-        return view('tests.index')->with("headerPadding", "public-test-archives");
+    public function testResults(Request $request)
+    {
+        $isWebAppArchive = Str::contains($request->path(), 'test-archive-web-app');
+        $reportBasePath = $isWebAppArchive ? 'analysis-report/' : 'analysis-report/w/';
+
+        $query = CachedTest::query()->orderByDesc('created_at');
+
+        if ($isWebAppArchive) {
+            $query->where('web_app', 1);
+            if (Auth::check()) {
+                $query->where('user_id', Auth::id());
+            }
+        } else {
+            $query->where('web_app', 0);
+        }
+
+        $results = $query->get()->map(function ($row) use ($reportBasePath) {
+            $scheme = parse_url($row->projectUrl, PHP_URL_SCHEME);
+            $host = parse_url($row->projectUrl, PHP_URL_HOST);
+            $domain = ($scheme && $host) ? ($scheme . '://' . $host) : $row->projectUrl;
+
+            return [
+                'projectUrl' => $row->projectUrl,
+                'createdAtFormatted' => optional($row->created_at)->format('j M Y, h:i A'),
+                'createdAtSort' => optional($row->created_at)->timestamp ?? 0,
+                'domain' => $domain,
+                'reportUrl' => url($reportBasePath . $row->test_key),
+            ];
+        });
+
+        return view('tests.index', compact('results'))
+            ->with("headerPadding", "public-test-archives");
     }
     
     public function getResults(Request $request)
