@@ -16,11 +16,9 @@ class CachedTestController extends Controller
         if (!$testKey) {
             return response()->json(['error' => 'test_key required'], 400);
         }
-        $query = CachedTest::where('test_key', $testKey);
-        if (Auth::check()) {
-            $query->where('user_id', Auth::id());
-        }
-        $cached = $query->first();
+        $cached = CachedTest::where('test_key', $testKey)
+            ->where('user_id', Auth::id())
+            ->first();
         if ($cached) {
             return response()->json([
                 'result' => $cached->result,
@@ -55,7 +53,7 @@ public function store(Request $request)
         'projectUrl' => 'nullable|string',
     ]);
 
-    $userId = Auth::check() ? Auth::id() : null;
+    $userId = Auth::id();
 
     // ✅ Use projectUrl from AJAX
     $url = $request->projectRoute ?? '';

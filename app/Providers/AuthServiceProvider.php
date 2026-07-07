@@ -27,7 +27,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        // Keep users signed in across long idle periods (Gmail-style persistence).
-        Auth::guard('web')->setRememberDuration(525600 * 5);
+        // Long-lived, but per-user remember tokens (not shared across browsers).
+        Auth::guard('web')->setRememberDuration((int) env('REMEMBER_ME_LIFETIME', 525600));
     }
 }

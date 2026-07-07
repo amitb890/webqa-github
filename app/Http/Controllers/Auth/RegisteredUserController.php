@@ -88,7 +88,10 @@ class RegisteredUserController extends Controller
                 'subject_id' => $user->id,
             ], $request, $user);
     
+            Auth::guard('web')->logout();
+
             Auth::login($user, true);
+            $request->session()->regenerate(true);
 
             return redirect(RouteServiceProvider::USER);
         }

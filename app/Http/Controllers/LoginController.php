@@ -89,8 +89,10 @@ public function handleGoogleCallback(Request $request)
         ], request(), $user);
     }
     Auth::guard('admin')->logout();
+    Auth::guard('web')->logout();
+
     Auth::guard('web')->login($user, true);
-    $request->session()->regenerate();
+    $request->session()->regenerate(true);
 
     return redirect(RouteServiceProvider::USER);
 }

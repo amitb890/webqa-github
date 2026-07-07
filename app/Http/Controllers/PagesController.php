@@ -223,7 +223,14 @@ class PagesController extends Controller
 
 
     public function index(){
-        return view("index");
+        $response = response()->view('index');
+        $response->headers->set('Vary', 'Cookie', false);
+
+        if (Auth::check()) {
+            $response->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0, private');
+        }
+
+        return $response;
     }
 
     public function analysis($id){

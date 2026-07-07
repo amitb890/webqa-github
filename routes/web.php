@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -19,13 +20,12 @@ use Symfony\Component\HttpClient\HttpClient;
 Route::get('/login/google', [App\Http\Controllers\LoginController::class, 'redirectToGoogle']);
 Route::get('/login/google/callback', [App\Http\Controllers\LoginController::class, 'handleGoogleCallback']);
 
-Route::get('/logout', function() {
-    if (auth('web')->check()) {
-        auth('web')->logout();
-    }
+Route::get('/logout', function () {
+    Auth::guard('web')->logout();
 
-    session()->regenerateToken();
-    
+    request()->session()->invalidate();
+    request()->session()->regenerateToken();
+
     return redirect('/')->with('message', 'You have been logged out successfully.');
 })->name('logout.get');
 
@@ -141,7 +141,7 @@ Route::get('/webtests', [App\Http\Controllers\PagesController::class, 'getResult
 
 
 
-Route::prefix('api')->group(function () {
+Route::prefix('api')->middleware('auth')->group(function () {
     Route::get('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'show']);
     Route::post('/cached-test', [App\Http\Controllers\Api\CachedTestController::class, 'store']);
 });
