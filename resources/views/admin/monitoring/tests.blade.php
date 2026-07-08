@@ -58,7 +58,7 @@
                             <tr>
                                 <td>{{ optional($row['date'])->format('Y-m-d H:i') }}</td>
                                 <td>
-                                    @if($row['url'] && $row['url'] !== 'Not captured')
+                                    @if($row['url'] && \Illuminate\Support\Str::startsWith($row['url'], ['http://', 'https://']))
                                         <a href="{{ $row['url'] }}" target="_blank">{{ \Illuminate\Support\Str::limit($row['url'], 70) }}</a>
                                     @else
                                         {{ $row['url'] }}

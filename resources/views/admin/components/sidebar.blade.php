@@ -1,16 +1,16 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <a href="../../index3.html" class="brand-link">
-            <span class="brand-text font-weight-light">Admin Panel</span>
+            <a href="{{ route('admin.home') }}" class="brand-link">
+            <span class="brand-text font-weight-light">Webqa Admin</span>
             </a>
 
             <!-- Sidebar -->
             <div class="sidebar">
             <!-- Sidebar user (optional) -->
-            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
                 <div class="image">
-                    <img src="{{ asset('admin/images/avatar.png') }}" class="img-circle elevation-2" alt="User Image">
+                    <i class="fas fa-user-circle fa-2x text-white"></i>
                 </div>
                 <div class="info">
                 <a href="#" class="d-block">{{ Auth('admin')->user()->name }}</a>
@@ -30,17 +30,12 @@
 
                     <li class="nav-item">
                         <a href="{{ route('admin.tests') }}" class="nav-link {{ request()->routeIs('admin.tests*') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-vial"></i>
+                            <i class="nav-icon fas fa-exclamation-triangle"></i>
                             <p>Tests</p>
                         </a>
                     </li>
 
-                    <li class="nav-item">
-                        <a href="{{ route('admin.activity') }}" class="nav-link {{ request()->routeIs('admin.activity') ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-exclamation-triangle"></i>
-                            <p>Activity & Failures</p>
-                        </a>
-                    </li>
+                 
 
                     <li class="nav-item">
                         <a href="#" class="nav-link">

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -19,9 +19,19 @@ class LoginController extends Controller
         return view('admin.auth.login');
     }
 
-    public function store(LoginRequest $request)
+    public function store(Request $request)
     {
-        $request->adminAuthenticate();
+        $credentials = $request->validate([
+            'username' => ['required', 'string'],
+            'password' => ['required', 'string'],
+        ]);
+
+        if (! Auth::guard('admin')->attempt($credentials, $request->boolean('remember'))) {
+            throw ValidationException::withMessages([
+                'username' => __('auth.failed'),
+            ]);
+        }
+
         $request->session()->regenerate();
 
         return redirect(RouteServiceProvider::ADMIN);

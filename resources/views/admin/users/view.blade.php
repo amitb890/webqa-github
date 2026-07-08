@@ -1,277 +1,160 @@
 
 @extends('admin.layouts.app')
- 
- @section('content')
 
-    <!-- Content Header (Page header) -->
-    <section class="content-header">
-      <div class="container-fluid">
+@section('content')
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <div class="container-fluid">
         <div class="row mb-2">
-          <div class="col-sm-6">
-            <h1>Users</h1>
-          </div>
-          <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">Users</li>
-            </ol>
-          </div>
-        </div>
-      </div><!-- /.container-fluid -->
-    </section>
-
-    <!-- Main content -->
-    <section class="content">
-          <div class="row mb-2">
-              <div class="col-md-6">
-                  <form action="">
-                      <div class="input-group">
-                          <input id="search" type="search" class="form-control form-control-lg" placeholder="Search user">
-                          <div class="input-group-append">
-                              <button type="submit" class="btn btn-lg btn-default">
-                                  <i class="fa fa-search"></i>
-                              </button>
-                          </div>
-                      </div>
-                  </form>
-              </div>
-          </div>
-      <!-- Default box -->
-      <div class="card">
-        <div class="card-header">
-          <div class="row">
-            <div class="col-md-12">
-            <h3 class="card-title">Users</h3>
+            <div class="col-sm-6">
+                <h1>Users</h1>
             </div>
-          </div>
-          @include("admin.components.message")
-
-          <div class="card-tools">
-            <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-              <i class="fas fa-minus"></i>
-            </button>
-            <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-              <i class="fas fa-times"></i>
-            </button>
-          </div>
+            <div class="col-sm-6">
+                <ol class="breadcrumb float-sm-right">
+                    <li class="breadcrumb-item"><a href="{{ route('admin.home') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Users</li>
+                </ol>
+            </div>
         </div>
-        <div class="card-body p-0">
-          <table class="table table-striped Users">
-              <thead>
-                  <tr>
-                      <th style="width: 1%">
-                          #
-                      </th>
-                      <th style="width: 20%">
-                          User Name
-                      </th>
-                      <th style="width: 30%">
-                          User Email
-                      </th>
-                      <th>
-                          Login Type
-                      </th>
-                      <th style="width: 8%" class="text-center">
-                          Status
-                      </th>
-                      <th style="width: 20%">
-                      </th>
-                  </tr>
-              </thead>
-              <tbody>
-              @foreach($users as $user)
-                <tr>
-                      <td>
-                          #
-                      </td>
-                      <td>
-                          <a href="#">
-                            {{ $user->name }}
-                          </a>
-                          <br/>
-                          <small>
-                              Created {{ $user->created_at }}
-                          </small>
-                      </td>
-                      <td>
-                          <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
-                      </td>
-                      <td>
-                          Email
-                      </td>
-                      <td class="project-state">
-                          <span class="badge {{ $user->deleted_at ? 'badge-danger' : 'badge-success' }}">{{ $user->deleted_at ? "Deleted" : "Active" }}</span>
-                      </td>
-                      @if(!$user->deleted_at)
-                      <td class="project-actions text-right">
-                          <form style="display: none" action="{{ route('admin.user.destroy',$user->id ) }}" method="post" id="del-form-{{ $user->id }}">
-                                {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
-                            </form>
-                            <a class="btn btn-danger btn-sm" onclick="
-                                 if (confirm('Are You Sure to delete user {{ $user->name }}?')){
-                                     event.preventDefault();
-                                     document.getElementById('del-form-{{ $user->id }}').submit();
-                                 }else {
-                                     event.preventDefault();
-                                 }">
-                                 <i class="fas fa-trash"></i>
-                                Delete
-                            </a>
-                      </td>
-                      @else
-                      <td class="project-actions text-right">
-                          <form style="display: none" action="{{ route('admin.user.activate',$user->id ) }}" method="post" id="activate-form-{{ $user->id }}">
-                                {{ csrf_field() }}
-                                {{ method_field('PUT') }}
-                            </form>
-                            <a class="btn btn-success btn-sm" onclick="
-                                 if (confirm('Are You Sure to activate user {{ $user->name }}?')){
-                                     event.preventDefault();
-                                     document.getElementById('activate-form-{{ $user->id }}').submit();
-                                 }else {
-                                     event.preventDefault();
-                                 }">
-                                 <i class="fas fa-edit"></i>
-                                Activate
-                            </a>
-                      </td>
-                      @endif
-                  </tr>
-                  @endforeach
-              </tbody>
-          </table>
+    </div><!-- /.container-fluid -->
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <div class="container-fluid">
+        @include('admin.components.message')
+
+        @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">All accounts</h3>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-striped mb-0" style="min-height: 200px;">
+                        <thead>
+                            <tr>
+                                <th>Email address</th>
+                                <th>Signup date</th>
+                                <th style="width: 160px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($users as $user)
+                                <tr>
+                                    <td>
+                                        <a href="mailto:{{ $user->email }}">{{ $user->email }}</a>
+                                        @if($user->deleted_at)
+                                            <span class="badge badge-danger ml-1">Deleted</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ optional($user->created_at)->format('Y-m-d') }}</td>
+                                    <td>
+                                        <div class="dropdown">
+                                            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <div class="dropdown-menu dropdown-menu-right">
+                                                @if(!$user->deleted_at)
+                                                    <a class="dropdown-item" href="#"
+                                                        onclick="event.preventDefault(); document.getElementById('reset-email-{{ $user->id }}').submit();">
+                                                        Send Reset Password Email
+                                                    </a>
+                                                    <a class="dropdown-item" href="#" data-toggle="modal" data-target="#resetPasswordModal{{ $user->id }}">
+                                                        Reset Password
+                                                    </a>
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item text-success" href="#"
+                                                        onclick="event.preventDefault(); document.getElementById('launch-{{ $user->id }}').submit();">
+                                                        Launch Account
+                                                    </a>
+                                                    <a class="dropdown-item text-danger" href="#"
+                                                        onclick="if (confirm('Delete account {{ $user->email }}?')) { event.preventDefault(); document.getElementById('delete-{{ $user->id }}').submit(); } else { event.preventDefault(); }">
+                                                        Delete Account
+                                                    </a>
+                                                @else
+                                                    <a class="dropdown-item text-success" href="#"
+                                                        onclick="if (confirm('Activate account {{ $user->email }}?')) { event.preventDefault(); document.getElementById('activate-{{ $user->id }}').submit(); } else { event.preventDefault(); }">
+                                                        Activate Account
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+
+                                        <!-- Hidden action forms -->
+                                        @if(!$user->deleted_at)
+                                            <form id="reset-email-{{ $user->id }}" action="{{ route('admin.user.reset-email', $user->id) }}" method="POST" class="d-none">
+                                                @csrf
+                                            </form>
+                                            <form id="launch-{{ $user->id }}" action="{{ route('admin.user.launch', $user->id) }}" method="POST" class="d-none">
+                                                @csrf
+                                            </form>
+                                            <form id="delete-{{ $user->id }}" action="{{ route('admin.user.destroy', $user->id) }}" method="POST" class="d-none">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @else
+                                            <form id="activate-{{ $user->id }}" action="{{ route('admin.user.activate', $user->id) }}" method="POST" class="d-none">
+                                                @csrf
+                                                @method('PUT')
+                                            </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3">No accounts found.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
-        <!-- /.card-body -->
-      </div>
-      <!-- /.card -->
+    </div>
+</section>
 
-    </section>
-    <!-- /.content -->
-
-@section("js")
-
-<script>
-document.addEventListener("DOMContentLoaded", (e)=>{
-    $('#search').on('keyup', function(){
-        search();
-    });
-    search();
-
-
-
-    function search(){
-        var keyword = $('#search').val();
-        $.post('{{ route("admin.users.search") }}',
-          {
-            _token: $('meta[name="csrf-token"]').attr('content'),
-            keyword:keyword
-          },
-          function(data){
-            postDataTable(data);
-          });
-    }
-
-
-
-    // table row with ajax
-    function postDataTable(res){
-      let htmlView = '';
-      if(res.employees.length <= 0){
-          htmlView+= `
-            <tr>
-                <td colspan="6">No users found.</td>
-            </tr>`;
-      }
-      for(let i = 0; i < res.employees.length; i++){
-            if(!res.employees[i].deleted_at){
-                htmlView += `<tr>
-                      <td>
-                          #
-                      </td>
-                      <td>
-                          <a href="#">
-                            ${res.employees[i].name}
-                          </a>
-                          <br/>
-                          <small>
-                              Created ${res.employees[i].created_at}
-                          </small>
-                      </td>
-                      <td>
-                          <a href="mailto:${res.employees[i].email}">${res.employees[i].email}</a>
-                      </td>
-                      <td>
-                          Email
-                      </td>
-                      <td class="project-state">
-                          <span class="badge ${res.employees[i].deleted_at ? "badge-danger" : "badge-success"}">${res.employees[i].deleted_at ? "Deleted" : "Active"}</span>
-                      </td>
-                      <td class="project-actions text-right">
-                            <form style="display: none" action="/control/admin/users/delete/${res.employees[i].id}" method="post" id="del-form-${res.employees[i].id}">
-                            {{ csrf_field() }}
-                                {{ method_field('DELETE') }}
-                            </form>
-                            <a class="btn btn-danger btn-sm" onclick="
-                                 if (confirm('Are You Sure to delete user ${res.employees[i].name}?')){
-                                     event.preventDefault();
-                                     document.getElementById('del-form-${res.employees[i].id}').submit();
-                                 }else {
-                                     event.preventDefault();
-                                 }">
-                                 <i class="fas fa-trash"></i>
-                                Delete
-                            </a>
-                      </td>
-                    </tr>`;
-            }else{
-                htmlView += `<tr>
-                      <td>
-                          #
-                      </td>
-                      <td>
-                          <a href="#">
-                            ${res.employees[i].name}
-                          </a>
-                          <br/>
-                          <small>
-                              Created ${res.employees[i].created_at}
-                          </small>
-                      </td>
-                      <td>
-                          <a href="mailto:${res.employees[i].email}">${res.employees[i].email}</a>
-                      </td>
-                      <td>
-                          Email
-                      </td>
-                      <td class="project-state">
-                          <span class="badge ${res.employees[i].deleted_at ? "badge-danger" : "badge-success"}">${res.employees[i].deleted_at ? "Deleted" : "Active"}</span>
-                      </td>
-                      <td class="project-actions text-right">
-                            <form style="display: none" action="/control/admin/users/activate/${res.employees[i].id}" method="post" id="activate-form-${res.employees[i].id}">
-                            {{ csrf_field() }}
-                                {{ method_field('PUT') }}
-                            </form>
-                            <a class="btn btn-success btn-sm" onclick="
-                                 if (confirm('Are You Sure to delete user ${res.employees[i].name}?')){
-                                     event.preventDefault();
-                                     document.getElementById('activate-form-${res.employees[i].id}').submit();
-                                 }else {
-                                     event.preventDefault();
-                                 }">
-                                 <i class="fas fa-edit"></i>
-                                Activate
-                            </a>
-                      </td>
-                    </tr>`;
-            }
-        }
-        $('tbody').html(htmlView);
-    }
-})
-</script>
-
-
-@endsection
-
+<!-- Reset password modals -->
+@foreach($users as $user)
+    @if(!$user->deleted_at)
+        <div class="modal fade" id="resetPasswordModal{{ $user->id }}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <form action="{{ route('admin.user.reset-password', $user->id) }}" method="POST">
+                        @csrf
+                        <div class="modal-header">
+                            <h5 class="modal-title">Reset password &mdash; {{ $user->email }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="password-{{ $user->id }}">New password</label>
+                                <input type="password" name="password" id="password-{{ $user->id }}" class="form-control" placeholder="At least 8 characters" required>
+                            </div>
+                            <div class="form-group mb-0">
+                                <label for="password-confirm-{{ $user->id }}">Confirm password</label>
+                                <input type="password" name="password_confirmation" id="password-confirm-{{ $user->id }}" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update password</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endif
+@endforeach
 @endsection

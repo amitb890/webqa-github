@@ -5,7 +5,7 @@
   <!-- /.login-logo -->
   <div class="card card-outline card-primary">
     <div class="card-header text-center">
-      <a href="../../index2.html" class="h1"><b>Admin</b>LTE</a>
+      <a href="{{ route('admin.login') }}" class="h1"><b>Webqa</b> Admin</a>
     </div>
     <div class="card-body">
       <p class="login-box-msg">Sign in to start your session</p>
@@ -15,15 +15,15 @@
 
         <div class="mb-3">
             <div class="input-group">
-            <input type="email" id="email" name="email" class="form-control {{ $errors->has('email') ? 'invalid' : ''  }}" placeholder="Email" value="{{ old('email') }}">
+            <input type="text" id="username" name="username" class="form-control {{ $errors->has('username') ? 'invalid' : ''  }}" placeholder="Username" value="{{ old('username') }}">
             <div class="input-group-append">
                 <div class="input-group-text">
-                <span class="fas fa-envelope"></span>
+                <span class="fas fa-user"></span>
                 </div>
             </div>
             </div>
-            @if ($errors->has('email'))
-                <span class="feedback">{{ $errors->first('email') }}</span>   
+            @if ($errors->has('username'))
+                <span class="feedback">{{ $errors->first('username') }}</span>   
             @endif
         </div>
         <div class="mb-3">

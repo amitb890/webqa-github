@@ -17,8 +17,9 @@ class AdminSeeder extends Seeder
     {
         $admins = [
             [
-            'name' => 'Admin',
-            'email' => 'superadmin@gmail.com',
+            'name' => 'Webqa',
+            'username' => 'webqa',
+            'email' => 'webqa@webqa.co',
             'password' => '12345678',
             ],
         ];
@@ -26,9 +27,10 @@ class AdminSeeder extends Seeder
         foreach($admins as $admin)
         {
             Admin::updateOrCreate([
-                'email' => $admin['email'],
+                'username' => $admin['username'],
             ], [
                 'name' => $admin['name'],
+                'email' => $admin['email'],
                 'password' => Hash::make($admin['password'])
             ]);
         }

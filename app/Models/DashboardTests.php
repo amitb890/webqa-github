@@ -13,6 +13,6 @@ class DashboardTests extends Model
 
     public function dashboardTestsDetails()
     {
-        return $this->hasMany(DashboardTestsDetails::class);
+        return $this->hasMany(DashboardTestsDetails::class, 'dashboard_test_id');
     }
 }

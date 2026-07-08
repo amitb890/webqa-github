@@ -28,7 +28,7 @@ $( document ).ready(function() {
             data: dataVal,     
             url: `/${request}`,  
             success : function(data) {
-                window.location = "/dashboard"
+                window.location = (data && data.redirect) ? data.redirect : "/dashboard"
             },
             error: function(data){
                 const errors = data.responseJSON && data.responseJSON.errors

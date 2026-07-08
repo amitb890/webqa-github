@@ -44,6 +44,13 @@ class RegisteredUserController extends Controller
             ], $request);
 
             $successMessage = "Looks like you had deleted your account sometime back. Please reach out to <a href='mailto:support@webqa.co'>support@webqa.co</a> to re-instate your account.";
+
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json([
+                    'errors' => ['email' => [$successMessage]],
+                ], 422);
+            }
+
             session()->flash('alert-class', 'alert-danger alert-danger-custom');
             session()->flash('message', $successMessage);
             return redirect()->back();
@@ -60,6 +67,10 @@ class RegisteredUserController extends Controller
                     'source' => 'Registration form',
                     'errors' => $validator->errors()->toArray(),
                 ], $request);
+
+                if ($request->ajax() || $request->expectsJson()) {
+                    return response()->json(['errors' => $validator->errors()], 422);
+                }
 
                 return redirect()->back()->withErrors($validator)->withInput();
             }
@@ -92,6 +103,18 @@ class RegisteredUserController extends Controller
 
             Auth::login($user, true);
             $request->session()->regenerate(true);
+
+            // Keep AuthenticateSession in sync after switching users, otherwise
+            // a stale password hash from a previous session would immediately
+            // log the newly registered user out on the next request.
+            $request->session()->put(
+                'password_hash_'.Auth::getDefaultDriver(),
+                $user->getAuthPassword()
+            );
+
+            if ($request->ajax() || $request->expectsJson()) {
+                return response()->json(['redirect' => RouteServiceProvider::USER]);
+            }
 
             return redirect(RouteServiceProvider::USER);
         }

@@ -297,28 +297,16 @@ Route::namespace("Test")->prefix('test')->group(function(){
 
 
 
-// admin
-Route::namespace("Admin")->prefix('control')->group(function(){
-    Route::namespace('Auth')->prefix('admin')->group(function(){
-        Route::get('/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'create'])->middleware('guest:admin')->name('admin.login');
-        Route::post('/login', [App\Http\Controllers\Admin\Auth\LoginController::class, 'store'])->middleware('guest:admin')->name('admin.store');
-        Route::post('logout', [App\Http\Controllers\Admin\Auth\LoginController::class, 'destroy'])->name('admin.logout');
-    });
+// Signed hand-off used by the admin "Launch Account" action. It runs in the
+// user (web) session so impersonation logs into the user dashboard session,
+// not the isolated admin session. The signature makes it safe to expose.
+Route::get('/impersonate/{user}', [App\Http\Controllers\Admin\Users\UsersController::class, 'impersonate'])
+    ->name('impersonate')
+    ->middleware('signed');
 
-    Route::middleware('admin')->group(function () {
-        Route::get('/admin', [App\Http\Controllers\Admin\HomeController::class, 'index'])->name('admin.home');
-        Route::get('/admin/tests', [App\Http\Controllers\Admin\MonitoringController::class, 'tests'])->name('admin.tests');
-        Route::get('/admin/tests/{source}/{id}/error', [App\Http\Controllers\Admin\MonitoringController::class, 'error'])->name('admin.tests.error');
-        Route::get('/admin/activity', [App\Http\Controllers\Admin\MonitoringController::class, 'activity'])->name('admin.activity');
-
-        Route::namespace("Users")->prefix('admin/users')->group(function(){
-            Route::get('/', [App\Http\Controllers\Admin\Users\UsersController::class, 'view'])->name('admin.users.view');
-            Route::post('/search', [App\Http\Controllers\Admin\Users\UsersController::class, 'search'])->name('admin.users.search');
-            Route::delete('/delete/{id}', [App\Http\Controllers\Admin\Users\UsersController::class, 'delete'])->name('admin.user.destroy');
-            Route::put('/activate/{id}', [App\Http\Controllers\Admin\Users\UsersController::class, 'activate'])->name('admin.user.activate');
-        });
-    });
-});
+// admin panel routes live in routes/admin.php (registered with the isolated
+// "web_admin" middleware group in RouteServiceProvider so admin auth has its
+// own session, separate from the public/user web session).
 
 
 Route::get('/services', function () {

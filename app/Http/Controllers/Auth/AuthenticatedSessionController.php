@@ -43,6 +43,13 @@ class AuthenticatedSessionController extends Controller
 
             $request->session()->regenerate(true);
 
+            // Keep AuthenticateSession in sync after switching users so a stale
+            // password hash can't immediately log the user back out.
+            $request->session()->put(
+                'password_hash_'.Auth::getDefaultDriver(),
+                Auth::user()->getAuthPassword()
+            );
+
             return redirect()->intended(RouteServiceProvider::USER);
         }
     }

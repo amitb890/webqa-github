@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CachedTest;
+use App\Models\DashboardTests;
 use App\Models\DashboardTestsDetails;
 use App\Models\LighthouseResult;
 use App\Models\TestResults;
@@ -127,26 +128,45 @@ class MonitoringController extends Controller
 
     protected function dashboardTestRows(?string $date): Collection
     {
-        $query = DashboardTestsDetails::with('dashboardTest')->latest();
+        // A dashboard test / full re-check is a single action, even though it
+        // stores one detail row per URL. Group by the parent run so the admin
+        // panel shows one row per action instead of one row per URL.
+        $query = DashboardTests::with('dashboardTestsDetails')->latest();
         if ($date) {
             $query->whereDate('created_at', $date);
         }
 
-        return $query->limit(300)->get()->map(function (DashboardTestsDetails $detail) {
-            $runStatus = optional($detail->dashboardTest)->status;
-            $failed = $detail->status === 'failed' || (bool) $detail->error_message;
+        return $query->limit(200)->get()->map(function (DashboardTests $run) {
+            $details = $run->dashboardTestsDetails;
+            $urlCount = $details->count();
+
+            $failedCount = $details->filter(function (DashboardTestsDetails $detail) {
+                return $detail->status === 'failed' || (bool) $detail->error_message;
+            })->count();
+
+            $pendingCount = $details->filter(function (DashboardTestsDetails $detail) {
+                return ! in_array($detail->status, ['completed', 'failed'], true);
+            })->count();
+
+            if ($failedCount > 0) {
+                $result = 'failed';
+            } elseif ($pendingCount > 0 || $run->status !== 'completed') {
+                $result = 'pending';
+            } else {
+                $result = 'success';
+            }
+
+            $isRecheck = in_array($run->status, ['recheck', 'recheck-single'], true);
 
             return [
-                'date' => $detail->created_at,
-                'url' => $detail->url,
-                'type' => in_array($runStatus, ['recheck', 'recheck-single'], true)
-                    ? 'Webapp Analysis - Full Re-check'
-                    : 'Webapp Analysis',
+                'date' => $run->created_at,
+                'url' => $urlCount === 1 ? (optional($details->first())->url ?: 'Not captured') : ($urlCount . ' URLs'),
+                'type' => $isRecheck ? 'Full Website Re-check' : 'Dashboard Test',
                 'source' => 'Dashboard / Website Tracker',
-                'result' => $failed ? 'failed' : ($detail->status === 'completed' ? 'success' : 'pending'),
+                'result' => $result,
                 'cached_url' => null,
-                'error_url' => $failed ? route('admin.tests.error', ['source' => 'dashboard-detail', 'id' => $detail->id]) : null,
-                'error_preview' => $detail->error_message,
+                'error_url' => $failedCount > 0 ? route('admin.tests.error', ['source' => 'dashboard-run', 'id' => $run->id]) : null,
+                'error_preview' => $failedCount > 0 ? ($failedCount . ' of ' . $urlCount . ' URL checks failed in this run.') : null,
             ];
         });
     }
@@ -189,6 +209,30 @@ class MonitoringController extends Controller
         if ($source === 'test-result') {
             $record = TestResults::find($id);
             return $record ? $this->payload('Website Test Error', $record->url, $this->decode($record->data), $record->created_at) : null;
+        }
+
+        if ($source === 'dashboard-run') {
+            $run = DashboardTests::with('dashboardTestsDetails')->find($id);
+            if (! $run) {
+                return null;
+            }
+
+            $failed = $run->dashboardTestsDetails
+                ->filter(function (DashboardTestsDetails $detail) {
+                    return $detail->status === 'failed' || (bool) $detail->error_message;
+                })
+                ->map(function (DashboardTestsDetails $detail) {
+                    return [
+                        'url' => $detail->url,
+                        'status' => $detail->status,
+                        'error_message' => $detail->error_message,
+                    ];
+                })->values()->all();
+
+            return $this->payload('Full Website Re-check Errors', $run->status, [
+                'run_status' => $run->status,
+                'failed_checks' => $failed,
+            ], $run->created_at);
         }
 
         if ($source === 'dashboard-detail') {

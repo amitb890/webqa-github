@@ -40,6 +40,19 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\PreventAuthenticatedResponseCache::class,
         ],
 
+        // Same as "web" but without AuthenticateSession, so user-session
+        // password-hash checks never touch admin auth. The isolated admin
+        // session cookie name is set in AppServiceProvider::register().
+        'web_admin' => [
+            \App\Http\Middleware\EncryptCookies::class,
+            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+            \Illuminate\Session\Middleware\StartSession::class,
+            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+            \App\Http\Middleware\VerifyCsrfToken::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \App\Http\Middleware\PreventAuthenticatedResponseCache::class,
+        ],
+
         'api' => [
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
