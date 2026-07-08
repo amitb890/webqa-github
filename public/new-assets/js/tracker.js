@@ -244,11 +244,65 @@ $(document).ready(function () {
       return ""
     }
     const { DateTime } = luxon
-    const dateTime = DateTime.fromSeconds(parseInt(testedAt, 10))
-    if (!dateTime.isValid) {
-      return ""
+    let dateTime = null
+
+    if (typeof testedAt === "number" || /^\d+$/.test(String(testedAt).trim())) {
+      const numericTime = Number(testedAt)
+      dateTime = String(Math.trunc(numericTime)).length >= 13
+        ? DateTime.fromMillis(numericTime)
+        : DateTime.fromSeconds(numericTime)
+    } else if (typeof testedAt === "string") {
+      dateTime = DateTime.fromSQL(testedAt)
+      if (!dateTime.isValid) {
+        dateTime = DateTime.fromISO(testedAt)
+      }
     }
+
+    if (!dateTime || !dateTime.isValid) return ""
     return dateTime.toFormat("MMMM d, yyyy - h:mm a")
+  }
+
+  function getGoogleResultTestedAt(result) {
+    if (!result || typeof result !== "object") return null
+
+    const directCandidates = [
+      result.tested_at,
+      result.created_at,
+      result.updated_at,
+      result.checked_at,
+      result.completed_at,
+      result.desktop && result.desktop.tested_at,
+      result.desktop && result.desktop.created_at,
+      result.desktop && result.desktop.updated_at,
+      result.desktop && result.desktop.checked_at,
+      result.desktop && result.desktop.completed_at,
+      result.mobile && result.mobile.tested_at,
+      result.mobile && result.mobile.created_at,
+      result.mobile && result.mobile.updated_at,
+      result.mobile && result.mobile.checked_at,
+      result.mobile && result.mobile.completed_at,
+    ]
+
+    const directMatch = directCandidates.find((value) => value != null && value !== "")
+    if (directMatch != null && directMatch !== "") return directMatch
+
+    const { desktopData, mobileData } = lighthousePayloadsFromResult(result)
+    const payloadCandidates = [
+      desktopData && desktopData.tested_at,
+      mobileData && mobileData.tested_at,
+      desktopData && desktopData.created_at,
+      mobileData && mobileData.created_at,
+      desktopData && desktopData.updated_at,
+      mobileData && mobileData.updated_at,
+      desktopData && desktopData.checked_at,
+      mobileData && mobileData.checked_at,
+      desktopData && desktopData.timestamp,
+      mobileData && mobileData.timestamp,
+    ]
+    const payloadMatch = payloadCandidates.find((value) => value != null && value !== "")
+    if (payloadMatch != null && payloadMatch !== "") return payloadMatch
+
+    return null
   }
 
   /** True when a tracker cell has real test output (not a cache placeholder with only tested_url). */
@@ -1089,6 +1143,40 @@ $(document).ready(function () {
         UI.buildRowsTable(totalUrls, selectedValue)
       }
 
+      static sanitizeIdPart(value) {
+        if (value == null) return "heading"
+        return String(value)
+          .trim()
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "_")
+          .replace(/^_+|_+$/g, "") || "heading"
+      }
+
+      static setUniqueElementId(element, baseId) {
+        if (!element || !baseId) return
+        const normalizedBaseId = UI.sanitizeIdPart(baseId)
+        let uniqueId = normalizedBaseId
+        let index = 1
+        while (document.getElementById(uniqueId) && document.getElementById(uniqueId) !== element) {
+          uniqueId = `${normalizedBaseId}_${index}`
+          index += 1
+        }
+        element.id = uniqueId
+      }
+
+      static assignHeaderCellIds(rowElement, type) {
+        if (!rowElement) return
+        const rowKey = UI.sanitizeIdPart(type || "headings")
+        const cells = rowElement.querySelectorAll("th")
+        cells.forEach((cell, index) => {
+          if (cell.id) return
+          const text = UI.sanitizeIdPart(cell.textContent)
+          const dataName = UI.sanitizeIdPart(cell.getAttribute("data-name"))
+          const columnKey = dataName !== "heading" ? dataName : text
+          UI.setUniqueElementId(cell, `${rowKey}_${columnKey}_${index + 1}`)
+        })
+      }
+
       static initTable(length){
        
           const tdExtra = document.createElement("td")
@@ -1099,6 +1187,7 @@ $(document).ready(function () {
 
           let tr = document.createElement("tr")
           tr.classList.add("th-bg")
+          UI.setUniqueElementId(tr, "headings")
           tr.innerHTML = `
                   <th scope="col">
                       <div class="t-search-url">
@@ -1135,6 +1224,7 @@ $(document).ready(function () {
                     </th>
                     <th scope="col">${page && page.includes("reports") && page[1] === "images" ? "Date Added" : "Last Checked"}</th>
           `
+          UI.assignHeaderCellIds(tr, "headings")
 
 
           let td = document.createElement("tr")
@@ -1229,6 +1319,7 @@ $(document).ready(function () {
             const td = document.createElement("td")
             td.setAttribute("data-consists", type)
             td.setAttribute("scope", "col")
+            UI.setUniqueElementId(td, labelDbName || type)
             td.innerHTML = `${displayName}
             <span class="total-hidden d-none"></span>
             <a class="dropdown-toggle dropdown-toggle-tracker p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -1645,7 +1736,7 @@ $(document).ready(function () {
 
               }
 
-     
+          UI.assignHeaderCellIds(tr, type)
           document.querySelector(".reports-table-header").appendChild(tr)
 
 
@@ -1719,7 +1810,9 @@ $(document).ready(function () {
         if(result){
           result = normalizeTrackerResult(type, result)
           if(ignore_tests.includes(type)){
-            time = "2025-03-28 08:08:23"
+            const googleTestedAt = getGoogleResultTestedAt(result)
+            const formattedGoogleTime = formatLastCheckedTime(googleTestedAt)
+            time = formattedGoogleTime || (googleTestedAt != null ? String(googleTestedAt) : "")
           }else if(result.tested_at){
             time = formatLastCheckedTime(result.tested_at)
           }else{
@@ -2612,6 +2705,47 @@ $(document).ready(function () {
         }
       }
 
+      static enforceLastCheckedColumnWidth() {
+        const fixedWidth = "150px"
+        const tables = document.querySelectorAll("#reportTable, #reportTableClone, #reportTable_wrapper table")
+
+        tables.forEach((table) => {
+          table.style.setProperty("table-layout", "fixed", "important")
+          table.style.setProperty("width", "100%", "important")
+        })
+
+        const targets = document.querySelectorAll(
+          "#reportTable thead tr th:nth-child(2), #reportTable tbody tr td:nth-child(2), #reportTable colgroup col:nth-child(2), #reportTable_wrapper table thead tr th:nth-child(2), #reportTable_wrapper table tbody tr td:nth-child(2), #reportTable_wrapper table colgroup col:nth-child(2)"
+        )
+
+        targets.forEach((element) => {
+          element.style.setProperty("width", fixedWidth, "important")
+          element.style.setProperty("min-width", fixedWidth, "important")
+          element.style.setProperty("max-width", fixedWidth, "important")
+        })
+
+        const textCells = document.querySelectorAll("#reportTable thead tr th:nth-child(2), #reportTable tbody tr td:nth-child(2), #reportTable_wrapper table thead tr th:nth-child(2), #reportTable_wrapper table tbody tr td:nth-child(2)")
+        textCells.forEach((cell) => {
+          cell.style.setProperty("white-space", "normal", "important")
+          cell.style.setProperty("word-break", "break-word", "important")
+          cell.style.setProperty("overflow", "hidden", "important")
+          cell.style.setProperty("text-overflow", "ellipsis", "important")
+        })
+      }
+
+      static shouldForceLastCheckedWidth() {
+        const reportSlug = ($("#report-slug").val() || "").toString().trim()
+        const currentPath = Array.isArray(page) ? page.join("/") : ""
+        const allowedReportSlugs = new Set(["headings", "google-page-speed-insights"])
+
+        if (allowedReportSlugs.has(reportSlug)) {
+          return true
+        }
+
+        // Fallback to route check when report slug input is absent.
+        return currentPath === "reports/headings" || currentPath === "reports/google-page-speed-insights"
+      }
+
       static initDataTable(pageLength = 11){
           const $reportTable = $("#reportTable")
           if ($reportTable.length && $.fn.DataTable && $.fn.DataTable.isDataTable($reportTable[0])) {
@@ -2623,33 +2757,14 @@ $(document).ready(function () {
           }
 
           const styles = {
-            colResize: {
-              isEnabled: () => $(window).width() > 768,
-              hoverClass: "dt-colresizable-hover",
-              hasBoundCheck: true,
-              minBoundClass: "dt-colresizable-bound-min",
-              maxBoundClass: "dt-colresizable-bound-max",
-              saveState: true,
-              isResizable: function (column) {
-                return column.idx !== 0;
-              },
-              onResize: function (column) {
-              },
-              onResizeEnd: function (column, columns) {
-            
-              },
-              stateSaveCallback: function (settings, data) {
-                let stateStorageName = window.location.pathname + "/colResizeStateData";
-                localStorage.setItem(stateStorageName, JSON.stringify(data));
-              },
-              stateLoadCallback: function (settings) {
-                let stateStorageName = window.location.pathname + "/colResizeStateData",
-                  data = localStorage.getItem(stateStorageName);
-                return data != null ? JSON.parse(data) : null;
-              },
-            },
             pageLength: pageLength,
             autoWidth: false,
+            columnDefs: [
+              {
+                targets: 1,
+                width: "150px"
+              }
+            ],
             colReorder: true,
             colReorder: {
               columns: ':gt(2)'
@@ -2679,8 +2794,15 @@ $(document).ready(function () {
           $('#reportTableClone')[0].innerHTML = $('#reportTable').clone()[0].innerHTML;
           UI.updateCloneTable()
           let table = new DataTable("#reportTable", styles);
+          const shouldForceLastCheckedWidth = Controls.shouldForceLastCheckedWidth()
+          if (shouldForceLastCheckedWidth) {
+            Controls.enforceLastCheckedColumnWidth()
+          }
           Controls.updateSelectedRecheckCount()
           table.on("draw", function () {
+            if (shouldForceLastCheckedWidth) {
+              Controls.enforceLastCheckedColumnWidth()
+            }
             Controls.updateSelectedRecheckCount()
           })
 

@@ -13835,6 +13835,23 @@ nav .nav-tabs{
     text-decoration: none;
 }
 
+/* Keep previous-tests pages free of horizontal scrolling on site + web app. */
+.previous-test .table-responsive,
+.previous-test .dataTables_wrapper .col-sm-12 {
+    overflow-x: hidden !important;
+}
+
+.previous-test .analysis-table-image table {
+    width: 100% !important;
+    table-layout: fixed;
+}
+
+.previous-test .analysis-table-image th,
+.previous-test .analysis-table-image td {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
 .phone-frame { 
   position: relative;
   width: 300px; 
@@ -18693,6 +18710,12 @@ table.dataTable thead th[data-is-resizable="true"] {
 .custom-tooltip-imran:hover::before {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
+}
+
+/* Analysis images table uses JS body tooltip to avoid overflow clipping. */
+.analysis-table-image td.custom-tooltip-imran::after,
+.analysis-table-image td.custom-tooltip-imran::before {
+    display: none !important;
 }
 
 

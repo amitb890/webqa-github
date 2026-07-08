@@ -16,15 +16,29 @@ class CachedTestController extends Controller
         if (!$testKey) {
             return response()->json(['error' => 'test_key required'], 400);
         }
-        $query = CachedTest::where('test_key', $testKey);
+        $cached = null;
 
         if (Auth::check()) {
-            $query->where('user_id', Auth::id());
+            // Prefer current user's cache, but allow public cache fallback for
+            // public report URLs opened while authenticated.
+            $cached = CachedTest::where('test_key', $testKey)
+                ->where('user_id', Auth::id())
+                ->latest('id')
+                ->first();
+
+            if (!$cached) {
+                $cached = CachedTest::where('test_key', $testKey)
+                    ->whereNull('user_id')
+                    ->latest('id')
+                    ->first();
+            }
         } else {
-            $query->whereNull('user_id');
+            $cached = CachedTest::where('test_key', $testKey)
+                ->whereNull('user_id')
+                ->latest('id')
+                ->first();
         }
 
-        $cached = $query->first();
         if ($cached) {
             return response()->json([
                 'result' => $cached->result,

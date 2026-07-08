@@ -1578,30 +1578,54 @@ $( document ).ready(function() {
   // main test logic
   const ref_id = $("#test_id").val()
   const testKey = ref_id;
-  Controls.fetchCachedTestResult(testKey).then(data => {
-    if (data.result) {
-      const labels = JSON.parse(data.test_labels)
-      projectUrl = data.projectUrl; // restore projectUrl
-    
-      labels.forEach(label => {
-        const result = data.result[label.name]
-        Controls.buildTest(result, label, labels, true)
-        
-        // If this is a broken links test, store the data globally for ignore functionality
-        if (label.name === 'broken_links' && result.allLinks) {
-          window.currentAnalysisData = {
-            allLinks: result.allLinks,
-            totalBrokenLinks: result.totalBrokenLinks || 0
-          };
-        }
-      })
-      endTest(JSON.parse(data.test_labels));
-      removeLoader();
-    } else {
-      // No cache, run test as usual
-      runTestAndCache(testKey);
+
+  const parseJsonSafely = (value) => {
+    if (value === null || value === undefined) return null
+    if (typeof value === "object") return value
+    if (typeof value !== "string") return null
+    try {
+      return JSON.parse(value)
+    } catch (e) {
+      return null
     }
-  });
+  }
+
+  Controls.fetchCachedTestResult(testKey)
+    .then(data => {
+      const labels = parseJsonSafely(data?.test_labels)
+      const cachedResultMap = data && typeof data.result === "object" ? data.result : null
+
+      if (cachedResultMap && Array.isArray(labels) && labels.length > 0) {
+        projectUrl = data.projectUrl || projectUrl // restore projectUrl
+
+        labels.forEach(label => {
+          const result = cachedResultMap[label.name]
+          if (!result) {
+            return
+          }
+
+          Controls.buildTest(result, label, labels, true)
+
+          // Keep broken links cache available for ignore actions.
+          if (label.name === "broken_links" && result.allLinks) {
+            window.currentAnalysisData = {
+              allLinks: result.allLinks,
+              totalBrokenLinks: result.totalBrokenLinks || 0,
+            }
+          }
+        })
+
+        endTest(labels)
+        removeLoader()
+      } else {
+        // No usable cache, run test as usual.
+        runTestAndCache(testKey)
+      }
+    })
+    .catch(() => {
+      // If cache lookup fails, continue with normal test flow.
+      runTestAndCache(testKey)
+    })
 
   // end of main test logic
 
@@ -5668,3 +5692,70 @@ function initializeCustomDataTable(datatableClass) {
       updatePaginationInfo();
   });
 }
+
+function initFloatingCustomTooltips() {
+  let activeTooltip = null;
+  let activeCell = null;
+
+  const removeTooltip = () => {
+    if (activeTooltip) {
+      activeTooltip.remove();
+      activeTooltip = null;
+    }
+    activeCell = null;
+  };
+
+  const positionTooltip = (cell, tooltip) => {
+    const rect = cell.getBoundingClientRect();
+    const top = rect.top + window.scrollY - tooltip.offsetHeight - 8;
+    const left = rect.left + window.scrollX + (rect.width / 2) - (tooltip.offsetWidth / 2);
+    tooltip.style.top = `${Math.max(8, top)}px`;
+    tooltip.style.left = `${Math.max(8, left)}px`;
+  };
+
+  document.addEventListener("mouseover", function (event) {
+    const cell = event.target.closest(".analysis-table-image td.custom-tooltip-imran");
+    if (!cell) return;
+    if (activeCell === cell && activeTooltip) return;
+
+    removeTooltip();
+
+    const text = (cell.getAttribute("data-tooltip") || cell.textContent || "").trim();
+    if (!text) return;
+
+    // Show tooltip only when content is truncated.
+    const isTruncated = cell.scrollWidth > cell.clientWidth;
+    if (!isTruncated) return;
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "tooltip-text show-tooltip";
+    tooltip.textContent = text;
+    tooltip.style.position = "absolute";
+    tooltip.style.zIndex = "2147483647";
+    tooltip.style.pointerEvents = "none";
+    document.body.appendChild(tooltip);
+    positionTooltip(cell, tooltip);
+
+    activeTooltip = tooltip;
+    activeCell = cell;
+  });
+
+  document.addEventListener("mouseout", function (event) {
+    const fromCell = event.target.closest(".analysis-table-image td.custom-tooltip-imran");
+    if (!fromCell) return;
+    const toCell = event.relatedTarget && event.relatedTarget.closest
+      ? event.relatedTarget.closest(".analysis-table-image td.custom-tooltip-imran")
+      : null;
+    if (toCell === fromCell) return;
+    removeTooltip();
+  });
+
+  window.addEventListener("scroll", function () {
+    if (!activeTooltip || !activeCell) return;
+    positionTooltip(activeCell, activeTooltip);
+  }, true);
+
+  window.addEventListener("resize", removeTooltip);
+}
+
+initFloatingCustomTooltips();
