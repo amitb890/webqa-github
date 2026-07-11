@@ -46,8 +46,8 @@ class TestController extends Controller
             }
             $failedUrls = [];
             $failedStatus = [404,'404'];
-            // Session::forget('google_page_speed_desktop');
-            // Session::forget('google_page_speed_mobile');
+            Session::forget('google_page_speed_desktop');
+            Session::forget('google_page_speed_mobile');
             Session::forget('project');
             Session::forget('settings');
 
