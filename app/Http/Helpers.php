@@ -597,6 +597,159 @@ class Helpers{
         return "table,frameset,title,meta,link[rel='canonical'],link[rel='icon'],a,img,svg,link[rel='stylesheet'],script";
     }
 
+    /**
+     * Browser-like request headers for page fetches (helps with some bot filters).
+     */
+    function browserRequestHeaders(): array
+    {
+        return [
+            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language' => 'en-US,en;q=0.9',
+            'Cache-Control' => 'no-cache',
+            'Upgrade-Insecure-Requests' => '1',
+        ];
+    }
+
+    /**
+     * Resolve the logical name for a crawled meta/link element.
+     * Open Graph tags use property="og:..." instead of name="...".
+     */
+    function resolveMetaElementName($node): ?string
+    {
+        $tagName = strtolower($node->getNode(0)->tagName ?? '');
+
+        if ($tagName === 'meta') {
+            $name = $node->attr('name');
+            if ($name === null || $name === '') {
+                $name = $node->attr('property');
+            }
+            if ($name === null || $name === '') {
+                $name = $node->attr('itemprop');
+            }
+            return ($name !== null && $name !== '') ? trim($name) : null;
+        }
+
+        return $tagName !== '' ? $tagName : null;
+    }
+
+    /**
+     * Resolve content for a crawled page element.
+     */
+    function resolveMetaElementContent($node, ?string $name): mixed
+    {
+        if ($name === 'link') {
+            return $node->extract(['href'])[0] ?? null;
+        }
+        if ($name === 'a') {
+            return $node->extract(['href'])[0] ?? null;
+        }
+        if ($name === 'img') {
+            return $this->extractImgElementContent($node);
+        }
+        if ($name === 'svg') {
+            return $this->extractSvgElementContent($node);
+        }
+        if ($name === 'script') {
+            return $node->extract(['src'])[0] ?? null;
+        }
+        if ($name === 'table') {
+            return $node->html();
+        }
+
+        $content = $node->attr('content');
+        if ($content === null || $content === '') {
+            $content = $node->getNode(0)->textContent ?? '';
+        }
+
+        return is_string($content) ? html_entity_decode(trim($content), ENT_QUOTES | ENT_HTML5) : $content;
+    }
+
+    /**
+     * Extract page meta/structural elements from a Goutte crawler instance.
+     */
+    function extractPageMetaFromCrawler($crawler): array
+    {
+        return $crawler->filter($this->pageMetaElementFilter())->each(function ($node) {
+            $name = $this->resolveMetaElementName($node);
+
+            if ($name === 'link') {
+                $name = $node->extract(['rel'])[0] ?? 'link';
+            }
+
+            $content = $this->resolveMetaElementContent($node, $name);
+
+            return [
+                'name' => $name,
+                'content' => $content,
+            ];
+        });
+    }
+
+    function isCloudflareChallengePage(string $html): bool
+    {
+        if ($html === '') {
+            return false;
+        }
+
+        return stripos($html, 'Just a moment') !== false
+            || stripos($html, 'cdn-cgi/challenge-platform') !== false
+            || stripos($html, 'Enable JavaScript and cookies to continue') !== false;
+    }
+
+    /**
+     * Regex fallback: scan raw HTML for meta tags using name OR property.
+     */
+    function extractMetaTagsFromHtml(string $html): array
+    {
+        $tags = [];
+
+        if ($html === '') {
+            return $tags;
+        }
+
+        if (!preg_match_all('/<meta\b[^>]*>/i', $html, $matches)) {
+            return $tags;
+        }
+
+        foreach ($matches[0] as $tag) {
+            $key = null;
+            $content = null;
+
+            if (preg_match('/\b(?:property|name|itemprop)\s*=\s*["\']([^"\']+)["\']/i', $tag, $m)) {
+                $key = trim(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5));
+            }
+            if (preg_match('/\bcontent\s*=\s*["\']([^"\']*)["\']/i', $tag, $m)) {
+                $content = html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5);
+            }
+
+            if ($key !== null && $key !== '' && $content !== null) {
+                $tags[$key] = $content;
+            }
+        }
+
+        return $tags;
+    }
+
+    /**
+     * Fill empty known meta keys from a raw-HTML regex scan.
+     */
+    function mergeMetaTagsFromHtml(array $obj, string $html): array
+    {
+        $htmlTags = $this->extractMetaTagsFromHtml($html);
+
+        foreach ($htmlTags as $name => $content) {
+            if (!isset($obj[$name])) {
+                continue;
+            }
+            if (($obj[$name] === '' || $obj[$name] === null) && $content !== '') {
+                $obj[$name] = $content;
+            }
+        }
+
+        return $obj;
+    }
+
     function extractImgElementContent($node): array
     {
         $src = $node->attr('src') ?? '';
@@ -1329,7 +1482,7 @@ private function checkUserAgent($urlArray, $url, $type, $secondaryBlockedUserAge
         
     }
 
-    function getTest($meta){
+    function getTest($meta, $html = null){
         $obj = [
             "frameset" => "",
             "title" => "",
@@ -1356,8 +1509,12 @@ private function checkUserAgent($urlArray, $url, $type, $secondaryBlockedUserAge
             "table" => [],
         ];
         foreach ($meta as $key => $value) {
-            $name = $value["name"];
-            $content = $value["content"];
+            $name = $value["name"] ?? null;
+            $content = $value["content"] ?? null;
+
+            if($name === null || $name === ""){
+                continue;
+            }
 
             if($name === "a"){
                 array_push($obj["links"], $content);
@@ -1376,7 +1533,45 @@ private function checkUserAgent($urlArray, $url, $type, $secondaryBlockedUserAge
             }
         }
 
+        if (is_string($html) && $html !== '') {
+            $obj = $this->mergeMetaTagsFromHtml($obj, $html);
+        }
+
         return $obj;
+    }
+
+    /**
+     * Ensure the stored meta array includes scalar tags resolved by getTest().
+     */
+    function enrichMetaArrayFromParsed(array $meta, array $parsed): array
+    {
+        $scalarKeys = [
+            'title', 'description', 'canonical', 'robots', 'viewport',
+            'og:title', 'og:description', 'og:url', 'og:type', 'og:image',
+            'twitter:title', 'twitter:description', 'twitter:url', 'twitter:image', 'twitter:image:alt',
+        ];
+
+        $byName = [];
+        foreach ($meta as $item) {
+            $name = $item['name'] ?? null;
+            if ($name !== null && $name !== '') {
+                $byName[$name] = $item;
+            }
+        }
+
+        foreach ($scalarKeys as $key) {
+            if (!isset($parsed[$key]) || $parsed[$key] === '' || $parsed[$key] === null) {
+                continue;
+            }
+            if (!isset($byName[$key]) || $byName[$key]['content'] === '' || $byName[$key]['content'] === null) {
+                $byName[$key] = [
+                    'name' => $key,
+                    'content' => $parsed[$key],
+                ];
+            }
+        }
+
+        return array_values($byName);
     }
 
     

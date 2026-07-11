@@ -951,6 +951,7 @@ class TestController2 extends Controller
         $content = $data["og:title"];
         $contentDesc = $data["og:description"];
         $contentImage = $data["og:image"];
+        $contentImage = $contentImage != "" ? $helpers->getAbsolutePath($contentImage, $domain) : "";
         $contentURL = $data["og:url"];
         $contentURL = $contentURL != "" ? $helpers->getAbsolutePath($contentURL, $domain) : "";
 

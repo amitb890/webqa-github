@@ -273,10 +273,7 @@ class RunTest implements ShouldQueue
             );
             
             $crawler = $goutteClient->request('GET', $url, [], [], [
-                'headers' => [
-                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
-                    'Accept' => 'text/html,*/*'
-                ]
+                'headers' => $helpers->browserRequestHeaders(),
             ]);
      
              $html = $crawler->html();
@@ -285,54 +282,11 @@ class RunTest implements ShouldQueue
              $internalResponse = $goutteClient->getInternalResponse();
      
              // Extract HTML components
-            $meta = $crawler->filter($helpers->pageMetaElementFilter())->each(function($node) use ($helpers) {
-                $name = $node->attr('name');
-                $content = $node->attr('content');
-
-                if($name === null){
-                    $name = $node->getNode(0)->tagName;
-                }
-                if($name === "meta"){
-                    $name = $node->attr('property');
-                }
-                if($content === null){
-                    $content = $node->getNode(0)->textContent;
-                }
-
-                if($name === "link"){
-                    $name = $node->extract(array('rel'))[0];
-                    $content = $node->extract(array('href'))[0];
-                }
-
-                if($name === "a"){
-                    $content = $node->extract(array('href'))[0];
-                }
-
-                if($name === "img"){
-                    $content = $helpers->extractImgElementContent($node);
-                }
-
-                if($name === "svg"){
-                    $content = $helpers->extractSvgElementContent($node);
-                }
-
-                if($name === "script"){
-                    $content = $node->extract(array('src'))[0];
-                }
-
-                if($name === "table"){
-                    $content = $node->html();
-                }
-
-                return [
-                    'name' => $name,
-                    'content' => $content,
-                ];
-            });
+            $meta = $helpers->extractPageMetaFromCrawler($crawler);
 
 
             // Attach HTML data even if null
-            $finalRes = $helpers->getTest($meta);
+            $finalRes = $helpers->getTest($meta, $html);
             $finalRes["html"] = $html;
             $finalRes["html_status_code"] = $statusCode;
             $finalRes["internal_response"] = $internalResponse;
@@ -1704,6 +1658,7 @@ class RunTest implements ShouldQueue
         $content = $data["og:title"];
         $contentDesc = $data["og:description"];
         $contentImage = $data["og:image"];
+        $contentImage = $contentImage != "" ? $helpers->getAbsolutePath($contentImage, $domain) : "";
         $contentURL = $data["og:url"];
         $contentURL = $contentURL != "" ? $helpers->getAbsolutePath($contentURL, $domain) : "";
 

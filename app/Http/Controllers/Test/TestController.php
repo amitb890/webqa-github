@@ -46,8 +46,8 @@ class TestController extends Controller
             }
             $failedUrls = [];
             $failedStatus = [404,'404'];
-            Session::forget('google_page_speed_desktop');
-            Session::forget('google_page_speed_mobile');
+            // Session::forget('google_page_speed_desktop');
+            // Session::forget('google_page_speed_mobile');
             Session::forget('project');
             Session::forget('settings');
 
@@ -72,7 +72,7 @@ class TestController extends Controller
        
             $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
             $options = [
-                'headers' => ['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)']
+                'headers' => $helpers->browserRequestHeaders(),
             ];
             $crawler = $goutteClient->request('GET', $data["urlValue"], [], [], $options);
             $contentType = $goutteClient->getResponse()->getHeader('Content-Type');
@@ -169,49 +169,9 @@ class TestController extends Controller
                 $internalResponse = $statusCode = $goutteClient->getInternalResponse();
                 Session::put('internal_response', $internalResponse);
 
-                $meta = $crawler->filter($helpers->pageMetaElementFilter())->each(function($node) use ($helpers) {
-                    $name = $node->attr('name');
-                    $content = $node->attr('content');
-                    if($name === null){
-                        $name = $node->getNode(0)->tagName;
-                    }
-                    if($name === "meta"){
-                        $name = $node->attr('property');
-                    }
-                    if($content === null){
-                        $content = $node->getNode(0)->textContent;
-                    }
-
-                    if($name === "link"){
-                        $name = $node->extract(array('rel'))[0];
-                        $content = $node->extract(array('href'))[0];
-                    }
-
-                    if($name === "a"){
-                        $content = $node->extract(array('href'))[0];
-                    }
-
-                    if($name === "img"){
-                        $content = $helpers->extractImgElementContent($node);
-                    }
-
-                    if($name === "svg"){
-                        $content = $helpers->extractSvgElementContent($node);
-                    }
-
-                    if($name === "script"){
-                        $content = $node->extract(array('src'))[0];
-                    }
-
-                    if($name === "table"){
-                        $content = $node->html();
-                    }
-
-                    return [
-                        'name' => $name,
-                        'content' => $content,
-                    ];
-                });
+                $meta = $helpers->extractPageMetaFromCrawler($crawler);
+                $parsedMeta = $helpers->getTest($meta, $html);
+                $meta = $helpers->enrichMetaArrayFromParsed($meta, $parsedMeta);
 
 
                   if(isset($data["saveInDB"])){
@@ -260,6 +220,16 @@ class TestController extends Controller
         $id = $request->input('ref_id');
 
         $test = TestResults::where("ref_id", $id)->get()->first();
+
+        if ($test && is_string($test->data) && is_string($test->html_code) && $test->html_code !== '') {
+            $meta = json_decode($test->data, true);
+            if (is_array($meta)) {
+                $parsedMeta = $helpers->getTest($meta, $test->html_code);
+                $meta = $helpers->enrichMetaArrayFromParsed($meta, $parsedMeta);
+                $test->data = json_encode($meta);
+            }
+        }
+
         return response()->json(['status'=>1,'data'=>$test]);
     }
 
@@ -1146,8 +1116,17 @@ class TestController extends Controller
         $content = $data["content"];
         $contentDesc = $data["ogDesc"]["content"] ?? '';
         $contentImage = $data["ogImage"]["content"] ?? '';
+        $contentImage = $contentImage != "" ? $helpers->getAbsolutePath($contentImage, $domain) : "";
         $contentURL = $data["ogURL"]["content"] ?? '';
         $contentURL = $contentURL != "" ? $helpers->getAbsolutePath($contentURL, $domain) : "";
+
+        $html = session()->get('html_code', '');
+        $blockedByCloudflare = ($content === '' || $content === null)
+            && ($contentDesc === '' || $contentDesc === null)
+            && ($contentImage === '' || $contentImage === null)
+            && ($contentURL === '' || $contentURL === null)
+            && is_string($html)
+            && $helpers->isCloudflareChallengePage($html);
 
         $casingStatus = true;
         $showContent = true;
@@ -1173,6 +1152,7 @@ class TestController extends Controller
         $isEqualURLClass = "result_pass";
         $messageURL = "No problems found.";
 
+        if (!$blockedByCloudflare) {
 
         // title
         if($content != $titleContent){
@@ -1362,6 +1342,24 @@ class TestController extends Controller
                     array_push($problemsURL, "OG URL is not exactly the same with the actual URL.");
                 }
             }
+        }
+
+        } else {
+            $blockedMsg = "Open Graph tags could not be detected because the site returned a Cloudflare security challenge page instead of the actual HTML.";
+            $status = false;
+            $statusTitle = false;
+            $statusDesc = false;
+            $statusURL = false;
+            $statusImage = false;
+            $showContent = false;
+            $showImage = false;
+            $tagStatus = false;
+            $casingStatus = false;
+            $message = $blockedMsg;
+            $messageTitle = $blockedMsg;
+            $messageDesc = $blockedMsg;
+            $messageImage = $blockedMsg;
+            $messageURL = $blockedMsg;
         }
 
 

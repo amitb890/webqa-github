@@ -4,6 +4,172 @@ $( document ).ready(function() {
   const CSV_FILE_NAME = "QA Results.csv";
   const CSV_FILE_NAME_BROKEN_LINKS = "QA Results - Broken Links.csv";
 
+  // Replicates how Facebook / LinkedIn decide which link-preview card layout to
+  // render for a given og:image. The browser itself loads the image so that a
+  // missing image (og:image absent) and a broken image (URL present but 403/404/
+  // unreachable) are detected exactly as an end user would experience them.
+  window.OgPreview = {
+    // Character caps applied per platform/field, mirroring how link-preview
+    // inspectors truncate text (not width-based clipping). Tune here if needed.
+    limits: {
+      fb: { title: 88, desc: 65 },
+      li: { title: 90, desc: 0 },
+    },
+    escapeHtml(value) {
+      return String(value == null ? "" : value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    },
+    // Truncates to a maximum character count, trimming back to the last whole
+    // word and appending an ellipsis (matches inspector-style truncation).
+    truncate(value, max) {
+      const text = String(value == null ? "" : value);
+      if (!max || text.length <= max) return text;
+      let cut = text.slice(0, max);
+      // Only trim back to the previous word boundary when the cut falls in the
+      // middle of a word (otherwise a whole trailing word would be dropped).
+      if (!/\s/.test(text.charAt(max))) {
+        const lastSpace = cut.lastIndexOf(" ");
+        if (lastSpace > 0) cut = cut.slice(0, lastSpace);
+      }
+      cut = cut.replace(/[\s.,;:!?\u2013\u2014-]+$/, "");
+      return cut + "\u2026";
+    },
+    getDomain(url) {
+      if (!url) return "";
+      try {
+        return new URL(url).hostname.replace(/^www\./, "");
+      } catch (e) {
+        return String(url)
+          .replace(/^https?:\/\//i, "")
+          .replace(/^www\./i, "")
+          .split("/")[0];
+      }
+    },
+    // Facebook: >=600x315 large, >=200x200 small thumbnail, else no image.
+    // LinkedIn: the Post Inspector renders ANY successfully fetched image as a
+    // full-width card image (even a tiny logo, upscaled), so once the image has
+    // loaded it is always shown large. A failed/absent image falls back to the
+    // no-image card (handled in onImgError / when no og:image is present).
+    classify(platform, w, h) {
+      w = w || 0;
+      h = h || 0;
+      if (platform === "fb") {
+        if (w >= 600 && h >= 315) return "large";
+        if (w >= 200 && h >= 200) return "small";
+        // Loaded but below Facebook's 200x200 minimum: Facebook ignores it, so
+        // we surface a distinct "image too small" state instead of the image.
+        return "toosmall";
+      }
+      return "large";
+    },
+    setTier(card, tier) {
+      if (!card) return;
+      card.classList.remove(
+        "og-card--loading",
+        "og-card--large",
+        "og-card--small",
+        "og-card--thumb",
+        "og-card--toosmall",
+        "og-card--none"
+      );
+      card.classList.add("og-card--" + tier);
+    },
+    onImgLoad(img, platform) {
+      const card = img.closest(".og-card");
+      this.setTier(card, this.classify(platform, img.naturalWidth, img.naturalHeight));
+    },
+    onImgError(img, platform) {
+      this.setTier(img.closest(".og-card"), "none");
+    },
+    // Builds one platform card as an HTML string.
+    buildCard(platform, opts) {
+      let image = opts.image || "";
+      // LinkedIn's scraper does not support WebP/SVG og:images and renders a
+      // no-image card for them, whereas Facebook displays them fine.
+      if (platform === "li" && /\.(webp|svg)(\?|#|$)/i.test(image)) {
+        image = "";
+      }
+      const lim = this.limits[platform] || { title: 0, desc: 0 };
+      const domain = this.escapeHtml(opts.domain || "");
+      const title = this.escapeHtml(this.truncate(opts.title, lim.title));
+      const desc = this.escapeHtml(this.truncate(opts.desc, lim.desc));
+      const imgAttr = this.escapeHtml(image);
+      const urlAttr = this.escapeHtml(opts.url || "");
+      const label = platform === "fb" ? "Facebook Preview" : "Linkedin Preview";
+      const initialTier = image ? "og-card--loading" : "og-card--none";
+
+      // Facebook renders the shared URL and a "more options" menu above the card.
+      const composer =
+        platform === "fb" && urlAttr
+          ? `<div class="og-card__composer">
+               <a class="og-card__composer-url" href="${urlAttr}" target="_blank">${urlAttr}</a>
+               <i class="fas fa-ellipsis og-card__composer-more"></i>
+             </div>`
+          : "";
+
+      // Facebook discards images below 200x200; show a clear notice in that case.
+      const placeholder =
+        platform === "fb"
+          ? `<div class="og-card__placeholder">
+               <i class="far fa-image"></i>
+               <span>og:image is too small for Facebook (minimum 200&times;200px)</span>
+             </div>`
+          : "";
+
+      const imgBlock = image
+        ? `<div class="og-card__imgwrap">
+             <img class="og-card__img" src="${imgAttr}" alt=""
+                  onload="OgPreview.onImgLoad(this,'${platform}')"
+                  onerror="OgPreview.onImgError(this,'${platform}')">
+             ${placeholder}
+           </div>`
+        : "";
+
+      let body;
+      let actions = "";
+      if (platform === "fb") {
+        body = `<div class="og-card__body">
+                  <div class="og-card__domain">${domain}</div>
+                  <div class="og-card__title">${title}</div>
+                  <div class="og-card__desc">${desc}</div>
+                </div>`;
+        actions = `<div class="og-card__actions">
+                     <span><i class="far fa-thumbs-up"></i>Like</span>
+                     <span><i class="far fa-comment"></i>Comment</span>
+                     <span><i class="fas fa-share"></i>Share</span>
+                   </div>`;
+      } else {
+        // LinkedIn shows title then domain, and no description.
+        body = `<div class="og-card__body">
+                  <div class="og-card__title">${title}</div>
+                  <div class="og-card__domain">${domain}</div>
+                </div>`;
+      }
+
+      const viewImage = image
+        ? `<a target="_blank" href="${imgAttr}">View Image</a>`
+        : "";
+
+      return `
+        <div class="og-preview-col">
+          <div class="og-preview-head">
+            <h4>${label}</h4>
+            ${viewImage}
+          </div>
+          <div class="og-card og-card--${platform === "fb" ? "facebook" : "linkedin"} ${initialTier}">
+            ${composer}
+            ${imgBlock}
+            ${body}
+            ${actions}
+          </div>
+        </div>`;
+    },
+  };
+
 
   let prevData = "", pageTitle = "", pageDesc = "", pageTitleStatus = true, pageDescStatus = true, buildTestStatus = false, testIndex = 0;
   let titleTruncateLength = 65, descriptionTruncateLength = 160;
@@ -442,6 +608,18 @@ $( document ).ready(function() {
       let ulImage = UI.getProblemsElement(data.problemsImage)
       let ulURL = UI.getProblemsElement(data.problemsURL)
 
+      const ogPreviewUrl = data.contentURL || data.tested_url || projectUrl || ""
+      const ogPreviewDomain = OgPreview.getDomain(ogPreviewUrl)
+      const ogPreviewData = {
+        image: data.contentImage || "",
+        domain: ogPreviewDomain,
+        url: ogPreviewUrl,
+        title: data.content || pageTitle || ogPreviewDomain || "",
+        desc: data.contentDesc || pageDesc || "",
+      }
+      const facebookPreviewCard = OgPreview.buildCard("fb", ogPreviewData)
+      const linkedinPreviewCard = OgPreview.buildCard("li", ogPreviewData)
+
       return `
       <div class="card">
         <div class="card-header">
@@ -566,26 +744,10 @@ $( document ).ready(function() {
           <div class="social-review">
             <div class="row">
               <div class="col-md-6">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Facebook Preview</h4>
-                    <a target="_blank" href="${data.contentImage}">View Image</a>
-                  </div>
-                  <div class="card-body">
-                    <img src="${data.contentImage}" alt="review-linkdine" />
-                  </div>
-                </div>
+                ${facebookPreviewCard}
               </div>
               <div class="col-md-6">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Linkedin Preview</h4>
-                    <a target="_blank" href="${data.contentImage}">View Image</a>
-                  </div>
-                  <div class="card-body">
-                    <img src="${data.contentImage}" alt="review-linkdine" />
-                  </div>
-                </div>
+                ${linkedinPreviewCard}
               </div>
             </div>
           </div>
