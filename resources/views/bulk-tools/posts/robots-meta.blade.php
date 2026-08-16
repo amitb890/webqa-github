@@ -115,6 +115,12 @@
   These parameters can be combined in a single robots meta tag. This lets you fine-tune how each page should be handled in search results - for example, allowing link equity to flow while preventing the page itself from being indexed.
 </p>
 
+<h3>Robots Meta Tag Directives at a Glance</h3>
+<p>Robots meta tag directives tell search engines how they should handle a webpage after crawling it. </p>
+<p>While some directives control whether a page appears in search results, others determine whether links are followed, cached versions are stored, search snippets are displayed, or media previews are shown. The infographic below provides a quick visual overview of the most commonly used robots meta directives and what each one does.</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/robots-meta-infographic.png') }}" alt="X-Robots meta tag infographic" class="img-fluid my-4">
+
 <p>Let us now see some examples of how to combine multiple directives in the Robots meta tag</p>
 
 <table class="good-bad-example-table robots-directives-table">

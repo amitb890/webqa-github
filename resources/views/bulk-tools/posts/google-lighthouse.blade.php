@@ -15,44 +15,104 @@
 
 <div class="list yellow-content summary-block">
   <span class="summary-heading">Quick Summary</span>
-  <p><a target="_blank" href="https://developer.chrome.com/docs/lighthouse/overview">Google Lighthouse</a> is an open source tool from Google that audits webpages across key quality areas -
-    Performance, Accessibility, Best Practices, SEO, and PWA.</p>
+  <p><a target="_blank" href="https://developer.chrome.com/docs/lighthouse/overview">Google Lighthouse</a> is Google's open-source website auditing tool that evaluates the quality of webpages across multiple categories, including Performance, Accessibility, Best Practices, and SEO. It helps developers, marketers, and website owners identify issues that affect user experience and provides actionable recommendations for improvement.
   <ol>
-    <li>It helps you spot issues that hurt real users: slow load, layout shifts, heavy JavaScript, and unoptimized assets.</li>
-    <li>It highlights accessibility problems (contrast, labels, ARIA usage) that impact usability and compliance.</li>
-    <li>You get actionable recommendations with clear “what to fix” guidance and supporting details.</li>
-    <li>Scores are useful for benchmarking, but the real value is in the audit findings and opportunities list.</li>
-    <li>Results can vary by device settings, network throttling, and page state.</li>
-  </ol>
+        <li>Lighthouse audits webpages in four key categories: Performance, Accessibility, Best Practices, and SEO.</li>
+        <li>Each category receives a score between 0 and 100, making it easy to identify strengths and areas that need improvement.</li>
+        <li>The audit includes detailed diagnostics, opportunities, and recommendations to help optimize your website.</li>
+        <li>Google Lighthouse is built into Chrome DevTools and also powers the performance analysis used by Google PageSpeed Insights.</li>
+        <li>This tool lets you bulk test Lighthouse scores across multiple URLs, helping you quickly identify pages that require optimization.</li>
+    </ol>
 </div>
 
 
+<h3>What is Google Lighthouse?</h3>
+
+<p>Google Lighthouse is an open-source website auditing tool developed by Google that helps evaluate the quality, performance, and overall health of web pages. It runs a series of automated tests against a webpage and generates a detailed report containing scores, diagnostics, and practical recommendations for improvement.</p><p>Unlike tools that focus solely on website speed, Lighthouse performs a comprehensive audit across four key categories: Performance, Accessibility, Best Practices, and SEO. Together, these categories provide a holistic view of how well a webpage is built and how effectively it serves both users and search engines.
+</p><p>Google Lighthouse is built directly into <a target="_blank" href="https://developer.chrome.com/docs/devtools">Google Chrome DevTools</a>, allowing developers to run audits without installing additional software. It also powers the performance analysis behind Google PageSpeed Insights, making it one of the most widely used website auditing tools available today.</p>
+
+<p>Each Lighthouse audit produces a score between 0 and 100 for each category, along with detailed explanations of detected issues and prioritized recommendations for fixing them. This enables developers, marketers, SEO professionals, and website owners to continuously improve their websites using objective, measurable data.</p>
 
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/google-lighthouse-report.png') }}" class="img-fluid my-4" alt="Google Lighthouse report example">
 
-<!-- Old content -->
-    <p>Navigating the web today, we often judge websites by their speed and responsiveness. In this context, the Google Page Speed Lighthouse Score emerges as a crucial metric, functioning much like a fitness tracker for websites, gauging their health and vitality regarding speed.</p>
+<h3>How Google Lighthouse Works</h3>
 
-    <h3>What is Google Page Speed Lighthouse Score?</h3>
-    <p>Imagine a digital report card for your website, assessing its speed and presenting a score. That's the essence of the Google Page Speed Lighthouse Score. Rooted in Google's Lighthouse tool, this score evaluates the efficiency with which a page loads and interacts, offering critical insights to developers and website owners.</p>
+<p>Google Lighthouse works by automatically loading a webpage in a controlled browser environment and running a series of automated audits against it. During the audit, Lighthouse simulates how a real user experiences the page and measures various aspects of its quality, performance, and usability.</p>
 
-    <h3>Significance of Page Speed</h3>
-    <p>A website's loading time isn't just about user impatience. Slow-loading sites can deter potential customers, diminish the user experience, and negatively impact search engine rankings.</p>
+<p>The audit begins by fetching the webpage and rendering it inside a Chromium browser. Lighthouse then analyzes hundreds of checks covering page loading speed, accessibility, security, coding best practices, and search engine optimization. Based on these results, it generates individual scores for each audit category along with detailed recommendations for improvement.</p>
 
-    <h3>Steps to Conduct a Lighthouse Scoring</h3>
-    <ol>
-      <li><b>Open Google Chrome:</b> Lighthouse is built into the Chrome browser, making it easily accessible without additional installations.</li>
-      <li><b>Navigate to the Website:</b> Enter the website URL you want to audit in the Chrome address bar.</li>
-      <li><b>Open Developer Tools:</b> Right-click anywhere on the page and select 'Inspect,' or you can use the shortcut Ctrl + Shift + I (Windows/Linux) or Cmd + Option + I (Mac).</li>
-      <li><b>Locate Lighthouse Tab:</b> In the Developer Tools panel, find the "Lighthouse" tab. If it's not visible, you might need to expand the tabs by clicking on the '>>' icon.</li>
-      <li><b>Configure Your Audit:</b> Lighthouse can tailor your audit based on device type (Mobile or Desktop) and the reports you want (Performance, Accessibility, Best Practices, SEO, etc.). Select your preferences.</li>
-      <li><b>Start the Audit:</b> Click the "Generate report" button. Lighthouse will then simulate a user accessing your website, evaluating various parameters.</li>
-      <li><b>Review the Scores:</b> Once the audit is complete, Lighthouse will present you with scores for each category alongside actionable recommendations for improvement.</li>
-    </ol>
-    <p><i>Note: Save your scores and suggestions. Over time, after making recommended changes, re-run the Lighthouse audit to measure improvements and ensure consistent optimization. Lighthouse's scores can vary slightly between runs due to various factors, such as server response times or third-party content load times. It's recommended to run the test multiple times and consider an average score for a more accurate assessment.</i></p>
+<p>Rather than simply reporting a score, Lighthouse identifies the underlying issues affecting your website. For example, it can detect oversized images, render-blocking resources, missing image alt attributes, poor color contrast, missing meta tags, inefficient JavaScript execution, and many other optimization opportunities.</p>
 
-    <img src="{{ asset('new-assets\assets\images\bulk-tool\bulk_lighthouse_1.png') }}" alt="Google Lighthouse Report Example"
-      class="img-fluid my-4">
+<img src="{{ asset('new-assets/assets/images/bulk-tool/lighthouse-issues.png') }}" class="img-fluid my-4" alt="Lighthouse issues">
+
+<p>After completing the audit, Lighthouse produces a comprehensive report containing category scores, diagnostics, passed audits, and actionable recommendations. This helps developers, designers, SEO professionals, and website owners prioritize fixes that will have the greatest impact on website quality and user experience.</p>
+
+
+<h3>How to Run a Lighthouse Audit in Google Chrome</h3>
+
+<p>Here is how you can run a Lighthouse audit report in Google Chrome</p>
+<p>Google Lighthouse is built directly into Google Chrome, allowing you to analyze any webpage without installing additional software. In just a few clicks, you can generate a detailed report covering Performance, Accessibility, Best Practices, and SEO.</p>
+
+
+<h4>Step 1: Open the webpage you want to audit</h4>
+
+<p>
+Launch Google Chrome and navigate to the webpage you would like to analyze. Wait for the page to finish loading before starting the audit.
+</p>
+
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-to-do-lighthouse-step1.png') }}" class="img-fluid my-4" alt="How to do Lighthouse Audit - Step 1">
+
+<h4>Step 2: Open Chrome DevTools</h4>
+
+<p>
+Right-click anywhere on the webpage and select <strong>Inspect</strong>, or press <strong>Ctrl + Shift + I</strong> (Windows/Linux) or <strong>Cmd + Option + I</strong> (Mac). Chrome DevTools will open.
+</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-to-do-lighthouse-step2.png') }}" class="img-fluid my-4" alt="How to do Lighthouse Audit - Step 2">
+
+<h4>Step 3: Open the Lighthouse panel</h4>
+
+<p>
+Inside Chrome DevTools, click the <strong>Lighthouse</strong> tab. If it isn't immediately visible, click the <strong>>></strong> menu to reveal additional tabs.
+</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-to-do-lighthouse-step3.png') }}" class="img-fluid my-4" alt="How to do Lighthouse Audit - Step 3">
+
+<h4>Step 4: Configure your audit</h4>
+
+<p>
+Choose whether you want to audit the <strong>Mobile</strong> or <strong>Desktop</strong> version of the page. You can also select which Lighthouse categories to test, including Performance, Accessibility, Best Practices, and SEO.
+</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-to-do-lighthouse-step4.png') }}" class="img-fluid my-4" alt="How to do Lighthouse Audit - Step 4">
+
+<h4>Step 5: Generate the Lighthouse report</h4>
+
+<p>
+Click <strong>Analyze page load</strong> (or <strong>Generate report</strong>, depending on your Chrome version). Lighthouse will load the page in a controlled environment and run a comprehensive series of automated audits.
+</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-to-do-lighthouse-step5.png') }}" class="img-fluid my-4" alt="How to do Lighthouse Audit - Step 5">
+
+<h4>Step 6: Review the audit results</h4>
+
+<p>
+Once the audit finishes, Lighthouse generates a detailed report showing category scores, performance metrics, diagnostics, passed audits, and optimization opportunities. Focus first on high-impact recommendations that will provide the greatest improvement.
+</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-to-do-lighthouse-step6.png') }}" class="img-fluid my-4" alt="How to do Lighthouse Audit - Step 6">
+
+<div class="list yellow-content">
+    <span class="summary-heading">Tip</span>
+
+    <p>
+        Lighthouse scores can vary slightly between tests because factors such as server response time, network conditions, third-party resources, and browser state may differ. Run the audit multiple times and use the average score when evaluating website performance or comparing changes after optimization.
+    </p>
+</div>
+
+
 
     <h3>Understanding Google Page Speed Lighthouse Scoring</h3>
     <p>Upon running a check with Lighthouse, a website is analyzed across various metrics, with page speed being a primary one. The score ranges from 0 to 100, with higher scores indicating better performance. Factors such as the time taken for the largest contentful paint, time to interact, and cumulative layout shift, among others, are considered.</p>
@@ -66,7 +126,7 @@
     <img src="{{ asset('new-assets\assets\images\bulk-tool\bulk_light_1.png') }}" alt="Lighthouse Scoring Color Codes"
       class="img-fluid my-4">
 
-    <h3>Breaking Down the Parameters in Google Page Speed Lighthouse Scoring</h3>
+
 
     <h4>1. Performance</h4>
     <p>This metric analyses how quickly the content of a page is visually populated and becomes interactive for users.</p>
@@ -106,23 +166,8 @@
     </ul>
     <img src="{{ asset('new-assets\assets\images\bulk-tool\bulk_light_5.png') }}" alt="Lighthouse Scoring Color Codes"
       class="img-fluid my-4">
-    <h3>Do's and Don'ts in Optimizing for a Better Score</h3>
 
-    <b>✅ Do's:</b>
-    <ul>
-      <li><b>Embrace Compression:</b> Use GZIP or Brotli to reduce file sizes.</li>
-      <li><b>Prioritize Content:</b> Load important content first.</li>
-      <li><b>Use Caching:</b> Reduce server load by leveraging browser caching.</li>
-    </ul>
 
-    <b>❌ Don’ts:</b>
-    <ul>
-      <li><b>Overload with Plugins:</b> Avoid unnecessary or outdated plugins that slow down your site.</li>
-      <li><b>Ignore Mobile:</b> Ensure your site is responsive and mobile-optimized.</li>
-      <li><b>Skimp on Hosting:</b> Poor server performance leads to slow load times.</li>
-    </ul>
-
-    <h3>Conclusion</h3>
     <p>The Google Page Speed Lighthouse Score is more than just a number. It reflects a website's health in the competitive digital landscape, directly impacting user experience and SEO rankings. By understanding and optimizing for this score, one can pave the way for a faster, more efficient, and user-friendly website.</p>
 
     <!-- Start FAQ -->
@@ -130,27 +175,55 @@
       <h3>FAQs</h3>
       <div class="accordion" id="accordionPanelsStayOpenExample">
         @foreach([
-          [
-            'q' => 'What does the Lighthouse Score indicate?',
-            'a' => 'The Lighthouse Score, specifically the Page Speed component, assesses how swiftly a page loads and becomes interactive. A higher score signifies better performance.'
-          ],
-          [
-            'q' => 'How often should I check my Lighthouse Score?',
-            'a' => 'Regular checks, especially post significant website updates, can help in maintaining optimal performance. Monthly or quarterly assessments are recommended.'
-          ],
-          [
-            'q' => 'How can I improve my Lighthouse Score?',
-            'a' => 'Optimizing images, leveraging browser caching, reducing server response times, and minimizing redirects are among the strategies to enhance the score.'
-          ],
-          [
-            'q' => 'What is Lighthouse score in SEO?',
-            'a' => 'Lighthouse score in SEO refers to a specific metric within Google\'s Lighthouse tool that evaluates the search engine optimization (SEO) health of a webpage. It assesses various on-page elements to determine how well a site is optimized for search engines, ensuring that it can be easily found, crawled, and indexed.'
-          ],
-          [
-            'q' => 'How is the lighthouse score calculated?',
-            'a' => 'The Lighthouse score is calculated based on a weighted average of various performance metrics, each contributing differently to the final score. These metrics include First Contentful Paint, Speed Index, Time to Interactive, and more. In addition to performance, Lighthouse scores other categories like SEO, Accessibility, and Best Practices, each with its own criteria. The combined results from these evaluations give a comprehensive score out of 100 for a webpage.'
-          ]
-        ] as $faq)
+[
+'q' => 'What is Google Lighthouse?',
+'a' => 'Google Lighthouse is an open-source auditing tool developed by Google that evaluates the quality of webpages. It automatically analyzes a page across multiple categories, including Performance, Accessibility, Best Practices, and SEO, and provides detailed recommendations to help improve the overall user experience.',
+],
+[
+'q' => 'What does a Lighthouse score mean?',
+'a' => 'Each Lighthouse category receives a score between 0 and 100. A score of 90–100 is considered Good, 50–89 indicates that improvements are needed, and 0–49 suggests significant issues that should be addressed. Higher scores generally indicate better website quality and adherence to modern web development best practices.',
+],
+[
+'q' => 'What categories does Lighthouse test?',
+'a' => 'Lighthouse evaluates webpages across four primary categories: Performance, which measures loading speed and responsiveness; Accessibility, which checks how usable the page is for people with disabilities; Best Practices, which reviews modern development standards and security practices; and SEO, which checks basic technical SEO implementation.',
+],
+[
+'q' => 'How is Lighthouse different from PageSpeed Insights?',
+'a' => 'Google Lighthouse is the auditing engine that performs the website analysis. Google PageSpeed Insights uses Lighthouse to generate its laboratory performance data while also combining it with real-world user experience data from the Chrome User Experience Report (CrUX), when available. Lighthouse provides a broader audit covering Accessibility, Best Practices, and SEO in addition to Performance.',
+],
+[
+'q' => 'Why do Lighthouse scores change between tests?',
+'a' => 'Small variations are normal. Scores can change because of differences in server response times, network conditions, browser caching, third-party resources, advertisements, analytics scripts, or background processes running during the audit. Running multiple tests and averaging the results provides a more reliable assessment.',
+],
+[
+'q' => 'Does Lighthouse affect Google rankings?',
+'a' => 'Lighthouse scores themselves are not Google ranking factors. However, many of the issues Lighthouse identifies—such as poor page performance, missing accessibility attributes, mobile usability problems, and weak technical SEO—can indirectly influence user experience and search engine visibility.',
+],
+[
+'q' => 'What is considered a good Lighthouse score?',
+'a' => 'Google recommends aiming for scores of 90 or above in each Lighthouse category. While achieving a perfect score of 100 is desirable, it is not essential. Consistently maintaining scores in the green range generally indicates that your website follows modern web development best practices.',
+],
+[
+'q' => 'Can I run Lighthouse audits on both mobile and desktop?',
+'a' => 'Yes. Lighthouse allows you to audit webpages using either a simulated mobile device or a desktop environment. Since mobile devices typically have slower processors and network conditions, mobile scores are often lower than desktop scores.',
+],
+[
+'q' => 'What are the most common issues Lighthouse detects?',
+'a' => 'Common issues include oversized images, render-blocking CSS and JavaScript, unused code, slow server response times, missing image alt text, insufficient color contrast, insecure resources, missing meta tags, incorrect viewport configuration, and other opportunities to improve performance, accessibility, and SEO.',
+],
+[
+'q' => 'Can Lighthouse test websites that require login?',
+'a' => 'Yes. If you open a logged-in page in Chrome and then run Lighthouse through Chrome DevTools, Lighthouse can audit the currently loaded page. However, online Lighthouse services may not be able to access pages protected by authentication.',
+],
+[
+'q' => 'How often should I run Lighthouse audits?',
+'a' => 'It is good practice to run Lighthouse after major website updates, design changes, CMS upgrades, plugin installations, or server migrations. Many development teams also include Lighthouse audits as part of their regular testing and deployment process to catch performance regressions early.',
+],
+[
+'q' => 'How does this Google Lighthouse Checker work?',
+'a' => 'This tool retrieves the Lighthouse scores for each URL you submit and reports the results across the four major audit categories—Performance, Accessibility, Best Practices, and SEO. It enables you to quickly identify pages that require optimization and monitor website quality across multiple URLs.',
+],
+] as $faq)
         <div class="accordion-item">
           <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"

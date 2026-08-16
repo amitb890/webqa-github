@@ -45,6 +45,12 @@
 
 <p>While search engines can sometimes discover sitemaps automatically, submitting them through Google Search Console gives you better visibility and control over how your website is crawled.</p>
 
+<h3>How Search Engines Use an XML Sitemap</h3>
+<p>An XML sitemap acts as a roadmap for search engine crawlers by listing the important URLs on your website in a structured, machine-readable format.</p>
+ <p>When a crawler discovers your sitemap, it reads the list of URLs and uses it as a guide to efficiently find and crawl your most important pages. While an XML sitemap doesn't guarantee that every page will be indexed, it significantly improves URL discovery, especially for large websites, newly launched sites, frequently updated content, and pages that may not be easily found through internal links alone. The illustration below shows how search engine bots read an XML sitemap and use it to discover and crawl webpages across your website.</p>
+
+ <img src="{{ asset('new-assets/assets/images/bulk-tool/xml-sitemap-bot-crawling.png') }}" class="img-fluid my-4" alt="XML Sitemap Crawl Process">
+
 <h3>Types of XML Sitemap</h3>
 <p>Not all XML sitemaps are the same. Depending on the size and nature of your website, you may use one or more types of XML sitemaps to help search engines crawl your content efficiently.</p>
 

@@ -34,6 +34,8 @@
   <li><b>Visual stability</b> - Does the page layout stay stable while the page loads? (measured by Cumulative Layout Shift)</li>
 </ol>
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/what-is-core-web-vitals.png') }}" class="img-fluid my-4" alt="Core web vitals example">
+
 <p><a target="_blank" href="https://developers.google.com/search/docs/appearance/core-web-vitals">Core web vitals</a> helps you measure your website's page's usability - do they feel fast, responsive and steady? Improving core web vitals scores leads to better user satisfaction which in turn can support improved rankings and more traffic to your website.</p>
 
 
@@ -47,175 +49,501 @@
 </ol>
 <p>Each metric has clear thresholds for what Google considers “Good.”</p>
 
+
+
+<style>
+.cwv-bento {
+    background: #f7f9fc;
+    border: 1px solid #dbe6f6;
+    border-radius: 18px;
+    padding: 28px;
+    margin: 40px 0;
+}
+
+.cwv-header{
+    margin-bottom:28px;
+}
+
+.cwv-header h3{
+    margin-bottom:8px;
+}
+
+.cwv-meta{
+    color:#667085;
+    margin:0;
+}
+
+.cwv-grid{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:22px;
+}
+
+.cwv-box{
+    background:#fff;
+    border:1px solid #e8edf5;
+    border-radius:14px;
+    padding:20px;
+    box-shadow:0 8px 25px rgba(16,24,40,.04);
+}
+
+.cwv-box img{
+    width:100%;
+    max-width:420px;
+    height:auto;
+    display:block;
+    margin:0 auto;
+}
+
+.cwv-box h4{
+    margin-bottom:12px;
+}
+
+.cwv-box p{
+    margin:0;
+    line-height:1.7;
+}
+
+.cwv-score{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.cwv-pill{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 16px;
+    border-radius:10px;
+    font-weight:600;
+}
+
+.cwv-good{
+    background:#ecfdf3;
+    color:#027a48;
+}
+
+.cwv-mid{
+    background:#fff7e6;
+    color:#b54708;
+}
+
+.cwv-bad{
+    background:#fef3f2;
+    color:#b42318;
+}
+
+.cwv-two{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    margin-top:22px;
+}
+
+.cwv-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+}
+
+.cwv-list li{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:14px;
+    line-height:1.6;
+}
+
+.cwv-list li:last-child{
+    margin-bottom:0;
+}
+
+.cwv-check{
+    color:#16a34a;
+    font-weight:bold;
+}
+
+.cwv-cross{
+    color:#dc2626;
+    font-weight:bold;
+}
+
+@media(max-width:1100px){
+
+.cwv-grid{
+grid-template-columns:1fr;
+}
+
+.cwv-two{
+grid-template-columns:1fr;
+}
+
+}
+
+/* Large monitors (27", 32", 4K, ultrawide) */
+@media (min-width: 1600px){
+
+    .cwv-box img{
+        max-width:340px;
+    }
+
+}
+
+/* Typical laptops including 13" MacBook */
+@media (max-width: 1200px){
+
+    .cwv-box img{
+        max-width:320px;
+    }
+
+}
+
+/* Tablets */
+@media (max-width: 768px){
+
+    .cwv-box img{
+        max-width:260px;
+    }
+
+}
+
+/* Small phones */
+@media (max-width: 480px){
+
+    .cwv-box img{
+        max-width:220px;
+    }
+
+}
+</style>
+
 <!-- Metric: LCP -->
-<div style="background:#f3f6fb; border:1px solid #dbe6f6; border-radius:12px; padding:18px; margin:18px 0 22px;">
-  <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
-    <div style="flex:1 1 520px; min-width:260px;">
-      <h3 style="margin-bottom:6px;">Largest Contentful Paint - LCP</h3>
-      <p style="margin:0 0 12px; color:#475467;">
-        <b>Measures:</b> Loading speed &nbsp;|&nbsp; <b>Measured in:</b> seconds
-      </p>
+<div class="cwv-bento">
 
-      <p style="margin-bottom:10px;">
-        <b>What it measures</b> - The time it takes for the largest content element - often a hero image, banner, or headline to become visible.<br><br>
-        <b>Why it matters</b> - This strongly determines how fast your page "feels" to users.
-      </p>
+    <div class="cwv-header">
 
-      <ul style="margin-bottom:12px;">
-        <li><b>Good</b> - Less than 2.5 seconds</li>
-        <li><b>Needs improvement</b> - 2.5 – 4 seconds</li>
-        <li><b>Poor</b> - More than 4 seconds</li>
-      </ul>
+        <h3>Largest Contentful Paint (LCP)</h3>
 
-      <!-- Highlight: What usually improves -->
-      <div style="background:#ffffff; border:1px solid #dbe6f6; border-radius:10px; padding:12px 14px; margin-top:12px;">
-        <p style="margin:0 0 8px;"><b>What usually improves LCP</b></p>
-        <ol style="margin:0; padding-left:18px;">
-          <li>Optimize and properly size the hero image (use modern formats and correct dimensions).</li>
-          <li>Reduce render blocking CSS/JS so above the fold content can paint sooner.</li>
-          <li>Improve server response time (TTFB) with caching, CDN, and backend optimization.</li>
-          <li>Preload critical assets (hero image, key fonts) to prioritize the main content.</li>
-        </ol>
-      </div>
+        <p class="cwv-meta">
+            Measures Loading Speed • Measured in Seconds
+        </p>
+
     </div>
 
-    <div style="flex:0 1 420px; width:420px; max-width:100%;">
-      <img src="{{ asset('new-assets/assets/images/bulk-tool/lcp.png') }}"
-           alt="Largest Contentful Paint (LCP) score thresholds"
-           class="img-fluid"
-           style="width:100%; height:auto; margin:0; border-radius:10px; display:block; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+    <div class="cwv-grid">
 
-      <!-- Common mistakes (typography matched to "What usually improves") -->
-      <div style="margin-top:23px; border-radius:12px; overflow:hidden; border:1px solid #f3c7c7;">
-        <div style="background:linear-gradient(90deg, rgba(217,45,32,0.14), rgba(217,45,32,0.05)); padding:12px 12px;">
-          <p style="margin:0 0 8px;"><b>Common mistakes</b></p>
-          <ol style="margin:0; padding-left:18px;">
-            <li>Lazy loading the hero image or loading it too late.</li>
-            <li>Using oversized images with wrong dimensions and heavy files above the fold.</li>
-            <li>Blocking rendering with heavy CSS or JS before showing the main content.</li>
-            <li>Slow server response time (TTFB) due to poor caching or no CDN.</li>
-          </ol>
+        <div class="cwv-box">
+
+            <img src="{{ asset('new-assets/assets/images/bulk-tool/lcp.png') }}" alt="Largest Contentful Paint">
+
         </div>
-      </div>
+
+        <div class="cwv-score">
+
+            <div class="cwv-pill cwv-good">
+                <span>Good</span>
+                <span>&lt; 2.5s</span>
+            </div>
+
+            <div class="cwv-pill cwv-mid">
+                <span>Needs Improvement</span>
+                <span>2.5 – 4s</span>
+            </div>
+
+            <div class="cwv-pill cwv-bad">
+                <span>Poor</span>
+                <span>&gt; 4s</span>
+            </div>
+
+        </div>
+
     </div>
-  </div>
+
+    <div class="cwv-two">
+
+        <div class="cwv-box">
+
+            <h4>What it measures</h4>
+
+            <p>
+                LCP measures how long it takes for the largest visible element on the page - usually a hero image, banner, or heading to appear on screen.
+            </p>
+
+        </div>
+
+        <div class="cwv-box">
+
+            <h4>Why LCP matters</h4>
+
+            <p>
+                Visitors judge page speed by how quickly the main content becomes visible. A slow LCP often makes an otherwise fast website feel sluggish.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="cwv-two">
+
+        <div class="cwv-box">
+
+            <h4>What usually improves LCP</h4>
+
+            <ul class="cwv-list">
+
+                <li><span class="cwv-check">✓</span>Optimize hero images.</li>
+
+                <li><span class="cwv-check">✓</span>Reduce render-blocking CSS and JavaScript.</li>
+
+                <li><span class="cwv-check">✓</span>Improve server response time.</li>
+
+                <li><span class="cwv-check">✓</span>Preload critical assets.</li>
+
+            </ul>
+
+        </div>
+
+        <div class="cwv-box">
+
+            <h4>Common mistakes</h4>
+
+            <ul class="cwv-list">
+
+                <li><span class="cwv-cross">✕</span>Lazy loading the hero image.</li>
+
+                <li><span class="cwv-cross">✕</span>Oversized images above the fold.</li>
+
+                <li><span class="cwv-cross">✕</span>Heavy render-blocking CSS.</li>
+
+                <li><span class="cwv-cross">✕</span>Slow server response times.</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
 </div>
 
 <!-- Metric: INP -->
-<div style="background:#f5f3fb; border:1px solid #e3dcf8; border-radius:12px; padding:18px; margin:18px 0 22px;">
-  <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
-    <div style="flex:1 1 520px; min-width:260px;">
-      <h3 style="margin-bottom:6px;">Interaction to Next Paint - INP</h3>
-      <p style="margin:0 0 12px; color:#475467;">
-        <b>Measures:</b> Interactivity &nbsp;|&nbsp; <b>Measured in:</b> milliseconds
-      </p>
 
-      <p style="margin-bottom:10px;">
-        <b>What it measures</b> - How quickly your page responds visually after a user interaction like a click, tap, or key press.<br><br>
-        <b>Why it matters</b> - Pages can load quickly but still feel “laggy” if JavaScript blocks the main thread.
-      </p>
+<div class="cwv-bento" style="background:#f5f3fb;border:1px solid #e3dcf8;">
 
-      <ul style="margin-bottom:12px;">
-        <li><b>Good</b> - Less than 200 milliseconds</li>
-        <li><b>Needs improvement</b> - 200 – 500 milliseconds</li>
-        <li><b>Poor</b> - More than 500 milliseconds</li>
-      </ul>
+    <div class="cwv-header">
 
-      <!-- Highlight: What usually improves -->
-      <div style="background:#ffffff; border:1px solid #e3dcf8; border-radius:10px; padding:12px 14px; margin-top:12px;">
-        <p style="margin:0 0 8px;"><b>What usually improves INP</b></p>
-        <ol style="margin:0; padding-left:18px;">
-          <li>Reduce heavy JavaScript - ship less JS, remove unused code, split bundles wisely.</li>
-          <li>Break up long tasks on the main thread - avoid blocking work during interactions.</li>
-          <li>Defer non critical scripts and load third party tags only when needed.</li>
-          <li>Optimize event handlers and rendering - avoid expensive renders on click and tap.</li>
-        </ol>
-      </div>
+        <h3>Interaction to Next Paint (INP)</h3>
+
+        <p class="cwv-meta">
+            Measures Interactivity • Measured in Milliseconds
+        </p>
+
     </div>
 
-    <div style="flex:0 1 420px; width:420px; max-width:100%;">
-      <img src="{{ asset('new-assets/assets/images/bulk-tool/inp.png') }}"
-           alt="Interaction to Next Paint (INP) score thresholds"
-           class="img-fluid"
-           style="width:100%; height:auto; margin:0; border-radius:10px; display:block; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+    <div class="cwv-grid">
 
-      <!-- Common mistakes (typography matched to "What usually improves") -->
-      <div style="margin-top:53px; border-radius:12px; overflow:hidden; border:1px solid #f3c7c7;">
-        <div style="background:linear-gradient(90deg, rgba(217,45,32,0.14), rgba(217,45,32,0.05)); padding:12px 12px;">
-          <p style="margin:0 0 8px;"><b>Common mistakes</b></p>
-          <ol style="margin:0; padding-left:18px;">
-            <li>Shipping too much JavaScript on every page (large bundles).</li>
-            <li>Letting long tasks block the main thread during clicks and taps.</li>
-            <li>Loading heavy third-party scripts by default (tags, chat widgets, trackers).</li>
-            <li>Triggering expensive re-renders or layout work on every interaction.</li>
-          </ol>
+        <div class="cwv-box image-box">
+
+            <img src="{{ asset('new-assets/assets/images/bulk-tool/inp.png') }}"
+                 alt="Interaction to Next Paint (INP)">
+
         </div>
-      </div>
+
+        <div class="cwv-score">
+
+            <div class="cwv-pill cwv-good">
+                <span>Good</span>
+                <span>&lt; 200 ms</span>
+            </div>
+
+            <div class="cwv-pill cwv-mid">
+                <span>Needs Improvement</span>
+                <span>200 – 500 ms</span>
+            </div>
+
+            <div class="cwv-pill cwv-bad">
+                <span>Poor</span>
+                <span>&gt; 500 ms</span>
+            </div>
+
+        </div>
+
     </div>
-  </div>
+
+    <div class="cwv-two">
+
+        <div class="cwv-box">
+
+            <h4>What it measures</h4>
+
+            <p>
+                INP measures how quickly your webpage responds after a user interaction, such as clicking a button, tapping a link, opening a menu, or typing into a form. It reflects the delay before users see a visual response.
+            </p>
+
+        </div>
+
+        <div class="cwv-box">
+
+            <h4>Why INP matters</h4>
+
+            <p>
+                Even fast loading websites can feel slow if interactions are delayed. A low INP makes your website feel responsive and smooth, while a high INP creates lag and frustration during everyday use.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="cwv-two">
+
+        <div class="cwv-box">
+
+            <h4>What usually improves INP</h4>
+
+            <ul class="cwv-list">
+
+                <li><span class="cwv-check">✓</span>Reduce the amount of JavaScript running on the page.</li>
+
+                <li><span class="cwv-check">✓</span>Break long-running tasks into smaller chunks.</li>
+
+                <li><span class="cwv-check">✓</span>Load third-party scripts only when necessary.</li>
+
+                <li><span class="cwv-check">✓</span>Optimize event handlers and avoid expensive DOM updates.</li>
+
+            </ul>
+
+        </div>
+
+        <div class="cwv-box">
+
+            <h4>Common mistakes</h4>
+
+            <ul class="cwv-list">
+
+                <li><span class="cwv-cross">✕</span>Shipping large JavaScript bundles to every page.</li>
+
+                <li><span class="cwv-cross">✕</span>Blocking the main thread with long-running JavaScript.</li>
+
+                <li><span class="cwv-cross">✕</span>Loading unnecessary third-party scripts like chat widgets and trackers.</li>
+
+                <li><span class="cwv-cross">✕</span>Triggering expensive rendering and layout calculations after every interaction.</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
 </div>
 
 <!-- Metric: CLS -->
-<div style="background:#f2f8f6; border:1px solid #d7efe7; border-radius:12px; padding:18px; margin:18px 0 22px;">
-  <div style="display:flex; gap:18px; align-items:flex-start; flex-wrap:wrap;">
-    <div style="flex:1 1 520px; min-width:260px;">
-      <h3 style="margin-bottom:6px;">Cumulative Layout Shift - CLS</h3>
-      <p style="margin:0 0 12px; color:#475467;">
-        <b>Measures:</b> Visual stability &nbsp;|&nbsp; <b>Measured in:</b> CLS score (unitless)
-      </p>
+<div class="cwv-bento" style="background:#f2f8f6;border:1px solid #d7efe7;">
 
-      <p style="margin-bottom:10px;">
-        <b>What it measures</b> - How much the page layout shifts unexpectedly while loading.<br><br>
-        <b>Why it matters</b> - Layout jumps can cause mis-clicks and make the experience feel broken or untrustworthy.
-      </p>
+    <div class="cwv-header">
 
-      <ul style="margin-bottom:12px;">
-        <li><b>Good:</b> Less than 0.1</li>
-        <li><b>Needs improvement:</b> 0.1 – 0.25</li>
-        <li><b>Poor:</b> More than 0.25</li>
-      </ul>
+        <h3>Cumulative Layout Shift (CLS)</h3>
 
-      <!-- Highlight: What usually improves -->
-      <div style="background:#ffffff; border:1px solid #d7efe7; border-radius:10px; padding:12px 14px; margin-top:12px;">
-        <p style="margin:0 0 8px;"><b>What usually improves CLS:</b></p>
-        <ol style="margin:0; padding-left:18px;">
-          <li>Reserve space for images, ads, and embeds. Set width and height or use aspect-ratio.</li>
-          <li>Avoid inserting banners or UI elements above existing content after load.</li>
-          <li>Prevent font swaps from shifting text. Use font-display wisely and preload key fonts.</li>
-          <li>Stabilize dynamic components e.g accordions, carousels so they don’t push layouts.</li>
-        </ol>
-      </div>
+        <p class="cwv-meta">
+            Measures Visual Stability • Measured as a CLS Score
+        </p>
+
     </div>
 
-    <div style="flex:0 1 420px; width:420px; max-width:100%;">
-      <img src="{{ asset('new-assets/assets/images/bulk-tool/cls.png') }}"
-           alt="Cumulative Layout Shift (CLS) score thresholds"
-           class="img-fluid"
-           style="width:100%; height:auto; margin:0; border-radius:10px; display:block; box-shadow:0 6px 18px rgba(0,0,0,0.06);">
+    <div class="cwv-grid">
 
-      <!-- Common mistakes (typography matched to "What usually improves") -->
-      <div style="margin-top:53px; border-radius:12px; overflow:hidden; border:1px solid #f3c7c7;">
-        <div style="background:linear-gradient(90deg, rgba(217,45,32,0.14), rgba(217,45,32,0.05)); padding:12px 12px;">
-          <p style="margin:0 0 8px;"><b>Common mistakes</b></p>
-          <ol style="margin:0; padding-left:18px;">
-            <li>Not setting width and height (or aspect ratio) for images and embeds.</li>
-            <li>Injecting banners above content after the page starts rendering.</li>
-            <li>Ads and widgets loading late without reserving space.</li>
-            <li>Font swaps causing text to reflow and shifting layout.</li>
-          </ol>
+        <div class="cwv-box image-box">
+
+            <img src="{{ asset('new-assets/assets/images/bulk-tool/cls.png') }}"
+                 alt="Cumulative Layout Shift (CLS)">
+
         </div>
-      </div>
+
+        <div class="cwv-score">
+
+            <div class="cwv-pill cwv-good">
+                <span>Good</span>
+                <span>&lt; 0.1</span>
+            </div>
+
+            <div class="cwv-pill cwv-mid">
+                <span>Needs Improvement</span>
+                <span>0.1 – 0.25</span>
+            </div>
+
+            <div class="cwv-pill cwv-bad">
+                <span>Poor</span>
+                <span>&gt; 0.25</span>
+            </div>
+
+        </div>
+
     </div>
-  </div>
-</div>
 
-<!-- Final tip highlight -->
-<div style="background:#fff7e6; border:1px solid #ffd79a; border-radius:12px; padding:12px 14px; margin-top:10px;">
-  <p style="margin:0; color:#7a4b00;">
-    <b>Note</b> - A page is generally considered “Good” when these thresholds are met for at least 75% of real user visits.
-  </p>
-</div>
+    <div class="cwv-two">
 
+        <div class="cwv-box">
+
+            <h4>What it measures</h4>
+
+            <p>
+                CLS measures how much visible content unexpectedly moves while a page is loading. These layout shifts often occur when images, advertisements, fonts, or dynamically inserted elements appear without reserving enough space.
+            </p>
+
+        </div>
+
+        <div class="cwv-box">
+
+            <h4>Why CLS matters</h4>
+
+            <p>
+                Unexpected layout shifts create a frustrating experience and can cause users to click the wrong links or buttons. A low CLS score makes your website feel polished, predictable, and trustworthy.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="cwv-two">
+
+        <div class="cwv-box">
+
+            <h4>What usually improves CLS</h4>
+
+            <ul class="cwv-list">
+
+                <li><span class="cwv-check">✓</span>Reserve space for images, videos, ads, and embedded content.</li>
+
+                <li><span class="cwv-check">✓</span>Specify image dimensions or use the CSS aspect-ratio property.</li>
+
+                <li><span class="cwv-check">✓</span>Preload important fonts and use appropriate font-display settings.</li>
+
+                <li><span class="cwv-check">✓</span>Avoid inserting banners or UI elements above existing content after the page begins rendering.</li>
+
+            </ul>
+
+        </div>
+
+        <div class="cwv-box">
+
+            <h4>Common mistakes</h4>
+
+            <ul class="cwv-list">
+
+                <li><span class="cwv-cross">✕</span>Not reserving space for images, videos, and advertisements.</li>
+
+                <li><span class="cwv-cross">✕</span>Injecting cookie banners or promotional bars after the page has loaded.</li>
+
+                <li><span class="cwv-cross">✕</span>Loading third-party widgets without allocating layout space.</li>
+
+                <li><span class="cwv-cross">✕</span>Allowing web fonts to swap and shift the page layout after rendering.</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+</div>
 <!-- the three section ends -->
 
 
@@ -236,51 +564,240 @@
 <p>Core Web Vitals are a practical way to measure and improve real user experience. Better scores typically mean happier visitors, more completed actions, and fewer people leaving before your page even gets a chance to persuade them.</p>
 
 <!-- additional metrics section start -->
-<h3>Additional Performance Metrics - Not Part of Core Web Vitals</h3>
+<style>
+.metric-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+    margin:30px 0;
+}
 
-<p>Core Web Vitals are intentionally a small, focused set of metrics that represent three user experience signals - Largest Contentful Paint, Interaction to next paint and Cumulative layout shift. Google keeps the Core Web Vitals list limited to the only three to give a basic assessment of how fast the page "feels" for users.</p>
+.metric-card{
 
-<p>That doesn’t mean other PageSpeed metrics are unimportant. It means they’re better treated as supporting metrics - useful for identifying "<b>why a page is slow</b>" and "<b>what needs to be done</b>" to improve a page's overall speed.</p>
+    background:#fff;
 
-<p>Below are common performance metrics you will see in PageSpeed Insights and Lighthouse tests that are not Core Web Vitals.</p>
+    border:1px solid #e4e7ec;
 
-<h5>Speed Index - SI</h5>
-<ul>
-  <li><b>Measures</b> - How quickly the visible area of the page is populated during load</li>
-  <li><b>Measured in</b> - seconds</li>
-</ul>
-<p><b>Why it’s not a Core Web Vital:</b> It can vary heavily based on above the fold content and lab test conditions. It’s great for debugging perceived speed, but less consistent as a universal real world user metric.</p>
+    border-radius:16px;
 
-<h5>First Contentful Paint - FCP</h5>
-<ul>
-  <li><b>Measures</b> - When the first text or image is painted</li>
-  <li><b>Measured in</b> - seconds</li>
-</ul>
-<p><b>Why it’s not a Core Web Vital:</b> It measures when “something shows up in the visible area” but not when the main content is ready. A page can have a good FCP and still feel slow if the primary content arrives late - LCP addresses that more directly.</p>
+    padding:22px;
 
-<h5>Time to First Byte - TTFB</h5>
-<ul>
-  <li><b>Measures</b> - How quickly the server starts responding</li>
-  <li><b>Measured in</b> - milliseconds</li>
-</ul>
-<p><b>Why it’s not a Core Web Vital:</b> It mostly captures server and network responsiveness, not the complete user perceived loading experience. It’s best used as a root-cause indicator to see if the web server is to be held responsible for slow loading of web pages.</p>
+    transition:.25s;
 
-<h5>Total Blocking Time - TBT</h5>
-<ul>
-  <li><b>Measures</b> - How long the main thread is blocked, often due to heavy JavaScript)</li>
-  <li><b>Measured in</b> - milliseconds</li>
-</ul>
-<p><b>Why it’s not a Core Web Vital:</b> TBT is a "lab only" metrics and acts as a proxy. Google’s user facing responsiveness metric is INP, TBT is still very useful for diagnosing what’s hurting INP during development.</p>
+    box-shadow:0 8px 25px rgba(16,24,40,.04);
 
-<h5>Time to Interactive - TTI</h5>
-<ul>
-  <li><b>Measures</b> - An estimate of when a page becomes "fully interactive"</li>
-  <li><b>Measured in</b> - seconds</li>
-</ul>
-<p><b>Why it’s not a Core Web Vital:</b> “Interactive” isn’t one clear moment for modern websites. Interactivity varies by component and user action, which is why INP is preferred as a more realistic measure.</p>
+}
 
+.metric-card:hover{
 
-<p style="margin-top:12px;">Core Web Vitals are the primary UX outcomes. The metrics above are your supporting toolkit for diagnosing bottlenecks and prioritizing fixes.</p>
+    transform:translateY(-3px);
+
+    box-shadow:0 18px 35px rgba(16,24,40,.08);
+
+}
+
+.metric-card h4{
+
+    margin-bottom:16px;
+
+}
+
+.metric-meta{
+
+    display:flex;
+
+    gap:10px;
+
+    flex-wrap:wrap;
+
+    margin-bottom:16px;
+
+}
+
+.metric-tag{
+
+    background:#f3f5f7;
+
+    border-radius:999px;
+
+    padding:6px 12px;
+
+    font-size:13px;
+
+    font-weight:600;
+
+}
+
+.metric-card p{
+
+    margin:0;
+
+    line-height:1.7;
+
+}
+
+.metric-note{
+
+    margin-top:14px;
+
+    color:#667085;
+
+    font-size:15px;
+
+}
+
+.metric-footer{
+
+    background:#fff7e6;
+
+    border:1px solid #ffd27d;
+
+    border-radius:12px;
+
+    padding:16px 18px;
+
+    margin-top:24px;
+
+}
+
+@media(max-width:992px){
+
+.metric-grid{
+
+grid-template-columns:1fr;
+
+}
+
+}
+</style>
+
+<h3>Additional Performance Metrics</h3>
+
+<p>
+Core Web Vitals measure the three most important aspects of user experience, but they aren't the only metrics available. Google Lighthouse and PageSpeed Insights report several additional metrics that help explain <b>why</b> a page is slow and <b>where</b> improvements should be made.
+</p>
+
+<div class="metric-grid">
+
+<div class="metric-card">
+
+<h4>Speed Index (SI)</h4>
+
+<div class="metric-meta">
+
+<span class="metric-tag">Measures Visual Progress</span>
+
+<span class="metric-tag">Seconds</span>
+
+</div>
+
+<p>
+Shows how quickly the visible portion of a page becomes populated during loading.
+</p>
+
+<p class="metric-note">
+Useful for understanding perceived loading speed, but highly dependent on page design and testing conditions.
+</p>
+
+</div>
+
+<div class="metric-card">
+
+<h4>First Contentful Paint (FCP)</h4>
+
+<div class="metric-meta">
+
+<span class="metric-tag">First Visible Content</span>
+
+<span class="metric-tag">Seconds</span>
+
+</div>
+
+<p>
+Measures when the browser first renders any text or image on the page.
+</p>
+
+<p class="metric-note">
+A fast FCP doesn't necessarily mean the page feels fast because the main content may still be loading.
+</p>
+
+</div>
+
+<div class="metric-card">
+
+<h4>Time to First Byte (TTFB)</h4>
+
+<div class="metric-meta">
+
+<span class="metric-tag">Server Response</span>
+
+<span class="metric-tag">Milliseconds</span>
+
+</div>
+
+<p>
+Measures how quickly the server begins sending data after receiving a request.
+</p>
+
+<p class="metric-note">
+Useful for identifying backend, hosting, caching or CDN related performance problems.
+</p>
+
+</div>
+
+<div class="metric-card">
+
+<h4>Total Blocking Time (TBT)</h4>
+
+<div class="metric-meta">
+
+<span class="metric-tag">Main Thread Blocking</span>
+
+<span class="metric-tag">Milliseconds</span>
+
+</div>
+
+<p>
+Measures how long JavaScript blocks the browser before it can respond to user input.
+</p>
+
+<p class="metric-note">
+Although not a Core Web Vital, TBT is one of the best indicators for diagnosing poor INP during development.
+</p>
+
+</div>
+
+<div class="metric-card" style="grid-column:1/-1;">
+
+<h4>Time to Interactive (TTI)</h4>
+
+<div class="metric-meta">
+
+<span class="metric-tag">Page Interactivity</span>
+
+<span class="metric-tag">Seconds</span>
+
+</div>
+
+<p>
+Estimates when a page becomes fully interactive and able to respond reliably to user input.
+</p>
+
+<p class="metric-note">
+Modern websites become interactive gradually, which is why Google replaced TTI with INP as its preferred responsiveness metric.
+</p>
+
+</div>
+
+</div>
+
+<div class="metric-footer">
+
+<b>Key takeaway</b><br><br>
+
+Core Web Vitals tell you <b>how users experience your website</b>. Supporting metrics like FCP, SI, TTFB, TBT and TTI help explain <b>why</b> those Core Web Vitals scores are good or bad, making them valuable diagnostic tools during optimization.
+
+</div>
 
 <!-- additional metrics section end -->
 
@@ -290,27 +807,63 @@
       <h3>FAQs</h3>
       <div class="accordion" id="accordionPanelsStayOpenExample">
         @foreach([
-          [
-            'q' => 'Are Core Web Vitals a ranking factor?',
-            'a' => 'They are used as part of Google’s page experience systems. They’re not the only factor, but they can help - especially when relevance is similar.'
-          ],
-          [
-            'q' => 'What should I fix first - LCP, INP, or CLS?',
-            'a' => 'You should fix that metric which has the worst numbers. If all three metrics are close, then prioritize LCP first, then INP and lastly CLS.'
-          ],
-          [
-            'q' => 'Do Core Web Vitals matter more on mobile?',
-            'a' => 'Core web vitals matter considerably more on mobile devices because mobile devices tend to have slower network speeds. Google’s evaluation of site speed is strongly inclined towards a "mobile first"experience.'
-          ],
-          [
-            'q' => 'Can third-party scripts hurt Core Web Vitals?',
-            'a' => 'Absolutely, and they do hurt your core web vitals numbers more often than you think. Analytics scripts, visitor monitoring scripts, live chat widgets, admanager scripts and basically any third party javascript will have an adverse effect in your website core web vital numbers.'
-          ],
-          [
-            'q' => 'Can a page pass core web vital numbers and still feel slow?',
-            'a' => 'Yes a website can have good numbers for core web vitals and still load slowly. For example, a website may have optimised its Largest contentful paint numbers by optimising render blocking resources but has not addressed the heavy HTML page size and lots of uncompressed images. That way, the first fold may load quickly but rest of the page could be slower to load and navigate for users.'
-          ]
-        ] as $faq)
+[
+'q' => 'What are Core Web Vitals?',
+'a' => 'Core Web Vitals are a set of user experience metrics introduced by Google to measure how users experience a webpage. They focus on three key aspects of page experience: loading speed (Largest Contentful Paint or LCP), responsiveness (Interaction to Next Paint or INP), and visual stability (Cumulative Layout Shift or CLS). Together, these metrics help website owners understand whether their pages feel fast, responsive, and stable for real visitors.',
+],
+[
+'q' => 'Why are Core Web Vitals important?',
+'a' => 'Core Web Vitals directly measure the quality of a visitor’s experience on your website. Faster loading pages, responsive interactions, and stable layouts improve user satisfaction, reduce bounce rates, and often lead to higher engagement and conversions. Google also considers Core Web Vitals as part of its overall page experience signals.',
+],
+[
+'q' => 'Are Core Web Vitals a Google ranking factor?',
+'a' => 'Yes. Google includes Core Web Vitals as part of its Page Experience signals. While high-quality and relevant content remains the most important ranking factor, improving Core Web Vitals can provide a competitive advantage when multiple pages offer similar information.',
+],
+[
+'q' => 'What is considered a good Core Web Vitals score?',
+'a' => 'Google recommends achieving an LCP of 2.5 seconds or less, an INP of 200 milliseconds or less, and a CLS score below 0.1. A page is generally considered to have good Core Web Vitals when these thresholds are met for at least 75% of real user visits.',
+],
+[
+'q' => 'What is the difference between LCP, INP, and CLS?',
+'a' => 'Largest Contentful Paint (LCP) measures loading performance, Interaction to Next Paint (INP) measures how quickly the page responds after user interactions, and Cumulative Layout Shift (CLS) measures how visually stable the page remains while loading.',
+],
+[
+'q' => 'Why is my mobile score worse than my desktop score?',
+'a' => 'Mobile devices usually have slower processors, less memory, and slower internet connections than desktop computers. Google also evaluates websites using mobile-first principles, so performance issues often become more noticeable on mobile devices.',
+],
+[
+'q' => 'Can third-party scripts affect Core Web Vitals?',
+'a' => 'Yes. Third-party JavaScript such as analytics tools, advertising scripts, live chat widgets, social media plugins, and tag managers can significantly affect loading speed, responsiveness, and layout stability. Regularly reviewing and removing unnecessary third-party scripts can improve your Core Web Vitals scores.',
+],
+[
+'q' => 'How often should I test my Core Web Vitals?',
+'a' => 'You should review Core Web Vitals whenever you make significant website updates, deploy new features, install plugins, change hosting providers, or redesign your website. Regular monitoring helps detect performance regressions before they impact users.',
+],
+[
+'q' => 'Why do my Core Web Vitals scores change over time?',
+'a' => 'Scores can fluctuate due to changes in server performance, network conditions, website content, advertisements, third-party scripts, browser updates, or differences in user devices. Small variations are normal and expected.',
+],
+[
+'q' => 'What is the difference between Field Data and Lab Data?',
+'a' => 'Field Data is collected from real Chrome users through the Chrome User Experience Report (CrUX), reflecting actual visitor experiences. Lab Data is generated in a controlled testing environment using tools such as Lighthouse and PageSpeed Insights. Field Data represents real-world performance, while Lab Data is mainly used for diagnosing issues during development.',
+],
+[
+'q' => 'Can a website pass Core Web Vitals and still feel slow?',
+'a' => 'Yes. Core Web Vitals measure three specific aspects of user experience, but they do not evaluate every aspect of website performance. Large HTML documents, excessive images, complex animations, or inefficient navigation can still make a website feel slow even when Core Web Vitals pass.',
+],
+[
+'q' => 'Do Core Web Vitals only apply to mobile websites?',
+'a' => 'No. Core Web Vitals are measured for both desktop and mobile experiences. However, mobile performance usually receives greater attention because Google primarily uses mobile-first indexing and many visitors browse using smartphones.',
+],
+[
+'q' => 'How can I improve my Core Web Vitals?',
+'a' => 'Improving Core Web Vitals typically involves optimizing images, reducing unnecessary JavaScript, improving server response times, using browser caching, minimizing layout shifts, reserving space for images and advertisements, and reducing the impact of third-party scripts. The exact improvements depend on which metric is performing poorly.',
+],
+[
+'q' => 'How does this Core Web Vitals Checker work?',
+'a' => 'This tool checks the Core Web Vitals performance of every URL you submit and reports the values for Largest Contentful Paint (LCP), Interaction to Next Paint (INP), and Cumulative Layout Shift (CLS). It helps you quickly identify pages that require optimization so you can improve user experience across your website.',
+],
+] as $faq)
         <div class="accordion-item">
           <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"

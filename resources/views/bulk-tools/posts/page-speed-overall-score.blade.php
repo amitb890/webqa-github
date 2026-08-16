@@ -11,73 +11,172 @@
   <div class="single-post-content">
       <h2 class="tools_des_fastheading">Google PageSpeed Overall Score</h2>
 
-      <p>Google PageSpeed Overall Score is a beacon of performance measurement, like a health check-up for your website's speed and performance. It provides vital insights and recommendations, making it a critical tool for optimizing website speed.</p>
 
-      <h3>What is Google PageSpeed Overall Score?</h3>
-      <p>Google PageSpeed Overall Score is a composite score provided by Google to evaluate the efficiency and speed at which a web page loads. It comprehensively reflects your website's performance, calculated based on various factors like resource optimization, server response times, and rendering speed. Scores typically fall into three categories: good (90-100), needs improvement (50-89), and poor (0-49).</p>
-      <img src="{{ asset('new-assets\assets\images\bulk-tool\bulk_overall_1.png') }}" alt="Submit XML Sitemap Example"
-      class="img-fluid my-4">
-      <h3>Why is it Important?</h3>
-      <p>This score is pivotal as it affects user experience, SEO rankings, and conversion rates, directly impacting user satisfaction, visibility, and the overall success of your website.</p>
+<div class="list yellow-content summary-block">
+    <span class="summary-heading">Quick Summary</span>
 
-      <h3>How to Use Google PageSpeed Insights Tool</h3>
-      <p>Using the PageSpeed Insights Tool is straightforward. You need to visit Google Page Speed Insights, input any URL you wish to analyze, and hit “Analyze.” After a brief analysis, you are presented with mobile and desktop webpage version scores and a list of optimization opportunities. Implement the suggested optimizations and rerun the tool to observe the impact on your page’s performance.</p>
+    <p>
+        Google PageSpeed Insights analyzes how quickly a webpage loads and performs on both mobile and desktop devices. It evaluates your page using Lighthouse audits and real-world user experience data to identify performance bottlenecks and recommend improvements.
+    </p>
 
-      <h3>Understanding the PageSpeed Insights Report</h3>
-      <p>The PageSpeed Insights Report might seem technical, but it is quite manageable. It's divided into three main sections: Core Web Vitals Assessment, Diagnose Performance Issues, and Opportunities, each providing detailed insights and suggestions on different aspects of your webpage, from loading performance to SEO.</p>
+    <ol>
+        <li>PageSpeed scores range from 0 to 100, with 90–100 considered good performance.</li>
+        <li>The report includes Core Web Vitals, performance metrics, diagnostics, and optimization opportunities.</li>
+        <li>A faster website provides a better user experience, improves engagement, and can indirectly support SEO.</li>
+        <li>PageSpeed evaluates factors such as loading speed, responsiveness, visual stability, JavaScript execution, and resource optimization.</li>
+        <li>This tool lets you bulk check Google PageSpeed scores across multiple URLs, helping you quickly identify pages that need performance improvements.</li>
+    </ol>
+</div>
 
-      <h3>Enhancing Your Score: Practical Steps</h3>
-      <ul>
-          <li><b>Optimize Media:</b> Properly scale and compress images and videos.</li>
-          <li><b>Minimize HTTP Requests:</b> By optimizing code and combining files.</li>
-          <li><b>Leverage Browser Caching:</b> Set appropriate expiry times for resources.</li>
-          <li><b>Enable Compression:</b> Utilize gzip compression to reduce file sizes.</li>
-          <li><b>Prioritize Above-the-Fold Content:</b> Optimize the loading of initial content that appears to the users.</li>
-      </ul>
 
-      <h3>Do's and Don'ts for Google PageSpeed Overall Score</h3>
+<h3>What is Google PageSpeed Overall Score?</h3>
 
-      <b>✅ Do’s:</b>
-      <ul>
-          <li>Consistently Monitor and Optimize: Regular checkups and implementations of suggested improvements are crucial.</li>
-          <li>Prioritize Critical Content and Resources: Ensure necessary content and resources are optimized and load quickly.</li>
-      </ul>
+<p>
+<a target="_blank" href="https://pagespeed.web.dev/">Google PageSpeed Insights Score</a> is a performance score that measures how efficiently a webpage loads and responds on both mobile and desktop devices. It is generated using Google's Lighthouse auditing tool, which analyzes various aspects of a webpage including loading speed, responsiveness, visual stability, accessibility, and resource optimization.
+</p>
 
-      <b>❌ Don’ts:</b>
-      <ul>
-          <li>Ignore Mobile Performance or Updates: Mobile optimization and keeping your plugins and themes updated are crucial.</li>
-          <li>Overlook Small Gains: Every little optimization counts towards improving the overall score.</li>
-      </ul>
+<p>
+The score ranges from 0 to 100, with higher scores indicating better overall performance. Google groups the scores into three categories:
+</p>
 
-      <h3>Conclusion</h3>
-      <p>Google PageSpeed Overall Score is more than just a performance indicator; it comprehensively reflects your website’s operational health and efficiency. Regularly monitoring and implementing Google’s recommendations can significantly improve user experience, SEO rankings, and conversion rates, paving the way for your website’s enhanced success and user satisfaction.</p>
+<ul>
+    <li><strong>90–100:</strong> Good – The page performs well and meets most performance best practices.</li>
+    <li><strong>50–89:</strong> Needs Improvement – The page is usable but has opportunities for optimization.</li>
+    <li><strong>0–49:</strong> Poor – The page has significant performance issues that should be addressed.</li>
+</ul>
+
+<p>
+The overall score is calculated using multiple performance metrics collected during a Lighthouse audit. These include metrics such as First Contentful Paint (FCP), Largest Contentful Paint (LCP), Interaction to Next Paint (INP), Cumulative Layout Shift (CLS), Speed Index, and Total Blocking Time (TBT). Together, these metrics provide a comprehensive picture of how quickly a page loads, becomes interactive, and remains visually stable for users.
+</p>
+
+<p>
+Google PageSpeed Insights also combines laboratory testing with real-world user experience data (when available) from the <a target="_blank" href="https://developer.chrome.com/docs/crux">Chrome User Experience Report (CrUX)</a>. This allows website owners to understand not only how a page performs under controlled conditions but also how it performs for actual visitors using different devices and network conditions.
+</p>
+<img src="{{ asset('new-assets\assets\images\bulk-tool\bulk_overall_1.png') }}" alt="Google Page Speed Score" class="img-fluid my-4">
+
+<h3>How Google PageSpeed Insights Works</h3>
+
+<p>Google PageSpeed Insights analyzes the performance of a webpage by fetching the URL, loading it in a controlled browser environment using Lighthouse, and measuring various performance metrics. It evaluates how quickly the page loads, becomes interactive, and remains visually stable before generating an overall performance score and a detailed optimization report.</p>
+<p>During the analysis, Lighthouse simulates how users experience your webpage on both mobile and desktop devices. It measures important metrics such as First Contentful Paint (FCP), Largest Contentful Paint (LCP), Interaction to Next Paint (INP), Cumulative Layout Shift (CLS), Speed Index, and Total Blocking Time (TBT). These metrics are then combined using Google's scoring model to calculate the final PageSpeed score.</p>
+
+<p>Whenever possible, Google also supplements the Lighthouse audit with real-world user experience data from the Chrome User Experience Report (CrUX). This field data helps website owners understand how actual visitors experience the page across different devices, browsers, and network conditions.</p>
+
+<p>
+After completing the analysis, PageSpeed Insights categorizes the performance score as <strong>Good (90–100)</strong>, <strong>Needs Improvement (50–89)</strong>, or <strong>Poor (0–49)</strong>. It also highlights opportunities, diagnostics, and best practices that can help improve your website's loading speed and overall user experience.
+</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-pagespeed-works.png') }}" class="img-fluid my-4" alt="How Google Page Speed Insights works">
+
+<h3>PageSpeed Optimization Practices - The Good and the Bad</h3>
+
+<p>
+Improving your PageSpeed score is not about chasing a perfect score—it's about delivering a faster, smoother experience for your visitors. The following examples highlight common optimization techniques alongside practices that can significantly slow down your website.
+</p>
+
+<table class="good-bad-example-table">
+    <thead>
+        <tr>
+            <th>Good Examples</th>
+            <th>Bad Examples</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Compressing and serving images in modern formats like <strong>WebP</strong> or <strong>AVIF</strong>.</td>
+            <td>Uploading large, uncompressed JPEG or PNG images directly from a camera or design tool.</td>
+        </tr>
+
+        <tr>
+            <td>Lazy loading images and videos that appear below the fold.</td>
+            <td>Loading every image, video, and iframe immediately when the page opens.</td>
+        </tr>
+
+        <tr>
+            <td>Minifying CSS and JavaScript files before deployment.</td>
+            <td>Serving large, unminified CSS and JavaScript files with unnecessary whitespace and comments.</td>
+        </tr>
+
+        <tr>
+            <td>Using browser caching and a CDN to serve static assets quickly.</td>
+            <td>Serving every request directly from the origin server without caching.</td>
+        </tr>
+
+        <tr>
+            <td>Reducing unused JavaScript and loading only the code required for the current page.</td>
+            <td>Loading large JavaScript libraries that are never used by the page.</td>
+        </tr>
+
+        <tr>
+            <td>Optimizing server response time with efficient hosting and caching.</td>
+            <td>Allowing slow server response times that delay page rendering.</td>
+        </tr>
+
+        <tr>
+            <td>Loading custom fonts efficiently using modern formats and <code>font-display: swap</code>.</td>
+            <td>Loading multiple large font families that block page rendering.</td>
+        </tr>
+
+        <tr>
+            <td>Regularly monitoring PageSpeed Insights after major website updates.</td>
+            <td>Ignoring performance issues until users start complaining about slow pages.</td>
+        </tr>
+    </tbody>
+</table>
 
       <!-- Start FAQ -->
       <div class="getting-recover-main recover-faq-area">
           <h3>FAQs</h3>
           <div class="accordion" id="accordionPanelsStayOpenExample">
               @foreach([
-                  [
-                      'q' => 'How can I check my Google PageSpeed Overall Score?',
-                      'a' => 'Google’s PageSpeed Insights provides a free and easy way to check your score.',
-                  ],
-                  [
-                      'q' => 'Does Google PageSpeed Overall Score Affect SEO?',
-                      'a' => 'Absolutely, it\'s a critical factor in Google’s search algorithm.',
-                  ],
-                  [
-                      'q' => 'Can a high Google PageSpeed Overall Score guarantee a better user experience?',
-                      'a' => 'While it significantly contributes to user experience due to faster load times, other factors like content quality and usability are also important.',
-                  ],
-                  [
-                      'q' => 'Is achieving a score of 100 realistic?',
-                      'a' => 'Achieving 100 is challenging, but aiming for continuous improvement and maintaining a score in the "good" range is beneficial.',
-                  ],
-                  [
-                      'q' => 'What Is a Good PageSpeed Insights Score?',
-                      'a' => 'A score of 100/100 is theoretically the best, with 90 and above being good, 50 to 89 needing improvement, and below 50 being considered poor according to Google’s standards.',
-                  ]
-              ] as $faq)
+[
+'q' => 'What is Google PageSpeed Insights?',
+'a' => 'Google PageSpeed Insights is a free performance analysis tool developed by Google. It evaluates how quickly a webpage loads on both mobile and desktop devices, identifies performance bottlenecks, and provides actionable recommendations for improving speed, user experience, and Core Web Vitals.',
+],
+[
+'q' => 'What is a good Google PageSpeed Insights score?',
+'a' => 'Google categorizes PageSpeed scores into three ranges: <strong>90–100 (Good)</strong>, <strong>50–89 (Needs Improvement)</strong>, and <strong>0–49 (Poor)</strong>. While achieving a perfect score of 100 is ideal, maintaining a score above 90 is generally considered excellent for most websites.',
+],
+[
+'q' => 'Does Google PageSpeed Insights affect SEO?',
+'a' => 'PageSpeed Insights itself is not a ranking factor. However, many of the metrics it measures—such as loading performance and Core Web Vitals—contribute to page experience, which Google considers when evaluating search results. Faster websites also tend to provide better user experiences, lower bounce rates, and higher engagement.',
+],
+[
+'q' => 'Why is my mobile PageSpeed score lower than my desktop score?',
+'a' => 'Mobile devices generally have slower processors, less memory, and slower network connections than desktop computers. Google also simulates realistic mobile network conditions during testing, making mobile performance more challenging and often resulting in lower scores.',
+],
+[
+'q' => 'How often should I test my website with PageSpeed Insights?',
+'a' => 'You should test your website after major design changes, CMS updates, plugin installations, server migrations, or whenever you notice slower loading speeds. Regular monitoring helps identify performance regressions before they affect visitors.',
+],
+[
+'q' => 'Why does my PageSpeed score change over time?',
+'a' => 'PageSpeed scores can vary because of changes in website content, third-party scripts, advertising, server performance, network conditions, browser updates, and improvements to Lighthouse itself. Small fluctuations between tests are completely normal.',
+],
+[
+'q' => 'What are Core Web Vitals?',
+'a' => 'Core Web Vitals are a set of user experience metrics that measure loading performance, interactivity, and visual stability. They currently include Largest Contentful Paint (LCP), Interaction to Next Paint (INP), and Cumulative Layout Shift (CLS), all of which are reported within PageSpeed Insights.',
+],
+[
+'q' => 'Do I need a perfect PageSpeed score of 100?',
+'a' => 'No. A perfect score is not required for a fast website or strong SEO performance. Many high-performing websites score between 90 and 99. Focus on delivering a fast, stable user experience rather than chasing a perfect score.',
+],
+[
+'q' => 'What usually causes a low PageSpeed score?',
+'a' => 'Common causes include oversized images, render-blocking CSS and JavaScript, excessive third-party scripts, slow server response times, lack of browser caching, large font files, unused CSS or JavaScript, and poor hosting performance.',
+],
+[
+'q' => 'Can my hosting provider affect my PageSpeed score?',
+'a' => 'Yes. Slow hosting, overloaded servers, high server response times, and poor infrastructure can significantly affect your PageSpeed score. Using quality hosting, caching, and a Content Delivery Network (CDN) can often improve website performance.',
+],
+[
+'q' => 'What is the difference between lab data and field data?',
+'a' => 'Lab data is generated by Lighthouse during a controlled performance test, allowing developers to diagnose issues consistently. Field data comes from the Chrome User Experience Report (CrUX) and reflects how real users experience your website under actual browsing conditions.',
+],
+[
+'q' => 'How does this Google PageSpeed Score Checker work?',
+'a' => 'This tool analyzes the PageSpeed Insights performance score for each URL you provide and reports the mobile and desktop performance scores. It allows you to quickly identify slow pages across your website so you can prioritize optimization efforts.',
+],
+] as $faq)
               <div class="accordion-item">
                   <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"

@@ -195,7 +195,7 @@
 <p>It helps you guide search engine bots, but it has it's limits. Understanding what a Robots.txt can and cannot do will prevent common SEO mistakes.</p>
 
 <div class="list green-list">
-  <h3>What Robots.txt CAN Do</h3>
+  <h3>What Robots.txt Can Do</h3>
   <ol>
     <li><b>Control crawling behavior:</b> Robots.txt tells bots which sections of your website they should or should not crawl.</li>
     <li><b>Reduces unnecessary server load:</b> Robots.txt limits bot hits on pages that don’t add value, especially on large websites.</li>
@@ -206,7 +206,7 @@
 </div>
 
 <div class="list red-list">
-  <h3>What Robots.txt CANNOT Do</h3>
+  <h3>What Robots.txt Cannot Do</h3>
   <ol>
     <li><b>Guarantee a page won’t be indexed:</b> A URL can still appear in search results if it’s linked from elsewhere, even if crawling is blocked through Robots.txt.</li>
     <li><b>Secure private content:</b> Robots.txt is public and not a security feature. Sensitive pages should be protected with login or authentication methods.</li>

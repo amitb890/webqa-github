@@ -38,9 +38,11 @@
   </code>
 </div>
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/what-are-open-graph-tags.png') }}" class="img-fluid my-4" alt="What are open graph tags">
+
 <p>When these tags are set correctly, the shared preview becomes more consistent, more clickable, and more aligned with your brand.</p>
 
-<h3>Why OG Tags Matter</h3>
+<h3>Why Open Graph Tags Matter</h3>
 <p>When someone shares your page on social media or messaging apps, the preview becomes the first impression of your website's content. OG tags help you control that impression instead of leaving it up to the platform to “guess” what content to show.</p>
 
 <p>A well optimized Open Graph setup can make the difference between a link that gets ignored and a link that earns clicks and engagement.</p>
@@ -79,7 +81,7 @@
 </div>
 
 
-<h3>Do's and Don'ts of OG Tags</h3>
+<h3>Do's and Don'ts of Open Graph Tags</h3>
 <p>OG tags are all about controlling how your pages look when shared. A few best practices can help you create previews that are consistent, attractive, and more likely to earn clicks across Facebook, LinkedIn, Twitter, and messaging apps.</p>
 
 <div class="list green-list">
@@ -109,9 +111,9 @@
 
 <h3>How Open Graph Tags actually Look</h3>
 <p>Here is an example which shows how open graph tags content decides the thumbnail preview on different social sites:</p>
-<b>Facebook</b>
+<h4>Facebook</h4>
 <img src="{{ asset('new-assets/assets/images/bulk-tool/open_graph_image_1.png') }}" alt="Open Graph Tag Example" class="img-fluid my-4">
-<b>LinkedIn</b>
+<h4>LinkedIn</h4>
 <img src="{{ asset('new-assets/assets/images/bulk-tool/open_graph_image_2.png') }}" alt="Open Graph Example Breakdown" class="img-fluid my-4">
 
 
@@ -120,23 +122,47 @@
           <h3>FAQs</h3>
           <div class="accordion" id="accordionPanelsStayOpenExample">
               @foreach([
-                  [
-                      'q' => 'What is the difference between OG tags and meta tags?',
-                      'a' => 'OG tags are a subset of meta tags used specifically for social media previews.',
-                  ],
-                  [
-                      'q' => 'Do OG tags affect SEO?',
-                      'a' => 'They don’t directly affect search rankings but significantly impact social traffic and engagement.',
-                  ],
-                  [
-                      'q' => 'What size should OG images be?',
-                      'a' => 'A common recommended size is 1200×630 pixels for most platforms.',
-                  ],
-                  [
-                      'q' => 'Why is my social preview not updating?',
-                      'a' => 'Social platforms cache previews. Tools like Facebook’s Debugger can force a refresh.',
-                  ],
-              ] as $faq)
+[
+'q' => 'What are Open Graph (OG) tags?',
+'a' => 'Open Graph tags are HTML meta elements placed inside the headsection of a webpage. They tell social media platforms which title, description, image, and URL should be displayed when someone shares your webpage.',
+],
+[
+'q' => 'What is the difference between OG tags and regular meta tags?',
+'a' => 'Regular meta tags are primarily used by search engines to understand your webpage and generate search snippets. Open Graph tags, on the other hand, are designed specifically for social media platforms to generate consistent and visually appealing link previews.',
+],
+[
+'q' => 'Do Open Graph tags affect SEO?',
+'a' => 'Open Graph tags are not a direct Google ranking factor and do not influence search rankings. However, they improve how your pages appear when shared on social media, often leading to higher click-through rates, increased engagement, and more referral traffic.',
+],
+[
+'q' => 'Which social media platforms support Open Graph tags?',
+'a' => 'Open Graph tags are supported by Facebook, LinkedIn, Slack, WhatsApp, Microsoft Teams, Discord, and many other platforms that generate link previews. X (formerly Twitter) primarily uses Twitter Card tags but often falls back to Open Graph tags when Twitter-specific tags are unavailable.',
+],
+[
+'q' => 'What Open Graph tags are most important?',
+'a' => 'The most commonly used Open Graph tags are og:title, og:description, og:image, og:url, and og:type. Together, these control how your webpage is presented when shared on social platforms.',
+],
+[
+'q' => 'What size should Open Graph images be?',
+'a' => 'For the best compatibility across most social media platforms, Open Graph images should be at least 1200 × 630 pixels with an aspect ratio close to 1.91:1. Using high-resolution images ensures previews look sharp on both desktop and mobile devices.',
+],
+[
+'q' => 'Why is my Open Graph image not appearing?',
+'a' => 'Common reasons include missing og:image tags, inaccessible image URLs, unsupported image formats, image dimensions that are too small, or cached previews that have not yet been refreshed by the social platform.',
+],
+[
+'q' => 'Why is my social media preview not updating?',
+'a' => 'Most social platforms cache Open Graph data to improve performance. Even after updating your tags, the old preview may continue to appear until the cache is refreshed. Facebook Sharing Debugger and LinkedIn Post Inspector can be used to request a fresh crawl of your page.',
+],
+[
+'q' => 'Can I use different images for search engines and social media?',
+'a' => 'Yes. The image shown in search results is independent of the Open Graph image. Many websites use a dedicated og:image specifically optimized for social sharing while using different images within the page content.',
+],
+[
+'q' => 'What happens if my webpage does not contain Open Graph tags?',
+'a' => 'If Open Graph tags are missing, social platforms attempt to generate previews automatically by extracting information from the page. This often results in inconsistent titles, descriptions, or images, making the shared link less attractive and reducing click-through rates.',
+],
+] as $faq)
               <div class="accordion-item">
                   <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
