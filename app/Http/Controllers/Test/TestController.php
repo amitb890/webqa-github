@@ -1832,32 +1832,16 @@ class TestController extends Controller
         $xmldata = "";
 
         if($isSitemap){
-            if(!$helpers->isValidUrl($isSitemapVal)){
-                $status = false;
-                $fileExists = false;
+            $lookup = $helpers->findUrlInXmlSitemaps($isSitemapVal, $urlValue, $urlValueTwo);
+            $fileExists = $lookup["fileExists"];
+            $xmldata = $lookup["xmldata"];
 
+            if(!$fileExists){
+                $status = false;
                 $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
             }else{
-                $xmldata = @simplexml_load_file($isSitemapVal);
-                if(!$xmldata){
-                    $status = false;
-                    $fileExists = false;
-
-                    $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
-                }else{
-                    $fileExists = true;
-
-                    foreach($xmldata as $data){
-                        if(strcmp($data->loc,$urlValue) === 0 || strcmp($data->loc,$urlValueTwo) === 0){
-                            $status = true;
-                            $message = "Page is added in XML Sitemap";
-                            break;
-                        }else{
-                            $status = false;
-                            $message = "Page is not added in XML Sitemap";
-                        }
-                    }
-                }
+                $status = $lookup["status"];
+                $message = $status ? "Page is added in XML Sitemap" : "Page is not added in XML Sitemap";
             }
         }
 
@@ -2197,7 +2181,6 @@ class TestController extends Controller
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $urlValueTwo = rtrim(str_replace("www.", "", $urlValue), "/");
         $isSitemap = $settings->settings_sub->html_sitemap;
         $sitemapVal = $settings->settings_sub->html_sitemap_val;
 
@@ -2207,36 +2190,15 @@ class TestController extends Controller
 
 
         if($isSitemap){
-            if(!$helpers->isValidUrl($sitemapVal)){
+            $lookup = $helpers->findUrlInHtmlSitemaps($sitemapVal, $urlValue, $domain);
+            $fileExists = $lookup["fileExists"];
+
+            if(!$fileExists){
                 $status = false;
-                $fileExists = false;
                 $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
             }else{
-                $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
-                $crawler = $goutteClient->request('GET', $sitemapVal);
-                $links = $crawler->filter("a")->each(function($node){
-                    return $node->extract(array('href'))[0];
-                });
-
-                if(count($links) > 0){
-                    for($i=0;$i<count($links);$i++){
-                        $content = $links[$i];
-                        $link = $helpers->getAbsolutePath($content, $domain);
-                        $linkCustom = str_replace("www.", "", $link);
-                        if($linkCustom === $urlValueTwo){
-                            $status = true;
-                            $message = "Page is added in HTML Sitemap";
-                            break;
-                        }else{
-                            $status = false;
-                            $message = "Page is not added in HTML Sitemap";
-                        }
-                    }
-                }else{
-                    $status = false;
-                    $fileExists = false;
-                    $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
-                }
+                $status = $lookup["status"];
+                $message = $status ? "Page is added in HTML Sitemap" : "Page is not added in HTML Sitemap";
             }
         }
 

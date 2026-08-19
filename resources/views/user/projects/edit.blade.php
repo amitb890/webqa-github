@@ -54,12 +54,11 @@
                             </div>
                         <div class="col-md-12 project-single-input">
                             <label for="name" class="form-label">XML Sitemaps</label>
-                            <textarea class="form-control" id="xmlSitemap" rows="2" placeholder="Enter XML sitemap URLs (one per line)">@if(isset($xmlSitemap) && count($xmlSitemap) > 0)
-                                @foreach ($xmlSitemap as $itemXml)
-@if ($itemXml != ''){{ $itemXml }}
-                                    @endif
-                                @endforeach
-@endif</textarea>
+                            <textarea class="form-control" id="xmlSitemap" rows="2" placeholder="Enter XML sitemap URLs (one per line)">@if(isset($xmlSitemap) && count($xmlSitemap) > 0){{ implode("\n", $xmlSitemap) }}@endif</textarea>
+                        </div>
+                        <div class="col-md-12 project-single-input">
+                            <label for="htmlSitemap" class="form-label">HTML Sitemaps</label>
+                            <textarea class="form-control" id="htmlSitemap" rows="2" placeholder="Enter HTML sitemap URLs (one per line)">@if(isset($htmlSitemap) && count($htmlSitemap) > 0){{ implode("\n", $htmlSitemap) }}@endif</textarea>
                         </div>
                         <div class="main_sitemap_area">
                             <div class="sitemap_area">

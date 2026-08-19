@@ -24,6 +24,7 @@ class OnboardingController extends Controller
 
         $rootUrl = rtrim($request->root_url, '/');
         $sitemaps = [];
+        $htmlSitemaps = \App\Http\Helpers::detectHtmlSitemapUrls($rootUrl);
 
         // 1. Try robots.txt
         $robotsUrl = $rootUrl . '/robots.txt';
@@ -78,6 +79,7 @@ class OnboardingController extends Controller
 
         return response()->json([
             'sitemaps' => $sitemaps,
+            'html_sitemaps' => $htmlSitemaps,
         ]);
     }
 

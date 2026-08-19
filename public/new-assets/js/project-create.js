@@ -8,6 +8,14 @@ $(document).ready(function() {
     // Initialize with current homepage value on edit page (if exists)
     let lastProcessedHomepage = $('#homepage').val() ? $('#homepage').val().trim() : '';
 
+    function sitemapTextareaToStoredValue(selector) {
+        return ($(selector).val() || '')
+            .split(/\r?\n/)
+            .map(function (line) { return line.trim(); })
+            .filter(Boolean)
+            .join(',');
+    }
+
     // Add auto line numbers to URLs list (project create/edit only)
     function initUrlsListAutoNumbers() {
         const textarea = document.getElementById('urlsList');
@@ -297,11 +305,20 @@ $(document).ready(function() {
                 $('#xmlSitemap').val('');
                 await fetchUrls([]);
             }
+
+            if (data.html_sitemaps && data.html_sitemaps.length > 0) {
+                $('#htmlSitemap').val(data.html_sitemaps.join('\n'));
+            } else if ($('#htmlSitemap').length) {
+                $('#htmlSitemap').val('');
+            }
             
         } catch (error) {
             console.error('Error detecting sitemaps:', error);
             // On error, show message
             $('#xmlSitemap').val('');
+            if ($('#htmlSitemap').length) {
+                $('#htmlSitemap').val('');
+            }
             await fetchUrls([]);
         } finally {
             // Hide loader after both operations complete
@@ -800,21 +817,18 @@ $(document).ready(function() {
             createButton.prop('disabled', true);
             createButton.html('<span class="spinner-border spinner-border-sm me-2"></span>Creating Project...');
 
-            // Make an AJAX request to create a project.
-            // Get first line from xmlSitemap textarea
-            const xmlSitemapValue = $("#xmlSitemap").val().split('\n')[0].trim();
-            
-            // Remove serial numbers from URLs list before sending
             let cleanedUrlsList = urlsList.val();
             cleanedUrlsList = removeSerialNumbersFromUrls(cleanedUrlsList);
-            
+
+            // Make an AJAX request to create a project.
             $.ajax({
                 url: `/createProject`,
                 type: 'POST',
                 data: {
                     "name": name.val(),
                     "homepage": homepage.val(),
-                    "xmlSitemap": xmlSitemapValue,
+                    "xmlSitemap": sitemapTextareaToStoredValue('#xmlSitemap'),
+                    "htmlSitemap": sitemapTextareaToStoredValue('#htmlSitemap'),
                     "urlsList": cleanedUrlsList,
                     "route": route,
                     "_method": 'POST',
@@ -925,10 +939,6 @@ $(document).ready(function() {
                 return false;
             }
             
-            // Get first line from xmlSitemap textarea
-            const xmlSitemapValue = $("#xmlSitemap").val().split('\n')[0].trim();
-            
-            // Remove serial numbers from URLs list before sending
             let cleanedUrlsList = urlsList.val();
             cleanedUrlsList = removeSerialNumbersFromUrls(cleanedUrlsList);
             
@@ -939,7 +949,8 @@ $(document).ready(function() {
                 data: {
                     "name": name.val(),
                     "homepage": homepage.val(),
-                    "xmlSitemap": xmlSitemapValue,
+                    "xmlSitemap": sitemapTextareaToStoredValue('#xmlSitemap'),
+                    "htmlSitemap": sitemapTextareaToStoredValue('#htmlSitemap'),
                     "urlsList": cleanedUrlsList,
                     "projectId": $('#projectId').val(),
                     "settingsSubId": $('#settingsSubId').val(),

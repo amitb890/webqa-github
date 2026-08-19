@@ -196,6 +196,18 @@ $(document).ready(function () {
       .replace(/"/g, "&quot;")
   }
 
+  function trackerSitemapUrlCell(rawUrl) {
+    const urls = String(rawUrl || "")
+      .split(/[,\r\n]+/)
+      .map(function (url) { return url.trim(); })
+      .filter(Boolean)
+    if (!urls.length) return "—"
+    return urls.map(function (url) {
+      const hrefEsc = trackerEscapeHtml(url)
+      return `<a href="${hrefEsc}" target="_blank" rel="noopener noreferrer">${hrefEsc}</a>`
+    }).join("<br>")
+  }
+
   function trackerSettingEnabled(settings, key) {
     return settings && (settings[key] === true || settings[key] === 1 || settings[key] === "1")
   }
@@ -2195,7 +2207,6 @@ $(document).ready(function () {
                       const rawUrl = (result.settings && result.settings[valKey])
                         ? String(result.settings[valKey])
                         : (projectSettings && projectSettings[valKey] ? String(projectSettings[valKey]) : "");
-                      const hrefEsc = rawUrl.replace(/&/g, "&amp;").replace(/"/g, "&quot;");
                       const excluded = /excluded/i.test(result.message || "");
                       let listCell = "—";
                       let listClass = "";
@@ -2206,9 +2217,7 @@ $(document).ready(function () {
                         listCell = "N/A";
                       }
                       const detail = trackerEscapeHtml(result.message || "");
-                      const urlCell = rawUrl
-                        ? `<a href="${hrefEsc}" target="_blank" rel="noopener noreferrer">${trackerEscapeHtml(rawUrl)}</a>`
-                        : "—";
+                      const urlCell = trackerSitemapUrlCell(rawUrl);
                       if (isXml) {
                         td.innerHTML += `
                         <td class="${hid} text-start">${urlCell}</td>

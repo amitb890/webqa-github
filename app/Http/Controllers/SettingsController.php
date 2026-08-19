@@ -81,7 +81,7 @@ class SettingsController extends Controller
         }
         $sitemapString = $request->input('sitemapString');
         $settingsSub = SettingsSub::where("project_settings_id", $id)->get()->first();
-        $settingsSub->xml_sitemap_val = $sitemapString;
+        $settingsSub->xml_sitemap_val = \App\Http\Helpers::normalizeSitemapValue((string) $sitemapString);
 
         $settingsSubState = $settingsSub->save();
 
@@ -485,10 +485,12 @@ class SettingsController extends Controller
 
 
         // xml sitemap
-        $validator->sometimes('xmlSitemapVal', ['url', function($attribute, $value, $fail) use($data, $projectUrl, $projectUrlOrigin, $helpers){
-            if(!$helpers->isLinkSameAsOrigin($value, $projectUrlOrigin)){
-                $msg = "This URL does not exist in the website address - "  . $projectUrl;
-                return $fail(__($msg));
+        $validator->sometimes('xmlSitemapVal', [function($attribute, $value, $fail) use($data, $projectUrl, $projectUrlOrigin, $helpers){
+            foreach(\App\Http\Helpers::parseSitemapUrls((string) $value) as $sitemapUrl){
+                if(!$helpers->isLinkSameAsOrigin($sitemapUrl, $projectUrlOrigin)){
+                    $msg = "This URL does not exist in the website address - "  . $projectUrl;
+                    return $fail(__($msg));
+                }
             }
         }], function ($input) {
             return $input->isXmlSitemap == true;
@@ -496,13 +498,19 @@ class SettingsController extends Controller
  
 
         // html sitemap
-        $validator->sometimes('htmlSitemapVal', ['url', function($attribute, $value, $fail) use($data, $projectUrl, $projectUrlOrigin, $helpers){
-            if(!$helpers->isLinkSameAsOrigin($value, $projectUrlOrigin)){
-                $msg = "This URL does not exist in the website address - "  . $projectUrl;
-                return $fail(__($msg));
+        $validator->sometimes('htmlSitemapVal', [function($attribute, $value, $fail) use($data, $projectUrl, $projectUrlOrigin, $helpers){
+            $urls = \App\Http\Helpers::parseSitemapUrls((string) $value);
+            if($urls === []){
+                return $fail(__('Please enter address to the html sitemap.'));
+            }
+            foreach($urls as $sitemapUrl){
+                if(!$helpers->isLinkSameAsOrigin($sitemapUrl, $projectUrlOrigin)){
+                    $msg = "This URL does not exist in the website address - "  . $projectUrl;
+                    return $fail(__($msg));
+                }
             }
         }], function ($input) {
-            return $input->isHtmlSitemap == true;
+            return $input->isHtmlSitemap == true || $input->isHtmlSitemapCustom == true;
         });
         
         // schema URLs validation - only when schema testing is enabled and custom URLs are provided
@@ -706,8 +714,9 @@ class SettingsController extends Controller
 
             // xml sitemap
             $settingsSub->xml_sitemap = $data["isXmlSitemap"];
+            $settingsSub->xml_sitemap_custom = !empty($data["isXmlSitemapCustom"]);
             if($data["isXmlSitemapCustom"]){
-                $settingsSub->xml_sitemap_val = $data["xmlSitemapVal"];
+                $settingsSub->xml_sitemap_val = \App\Http\Helpers::normalizeSitemapValue((string) ($data["xmlSitemapVal"] ?? ''));
             }
             
             // schema settings
@@ -723,8 +732,9 @@ class SettingsController extends Controller
 
             // html sitemap
             $settingsSub->html_sitemap = $data["isHtmlSitemap"];
+            $settingsSub->html_sitemap_custom = !empty($data["isHtmlSitemapCustom"]);
             if($data["isHtmlSitemapCustom"]){
-                $settingsSub->html_sitemap_val = $data["htmlSitemapVal"];
+                $settingsSub->html_sitemap_val = \App\Http\Helpers::normalizeSitemapValue((string) ($data["htmlSitemapVal"] ?? ''));
             }
 
             // meta viewport

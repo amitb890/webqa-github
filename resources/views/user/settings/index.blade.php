@@ -879,10 +879,14 @@
                                         </label>
                                     </div>
                                     <div class="form-check form-check-link">
-                                        <label class="form-check-label" for="pagefavicon2">
+                                        <label class="form-check-label" for="htmlSitemapVal">
                                             Address of the HTML Sitemap File
                                         </label>
-                                        <input class="hideInputCheckElement" type="text" id="htmlSitemapVal" value="{{ $settings->settingsSub->html_sitemap_val}}">
+                                        <?php
+                                            $htmlSitemapLines = \App\Http\Helpers::parseSitemapUrls($settings->settingsSub->html_sitemap_val);
+                                            $htmlSitemapFormatted = implode("\n", $htmlSitemapLines);
+                                        ?>
+                                        <textarea class="form-control hideInputCheckElement" id="htmlSitemapVal" rows="3" placeholder="Enter each HTML sitemap URL in a new line">{{ $htmlSitemapFormatted }}</textarea>
                                     </div>
                                 </div>
                                 <div class="accor-content-button">
@@ -5535,8 +5539,8 @@
         "xmlSitemapVal": `${project.homepage}/xml.sitemap`,
     }
     const defaultHTMLSitemap = {
-        "switchHTML": 0,
-        "isHtmlSitemap": 0,
+        "switchHTML": 1,
+        "isHtmlSitemap": 1,
         "isHtmlSitemapCustom": 1,
         "htmlSitemapVal": `${project.homepage}/sitemap`,
     }
@@ -5758,7 +5762,7 @@
             "switchFavicon": 1,
             "switchXML": 1,
             "switchSchema": 0,
-            "switchHTML": 0,
+            "switchHTML": 1,
             "switchViewport": 1,
             "switchFrameset": 1,
             "switchDoctype": 1,
@@ -5898,7 +5902,7 @@
             "isXmlSitemapCustom": 1,
             "xmlSitemapVal": `${project.homepage}/xml.sitemap`,
 
-            "isHtmlSitemap": 0,
+            "isHtmlSitemap": 1,
             "isHtmlSitemapCustom": 1,
             "htmlSitemapVal": `${project.homepage}/sitemap`,
 

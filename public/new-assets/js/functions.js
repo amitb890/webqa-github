@@ -1516,6 +1516,12 @@ function getAllValues(className){
                 el.value = val
                 el.innerHTML = val
                 break;
+            case "htmlSitemapVal":
+            case "xmlSitemapVal":
+                val = String(val || "").split(/[\n,]+/).map(function (line) { return line.trim(); }).filter(Boolean)
+                val = removeDuplicates(val)
+                val = val.toString()
+                break;
         }
 
         if($(el).attr("type") === "checkbox"){
