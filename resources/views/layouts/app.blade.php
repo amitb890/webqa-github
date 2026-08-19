@@ -708,6 +708,7 @@ if (!empty($activeProjectFavicon)) {
 
     <!-- custom scripts -->
     <script src="{{ asset('js/app.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+    <script src="{{ asset('new-assets/js/how-to-fix-content.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/js/functions.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
     <script src="{{ asset('new-assets/js/main.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 

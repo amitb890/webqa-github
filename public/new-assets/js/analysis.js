@@ -510,8 +510,8 @@ $( document ).ready(function() {
               </span>
             </div>
             ${!data.status ? 
-              `<div class="card-header-right data-test-name="${data.title}">
-                  <button class="btn rounded-pill fix-btn">
+              `<div class="card-header-right">
+                  <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                     How to fix it?
                   </button>
             </div>`
@@ -643,8 +643,8 @@ $( document ).ready(function() {
               </span>
             </div>
             ${!data.status ? 
-              `<div class="card-header-right data-test-name="${data.title}">
-                  <button class="btn rounded-pill fix-btn">
+              `<div class="card-header-right">
+                  <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                     How to fix it?
                   </button>
             </div>`
@@ -2359,8 +2359,8 @@ $( document ).ready(function() {
           </div>
           
           ${!data.status ? 
-            `<div class="card-header-right data-test-name="${data.title}" data-test-name="${data.title}">
-                <button class="btn rounded-pill fix-btn">
+            `<div class="card-header-right">
+                <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                   How to fix it?
                 </button>
           </div>
@@ -2454,8 +2454,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>`
@@ -2673,8 +2673,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>`
@@ -3140,8 +3140,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>`
@@ -3942,8 +3942,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}" data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>
@@ -4976,18 +4976,36 @@ $( document ).ready(function() {
       }
     });
 
-      $(".fix-btn").on( "click", function(e) {
-        const val = e.target.parentElement.getAttribute("data-test-name")
-        const data = getModalFixContent(val)
+      $(document).off("click", ".fix-btn").on("click", ".fix-btn", function(e) {
+        const btn = e.target.closest(".fix-btn")
+        const testName = btn.getAttribute("data-test-name")
+
+        // The card wrapper carries the label name, which lets us pull the full
+        // result object back out of resultsData and pick the failure reason.
+        const card = btn.closest(".analysis-card")
+        const result = card ? getElementData(card.getAttribute("data-name")) : null
+
+        const data = getModalFixContent(testName, result)
+
+        $("#modalFixTestName").text(data.testName || "")
         $("#modalFixLabel").html(data.headerTitle)
         $(".modal-video-content").html(data.contentHTML)
+
+        if(data.learnMoreURL){
+          $("#modalFixLearnMore").attr("href", data.learnMoreURL).removeAttr("hidden")
+        }else{
+          $("#modalFixLearnMore").attr("hidden", "hidden")
+        }
+
         if(data.video_url != ""){
           $(".modal-video iframe").attr("src", data.video_url)
           $(".modal-video").css({display: "block"})
         }else{
+          $(".modal-video iframe").removeAttr("src")
           $(".modal-video").css({display: "none"})
         }
-        modalFix.toggle()
+
+        modalFix.show()
       })
 
       $(".intentional-btn").on( "click", function(e) {

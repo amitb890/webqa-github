@@ -111,7 +111,7 @@ class CreateProjectSettingsSubTable extends Migration
             $table->boolean("xml_sitemap")->default(1)->nullable();
             $table->boolean("xml_sitemap_custom")->default(1)->nullable();
             $table->string("xml_sitemap_val")->default("")->nullable();
-            $table->boolean("html_sitemap")->default(0)->nullable();
+            $table->boolean("html_sitemap")->default(1)->nullable();
             $table->boolean("html_sitemap_custom")->default(1)->nullable();
             $table->string("html_sitemap_val")->default("")->nullable();
 

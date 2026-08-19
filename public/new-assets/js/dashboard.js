@@ -1,13 +1,13 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 2000, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1, urlsGoogleFinal = 0
   /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
   var googleProgressIsRecheck = false
   /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */
   var googleProgressExpectedResults = 0
-  var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
+  var recheckAllowed = true
   var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -19,6 +19,8 @@ $(document).ready(function () {
   })
   let removeTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
   const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
+  /** Tests that still run but have no dashboard tile — results are only shown on their report page. */
+  const dashboard_excluded_tests = ["html_sitemap"]
   let obj = {
     meta_title: [],
     meta_desc: [],
@@ -668,6 +670,9 @@ $(document).ready(function () {
 
       if(heading != "Security" && heading != "Coding Best Practices"){
         listItems.forEach(item=>{
+          if(dashboard_excluded_tests.includes(item.db_name)){
+            return
+          }
           if(item.is_dashboard_status){
             if(!item.show_dashboard_status){
               showStatus = true
@@ -746,6 +751,9 @@ $(document).ready(function () {
         const promises = []
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
+            if(dashboard_excluded_tests.includes(key)){
+              continue
+            }
             if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
               let status = false
               let label 
@@ -780,9 +788,6 @@ $(document).ready(function () {
                   continue
                 }
 
-                if(label.db_name === "xml_sitemap"){
-                  label.display_name = "Sitemap"
-                }
               }
 
 
@@ -812,7 +817,7 @@ $(document).ready(function () {
         "core_web_vitals"
       ])
       for (const [key, value] of Object.entries(data || {})) {
-        if (skipCachedWidgets.has(key) || ignore_tests.includes(key)) continue
+        if (skipCachedWidgets.has(key) || ignore_tests.includes(key) || dashboard_excluded_tests.includes(key)) continue
 
         const hasRenderableData = Array.isArray(value)
           ? value.length > 0
@@ -838,9 +843,6 @@ $(document).ready(function () {
         }else{
           label = Controls.getActiveLabel(key)
           if (!label) continue
-          if (label.db_name === "xml_sitemap") {
-            label.display_name = "Sitemap"
-          }
           if (label.show_dashboard_status === false) continue
         }
 
@@ -2178,190 +2180,51 @@ $(document).ready(function () {
               `
               break;    
             case "xml_sitemap": {
-            const xmlSitemapReportsUrl = reportsUrl
-            const htmlLabel = Controls.getActiveLabel("html_sitemap")
-            const htmlSitemapReportsUrl = (htmlLabel && htmlLabel.reportsUrl) || "#"
             const xmlRobotsAttr = (data.robotsTxtUrl || "").replace(/"/g, "&quot;")
             const xmlRobotsText = data.robotsTxtUrl || ""
-            let htmlRobotsAttr = ""
-            let htmlRobotsText = ""
-            if (htmlSitemapData != null) {
-              htmlRobotsText = htmlSitemapData.robotsTxtUrl || ""
-              htmlRobotsAttr = htmlRobotsText.replace(/"/g, "&quot;")
-            }
-            element = `
-              <div class="dashboard_sitemap_content common_tab">
-                      <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                          <button
-                            class="nav-link active"
-                            id="xml-sitemap-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#xml-sitemap"
-                            type="button"
-                            role="tab"
-                            aria-controls="xml-sitemap"
-                            aria-selected="true"
-                          >
-                            XML Sitemap
-                          </button>
-                        </li>
+            element = data.fileExists ? `
+                <div class="deshboard_inner_description border_bottom">
+                  <div class="roboto_url">
+                    <p>
+                      <span>Robots.txt URL: </span>
+                      <span>
+                        ${xmlRobotsText
+                          ? `<a href="${xmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${xmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
+                          : "<span>—</span>"}
+                      </span>
+                    </p>
+                  </div>
+                  <div class="deshboard_inner_description">
+                    <p>URL's found on XML sitemap<span class="${data.sitemapExists === data.totalUrls ? 'success' : 'danger'}">${data.sitemapExists}</span></p>
+                    <p>URL's found on website<span>${data.totalUrls}</span></p>
+                  </div>
 
-                        ${htmlSitemapData != null ? `       
-                        <li class="nav-item " role="presentation">
-                          <button
-                            class="nav-link"
-                            id="html-sitemap-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#html-sitemap"
-                            type="button"
-                            role="tab"
-                            aria-controls="html-sitemap"
-                            aria-selected="false"
-                          >
-                            HTML Sitemap
-                          </button>
-                        </li>` : 
-                        ""}
-
-                        
-                      </ul>
-                      <div class="tab-content" id="myTabContent">
-                        <div
-                          class="tab-pane fade show active"
-                          id="xml-sitemap"
-                          role="tabpanel"
-                          aria-labelledby="xml-sitemap-tab"
-                        >
-
-                        ${data.fileExists ? `
-                          
-                          <div class="deshboard_inner_description border_bottom">
-                            <div class="roboto_url">
-                              <p>
-                                <span>Robots.txt URL: </span>
-                                <span>
-                                  ${xmlRobotsText
-                                    ? `<a href="${xmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${xmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
-                                    : "<span>—</span>"}
-                                </span>
-                              </p>
-                            </div>
-                            <div class="deshboard_inner_description">
-                              <p>URL's found on XML sitemap<span class="${data.sitemapExists === data.totalUrls ? 'success' : 'danger'}">${data.sitemapExists}</span></p>
-                              <p>URL's found on website<span>${data.totalUrls}</span></p>
-                            </div>
-
-
-                            ${data.sitemapNotFound.length > 0 ? `
-                            <div class="dashboard_sitemap_textarea">
-                              <p>URL's not included on XML sitemap</p>
-                              <textarea>
-                                  ${data.sitemapNotFoundString}
-                              </textarea>
-                            </div>
-                            ` : ``}
-
-                          </div>
-
-                          <div class="inner_dashboard_footer">
-                            <a href="${xmlSitemapReportsUrl}">View Report</a>
-                          </div>
-                          ` 
-                          
-                          
-                          : `
-                          
-                          <div class="deshboard_inner_description border_bottom">
-                            <div class="blank_sitemap_content">
-                              <img
-                                src="/new-assets/assets/images/blank-sitemap.svg"
-                                alt="icon"
-                              />
-                              <p>
-                                We could not find XML sitemap on your website
-                              </p>
-                            </div>
-                          </div>
-
-                           <div class="inner_dashboard_footer">
-                            <a href="${xmlSitemapReportsUrl}">View Report</a>
-                            </div>
-                          `
-                        
-                        }
-                        </div>
-
-
-
-
-                        <div
-                          class="tab-pane fade"
-                          id="html-sitemap"
-                          role="tabpanel"
-                          aria-labelledby="html-sitemap-tab">
-                          
-
-
-                    
-                          
-                      ${htmlSitemapData != null ? htmlSitemapData.fileExists ? `
-                          
-                      <div class="deshboard_inner_description border_bottom">
-                        <div class="roboto_url">
-                          <p>
-                            <span>Robots.txt URL: </span>
-                            <span>
-                              ${htmlRobotsText
-                                ? `<a href="${htmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${htmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
-                                : "<span>—</span>"}
-                            </span>
-                          </p>
-                        </div>
-                        <div class="deshboard_inner_description">
-                          <p>URL's found on HTML sitemap<span class="${htmlSitemapData.sitemapExists === htmlSitemapData.totalUrls ? 'success' : 'danger'}">${htmlSitemapData.sitemapExists}</span></p>
-                          <p>URL's found on website<span>${htmlSitemapData.totalUrls}</span></p>
-                        </div>
-
-
-                        ${htmlSitemapData.sitemapNotFound.length > 0 ? `
-                        <div class="dashboard_sitemap_textarea">
-                          <p>URL's not included on HTML sitemap</p>
-                          <textarea>
-                              ${htmlSitemapData.sitemapNotFoundString}
-                          </textarea>
-                        </div>
-                        ` : ``}
-
-                      </div>
-
-                      <div class="inner_dashboard_footer">
-                        <a href="${htmlSitemapReportsUrl}">View Report</a>
-                      </div>
-                      ` 
-                      
-                      
-                      : `
-                      
-                      <div class="deshboard_inner_description border_bottom">
-                        <div class="blank_sitemap_content">
-                          <img
-                            src="/new-assets/assets/images/blank-sitemap.svg"
-                            alt="icon"
-                          />
-                          <p>
-                            We could not find HTML sitemap on your website
-                          </p>
-                        </div>
-                      </div>
-
-                       <div class="inner_dashboard_footer">
-                        <a href="${htmlSitemapReportsUrl}">View Report</a>
-                        </div>
-                      `
-                    
-                      : "" }
-            `
+                  ${(data.sitemapNotFound || []).length > 0 ? `
+                  <div class="dashboard_sitemap_textarea">
+                    <p>URL's not included on XML sitemap</p>
+                    <textarea>
+                        ${data.sitemapNotFoundString}
+                    </textarea>
+                  </div>
+                  ` : ``}
+                </div>
+                <div class="inner_dashboard_footer">
+                  <a href="${reportsUrl}">View Report</a>
+                </div>` : `
+                <div class="deshboard_inner_description border_bottom">
+                  <div class="blank_sitemap_content">
+                    <img
+                      src="/new-assets/assets/images/blank-sitemap.svg"
+                      alt="icon"
+                    />
+                    <p>
+                      We could not find XML sitemap on your website
+                    </p>
+                  </div>
+                </div>
+                <div class="inner_dashboard_footer">
+                  <a href="${reportsUrl}">View Report</a>
+                </div>`
               break;
             }
               case "images":
@@ -2407,7 +2270,7 @@ $(document).ready(function () {
         div.innerHTML = UI.getSingleLoaderCardElement(label, parsed)
         const cardShell = document.getElementById(`card_${label}`)?.querySelector(".single_dashboard_card")
         if (!cardShell) return
-        // First update removes .broken_links_content; later updates (e.g. XML sitemap + htmlSitemapData) must remove .single_dashboard_card_content instead.
+        // First update removes .broken_links_content; later updates (e.g. tile refresh) must remove .single_dashboard_card_content instead.
         const block =
           cardShell.querySelector(".page_speed_content") ||
           cardShell.querySelector(".single_dashboard_card_content") ||
@@ -3275,27 +3138,14 @@ $(document).ready(function () {
 
 
     static applyDashboardCardResponse(data, element, key, label){
-      if(label.db_name == "html_sitemap"){
-          console.log("HTML Sitemap data", data)
-          htmlSitemapData = typeof data === "string" ? JSON.parse(data) : data
-          if (lastXmlSitemapCardPayload && document.getElementById("card_xml_sitemap")) {
-            UI.updateSingleLoaderCard(
-              lastXmlSitemapCardPayload.data,
-              element,
-              lastXmlSitemapCardPayload.key,
-              lastXmlSitemapCardPayload.label
-            )
-          }
-      }else{
-          if (label.db_name === "xml_sitemap") {
-            lastXmlSitemapCardPayload = { data, key, label }
-          }
-          UI.updateSingleLoaderCard(data, element, key, label)
-      }
+      UI.updateSingleLoaderCard(data, element, key, label)
     }
 
     static manageSingleCard(element, key, label, appendStatus, status = true){
-      if(label.db_name != "html_sitemap" && status){
+      if(dashboard_excluded_tests.includes(label.db_name)){
+        return $.Deferred().resolve().promise()
+      }
+      if(status){
         UI.buildSingleLoaderCard(label, appendStatus)
       }
       if(ignore_tests.includes(key)){
@@ -3406,8 +3256,6 @@ $(document).ready(function () {
       const testDetails = data.results
       projectFinal = data.project
       $(".dashboard_top_items_main").html("")
-      htmlSitemapData = null
-      lastXmlSitemapCardPayload = null
       UI.buildWidgetSidebar()
 
       function finishDashboardTiles(cardsDeferred){
@@ -3984,9 +3832,6 @@ $(document).ready(function () {
 
       }else{
         label = Controls.getActiveLabel(key)
-        if(label.db_name === "xml_sitemap"){
-          label.display_name = "Sitemap"
-        }
       }
 
 

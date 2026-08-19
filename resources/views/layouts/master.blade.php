@@ -242,6 +242,7 @@
     <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}"></script>
 
     <!-- custom scripts -->
+    <script src="{{ asset('new-assets/js/how-to-fix-content.js') }}"></script>
     <script src="{{ asset('new-assets/js/functions.js') }}"></script>
     <script src="{{ asset('new-assets/js/main.js') }}"></script>
     <script src="{{ asset('new-assets/js/register.js') }}"></script>
