@@ -11038,7 +11038,7 @@ table.bulk-table td:last-child {
  }
 
 #card_google_lighthouse, #card_core_web_vitals {
-  grid-column: span 8;
+  grid-column: span 12;
 }
 
 .google_page_content {

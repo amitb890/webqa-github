@@ -3568,7 +3568,7 @@ $( document ).ready(function() {
         // build map: type -> array of blocks
         const map = {};
         data.blocks.forEach((blk, i) => {
-          const types = blk.types && blk.types.length ? blk.types : ['(unknown)'];
+          const types = blk.types && blk.types.length ? blk.types : ['JSON-LD (no @type)'];
           types.forEach(t => {
             if(!map[t]) map[t] = [];
             map[t].push(Object.assign({}, blk, { index: i+1 }));
@@ -3705,7 +3705,6 @@ $( document ).ready(function() {
           }catch(e){}
         }, 10);
       }
-  alert(data.showContent)
       // If Schema test is excluded (server signals showContent=false) do not render the schema card
       if(data && data.label && data.label.name === 'schema' && data.showContent === false){
         return;
@@ -3876,20 +3875,25 @@ $( document ).ready(function() {
       // Prepare schema subcards HTML if this is Schema test
       let schemaBlocksHtml = '';
       if((data.title === 'Schema' || data.tagName === 'Schema') && Array.isArray(data.blocks) && data.blocks.length){
+        const summaryTypes = (data.types && data.types.length) ? data.types.join(', ') : '';
         schemaBlocksHtml += '<div class="card-inner-content schema-blocks-container">';
+        if (summaryTypes) {
+          schemaBlocksHtml += `<div class="schema-types-summary" style="margin-bottom:10px;"><strong>Schema types:</strong> ${escapeHtml(summaryTypes)}</div>`;
+        }
         data.blocks.forEach((b, idx) => {
-          const typesText = (b.types && b.types.length) ? b.types.join(', ') : '(unknown)';
+          const hasTypes = b.types && b.types.length;
+          const typesText = hasTypes ? b.types.join(', ') : 'JSON-LD (no @type)';
           const snippet = b.snippet ? `<pre style="white-space:pre-wrap; background:#f8f9fa; padding:8px; border-radius:4px; max-height:220px; overflow:auto;">${escapeHtml(b.snippet)}</pre>` : '';
           const probsHtml = (b.problems && b.problems.length) ? UI.getProblemsElement(b.problems) : '<div class="no-problems">No problems</div>';
-          // Make header clickable by adding schema-sub-header with data-target
+          const startOpen = !hasTypes || (b.problems && b.problems.length);
           schemaBlocksHtml += `<div class="card mb-2 schema-subcard">
               <div class="card-body">
                 <div class="schema-sub-header d-flex justify-content-between align-items-center" data-target="#schema-sub-${idx}" role="button" tabindex="0" style="cursor:pointer;"
                      onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">
-                  <div><strong>${typesText}</strong></div>
+                  <div><strong>${escapeHtml(typesText)}</strong></div>
                   <div><a href="javascript:void(0)" class="schema-sub-toggle" data-target="#schema-sub-${idx}" onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">▾</a></div>
                 </div>
-                <div id="schema-sub-${idx}" style="display:none; margin-top:8px;">
+                <div id="schema-sub-${idx}" style="display:${startOpen ? 'block' : 'none'}; margin-top:8px;">
                   ${snippet}
                   ${probsHtml}
                 </div>
@@ -3936,7 +3940,7 @@ $( document ).ready(function() {
                                 fill="#D3D5D8" />
                             </svg>
                             <div class="card-help-body">
-                              <p>${data.description}</p>
+                              <p>${data.description || ''}</p>
                               <a href="${data.learnMoreURL}" target="_blank">Learn More</a>
                             </div>
                           </span>
@@ -3970,7 +3974,7 @@ $( document ).ready(function() {
                           <div class="card-single-content ${data.status ? "text-success-custom" : "text-danger-custom"} problem-help">
                             <p>
                               <span class="badge status_pdf">${data.status ? "PASS" : "FAIL"}</span>
-                              <span class="message_pdf">${data.label.name === "broken_links"  ? `Your page has ${window.currentAnalysisData.totalBrokenLinks} broken links, please see the list below.` : data.message}</span>
+                              <span class="message_pdf">${data.label.name === "broken_links"  ? `Your page has ${window.currentAnalysisData.totalBrokenLinks} broken links, please see the list below.` : (data.message || (data.problems && data.problems[0]) || '')}</span>
                             </p>
 
                             ${data.showSnippet ? `
