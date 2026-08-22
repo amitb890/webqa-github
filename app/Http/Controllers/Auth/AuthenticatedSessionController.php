@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
@@ -29,29 +30,28 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request)
     {
-        $is_user = User::onlyTrashed()
+        $isDeleted = User::onlyTrashed()
                 ->where('email', $request->email)->exists();
-        if($is_user){
-            $successMessage = "Looks like you had deleted your account sometime back. Please reach out to <a href='mailto:support@webqa.co'>support@webqa.co</a> to re-instate your account.";
-            session()->flash('alert-class', 'alert-danger alert-danger-custom');
-            session()->flash('message', $successMessage);
-            return redirect()->back();
-        }else{
-            Auth::guard('web')->logout();
-
-            $request->authenticate();
-
-            $request->session()->regenerate(true);
-
-            // Keep AuthenticateSession in sync after switching users so a stale
-            // password hash can't immediately log the user back out.
-            $request->session()->put(
-                'password_hash_'.Auth::getDefaultDriver(),
-                Auth::user()->getAuthPassword()
-            );
-
-            return redirect()->intended(RouteServiceProvider::USER);
+        if ($isDeleted) {
+            throw ValidationException::withMessages([
+                'email' => "Looks like you had deleted your account sometime back. Please reach out to <a href='mailto:support@webqa.co'>support@webqa.co</a> to re-instate your account.",
+            ]);
         }
+
+        Auth::guard('web')->logout();
+
+        $request->authenticate();
+
+        $request->session()->regenerate(true);
+
+        // Keep AuthenticateSession in sync after switching users so a stale
+        // password hash can't immediately log the user back out.
+        $request->session()->put(
+            'password_hash_'.Auth::getDefaultDriver(),
+            Auth::user()->getAuthPassword()
+        );
+
+        return redirect()->intended(RouteServiceProvider::USER);
     }
 
     /**

@@ -30,7 +30,7 @@
                             <label for="email" class="form-label label-bold">Email Address</label>
                             <input type="email" class="form-control h-5 {{ $errors->has('email') ? 'invalid' : ''  }}" name="email" id="email" value="{{ old('email', $email ?? '') }}">
                             @if ($errors->has('email'))
-                                <span class="feedback">{{ $errors->first('email') }}</span>
+                                <span class="feedback">{!! $errors->first('email') !!}</span>
                             @endif
                         </div>
 

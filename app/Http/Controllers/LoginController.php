@@ -63,8 +63,17 @@ public function handleGoogleCallback(Request $request)
         return redirect('/login')->with('error', 'Google login failed');
     }
 
+    $email = $socialiteUser->getEmail();
+
+    // Soft-deleted accounts must not be recreated or signed in via Google.
+    if (User::onlyTrashed()->where('email', $email)->exists()) {
+        return redirect('/login')->withErrors([
+            'email' => "Looks like you had deleted your account sometime back. Please reach out to <a href='mailto:support@webqa.co'>support@webqa.co</a> to re-instate your account.",
+        ]);
+    }
+
     // Check if the user already exists in your database
-    $user = User::where('email', $socialiteUser->getEmail())->first();
+    $user = User::where('email', $email)->first();
 // dd($user);
     // If the user doesn't exist, create a new user
     if (!$user) {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 use App\Models\User;
 
 class PasswordResetLinkController extends Controller
@@ -34,39 +35,38 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request)
     {
-        $is_user = User::onlyTrashed()
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
+        $isDeleted = User::onlyTrashed()
                 ->where('email', $request->email)->exists();
-        if($is_user){
-            $successMessage = "Looks like you had deleted your account sometime back. Please reach out to <a href='mailto:support@webqa.co'>support@webqa.co</a> to re-instate your account.";
-            session()->flash('alert-class', 'alert-danger alert-danger-custom');
-            session()->flash('message', $successMessage);
-            return redirect()->back();
-        }else{
-            $request->validate([
-                'email' => ['required', 'email'],
+        if ($isDeleted) {
+            throw ValidationException::withMessages([
+                'email' => "Looks like you had deleted your account sometime back. Please reach out to <a href='mailto:support@webqa.co'>support@webqa.co</a> to re-instate your account.",
+            ]);
+        }
+
+        // We will send the password reset link to this user. Once we have attempted
+        // to send the link, we will examine the response then see the message we
+        // need to show to the user. Finally, we'll send out a proper response.
+        try {
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::error('Password reset request failed', [
+                'email' => $request->email,
+                'message' => $e->getMessage(),
             ]);
 
-            // We will send the password reset link to this user. Once we have attempted
-            // to send the link, we will examine the response then see the message we
-            // need to show to the user. Finally, we'll send out a proper response.
-            try {
-                $status = Password::sendResetLink(
-                    $request->only('email')
-                );
-            } catch (\Throwable $e) {
-                \Illuminate\Support\Facades\Log::error('Password reset request failed', [
-                    'email' => $request->email,
-                    'message' => $e->getMessage(),
-                ]);
-
-                return back()->withInput($request->only('email'))
-                    ->withErrors(['email' => 'We could not send the reset email. Please try again or contact support@webqa.co.']);
-            }
-
-            return $status == Password::RESET_LINK_SENT
-                        ? back()->with('status', __($status))
-                        : back()->withInput($request->only('email'))
-                                ->withErrors(['email' => __($status)]);
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'We could not send the reset email. Please try again or contact support@webqa.co.']);
         }
+
+        return $status == Password::RESET_LINK_SENT
+                    ? back()->with('status', __($status))
+                    : back()->withInput($request->only('email'))
+                            ->withErrors(['email' => __($status)]);
     }
 }

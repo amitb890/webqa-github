@@ -44,7 +44,7 @@
                         @csrf
                         <input type="email" class="{{ $errors->has('email') ? 'invalid' : ''  }}" name="email" id="email" aria-describedby="emailHelp" value="{{ old('email') }}" autofocus>
                         @if ($errors->has('email'))
-                            <span class="feedback">{{ $errors->first('email') }}</span>
+                            <span class="feedback">{!! $errors->first('email') !!}</span>
                         @endif
                         
                       <div class="login_input_password">
