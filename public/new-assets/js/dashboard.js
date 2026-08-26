@@ -17,7 +17,8 @@ $(document).ready(function () {
   var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {     
     keyboard: false 
   })
-  let removeTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
+  let removeTileDisabled = false, addTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
+  let lastDashboardResults = null, lastGoogleResults = null
   const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
   let obj = {
     meta_title: [],
@@ -669,7 +670,7 @@ $(document).ready(function () {
       if(heading != "Security" && heading != "Coding Best Practices"){
         listItems.forEach(item=>{
           if(item.is_dashboard_status){
-            if(!item.show_dashboard_status){
+            if(!Controls.isDashboardStatusOn(item.show_dashboard_status)){
               showStatus = true
               ul.innerHTML+=`<li>${item.display_name}<a data-label="${item.db_name}" class="add-tile add_widget_btn">+Add</a></li>`
             }
@@ -747,43 +748,20 @@ $(document).ready(function () {
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
             if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
-              let status = false
-              let label 
-              let show_dashboard_status = Controls.getShowDashboardStatus(element)
-
-
-
-              if(key === "security_labels"){
-                  status = show_dashboard_status
-                  label = {
-                    display_name: "Security Headers",
-                    urlDetails: "/test-details/security-headers",
-                    reportsUrl: "/reports/security-headers",
-                    db_name: "security_labels"
-                  }
-
-              }else if(key === "cbp_labels"){
-                status = show_dashboard_status
-                label = {
-                  display_name: "Best Practices",
-                  urlDetails: "/test-details/coding-best-practices",
-                  reportsUrl: "/reports/coding-best-practices",
-                  db_name: "cbp_labels"
-                }
-
-              }else{
-                // Use the results bucket key (e.g. robot_text_test), not element[0].label.db_name.
-                // Stale rows can embed the wrong label while still sitting under the correct key; the key must win.
-                label = Controls.getActiveLabel(key)
-                if (!label) {
+              let label = Controls.getActiveLabel(key)
+              if (!label) {
                   console.warn("buildLoaderCards: no label for results key", key)
                   continue
-                }
-
               }
 
 
-              if(label.show_dashboard_status || status){ // making sure the test has at least one url
+              const groupedVisible = key === "security_labels"
+                ? Controls.isGroupedDashboardTileVisible(securityLabels)
+                : key === "cbp_labels"
+                  ? Controls.isGroupedDashboardTileVisible(cbpLabels)
+                  : false
+              const regularVisible = key !== "security_labels" && key !== "cbp_labels" && Controls.isDashboardStatusOn(label.show_dashboard_status)
+              if(groupedVisible || regularVisible){
                 promises.push(Controls.manageSingleCard(element, key, label, false))
               }
             }
@@ -819,23 +797,15 @@ $(document).ready(function () {
 
         let label
         if(key === "security_labels"){
-          label = {
-            display_name: "Security Headers",
-            urlDetails: "/test-details/security-headers",
-            reportsUrl: "/reports/security-headers",
-            db_name: "security_labels"
-          }
+          if (!Controls.isGroupedDashboardTileVisible(securityLabels)) continue
+          label = Controls.getActiveLabel(key)
         }else if(key === "cbp_labels"){
-          label = {
-            display_name: "Best Practices",
-            urlDetails: "/test-details/coding-best-practices",
-            reportsUrl: "/reports/coding-best-practices",
-            db_name: "cbp_labels"
-          }
+          if (!Controls.isGroupedDashboardTileVisible(cbpLabels)) continue
+          label = Controls.getActiveLabel(key)
         }else{
           label = Controls.getActiveLabel(key)
           if (!label) continue
-          if (label.show_dashboard_status === false) continue
+          if (!Controls.isDashboardStatusOn(label.show_dashboard_status)) continue
         }
 
         UI.buildSingleLoaderCard(label, false)
@@ -849,7 +819,7 @@ $(document).ready(function () {
         const dbName = ignore_tests[i]
         const label = Controls.getActiveLabel(dbName)
         if (!label) continue
-        if (label.show_dashboard_status === false) continue
+        if (!Controls.isDashboardStatusOn(label.show_dashboard_status)) continue
         if (document.getElementById("card_" + dbName)) continue
         UI.buildSingleLoaderCard(label, false)
       }
@@ -2656,9 +2626,12 @@ $(document).ready(function () {
     
 
     static finalizeGoogleElements(results){
+      if (results) lastGoogleResults = results
       const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
       tests.forEach(test=>{
+        if (!document.getElementById(`card_${test}`)) return
         const testLabel = Controls.getActiveLabel(test)
+        if (!testLabel || !Controls.isDashboardStatusOn(testLabel.show_dashboard_status)) return
         DB.getTestDetails(testLabel, results)
         .done(function(data) {
           UI.updateSingleLoaderCard(data, results, test, testLabel)
@@ -3090,13 +3063,78 @@ $(document).ready(function () {
 
   
         
+    static isDashboardStatusOn(value){
+      return value === true || value === 1 || value === "1"
+    }
+
+    static isGroupedDashboardTileVisible(list){
+      if (!Array.isArray(list) || list.length === 0) return false
+      return list.every((el) => Controls.isDashboardStatusOn(el.show_dashboard_status))
+    }
+
+    static hasTilePayload(value){
+      if (value == null) return false
+      if (Array.isArray(value)) return value.length > 0
+      if (typeof value === "object") {
+        const keys = Object.keys(value)
+        if (!keys.length) return false
+        const hasNestedData = keys.some((k) => {
+          const nested = value[k]
+          if (Array.isArray(nested)) return nested.length > 0
+          if (nested && typeof nested === "object") return Object.keys(nested).length > 0
+          return nested != null && nested !== ""
+        })
+        if (hasNestedData) return true
+        return keys.some((k) => !Array.isArray(value[k]))
+      }
+      return Boolean(value)
+    }
+
+    static setLocalShowDashboardStatus(dbName, status){
+      const flag = Controls.isDashboardStatusOn(status) ? 1 : 0
+      const apply = (list) => {
+        if (!Array.isArray(list)) return
+        list.forEach((label) => {
+          if (dbName === "security_labels" || dbName === "cbp_labels") {
+            if (label.dashboard_parent === dbName) label.show_dashboard_status = flag
+          } else if (label.db_name === dbName) {
+            label.show_dashboard_status = flag
+          }
+        })
+      }
+      apply(allLabels)
+      apply(seoLabels)
+      apply(performanceLabels)
+      apply(cbpLabels)
+      apply(securityLabels)
+    }
+
+    static showDashboardTileAlert(ok, msg){
+      displayAlert(".analysis-content-body-message", {
+        status: ok ? 1 : 0,
+        msg: msg,
+        notHide: !ok
+      })
+      $('.analysis-content-body-message').show()
+    }
+
+    static syncTileActionStateAfterMutation(){
+      if (document.querySelector(".dashboard_recheck_area .main-tricker-progress")) {
+        UI.updateTileActionState("full")
+      } else if (refreshTileDisabled && refreshTileDbName) {
+        UI.updateTileActionState("single", refreshTileDbName)
+      } else {
+        UI.updateTileActionState("default")
+      }
+    }
+
     static getShowDashboardStatus(element){
-      for (const [key, value] of Object.entries(element)) {
+      for (const [key, value] of Object.entries(element || {})) {
         const el = element[key]
-        if(el.length > 0){
-          const labelDbName = el[0].label.db_name
+        if(el && el.length > 0){
+          const labelDbName = el[0] && el[0].label && el[0].label.db_name
           const activeLabel = Controls.getActiveLabel(labelDbName)
-          if(!activeLabel.show_dashboard_status){
+          if(!activeLabel || !Controls.isDashboardStatusOn(activeLabel.show_dashboard_status)){
             return false
           }
         }
@@ -3106,14 +3144,7 @@ $(document).ready(function () {
     }
 
     static getShowDashboardStatus2(element){
-      for (let i = 0;i < element.length;i++) {
-        const el = element[i]
-          if(!el.show_dashboard_status){
-            return false
-          }
-      }
-
-      return true
+      return Controls.isGroupedDashboardTileVisible(element)
     }
 
     static finalizeTestLabels(labels){
@@ -3172,7 +3203,8 @@ $(document).ready(function () {
           display_name: "Security Headers",
           urlDetails: "/test-details/security-headers",
           reportsUrl: "/reports/security-headers",
-          db_name: "security_labels"
+          db_name: "security_labels",
+          show_dashboard_status: Controls.isGroupedDashboardTileVisible(securityLabels) ? 1 : 0
         }
       }
 
@@ -3181,7 +3213,8 @@ $(document).ready(function () {
           display_name: "Best Practices",
           urlDetails: "/test-details/coding-best-practices",
           reportsUrl: "/reports/coding-best-practices",
-          db_name: "cbp_labels"
+          db_name: "cbp_labels",
+          show_dashboard_status: Controls.isGroupedDashboardTileVisible(cbpLabels) ? 1 : 0
         }
       }
 
@@ -3254,12 +3287,13 @@ $(document).ready(function () {
 
     static renderDashboardFromTestData(data, dashboardStatus) {
       useCachedDashboardData = data.use_cached_dashboard === true
+      lastDashboardResults = data.results || null
       projectSettings = data.settings
-      if(data.results.security_labels){
+      if(data.results && data.results.security_labels){
         data.results.security_labels = Controls.cleanNulls(data.results.security_labels)
       }
 
-      if(data.results.cbp_labels){
+      if(data.results && data.results.cbp_labels){
         data.results.cbp_labels = Controls.cleanNulls(data.results.cbp_labels)
       }
 
@@ -3484,24 +3518,30 @@ $(document).ready(function () {
 
 
     static activeSidebarEvents(){
-      $(".remove-tile").on("click", (e)=>{
-        console.log("Remove Tile Disabled")
-        // if(!removeTileDisabled){
-        //   removeTileDisabled = true
-        //   const target = e.target.closest(".single_dashboard_card_main")
-        //   const elementDbName = target.getAttribute("data-label")
-        //   Controls.removeTile(elementDbName, target)
-        // }
-      })
-
-      $(".refresh-tile").on("click", (e)=>{
-          Controls.refreshSingleTile(e)
-      })
-
-      $(".add-tile").on("click", (e)=>{
+      $(document).off("click.dashboardRemoveTile", ".remove-tile").on("click.dashboardRemoveTile", ".remove-tile", (e)=>{
         e.preventDefault()
-        const target = e.target
+        e.stopPropagation()
+        if (removeTileDisabled) return
+        const target = e.target.closest(".single_dashboard_card_main")
+        if (!target) return
         const elementDbName = target.getAttribute("data-label")
+        if (!elementDbName) return
+        if (document.querySelector(".dashboard_recheck_area .main-tricker-progress")) return
+        if (target.querySelector(".page_speed_content")) return
+        removeTileDisabled = true
+        Controls.removeTile(elementDbName, target)
+      })
+
+      $(document).off("click.dashboardRefreshTile", ".refresh-tile").on("click.dashboardRefreshTile", ".refresh-tile", (e)=>{
+        e.preventDefault()
+        Controls.refreshSingleTile(e)
+      })
+
+      $(document).off("click.dashboardAddTile", ".add-tile").on("click.dashboardAddTile", ".add-tile", (e)=>{
+        e.preventDefault()
+        const btn = e.target.closest(".add-tile")
+        const elementDbName = btn && btn.getAttribute("data-label")
+        if (!elementDbName) return
         Controls.addTile(elementDbName)
       })
     }
@@ -3516,47 +3556,105 @@ $(document).ready(function () {
 
 
     static addTile(dbName){
+      if (addTileDisabled) return
+      if (!dbName || document.getElementById(`card_${dbName}`)) return
       const label = Controls.getActiveLabel(dbName)
-      const element = Controls.getActiveElement(dbName)
+      if (!label) return
 
-      // Disable recheck button when adding a new tile (which starts tests)
-      UI.updateRecheckButtonState(true)
+      addTileDisabled = true
+      const title = label.display_name || "Tile"
 
-      Controls.manageSingleCard(element, dbName, label, true)
       DB.updateLabelStatus(dbName, 1)
       .done(function(){
-        getAllTestLabels2(projectId)
-        .done(function(data) {
-            allLabels = data.all_labels
-            seoLabels = data.seo_labels
-            performanceLabels = data.performance_labels
-            cbpLabels = data.cbp_labels
-            securityLabels = data.security_labels
-            Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
-
-
-            UI.buildWidgetSidebar()
-            let title
-            if(element[0]){
-              title = element[0].title
-            }else if(element.css_caching_enable){
-              title = "Coding Best Practices"
-
-            }else{
-              title = "Security Headers"
-            }
-            const msg = `"${title}" was successfully added to dashboard.`
-            displayAlert(".analysis-content-body-message", {
-              status: 1,
-              msg: msg,
-              notHide: false
+        try {
+          Controls.setLocalShowDashboardStatus(dbName, 1)
+          UI.buildSingleLoaderCard(label, true)
+          Controls.restoreAddedTileContent(dbName, label)
+          UI.buildWidgetSidebar()
+          Controls.syncTileActionStateAfterMutation()
+          if (dbName === "images") {
+            UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
+          } else if (ignore_tests.includes(dbName)) {
+            UI.ensureWidgetNotice(dbName, "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+          }
+          Controls.showDashboardTileAlert(true, `"${title}" was successfully added to dashboard.`)
+          scrollToTop()
+          modalSidebar.toggle()
+          getAllTestLabels2(projectId)
+            .done(function(data) {
+              Controls.applyLabelsPayload(data)
+              UI.buildWidgetSidebar()
             })
-            $('.analysis-content-body-message').show()
-            scrollToTop()
-            modalSidebar.toggle()
-            Controls.activeSidebarEvents()
-        });
+            .fail(function() {
+              UI.buildWidgetSidebar()
+            })
+        } finally {
+          addTileDisabled = false
+        }
       })
+      .fail(function(){
+        addTileDisabled = false
+        Controls.showDashboardTileAlert(false, "Could not add this tile. Please try again.")
+      })
+    }
+
+    static restoreAddedTileContent(dbName, label){
+      if (ignore_tests.includes(dbName)) {
+        Controls.fillGoogleTile(dbName, label)
+        return
+      }
+
+      const liveElement = Controls.getActiveElement(dbName)
+      if (Controls.hasTilePayload(liveElement)) {
+        DB.getTestDetails(label, liveElement)
+          .done(function(data) {
+            Controls.applyDashboardCardResponse(data, liveElement, dbName, label)
+          })
+        return
+      }
+
+      const payload = lastDashboardResults ? lastDashboardResults[dbName] : null
+      if (useCachedDashboardData && Controls.hasTilePayload(payload)) {
+        Controls.applyDashboardCardResponse(payload, [], dbName, label)
+        return
+      }
+
+      const element = Controls.hasTilePayload(liveElement) ? liveElement : payload
+      if (!label || !label.urlDetails) return
+      DB.getTestDetails(label, element)
+        .done(function(data) {
+          Controls.applyDashboardCardResponse(data, element, dbName, label)
+        })
+        .fail(function() {
+          console.error("Could not restore tile content for", dbName)
+        })
+    }
+
+    static fillGoogleTile(dbName, label){
+      const applyResults = (results) => {
+        if (!results || !label) return
+        lastGoogleResults = results
+        DB.getTestDetails(label, results).done(function(data) {
+          if (document.getElementById(`card_${dbName}`)) {
+            UI.updateSingleLoaderCard(data, results, dbName, label)
+          }
+        })
+      }
+
+      if (Controls.hasTilePayload(lastGoogleResults)) {
+        applyResults(lastGoogleResults)
+        return
+      }
+
+      fetch(`/api/check-status/${projectId}`)
+        .then((response) => response.ok ? response.json() : null)
+        .then((payload) => {
+          if (!payload || !payload.results) return
+          applyResults(payload.results)
+        })
+        .catch((err) => {
+          console.error("Could not restore Page Speed tile:", err)
+        })
     }
 
     static refreshTileGoogle(dbName, target){
@@ -3760,30 +3858,36 @@ $(document).ready(function () {
     }
 
     static removeTile(dbName, target){
+      if (!target || !dbName) {
+        removeTileDisabled = false
+        return
+      }
+      const titleEl = target.querySelector(".dashboard_title p")
+      const title = titleEl && titleEl.textContent ? titleEl.textContent.trim() : "Tile"
+
       DB.updateLabelStatus(dbName, 0)
       .done(function(){
-        target.remove()
-        getAllTestLabels2(projectId)
-        .done(function(data) {
-            allLabels = data.all_labels
-            seoLabels = data.seo_labels
-            performanceLabels = data.performance_labels
-            cbpLabels = data.cbp_labels
-            securityLabels = data.security_labels
-            Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
-            UI.buildWidgetSidebar()
-            const title = target.querySelector(".dashboard_title p").textContent
-            const msg = `"${title}" was successfully removed from dashboard.`
-            displayAlert(".analysis-content-body-message", {
-              status: 1,
-              msg: msg,
-              notHide: false
+        try {
+          target.remove()
+          Controls.setLocalShowDashboardStatus(dbName, 0)
+          UI.buildWidgetSidebar()
+          Controls.showDashboardTileAlert(true, `"${title}" was successfully removed from dashboard.`)
+          scrollToTop()
+          getAllTestLabels2(projectId)
+            .done(function(data) {
+              Controls.applyLabelsPayload(data)
+              UI.buildWidgetSidebar()
             })
-            $('.analysis-content-body-message').show()
-            scrollToTop()
-            Controls.activeSidebarEvents()
-            removeTileDisabled = false
-        });
+            .fail(function() {
+              UI.buildWidgetSidebar()
+            })
+        } finally {
+          removeTileDisabled = false
+        }
+      })
+      .fail(function(){
+        removeTileDisabled = false
+        Controls.showDashboardTileAlert(false, "Could not remove this tile. Please try again.")
       })
     }
 

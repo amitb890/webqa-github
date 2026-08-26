@@ -12557,6 +12557,8 @@ canvas {
 
 .tracker-column-dropdown{
   vertical-align: middle;
+  overflow: visible;
+  position: relative;
 }
 
 .tracker-column-dropdown:hover .dropdown-toggle-tracker-circle svg{
@@ -18796,7 +18798,8 @@ table.dataTable thead th[data-is-resizable="true"] {
   display: block;
   opacity:0;
 }
-.dropdown-toggle-tracker-circle:hover svg{
+.dropdown-toggle-tracker-circle:hover svg,
+.tracker-column-dropdown:hover .dropdown-toggle-tracker-circle svg{
   opacity:100;
 }
 
@@ -18829,6 +18832,7 @@ table.dataTable thead th[data-is-resizable="true"] {
   outline: none !important;
   --bs-dropdown-min-width: 1rem !important;
   width:110px !important;
+  z-index: 2000 !important;
 }
 .dropdown-menu-start-two li:hover{
   background:#F6F6F6;
@@ -19001,9 +19005,10 @@ table.dataTable>tbody>tr .amitBannerJi{
     border-radius: 4px;
     font-size: 13px;
     position: absolute;
-    z-index: 1000;
+    z-index: 2147483647;
     white-space: normal;      
-    max-width: 600px;        
+    max-width: min(600px, calc(100vw - 24px));
+    word-break: break-word;
     box-shadow: 0 2px 6px rgba(0,0,0,0.3);
     pointer-events: none;     
     transition: opacity 0.2s;
@@ -19119,9 +19124,12 @@ table.dataTable>tbody>tr .amitBannerJi{
   max-width: 1200px;
 }
 
-#imagesDetailsModalUrl {
-  word-break: break-word;
+.images-details-modal-dialog table.bulk-table th, .images-details-modal-dialog table.bulk-table td {
+  word-wrap: unset;
+  word-break: unset;
+  white-space: unset;
 }
+
 .result_fail-imran {
     text-align: center; 
     vertical-align: middle;

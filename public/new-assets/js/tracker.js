@@ -1268,7 +1268,7 @@ $(document).ready(function () {
           elements = ["LCP", "FID", "CLS", "FCP", "TTI", "SI", "TBT"];
           break;
           case "mobile_friendly":
-            elements =  ["Mobile Friendly"]
+            elements =  ["Mobile Friendliness"]
             break;
         }
 
@@ -1297,14 +1297,43 @@ $(document).ready(function () {
         elements.forEach(el=>{
           const td = document.createElement("td")
           td.setAttribute("scope", "col")
-          td.innerHTML = el
-          if(el === "Mobile Friendly"){
+          td.setAttribute("data-consists", type)
+          td.innerHTML = `${el}
+            <span class="total-hidden d-none"></span>
+            <a class="dropdown-toggle dropdown-toggle-tracker p-2" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="/new-assets/assets/images/more.png">
+            </a>
+            <ul class="dropdown-menu dropdown-menu-start dropdown-menu-start-imran">
+                <li class='show-hidden-elements'>
+                    <a class="dropdown-item hide-column" href="#">Show hidden columns</a>
+                </li>
+            </ul>
+          `
+          if(el === "Mobile Friendliness"){
             td.setAttribute("colspan", 1)
           }else{
             td.setAttribute("colspan", 2)
           }
           document.querySelector(".table-header").appendChild(td)
         })
+      }
+
+      static trackerColumnDropdownTh(label, type, extraClass = "") {
+        const className = ["tracker-column-dropdown", extraClass].filter(Boolean).join(" ").replace(/\s+/g, " ").trim()
+        return `<th scope="col" data-name="${type}" class="${className}">
+                  <a class="dropdown-toggle p-2 dropdown-toggle-tracker-circle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span>${label}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
+                        <circle cx="6.93555" cy="6" r="5.5" transform="rotate(-90 6.93555 6)" stroke="#8191B9"/>
+                        <path d="M3.93555 5H9.93555L6.93543 8L3.93555 5Z" fill="#8191B9"/>
+                      </svg>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
+                      <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
+                      <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
+                      <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
+                  </ul>
+              </th>`
       }
 
       static buildTableHeader(type, data, colspan, options, settings, title){
@@ -1354,398 +1383,211 @@ $(document).ready(function () {
         
           switch(type){
             case "title":
-              tr.innerHTML+=``
               if (projectSettings.meta_title == 1) {
-              tr.innerHTML+= `<th scope="col" data-name="title" class="text-start tracker-column-dropdown">
-                  <a
-                      class="dropdown-toggle p-2 dropdown-toggle-tracker-circle"
-                      href="#"
-                      role="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                  >
-                      <span>Content</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
-                        <circle cx="6.93555" cy="6" r="5.5" transform="rotate(-90 6.93555 6)" stroke="#8191B9"/>
-                        <g clip-path="url(#clip0_297_566)">
-                        <path d="M3.93555 5H9.93555L6.93543 8L3.93555 5Z" fill="#8191B9"/>
-                        </g>
-                        <defs>
-                        <clipPath id="clip0_297_566">
-                        <rect width="6" height="3" fill="white" transform="translate(3.93555 5)"/>
-                        </clipPath>
-                        </defs>
-                      </svg>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
-                      <li>
-                          <a class="dropdown-item hide-column" href="#">Hide column</a>
-                      </li>
-                      <li>
-                          <a class="dropdown-item right-shift" href="#">Shift right</a>
-                      </li>
-                      <li>
-                          <a class="dropdown-item left-shift" href="#">Shift left</a>
-                      </li>
-                  </ul>
-              </th>`
+                tr.innerHTML += UI.trackerColumnDropdownTh("Content", type, "text-start")
               }
               if (projectSettings.max_title_length == 1) {
-                tr.innerHTML+= `
-              <th scope="col" data-name="title" class="tracker-column-dropdown">
-                  <a class="dropdown-toggle p-2 dropdown-toggle-tracker-circle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <span>Length</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
-                        <circle cx="6.93555" cy="6" r="5.5" transform="rotate(-90 6.93555 6)" stroke="#8191B9"/>
-                        <g clip-path="url(#clip0_297_566)">
-                        <path d="M3.93555 5H9.93555L6.93543 8L3.93555 5Z" fill="#8191B9"/>
-                        </g>
-                        <defs>
-                        <clipPath id="clip0_297_566">
-                        <rect width="6" height="3" fill="white" transform="translate(3.93555 5)"/>
-                        </clipPath>
-                        </defs>
-                      </svg>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
-                      <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
-                      <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
-                      <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
-                  </ul>
-              </th>
-                `;
-            }
-            
-            if (projectSettings.is_title_equal_h1 == 1) {
-            tr.innerHTML +=  `<th scope="col" data-name="title" class="${settings.is_title_equal_h1 ? "" : "hidden-element-tracker"} tracker-column-dropdown">
-                  <a class="dropdown-toggle p-2 dropdown-toggle-tracker-circle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <span>Title Equal to H1?</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
-                        <circle cx="6.93555" cy="6" r="5.5" transform="rotate(-90 6.93555 6)" stroke="#8191B9"/>
-                        <g clip-path="url(#clip0_297_566)">
-                        <path d="M3.93555 5H9.93555L6.93543 8L3.93555 5Z" fill="#8191B9"/>
-                        </g>
-                        <defs>
-                        <clipPath id="clip0_297_566">
-                        <rect width="6" height="3" fill="white" transform="translate(3.93555 5)"/>
-                        </clipPath>
-                        </defs>
-                      </svg>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
-                      <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
-                      <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
-                      <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
-                  </ul>
-              </th>`
-            }
-            if (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1) {
-              tr.innerHTML +=  `<th scope="col" data-name="title" class="${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"} tracker-column-dropdown">
-                  <a class="dropdown-toggle p-2 dropdown-toggle-tracker-circle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <span>Casing</span>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="13" height="12" viewBox="0 0 13 12" fill="none">
-                        <circle cx="6.93555" cy="6" r="5.5" transform="rotate(-90 6.93555 6)" stroke="#8191B9"/>
-                        <g clip-path="url(#clip0_297_566)">
-                        <path d="M3.93555 5H9.93555L6.93543 8L3.93555 5Z" fill="#8191B9"/>
-                        </g>
-                        <defs>
-                        <clipPath id="clip0_297_566">
-                        <rect width="6" height="3" fill="white" transform="translate(3.93555 5)"/>
-                        </clipPath>
-                        </defs>
-                      </svg>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end dropdown-menu-start-two">
-                      <li><a class="dropdown-item hide-column" href="#">Hide column</a></li>
-                      <li><a class="dropdown-item right-shift" href="#">Shift right</a></li>
-                      <li><a class="dropdown-item left-shift" href="#">Shift left</a></li>
-                  </ul>
-              </th>` 
-            }
+                tr.innerHTML += UI.trackerColumnDropdownTh("Length", type)
+              }
+              if (projectSettings.is_title_equal_h1 == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Title Equal to H1?", type, settings.is_title_equal_h1 ? "" : "hidden-element-tracker")
+              }
+              if (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Casing", type, settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker")
+              }
               break;
-              case "description":
-                  tr.innerHTML+=`
-                  <th class="text-start">Content</th>
-                  <th class="${settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker"}">Length</th>
-                  `
-                  break;
-              case "robots":
-                  tr.innerHTML+= `
-                  <th class="${settings.live_urls_robots_meta? "" : "hidden-element-tracker"}">Robots Tag Exists</th>
-                  <th>Content</th>
-                  `
-                  break;
-              case "robot_text_test": {
-                  const hideRobotTxt = settings.robot_text_test === false || settings.robot_text_test === 0;
-                  tr.innerHTML+= `
-                  <th class="${hideRobotTxt ? "hidden-element-tracker" : ""}">Robots.txt URL</th>
-                  <th class="${hideRobotTxt ? "hidden-element-tracker" : ""}">URL blocked</th>
-                  <th class="${hideRobotTxt ? "hidden-element-tracker" : ""}">Resource rules</th>
-                  `
-                  break;
+            case "description":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Content", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Length", type, settings.max_desc_length || settings.min_desc_length ? "" : "hidden-element-tracker")
+              break;
+            case "robots":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Robots Tag Exists", type, settings.live_urls_robots_meta ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Content", type)
+              break;
+            case "robot_text_test": {
+              const hideRobotTxt = settings.robot_text_test === false || settings.robot_text_test === 0;
+              const hidRt = hideRobotTxt ? "hidden-element-tracker" : "";
+              tr.innerHTML += UI.trackerColumnDropdownTh("Robots.txt URL", type, hidRt)
+              tr.innerHTML += UI.trackerColumnDropdownTh("URL blocked", type, hidRt)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Resource rules", type, hidRt)
+              break;
+            }
+            case "h1_heading_tag": {
+              const hideH = settings.h1_heading_tag === false || settings.h1_heading_tag === 0;
+              const hidH = hideH ? "hidden-element-tracker" : "";
+              tr.innerHTML += UI.trackerColumnDropdownTh("H1", type, hidH)
+              tr.innerHTML += UI.trackerColumnDropdownTh("H2", type, hidH)
+              tr.innerHTML += UI.trackerColumnDropdownTh("H3–H6", type, hidH)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Result", type, hidH)
+              break;
+            }
+            case "canonical":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Canonical URL", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Equal to Actual URL?", type, settings.canonical_url_equal_url ? "" : "hidden-element-tracker")
+              break;
+            case "url_slug":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Slug", type)
+              if (projectSettings.max_url_length == 1 || projectSettings.min_url_length == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("LEN", type)
               }
-              case "h1_heading_tag": {
-                  const hideH = settings.h1_heading_tag === false || settings.h1_heading_tag === 0;
-                  tr.innerHTML += `
-                  <th class="${hideH ? "hidden-element-tracker" : ""}">H1</th>
-                  <th class="${hideH ? "hidden-element-tracker" : ""}">H2</th>
-                  <th class="${hideH ? "hidden-element-tracker" : ""}">H3–H6</th>
-                  <th class="${hideH ? "hidden-element-tracker" : ""}">Result</th>
-                  `;
-                  break;
+              if (projectSettings.url_no_numbers == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Has Numbers?", type)
               }
-              case "canonical":
-                  tr.innerHTML+= `
-                  <th class="text-start">Canonical URL</th>
-                  <th class="${settings.canonical_url_equal_url ? "" : "hidden-element-tracker"}">Equal to Actual URL?</th>
-                  `
-                  break;
-                case "url_slug":
-                  tr.innerHTML += `<th>Slug</th>`;
-                  if (projectSettings.max_url_length == 1 || projectSettings.min_url_length == 1) {
-                    tr.innerHTML += `<th>LEN</th>`;
-                  }
-                  
-                  if (projectSettings.url_no_numbers == 1) {
-                      tr.innerHTML += `<th>Has Numbers?</th>`;
-                  }
-                  
-                  if (projectSettings.url_no_special == 1) {
-                      tr.innerHTML += `<th>Has Special Characters?</th>`;
-                  }
-                  
-                  if (projectSettings.url_slug_lowercase == 1) {
-                      tr.innerHTML += `<th>Has Uppercase Characters?</th>`;
-                  }
-          
-                  if (projectSettings.url_casing_only_hyphens == 1) {
-                      tr.innerHTML += `<th>Words Separated By Hyphens Only?</th>`;
-                  }
-                  
-                  if (projectSettings.url_casing_only_underscores == 1) {
-                      tr.innerHTML += `<th>Words Separated By Underscores Only?</th>`;
-                  }
-                  
-                  if (projectSettings.url_stop_words == 1) {
-                      tr.innerHTML += `<th>Contains Stop Words?</th>`;
-                  }
-                  break;
-                  case "images":
-                    tr.innerHTML+= `
-                    <th class="text-start">Images Details</th>
-                    <th>Result</th>
-                  `
-                  break;
-                case "favicon":
-                  tr.innerHTML+= `
-                  <th class="text-start">Favicon Image URL</th>`
-                  break;
-                case "meta_viewport":
-                  tr.innerHTML+= `
-                  <th>Viewport tag exists?</th>`
-                  break;
-                case "doctype":
-                  tr.innerHTML+= `
-                  <th>Doctype tag exists?</th>`
-                  break;
-                case "http_status_code":
-                  tr.innerHTML+= `
-                  <th></th>`
-                  break;
-                case "broken_links": {
-                  const hideBl = settings.broken_links === false || settings.broken_links === 0;
-                  tr.innerHTML+= `
-                  <th class="${hideBl ? "hidden-element-tracker" : ""}">Broken (total)</th>
-                  <th class="${hideBl ? "hidden-element-tracker" : ""}">Internal</th>
-                  <th class="${hideBl ? "hidden-element-tracker" : ""}">External</th>
-                  <th class="${hideBl ? "hidden-element-tracker" : ""}">Result</th>`
-                  break;
-                }
-                case "xml_sitemap": {
-                  const hide = settings.xml_sitemap === false || settings.xml_sitemap === 0;
-                  const hid = hide ? "hidden-element-tracker" : "";
-                  tr.innerHTML+= `
-                  <th class="${hid} text-start">XML sitemap URL</th>
-                  <th class="${hid}">URL listed</th>
-                  <th class="${hid} text-start">Detail</th>`;
-                  break;
-                }
-                case "html_sitemap": {
-                  const hide = settings.html_sitemap === false || settings.html_sitemap === 0;
-                  const hid = hide ? "hidden-element-tracker" : "";
-                  tr.innerHTML+= `
-                  <th class="${hid} text-start">HTML sitemap URL</th>
-                  <th class="${hid}">Sitemap reachable</th>
-                  <th class="${hid}">URL listed</th>
-                  <th class="${hid} text-start">Detail</th>`;
-                  break;
-                }
-                case "open_graph_tags":
-                  tr.innerHTML+= `
-                  <th class="text-start">Open Graph Title</th>
-                  <th class="${settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker"}">LEN</th>
-                  <th class="${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker"}">Casing</th>
-                  <th class="${settings.is_og_title_equal_title ? "" : "hidden-element-tracker"}">Open Graph Title Equal to title?</th>
-                  <th class="text-start">Open Graph Description</th>
-                  <th class="${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "hidden-element-tracker"}">LEN</th>
-                  <th class="${settings.is_og_desc_equal_desc ? "" : "hidden-element-tracker"}">Open Graph Description Equal to meta desciption?</th>
-                  <th class="text-start">Open Graph Image</th>
-                  <th class="${settings.og_image_dimensions_min || settings.og_image_dimensions_exact ? "" : "hidden-element-tracker"}">Width, Height</th>
-                  <th class="text-start">Open Graph URL</th>
-                  <th class="${settings.max_og_url_length ? "" : "hidden-element-tracker"}">LEN</th>
-                  <th class="${settings.is_og_url_equal_url ? "" : "hidden-element-tracker"}">Open Graph URL Equal to the actual url?</th>
-                  `
-                  break;
-                case "twitter_tags":
-                  tr.innerHTML+= `
-                  <th class="text-start">Twitter Title</th>
-                  <th class="${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker"}">LEN</th>
-                  <th class="${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker"}">Casing</th>
-                  <th class="${settings.is_twitter_title_equal_title ? "" : "hidden-element-tracker"}">Twitter Title Equal to Meta title?</th>
-                  <th class="text-start">Twitter Image</th>
-                  <th class="${settings.twitter_image_dimensions_min || settings.twitter_image_dimensions_exact ? "" : "hidden-element-tracker"}">Width, Height</th>
-                  <th class="text-start">Twitter Image Alt</th>
-                  <th class="${settings.max_twitter_image_alt_length ? "" : "hidden-element-tracker"}">LEN</th>
-                  `
-                  break;
-
-
-                  case "google_overall":
-                    tr.innerHTML+=`
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    `
-                    break;
-                  case "google_lighthouse":
-                    tr.innerHTML+=`
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    `
-                    break;
-                  case "core_web_vitals":
-                    tr.innerHTML+=`
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    <th>Desktop</th>
-                    <th>Mobile</th>
-                    `
-                    break;
-                  case "mobile_friendly":
-                    tr.innerHTML+=`
-                    <th>Mobile Friendly</th>
-                    `
-                    break;
-                  
-                  
-                  case "gzip_compression":
-                    tr.innerHTML+=`
-                    <th>Gzip Compression</th>
-                    `
-                    break;
-                  case "html_compression":
-                    tr.innerHTML+=`
-                    <th>HTML Compression</th>
-                    `
-                    break;
-                  case "css_compression":
-                    tr.innerHTML+=`
-                    <th>CSS Compression</th>
-                    `
-                    break;
-                  case "js_compression":
-                    tr.innerHTML+=`
-                    <th>JS Compression</th>
-                    `
-                    break;
-                  case "css_caching_enable":
-                    tr.innerHTML+=`
-                    <th>CSS Caching</th>
-                    `
-                    break;
-                  case "js_caching_enable":
-                    tr.innerHTML+=`
-                    <th>JS Caching</th>
-                    `
-                    break;
-                  case "page_size":
-                    tr.innerHTML+=`
-                    <th>Page Size</th>
-                    `
-                    break;
-                  case "nested_tables":
-                    tr.innerHTML+=`
-                    <th>Nested Tables</th>
-                    `
-                    break;
-                  case "frameset":
-                    tr.innerHTML+=`
-                    <th>Frameset</th>
-                    `
-                    break;
-                    
-                  
-                  case "is_safe_browsing":
-                    tr.innerHTML+=`
-                    <th>Safe Browsing</th>
-                    `
-                    break;
-                  case "cross_origin_links":
-                    tr.innerHTML+=`
-                    <th>Cross Origin Links</th>
-                    `
-                    break;
-                  case "protocol_relative_resource":
-                    tr.innerHTML+=`
-                    <th>Protocol Relative Resource</th>
-                    `
-                    break;
-                  case "content_security_policy_header":
-                    tr.innerHTML+=`
-                    <th>Content Security Policy Header</th>
-                    `
-                    break;
-                  case "x_frame_options_header":
-                    tr.innerHTML+=`
-                    <th>X Frame Options Header</th>
-                    `
-                    break;
-                  case "hsts_header":
-                    tr.innerHTML+=`
-                    <th>HSTS Header</th>
-                    `
-                    break;
-                  case "bad_content_type":
-                    tr.innerHTML+=`
-                    <th>Bad content Type</th>
-                    `
-                    break;
-                  case "ssl_certificate_enable":
-                    tr.innerHTML+=`
-                    <th>SSL Certificate</th>
-                    `
-                    break;
-                  case "folder_browsing_enable":
-                    tr.innerHTML+=`
-                    <th>Folder Browsing</th>
-                    `
-                    break;
-
+              if (projectSettings.url_no_special == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Has Special Characters?", type)
+              }
+              if (projectSettings.url_slug_lowercase == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Has Uppercase Characters?", type)
+              }
+              if (projectSettings.url_casing_only_hyphens == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Words Separated By Hyphens Only?", type)
+              }
+              if (projectSettings.url_casing_only_underscores == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Words Separated By Underscores Only?", type)
+              }
+              if (projectSettings.url_stop_words == 1) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Contains Stop Words?", type)
+              }
+              break;
+            case "images":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Images Details", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Result", type)
+              break;
+            case "favicon":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Favicon Image URL", type, "text-start")
+              break;
+            case "meta_viewport":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Viewport tag exists?", type)
+              break;
+            case "doctype":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Doctype tag exists?", type)
+              break;
+            case "http_status_code":
+              tr.innerHTML += UI.trackerColumnDropdownTh("", type)
+              break;
+            case "broken_links": {
+              const hideBl = settings.broken_links === false || settings.broken_links === 0;
+              const hidBl = hideBl ? "hidden-element-tracker" : "";
+              tr.innerHTML += UI.trackerColumnDropdownTh("Broken (total)", type, hidBl)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Internal", type, hidBl)
+              tr.innerHTML += UI.trackerColumnDropdownTh("External", type, hidBl)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Result", type, hidBl)
+              break;
+            }
+            case "xml_sitemap": {
+              const hide = settings.xml_sitemap === false || settings.xml_sitemap === 0;
+              const hid = hide ? "hidden-element-tracker" : "";
+              tr.innerHTML += UI.trackerColumnDropdownTh("XML sitemap URL", type, `${hid} text-start`)
+              tr.innerHTML += UI.trackerColumnDropdownTh("URL listed", type, hid)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Detail", type, `${hid} text-start`)
+              break;
+            }
+            case "html_sitemap": {
+              const hide = settings.html_sitemap === false || settings.html_sitemap === 0;
+              const hid = hide ? "hidden-element-tracker" : "";
+              tr.innerHTML += UI.trackerColumnDropdownTh("HTML sitemap URL", type, `${hid} text-start`)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Sitemap reachable", type, hid)
+              tr.innerHTML += UI.trackerColumnDropdownTh("URL listed", type, hid)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Detail", type, `${hid} text-start`)
+              break;
+            }
+            case "open_graph_tags":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph Title", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("LEN", type, settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Casing", type, settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph Title Equal to title?", type, settings.is_og_title_equal_title ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph Description", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("LEN", type, settings.max_og_desc_length || settings.min_og_desc_length ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph Description Equal to meta desciption?", type, settings.is_og_desc_equal_desc ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph Image", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Width, Height", type, settings.og_image_dimensions_min || settings.og_image_dimensions_exact ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph URL", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("LEN", type, settings.max_og_url_length ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Open Graph URL Equal to the actual url?", type, settings.is_og_url_equal_url ? "" : "hidden-element-tracker")
+              break;
+            case "twitter_tags":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Twitter Title", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("LEN", type, settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Casing", type, settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Twitter Title Equal to Meta title?", type, settings.is_twitter_title_equal_title ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Twitter Image", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Width, Height", type, settings.twitter_image_dimensions_min || settings.twitter_image_dimensions_exact ? "" : "hidden-element-tracker")
+              tr.innerHTML += UI.trackerColumnDropdownTh("Twitter Image Alt", type, "text-start")
+              tr.innerHTML += UI.trackerColumnDropdownTh("LEN", type, settings.max_twitter_image_alt_length ? "" : "hidden-element-tracker")
+              break;
+            case "google_overall":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Desktop", type)
+              tr.innerHTML += UI.trackerColumnDropdownTh("Mobile", type)
+              break;
+            case "google_lighthouse":
+              for (let i = 0; i < 4; i++) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Desktop", type)
+                tr.innerHTML += UI.trackerColumnDropdownTh("Mobile", type)
+              }
+              break;
+            case "core_web_vitals":
+              for (let i = 0; i < 7; i++) {
+                tr.innerHTML += UI.trackerColumnDropdownTh("Desktop", type)
+                tr.innerHTML += UI.trackerColumnDropdownTh("Mobile", type)
+              }
+              break;
+            case "mobile_friendly":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Mobile Friendliness", type)
+              break;
+            case "gzip_compression":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Gzip Compression", type)
+              break;
+            case "html_compression":
+              tr.innerHTML += UI.trackerColumnDropdownTh("HTML Compression", type)
+              break;
+            case "css_compression":
+              tr.innerHTML += UI.trackerColumnDropdownTh("CSS Compression", type)
+              break;
+            case "js_compression":
+              tr.innerHTML += UI.trackerColumnDropdownTh("JS Compression", type)
+              break;
+            case "css_caching_enable":
+              tr.innerHTML += UI.trackerColumnDropdownTh("CSS Caching", type)
+              break;
+            case "js_caching_enable":
+              tr.innerHTML += UI.trackerColumnDropdownTh("JS Caching", type)
+              break;
+            case "page_size":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Page Size", type)
+              break;
+            case "nested_tables":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Nested Tables", type)
+              break;
+            case "frameset":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Frameset", type)
+              break;
+            case "is_safe_browsing":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Safe Browsing", type)
+              break;
+            case "cross_origin_links":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Cross Origin Links", type)
+              break;
+            case "protocol_relative_resource":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Protocol Relative Resource", type)
+              break;
+            case "content_security_policy_header":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Content Security Policy Header", type)
+              break;
+            case "x_frame_options_header":
+              tr.innerHTML += UI.trackerColumnDropdownTh("X Frame Options Header", type)
+              break;
+            case "hsts_header":
+              tr.innerHTML += UI.trackerColumnDropdownTh("HSTS Header", type)
+              break;
+            case "bad_content_type":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Bad content Type", type)
+              break;
+            case "ssl_certificate_enable":
+              tr.innerHTML += UI.trackerColumnDropdownTh("SSL Certificate", type)
+              break;
+            case "folder_browsing_enable":
+              tr.innerHTML += UI.trackerColumnDropdownTh("Folder Browsing", type)
+              break;
               }
 
           UI.assignHeaderCellIds(tr, type)
@@ -2654,6 +2496,7 @@ $(document).ready(function () {
 
   class Controls{
       static CSV_NAME = "Marketing QA Tool Results.csv";
+      static isShiftingTrackerColumn = false;
 
       static buildCSV(){
         const table = $( "#reportTableClone" ).clone()[0]
@@ -2825,19 +2668,25 @@ $(document).ready(function () {
 
           
 
-          $(".show-url-options-modal").click(function (e) {
-            // saving url that was clicked
-            const target = e.target.parentElement.parentElement.parentElement
-            const url = target.querySelector(".form-check-label").textContent.trim()
+          // Delegated on the wrapper: FixedColumns remounts a left-column clone outside #reportTable after colReorder.
+          $(document).off("click.trackerUrlOptions").on("click.trackerUrlOptions", "#reportTable_wrapper .show-url-options-modal, #reportTable .show-url-options-modal", function (e) {
+            e.preventDefault()
+            e.stopPropagation()
+            const $btn = $(this)
+            const target = $btn.closest("td")[0] || $btn.closest("tr")[0]
+            if (!target) return
+            const label = target.querySelector(".form-check-label")
+            if (!label) return
+            const url = label.textContent.trim()
             activeOptionsModalUrl = url
             activeOptionsElement = target
 
             var modalID = $(".url-options-modal .modal-dialog");
-            var topOffset = 0; 
-            var thisLeft = $(this).offset().left;
-            var thisTop = $(this).offset().top - topOffset;
-            var thisWidth = $(this).width();
-            var thisHeight = $(this).height();
+            var topOffset = 0;
+            var thisLeft = $btn.offset().left;
+            var thisTop = $btn.offset().top - topOffset;
+            var thisWidth = $btn.width();
+            var thisHeight = $btn.height();
             var idWidth = $(modalID).width();
             var idHeight = $(modalID).height();
 
@@ -2916,44 +2765,56 @@ $(document).ready(function () {
           });
 
           table.on('column-reorder', function(e, settings, details) {
-            $('#reportTable .reports-table-header tr:eq(0)').html(firstRow)
-            $('#reportTable .reports-table-header tr:eq(1)').html(secondRow)
+            // While we detach complex headers for shift left/right, skip restore so we don't overwrite .th-bg.
+            if (Controls.isShiftingTrackerColumn) {
+              return
+            }
+            const $top = $('#reportTable .reports-table-header tr.table-header-top')
+            const $mid = $('#reportTable .reports-table-header tr.table-header')
+            if (!$top.length || !$mid.length) {
+              return
+            }
+            $top.html(firstRow)
+            $mid.html(secondRow)
             UI.updateTableDesign()
         });
 
-          $(".tracker-column-dropdown .left-shift").on("click", function (e) {
-            const element = e.target.parentElement.parentElement.parentElement
-            const currentElement = element.getAttribute("data-name")
-            const currentIndex = Controls.getElementIndex(element)
-            Controls.shiftElement(table, currentIndex, "left", currentElement)
+          $("#reportTable").off("mouseenter.trackerColumnShiftOpts focusin.trackerColumnShiftOpts").on("mouseenter.trackerColumnShiftOpts focusin.trackerColumnShiftOpts", ".tracker-column-dropdown", function () {
+            Controls.updateTrackerColumnShiftOptions(this)
           })
 
-          $(".tracker-column-dropdown .right-shift").on("click", function (e) {
-            const element = e.target.parentElement.parentElement.parentElement
+          $("#reportTable").off("click.trackerColumnMenu").on("click.trackerColumnMenu", ".tracker-column-dropdown .hide-column, .tracker-column-dropdown .left-shift, .tracker-column-dropdown .right-shift", function (e) {
+            e.preventDefault()
+            const element = this.closest("th.tracker-column-dropdown")
+            if (!element) return
             const currentElement = element.getAttribute("data-name")
             const currentIndex = Controls.getElementIndex(element)
-            Controls.shiftElement(table, currentIndex, "right", currentElement)
-          })
+            const shiftState = Controls.getTrackerColumnShiftState(element)
 
-          $(".tracker-column-dropdown .hide-column").on("click", function (e) {
-            const element = e.target.parentElement.parentElement.parentElement
-            const currentElement = element.getAttribute("data-name")
-            const currentIndex = Controls.getElementIndex(element)
-            const remainingElements = $(`#reportTable tr th[data-name='${currentElement}']`).length
-
-            if(remainingElements > 1){
-              Controls.hideElement(table, currentIndex, "right", currentElement)
-            }else{
-              UI.showCantHideMessage()
+            if (this.classList.contains("hide-column")) {
+              const remainingElements = $(`#reportTable thead tr.th-bg th[data-name='${currentElement}']:visible`).length
+              const totalGroupColumns = $(`#reportTable thead tr.th-bg th[data-name='${currentElement}']`).length
+              const canHideLastColumn = totalGroupColumns === 1
+              if (remainingElements > 1 || canHideLastColumn) {
+                Controls.hideElement(table, currentIndex, "right", currentElement)
+              } else {
+                UI.showCantHideMessage()
+              }
+              return
             }
+
+            const side = this.classList.contains("left-shift") ? "left" : "right"
+            if ((side === "left" && shiftState.isLeftmost) || (side === "right" && shiftState.isRightmost)) {
+              return
+            }
+            Controls.shiftElement(table, currentIndex, side, currentElement)
           })
 
-          $("#reportTable").off("click.trackerHiddenElements").on("click.trackerHiddenElements", function (e) {
-            if(e.target.parentElement.classList.contains("show-hidden-elements")){
-              const element = e.target.parentElement.parentElement.parentElement
-              const currentElement = element.getAttribute("data-consists")
-              Controls.showHiddenElements(table, currentElement)
-            }
+          $("#reportTable").off("click.trackerHiddenElements").on("click.trackerHiddenElements", ".show-hidden-elements", function (e) {
+            e.preventDefault()
+            const element = this.closest("[data-consists]")
+            if (!element) return
+            Controls.showHiddenElements(table, element.getAttribute("data-consists"))
           })
 
           $(".tracker-right-input").on("click", (e)=>{
@@ -3005,16 +2866,59 @@ $(document).ready(function () {
 
       }
       
-      static showHiddenElements(table, currentElement){
-        const parentElement = $(`[data-consists='${currentElement}']`)[1]
-        parentElement.querySelector(".dropdown-toggle-tracker").style.display = "none"
+      static getTrackerGroupVisibleColumns(groupName) {
+        if (!groupName) return []
+        return Array.from(document.querySelectorAll(`#reportTable thead tr.th-bg th.tracker-column-dropdown[data-name="${groupName}"]`))
+          .filter((column) => $(column).is(":visible"))
+      }
 
-        hiddenColumns.forEach(el=>{
-          if(el.element === currentElement){
-            let column = table.column(el.index);
-            column.visible(true);
-            hiddenColumns = hiddenColumns.splice(el.index, 1)
+      static getTrackerColumnShiftState(headerCell) {
+        const th = headerCell && headerCell.closest ? headerCell.closest("th.tracker-column-dropdown") : headerCell
+        if (!th) {
+          return { th: null, isLeftmost: true, isRightmost: true }
+        }
+        const groupColumns = Controls.getTrackerGroupVisibleColumns(th.getAttribute("data-name"))
+        const indexInGroup = groupColumns.indexOf(th)
+        return {
+          th,
+          isLeftmost: indexInGroup <= 0,
+          isRightmost: indexInGroup === -1 || indexInGroup === groupColumns.length - 1,
+        }
+      }
+
+      static updateTrackerColumnShiftOptions(headerCell) {
+        const { th, isLeftmost, isRightmost } = Controls.getTrackerColumnShiftState(headerCell)
+        if (!th) return
+        const leftItem = th.querySelector(".left-shift")
+        const rightItem = th.querySelector(".right-shift")
+        if (leftItem && leftItem.parentElement) {
+          leftItem.parentElement.style.display = isLeftmost ? "none" : ""
+        }
+        if (rightItem && rightItem.parentElement) {
+          rightItem.parentElement.style.display = isRightmost ? "none" : ""
+        }
+      }
+
+      static getTrackerGroupParents(currentElement) {
+        if (!currentElement) return []
+        return Array.from(document.querySelectorAll(`#reportTable .table-header [data-consists="${currentElement}"]`))
+      }
+
+      static setTrackerGroupHiddenToggle(currentElement, display) {
+        Controls.getTrackerGroupParents(currentElement).forEach((parentElement) => {
+          const toggle = parentElement.querySelector(".dropdown-toggle-tracker")
+          if (toggle) toggle.style.display = display
+        })
+      }
+
+      static showHiddenElements(table, currentElement){
+        Controls.setTrackerGroupHiddenToggle(currentElement, "none")
+        hiddenColumns = hiddenColumns.filter((el) => {
+          if (el.element === currentElement) {
+            table.column(el.index).visible(true)
+            return false
           }
+          return true
         })
       }
 
@@ -3026,15 +2930,12 @@ $(document).ready(function () {
       }
 
       static hideElement(table, currentIndex, side, currentElement){
-        const parentElement = $(`[data-consists='${currentElement}']`)[1]
-        parentElement.querySelector(".dropdown-toggle-tracker").style.display = "block"
-
+        Controls.setTrackerGroupHiddenToggle(currentElement, "block")
 
         const index = currentIndex + hiddenColumns.length
         let column = table.column(index);
 
-        // Toggle the visibility
-        column.visible(!column.visible());
+        column.visible(false);
         const obj = {
           index: index, 
           element: currentElement
@@ -3052,15 +2953,36 @@ $(document).ready(function () {
           newIndex--
         }
 
-
-
-        const newElement = document.querySelector("#reportTable .th-bg").children[newIndex]
-        if(newElement){
-          if(newElement.getAttribute("data-name") === currentElement){
-            table.colReorder.move(currentIndex, newIndex);
-          }
+        const headerRow = document.querySelector("#reportTable .th-bg")
+        const newElement = headerRow && headerRow.children[newIndex]
+        if(!newElement || newElement.getAttribute("data-name") !== currentElement){
+          return
         }
 
+        // DataTables ColReorder walks every thead row by column index. Group headers use
+        // colspan, so later columns have no matching cell and insertBefore throws.
+        // Detach those rows for the move; only .th-bg + body cells need reordering.
+        const thead = document.querySelector("#reportTable thead")
+        const complexHeaderRows = thead
+          ? Array.from(thead.querySelectorAll("tr.table-header-top, tr.table-header"))
+          : []
+        complexHeaderRows.forEach((row) => row.remove())
+
+        Controls.isShiftingTrackerColumn = true
+        try {
+          table.colReorder.move(currentIndex, newIndex)
+        } finally {
+          Controls.isShiftingTrackerColumn = false
+          const leafHeader = thead && thead.querySelector("tr.th-bg")
+          complexHeaderRows.forEach((row) => {
+            if (!thead) return
+            if (leafHeader) {
+              thead.insertBefore(row, leafHeader)
+            } else {
+              thead.appendChild(row)
+            }
+          })
+        }
       }
 
 
@@ -4933,44 +4855,114 @@ $("#hide-col-btn").on("click", function () {
     $(this).toggleClass("collapsed");
 });
 
-function metaDiscriptionReportContent(){
-  const tbody = document.querySelector('#reportTable tbody');
+function initTrackerTruncationTooltips(){
+  let activeCell = null
+  let activeTooltip = null
 
-tbody.addEventListener('mouseover', function(e) {
-    const td = e.target.closest('.meta-content-imran');
-    if (!td || !tbody.contains(td)) return;
-
-    const hasContent = td.textContent && td.textContent.trim() !== '' && td.textContent.trim() !== '-';
-
-    const isTruncated = hasContent && td.scrollWidth > td.clientWidth;
-
-    td.style.cursor = isTruncated ? 'pointer' : 'default';
-
-    if (isTruncated && !td._tooltip) {
-        const tooltip = document.createElement('div');
-        tooltip.className = 'tooltip-text';
-        tooltip.textContent = td.textContent;
-        document.body.appendChild(tooltip);
-
-        const rect = td.getBoundingClientRect();
-        tooltip.style.top = rect.top - tooltip.offsetHeight - 5 + window.scrollY + 'px';
-        tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + window.scrollX + 'px';
-
-        tooltip.classList.add('show-tooltip');
-        td._tooltip = tooltip;
+  const removeTooltip = () => {
+    if (activeTooltip) {
+      activeTooltip.remove()
+      activeTooltip = null
     }
-});
-
-tbody.addEventListener('mouseout', function(e) {
-    const td = e.target.closest('.meta-content-imran');
-    if (!td || !tbody.contains(td)) return;
-
-    if (td._tooltip) {
-        td._tooltip.remove();
-        td._tooltip = null;
+    if (activeCell) {
+      activeCell.style.cursor = ""
+      activeCell = null
     }
+  }
 
-    td.style.cursor = 'default';
-});
+  const isTruncated = (el) => {
+    if (!el) return false
+    if (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1) {
+      return true
+    }
+    const nested = el.querySelectorAll("label, a, span, .form-check-label")
+    for (let i = 0; i < nested.length; i++) {
+      const node = nested[i]
+      if (node.scrollWidth > node.clientWidth + 1 || node.scrollHeight > node.clientHeight + 1) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const getCellText = (td) => {
+    const label = td.querySelector(".form-check-label")
+    if (label) {
+      return (label.textContent || "").replace(/\s+/g, " ").trim()
+    }
+    const link = td.querySelector("a")
+    if (link && (link.getAttribute("href") || "").trim()) {
+      const linkText = (link.textContent || "").replace(/\s+/g, " ").trim()
+      // Prefer full URL/href when the visible link text is truncated (e.g. "Link").
+      if (linkText && linkText.toLowerCase() !== "link") {
+        return linkText
+      }
+      return (link.getAttribute("href") || linkText).trim()
+    }
+    return (td.textContent || "").replace(/\s+/g, " ").trim()
+  }
+
+  const positionTooltip = (cell, tooltip) => {
+    const rect = cell.getBoundingClientRect()
+    const top = rect.top + window.scrollY - tooltip.offsetHeight - 8
+    let left = rect.left + window.scrollX + (rect.width / 2) - (tooltip.offsetWidth / 2)
+    const maxLeft = window.scrollX + window.innerWidth - tooltip.offsetWidth - 8
+    left = Math.max(8, Math.min(left, maxLeft))
+    tooltip.style.top = `${Math.max(window.scrollY + 8, top)}px`
+    tooltip.style.left = `${left}px`
+  }
+
+  const cellSelector = [
+    "#reportTable tbody td",
+    "#reportTable_wrapper .dtfc-fixed-left tbody td",
+    "#reportTable_wrapper .DTFC_LeftWrapper tbody td",
+  ].join(", ")
+
+  $(document)
+    .off("mouseover.trackerTruncateTip")
+    .on("mouseover.trackerTruncateTip", cellSelector, function () {
+      const td = this
+      if (activeCell === td && activeTooltip) return
+
+      const text = getCellText(td)
+      if (!text || text === "-" || text === "—") {
+        if (activeCell === td) removeTooltip()
+        return
+      }
+
+      if (!isTruncated(td)) {
+        if (activeCell === td) removeTooltip()
+        return
+      }
+
+      removeTooltip()
+
+      const tooltip = document.createElement("div")
+      tooltip.className = "tooltip-text show-tooltip"
+      tooltip.textContent = text
+      tooltip.style.zIndex = "2147483647"
+      document.body.appendChild(tooltip)
+      positionTooltip(td, tooltip)
+
+      td.style.cursor = "pointer"
+      activeTooltip = tooltip
+      activeCell = td
+    })
+
+  $(document)
+    .off("mouseout.trackerTruncateTip")
+    .on("mouseout.trackerTruncateTip", cellSelector, function (e) {
+      const td = this
+      const related = e.relatedTarget
+      if (related && (td === related || td.contains(related))) return
+      if (activeCell === td) removeTooltip()
+    })
+
+  $(document)
+    .off("scroll.trackerTruncateTip")
+    .on("scroll.trackerTruncateTip", ".table-responsive, #reportTable_wrapper, .dataTables_scrollBody", removeTooltip)
+
+  $(window).off("scroll.trackerTruncateTip resize.trackerTruncateTip").on("scroll.trackerTruncateTip resize.trackerTruncateTip", removeTooltip)
 }
-metaDiscriptionReportContent();
+
+initTrackerTruncationTooltips()

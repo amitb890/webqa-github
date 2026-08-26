@@ -107,14 +107,31 @@ class ProjectsController extends Controller
     }
 
     public function updateLabelStatus(Request $request){
-        $status = $request->input('status');
-        $test_title = $request->input('test_title');
-        $projectId = $request->input('projectId');
+        $status = ((int) $request->input('status')) ? 1 : 0;
+        $test_title = (string) $request->input('test_title');
+        $projectId = (int) $request->input('projectId');
 
-        if($test_title === "security_labels" || $test_title === "cbp_labels"){
-            TestLabel::where('project_id', $projectId)->where("dashboard_parent", $test_title)->update(['show_dashboard_status'=>$status]);
-        }else{
-            TestLabel::where('project_id', $projectId)->where("db_name", $test_title)->update(['show_dashboard_status'=>$status]);
+        if ($test_title === '' || $projectId < 1) {
+            return response()->json(['status' => 0, 'msg' => 'Invalid request.'], 422);
+        }
+
+        $project = Projects::where('id', $projectId)->where('user_id', Auth::id())->first();
+        if (!$project) {
+            return response()->json(['status' => 0, 'msg' => 'Project not found.'], 403);
+        }
+
+        if ($test_title === "security_labels" || $test_title === "cbp_labels") {
+            $exists = TestLabel::where('project_id', $projectId)->where("dashboard_parent", $test_title)->exists();
+            if (!$exists) {
+                return response()->json(['status' => 0, 'msg' => 'Label not found.'], 404);
+            }
+            TestLabel::where('project_id', $projectId)->where("dashboard_parent", $test_title)->update(['show_dashboard_status' => $status]);
+        } else {
+            $exists = TestLabel::where('project_id', $projectId)->where("db_name", $test_title)->exists();
+            if (!$exists) {
+                return response()->json(['status' => 0, 'msg' => 'Label not found.'], 404);
+            }
+            TestLabel::where('project_id', $projectId)->where("db_name", $test_title)->update(['show_dashboard_status' => $status]);
         }
 
         return response()->json(['status' => 1, 'msg' => 'Success.']);
