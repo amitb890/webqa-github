@@ -17,6 +17,10 @@ class TestContextService
 
     public const MODE_SNAPSHOT = 'snapshot';
 
+    public const MODE_BULK = 'bulk';
+
+    public const MODE_ANALYSIS = 'analysis';
+
     /** Frontend / settings-page keys mapped to DB column names. */
     private const KEY_ALIASES = [
         'casingCamel' => 'title_casing_camel',
@@ -55,7 +59,7 @@ class TestContextService
             $rawSub = $collectData['settingsVal']['settings_sub'] ?? [];
 
             return [
-                'mode' => self::MODE_SNAPSHOT,
+                'mode' => $project === 'bulk' ? self::MODE_BULK : self::MODE_ANALYSIS,
                 'project_id' => null,
                 'snapshot' => $this->normalizeSnapshot(is_array($rawSub) ? $rawSub : []),
             ];
@@ -159,7 +163,7 @@ class TestContextService
             return null;
         }
 
-        if ($test->settings_mode === self::MODE_SNAPSHOT) {
+        if (in_array($test->settings_mode, [self::MODE_SNAPSHOT, self::MODE_BULK, self::MODE_ANALYSIS], true)) {
             $snapshot = json_decode($test->settings_snapshot ?? '', true);
             if (! is_array($snapshot)) {
                 $snapshot = [];

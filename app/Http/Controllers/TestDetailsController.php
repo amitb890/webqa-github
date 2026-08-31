@@ -153,7 +153,7 @@ class TestDetailsController extends Controller
 
 
     public function xmlSitemap(Request $request){
-        echo json_encode($this->summarizeSitemapCard($request));
+        echo json_encode($this->summarizeSitemapCard($request, 'xml_sitemap'));
     }
 
 
@@ -209,7 +209,7 @@ class TestDetailsController extends Controller
 
 
     public function htmlSitemap(Request $request){
-        echo json_encode($this->summarizeSitemapCard($request));
+        echo json_encode($this->summarizeSitemapCard($request, 'html_sitemap'));
     }
 
 
@@ -655,12 +655,13 @@ class TestDetailsController extends Controller
     /**
      * Shared dashboard-card summary for XML and HTML sitemap widgets.
      */
-    private function summarizeSitemapCard(Request $request): \stdClass
+    private function summarizeSitemapCard(Request $request, string $widgetKey): \stdClass
     {
         $elements = json_decode($request->input("data"));
         $object = new \stdClass();
         $object->fileExists = false;
-        $object->robotsTxtUrl = '';
+        $object->sitemapUrl = '';
+        $object->officialUrl = trim((string) $request->input('homepage', ''));
         $object->sitemapExists = 0;
         $object->sitemapNotFound = [];
         $object->sitemapNotFoundString = "";
@@ -670,6 +671,7 @@ class TestDetailsController extends Controller
             return $object;
         }
 
+        $valKey = $widgetKey === 'html_sitemap' ? 'html_sitemap_val' : 'xml_sitemap_val';
         $list = is_array($elements) ? $elements : iterator_to_array($elements);
         $object->totalUrls = count($list);
         $sitemapExists = 0;
@@ -681,9 +683,13 @@ class TestDetailsController extends Controller
             if (! is_object($element)) {
                 continue;
             }
-            $candidateUrl = self::resolveRobotsTxtUrlFromStoredResult($element);
-            if ($object->robotsTxtUrl === '' && $candidateUrl !== '') {
-                $object->robotsTxtUrl = $candidateUrl;
+            $candidateSitemapUrl = self::resolveSitemapUrlFromStoredResult($element, $valKey);
+            if ($object->sitemapUrl === '' && $candidateSitemapUrl !== '') {
+                $object->sitemapUrl = $candidateSitemapUrl;
+            }
+            $candidateOfficialUrl = self::resolveOfficialUrlFromStoredResult($element);
+            if ($object->officialUrl === '' && $candidateOfficialUrl !== '') {
+                $object->officialUrl = $candidateOfficialUrl;
             }
             if (! empty($element->fileExists)) {
                 $object->fileExists = true;
@@ -706,6 +712,50 @@ class TestDetailsController extends Controller
         $object->sitemapNotFoundString = implode("\n", $notFoundLines);
 
         return $object;
+    }
+
+    /**
+     * Prefer stored sitemap settings; fall back to sitemap_url on the result row.
+     */
+    private static function resolveSitemapUrlFromStoredResult(object $element, string $valKey): string
+    {
+        $settings = $element->settings ?? null;
+        if (is_object($settings) && ! empty($settings->{$valKey}) && is_string($settings->{$valKey})) {
+            return trim($settings->{$valKey});
+        }
+        if (is_array($settings) && ! empty($settings[$valKey]) && is_string($settings[$valKey])) {
+            return trim($settings[$valKey]);
+        }
+
+        foreach (['sitemap_url', 'sitemapUrl'] as $prop) {
+            if (! empty($element->{$prop}) && is_string($element->{$prop})) {
+                return trim($element->{$prop});
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Derive the project's main URL from a tested page URL when homepage is not supplied.
+     */
+    private static function resolveOfficialUrlFromStoredResult(object $element): string
+    {
+        $testedUrl = $element->tested_url ?? '';
+        if (! is_string($testedUrl) || $testedUrl === '') {
+            return '';
+        }
+
+        $p = parse_url($testedUrl);
+        if (empty($p['host'])) {
+            return '';
+        }
+        $scheme = $p['scheme'] ?? '';
+        if ($scheme === '') {
+            $scheme = 'https';
+        }
+
+        return $scheme.'://'.$p['host'];
     }
 
     /**

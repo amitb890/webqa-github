@@ -79,7 +79,7 @@
                                     @if($row['cached_url'])
                                         <a href="{{ $row['cached_url'] }}" target="_blank">Open</a>
                                     @else
-                                        Not applicable
+                                        NA
                                     @endif
                                 </td>
                                 <td>

@@ -291,14 +291,22 @@ $(document).ready(function () {
 
 
     static getTestDetails(label, element){
+        const requestData = {
+            data: JSON.stringify(element),
+            "_token": $('meta[name="csrf-token"]').attr('content'),
+        }
+        if (
+          (label.db_name === "xml_sitemap" || label.db_name === "html_sitemap")
+          && projectFinal
+          && projectFinal.homepage
+        ) {
+          requestData.homepage = projectFinal.homepage
+        }
         return $.ajax({
             url : label.urlDetails,
             type : 'post',
             aysnc: false,
-            data: {
-                data: JSON.stringify(element),
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-            },       
+            data: requestData,
             success: function(data) {
             },error: function(data){
             }
@@ -826,9 +834,34 @@ $(document).ready(function () {
     }
 
 
+    static dashboardUrlLinks(rawUrl, withCopyIcon = true) {
+      const urls = String(rawUrl || "")
+        .split(/[,\r\n]+/)
+        .map((url) => url.trim())
+        .filter(Boolean)
+      if (!urls.length) {
+        return "<span>—</span>"
+      }
+      const copyIcon = withCopyIcon
+        ? `<img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
+        : ""
+      return urls.map((url) => {
+        const href = url.replace(/"/g, "&quot;")
+        const text = url.replace(/</g, "&lt;")
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>${copyIcon}`
+      }).join("<br>")
+    }
+
     static getSitemapCardMarkup(kindLabel, data, reportsUrl){
-        const robotsAttr = (data.robotsTxtUrl || "").replace(/"/g, "&quot;")
-        const robotsText = data.robotsTxtUrl || ""
+        const sitemapSettingsKey = kindLabel === "XML" ? "xml_sitemap_val" : "html_sitemap_val"
+        const settingsSub = projectSettings && (projectSettings.settings_sub || projectSettings.settingsSub)
+        const officialUrl = (data.officialUrl || (projectFinal && projectFinal.homepage) || "").trim()
+        const sitemapUrl = (
+          data.sitemapUrl
+          || (settingsSub && settingsSub[sitemapSettingsKey])
+          || (projectSettings && projectSettings[sitemapSettingsKey])
+          || ""
+        ).trim()
         let missingUrls = (Array.isArray(data.sitemapNotFound) ? data.sitemapNotFound : [])
           .map((url) => String(url || "").trim())
           .filter(Boolean)
@@ -847,12 +880,8 @@ $(document).ready(function () {
                 <div class="deshboard_inner_description">
                   <div class="roboto_url">
                     <p>
-                      <span>Robots.txt URL: </span>
-                      <span>
-                        ${robotsText
-                          ? `<a href="${robotsAttr}" target="_blank" rel="noopener noreferrer">${robotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
-                          : "<span>—</span>"}
-                      </span>
+                      <span>${kindLabel} Sitemap URL: </span>
+                      <span>${UI.dashboardUrlLinks(sitemapUrl)}</span>
                     </p>
                   </div>
                   <div class="deshboard_inner_description">
@@ -874,6 +903,12 @@ $(document).ready(function () {
 
         return `
                 <div class="deshboard_inner_description border_bottom">
+                  <div class="roboto_url">
+                    <p>
+                      <span>${kindLabel} Sitemap URL: </span>
+                      <span>${UI.dashboardUrlLinks(sitemapUrl)}</span>
+                    </p>
+                  </div>
                   <div class="blank_sitemap_content">
                     <img
                       src="/new-assets/assets/images/blank-sitemap.svg"

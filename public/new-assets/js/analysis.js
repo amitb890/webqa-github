@@ -1752,6 +1752,17 @@ $( document ).ready(function() {
     }
   }
 
+  const normalizeTestLabels = (value) => {
+    const parsed = parseJsonSafely(value)
+    if (Array.isArray(parsed)) {
+      return parsed
+    }
+    if (parsed && typeof parsed === "object") {
+      return [parsed]
+    }
+    return []
+  }
+
   Controls.fetchCachedTestResult(testKey)
     .then(data => {
       const labels = parseJsonSafely(data?.test_labels)
@@ -4816,7 +4827,16 @@ $( document ).ready(function() {
             let data = result.data
             projectUrl = data.url
 
-            const testLabels = JSON.parse(data.testLabels)
+            const testLabels = normalizeTestLabels(data.testLabels)
+            if (testLabels.length === 0) {
+              removeLoader()
+              displayAlert({
+                status: 0,
+                msg: "This test report does not include any saved test criteria."
+              })
+              return
+            }
+
             buildLoader(obj, testLabels)
 
             setTimeout(function (){

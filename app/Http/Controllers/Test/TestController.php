@@ -230,6 +230,10 @@ class TestController extends Controller
             }
         }
 
+        if ($test) {
+            $test->testLabels = $this->normalizeTestLabelsForStorage($test->testLabels ?? '[]');
+        }
+
         return response()->json(['status'=>1,'data'=>$test]);
     }
 
@@ -4215,11 +4219,10 @@ class TestController extends Controller
     protected function persistTestRun(array $data, array $meta, string $html, array $testContext): string
     {
         $refId = $this->generateNextRefId();
-        $testLabels = $data['testLabels'] ?? [];
 
         $test = new TestResults();
         $test->url = $data['urlValue'];
-        $test->testLabels = is_string($testLabels) ? $testLabels : json_encode($testLabels);
+        $test->testLabels = $this->normalizeTestLabelsForStorage($data['testLabels'] ?? []);
         $test->ref_id = $refId;
         $test->data = json_encode($meta);
         $test->html_code = $html;
@@ -4247,6 +4250,31 @@ class TestController extends Controller
         }
 
         return (string) $refId;
+    }
+
+    /**
+     * @param  mixed  $testLabels
+     */
+    protected function normalizeTestLabelsForStorage($testLabels): string
+    {
+        if (is_string($testLabels)) {
+            $decoded = json_decode($testLabels, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return '[]';
+            }
+
+            $testLabels = $decoded;
+        }
+
+        if (! is_array($testLabels)) {
+            return '[]';
+        }
+
+        if ($testLabels !== [] && ! array_is_list($testLabels)) {
+            $testLabels = [$testLabels];
+        }
+
+        return json_encode(array_values($testLabels));
     }
 
     /**
