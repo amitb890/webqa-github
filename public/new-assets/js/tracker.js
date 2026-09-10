@@ -937,14 +937,12 @@ $(document).ready(function () {
 
         const isWebsiteTracker = page && page[0] === "website-tracker"
 
+        // The tracker shows "Last Checked" inside the URL group header, so no test group absorbs it.
         if (isWebsiteTracker) {
-          $("#reportTable [data-consists='title']").each(function () {
-            const currentColspan = parseInt($(this).attr("colspan"), 10)
-            if (Number.isFinite(currentColspan)) {
-              $(this).attr("colspan", currentColspan + 1)
-            }
-          })
-        } else if (Controls.isPerformanceReportPage()) {
+          return
+        }
+
+        if (Controls.isPerformanceReportPage()) {
           const $lastHeaderTd = $('#reportTable .table-header td:last')
           const currentColspan = parseInt($lastHeaderTd.attr('colspan'), 10)
           if (Number.isFinite(currentColspan)) {
@@ -1195,6 +1193,7 @@ $(document).ready(function () {
           tdExtra.setAttribute("scope", "col")
           tdExtra.innerHTML = ``
           tdExtra.setAttribute("colspan", 1)
+          tdExtra.classList.add("last-checked-header-cell")
           document.querySelector(".table-header").appendChild(tdExtra)
 
           let tr = document.createElement("tr")
@@ -2725,9 +2724,10 @@ $(document).ready(function () {
               const hideBtn = target.closest("#hide-col-btn");
               const showBtn = target.closest("#show-col-btn");
               if (hideBtn) {
-                // hide the first column
-                table.column(0).visible(!table.column(0).visible());
-                $(this).find(".table-header").prepend(`<td>
+                $("table").addClass("first-col-collapsed");
+                $(hideBtn).addClass("collapsed");
+                Controls.setUrlGroupColumnsVisible(table, false);
+                $(this).find(".table-header").prepend(`<td class="url-group-toggle-cell">
                   <button
                     type="button"
                     class="first-col-toggle-btn"
@@ -2737,13 +2737,16 @@ $(document).ready(function () {
                       src="/new-assets/assets/images/table-collapse.png"
                       alt="icon"
                     />
-                  </button>`);
+                  </button>
+                </td>`);
               }
           
               if (showBtn) {
-                // show the first column
-                table.column(0).visible(!table.column(0).visible());
-                $(showBtn).remove();
+                const $toggleCell = $(showBtn).closest("td.url-group-toggle-cell");
+                ($toggleCell.length ? $toggleCell : $(showBtn)).remove();
+                Controls.setUrlGroupColumnsVisible(table, true);
+                $("table").removeClass("first-col-collapsed");
+                $("#hide-col-btn").removeClass("collapsed");
               }
           });
 
@@ -2866,6 +2869,20 @@ $(document).ready(function () {
 
       }
       
+      /** On the tracker "Last Checked" sits inside the URL group, so it collapses with the URL column. */
+      static getUrlGroupColumnIndexes(table) {
+        const indexes = [0]
+        const isWebsiteTracker = page && page[0] === "website-tracker"
+        if (isWebsiteTracker && table.column(1).length) {
+          indexes.push(1)
+        }
+        return indexes
+      }
+
+      static setUrlGroupColumnsVisible(table, visible) {
+        table.columns(Controls.getUrlGroupColumnIndexes(table)).visible(visible)
+      }
+
       static getTrackerGroupVisibleColumns(groupName) {
         if (!groupName) return []
         return Array.from(document.querySelectorAll(`#reportTable thead tr.th-bg th.tracker-column-dropdown[data-name="${groupName}"]`))
@@ -4850,10 +4867,6 @@ $(document).on("click",".download-xlsx-bulk",function() {
 
 });
 
-$("#hide-col-btn").on("click", function () {
-    $("table").toggleClass("first-col-collapsed");
-    $(this).toggleClass("collapsed");
-});
 
 function initTrackerTruncationTooltips(){
   let activeCell = null

@@ -110,7 +110,7 @@
                     
                     
                     
-                    <tr class="table-header">
+                    <tr class="table-header table-header-url-group">
                       <td scope="col" class="table-header-imran">
                         <div class="table-header-imran-inner">
                           <div class="form-check left-menu-check left-menu-check-imran">

@@ -18780,8 +18780,18 @@ display:none !important;
   color:#484848;
 }
 
-.table-header td:nth-child(2){
+.table-header:not(.table-header-url-group) td:nth-child(2){
   display:none !important;
+}
+
+/* Website tracker: "Last Checked" sits inside the URL group header, merged with the URL cell. */
+.table-header-url-group td:first-child{
+  border-right: 0 !important;
+}
+
+.table-header-url-group .last-checked-header-cell{
+  border-left: 0 !important;
+  background: var(--white);
 }
 
 
