@@ -1,318 +1,478 @@
-@section('title', 'Page Size Tester: Total Bytes & Asset Weight | Webqa')
-@section('meta-description', 'Check total page size and heavy assets. Identify oversized HTML, CSS, JS, and images for faster loads. Get clear Pass/Fail results and export findings.')
-@section('canonical', 'https://webqa.co/tool/page-size')
-@section('og-title', 'Test Page Size and Heavy Assets | Webqa')
-@section('og-description', 'Measure overall page weight and spot large resources—HTML, CSS, JS, and images—to improve load speed. See decisive outcomes and export results for quick fixes.')
+@section('title', 'HTML Page Size Tester: Total Page Weight & Asset Analysis | Webqa')
+@section('meta-description', 'Check total webpage HTML page size and identify heavy HTML, CSS, JavaScript, images, fonts, and other resources. Analyze page weight and find opportunities to improve performance.')
+@section('canonical', 'https://webqa.co/tools/page-size')
+@section('og-title', 'Test Page Size and Identify Heavy Resources | Webqa')
+@section('og-description', 'Measure total webpage weight and identify large HTML, CSS, JavaScript, image, font, and other resources that may affect page performance.')
 @section('og-url', 'https://webqa.co/tool/page-size')
 @section('og-image', 'https://webqa.co/new-assets/assets/images/og/tools/page-size-test.png')
 @section('og-image-alt', 'Page size test')
 
+
 <div class="single-post-content-main bulk-tool-test">
-    <div class="single-post-content">
-      <h2 class="tools_des_fastheading">HTML Page Size</h2>
-  
-      
-  <div class="list yellow-content summary-block">
-    <span class="summary-heading">Quick Summary</span>
-    <p>Page size refers to the total amount of data that a browser downloads to fully load a webpage, including HTML, CSS, JavaScript, images, fonts, videos, and other resources.</p>
+  <div class="single-post-content">
+
+    <h2 class="tools_des_fastheading">Page Size Test</h2>
+
+
+    <div class="list yellow-content summary-block">
+      <span class="summary-heading">Quick Summary</span>
+
+      <p>
+        Page size refers to the total amount of data a browser needs to download to load a webpage and its required resources.
+      </p>
+
+      <ol>
+        <li>Page weight can include HTML, CSS, JavaScript, images, fonts, videos, and other resources.</li>
+        <li>Large or unnecessary resources can increase download time and bandwidth usage.</li>
+        <li>Images, JavaScript, video, third-party resources, and large stylesheets are common sources of page bloat.</li>
+        <li>Minification, compression, responsive images, caching, and lazy loading can help reduce unnecessary page weight.</li>
+        <li>A page-size test helps identify heavy resources that may require further optimization.</li>
+      </ol>
+    </div>
+
+
+    <h3>What Is Page Size?</h3>
+
+    <p>
+      Page size, also called page weight, refers to the total amount of data that a browser needs to download to load a webpage and its associated resources.
+    </p>
+
+    <p>
+      A webpage is more than its HTML document. When a browser loads a page, it may request stylesheets, JavaScript files, images, fonts, videos, icons, third-party scripts, and other resources. The combined size of these resources contributes to the overall weight of the page.
+    </p>
+
+    <p>
+      Page size is commonly measured in bytes, kilobytes (KB), or megabytes (MB). The actual amount of data transferred can vary depending on factors such as HTTP compression, caching, and which resources are requested during the page load.
+    </p>
+
+    <p>
+      A smaller page is not automatically a better page. The goal is to remove unnecessary resources and reduce excessive page weight while preserving the content, functionality, design, and user experience visitors need.
+    </p>
+
+
+    <h3>What Contributes to Page Size?</h3>
+
+    <p>
+      Several types of resources can contribute to the total weight of a webpage. Some resources may be essential for the initial page while others may be loaded later as visitors interact with the website.
+    </p>
+
+    <img src="{{ asset('new-assets/assets/images/bulk-tool/html-page-size.png') }}" alt="HTML Page size tester" width="600" height="400" class="img-fluid my-4">
+
+    <ul>
+      <li>
+        <b>HTML:</b>&nbsp;The document containing the page's structure and content. Excessive markup, duplicated elements, and unnecessary attributes can increase HTML size.
+      </li>
+
+      <li>
+        <b>Images:</b>&nbsp;Images are often one of the largest contributors to page weight, particularly when they are unnecessarily large, poorly compressed, or served at dimensions much larger than required.
+      </li>
+
+      <li>
+        <b>CSS:</b>&nbsp;Stylesheets control the visual presentation of the page. Large, duplicated, or unused CSS can increase the amount of data required to render the website.
+      </li>
+
+      <li>
+        <b>JavaScript:</b>&nbsp;JavaScript enables interactive functionality but can contribute significant page weight when applications, libraries, frameworks, or third-party scripts are unnecessarily large.
+      </li>
+
+      <li>
+        <b>Fonts:</b>&nbsp;Custom web fonts can add additional requests and file weight, particularly when multiple families, weights, and styles are loaded.
+      </li>
+
+      <li>
+        <b>Video and audio:</b>&nbsp;Media files can be considerably larger than typical HTML, CSS, or JavaScript resources and should be delivered carefully.
+      </li>
+
+      <li>
+        <b>Third-party resources:</b>&nbsp;Analytics, advertising, chat widgets, social integrations, tracking tools, and other external services can add resources to a page.
+      </li>
+    </ul>
+
+
+    <h3>Page Size vs. HTML Size</h3>
+
+    <p>
+      Page size and HTML size are related but are not the same thing.
+    </p>
+
+    <table class="good-bad-example-table">
+      <thead>
+        <tr>
+          <th>HTML Size</th>
+          <th>Total Page Size</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>Measures the size of the HTML document itself.</td>
+          <td>Considers the resources required to load the webpage.</td>
+        </tr>
+
+        <tr>
+          <td>Includes markup, text, attributes, and embedded HTML content.</td>
+          <td>Can include HTML, CSS, JavaScript, images, fonts, media, and other resources.</td>
+        </tr>
+
+        <tr>
+          <td>Can be reduced through HTML minification and removal of unnecessary markup.</td>
+          <td>Can be reduced by optimizing multiple types of resources.</td>
+        </tr>
+
+        <tr>
+          <td>May represent only a small portion of the overall page weight.</td>
+          <td>Provides a broader view of the resources required to load the page.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      A page with a small HTML document can still be heavy if it loads large images, JavaScript bundles, videos, fonts, or third-party resources.
+    </p>
+
+
+    <h3>Why Does Page Size Matter?</h3>
+
+    <p>
+      Every resource a browser needs to download adds to the amount of data involved in loading a webpage. Larger pages can therefore take longer to transfer, particularly when visitors are using slower or higher-latency connections.
+    </p>
+
+    <p>
+      Excessive page weight can also increase bandwidth consumption and may require the browser to process more resources before the page becomes fully usable.
+    </p>
+
+    <p>
+      Keeping page weight under control can help with:
+    </p>
+
+    <ul>
+      <li><b>Loading efficiency:</b>&nbsp;Smaller resources generally require less data to transfer.</li>
+      <li><b>Mobile performance:</b>&nbsp;Reducing unnecessary bytes can be especially useful on mobile networks.</li>
+      <li><b>Bandwidth usage:</b>&nbsp;Smaller pages consume less data for visitors and infrastructure.</li>
+      <li><b>Repeat visits:</b>&nbsp;Effective caching can prevent previously downloaded resources from being downloaded again.</li>
+      <li><b>User experience:</b>&nbsp;Reducing unnecessary resource weight can contribute to a more efficient browsing experience.</li>
+    </ul>
+
+
+    <h3>What the Page Size Test Checks</h3>
+
+    <p>
+      The Page Size Test analyzes the resources associated with a webpage and helps identify the components contributing to its overall weight.
+    </p>
+
+    <p>The test can evaluate:</p>
+
     <ol>
-        <li>Smaller page sizes generally load faster, providing a better experience for visitors across desktop and mobile devices.</li>
-        <li>Large webpages consume more bandwidth, increase loading times, and can negatively impact Core Web Vitals and overall website performance.</li>
-        <li>Images, JavaScript, third-party scripts, videos, and custom fonts are often the biggest contributors to page size.</li>
-        <li>Reducing page size through compression, optimization, and removing unnecessary resources helps improve speed, usability, and crawl efficiency.</li>
-        <li>Regularly testing your webpage size allows you to identify performance bottlenecks and optimize your website before they affect visitors.</li>
+      <li>
+        <b>HTML size:</b>&nbsp;Measures the size of the webpage's HTML document.
+      </li>
+
+      <li>
+        <b>Stylesheet size:</b>&nbsp;Identifies CSS resources contributing to the page's overall weight.
+      </li>
+
+      <li>
+        <b>JavaScript size:</b>&nbsp;Identifies JavaScript resources and their contribution to page weight.
+      </li>
+
+      <li>
+        <b>Image resources:</b>&nbsp;Identifies images that contribute significantly to the total page size.
+      </li>
+
+      <li>
+        <b>Total page weight:</b>&nbsp;Provides an overall view of the resources detected for the webpage.
+      </li>
+
+      <li>
+        <b>Large resources:</b>&nbsp;Helps identify individual files that may deserve further optimization.
+      </li>
     </ol>
-</div>
 
-<h3>What is Page Size?</h3>
+    <p>
+      The results can help you determine whether page weight is being driven primarily by images, scripts, stylesheets, HTML, or other resources.
+    </p>
 
-<p>Page size refers to the total amount of data that a browser downloads to fully load a webpage. It is commonly measured in kilobytes (KB) or megabytes (MB) and includes every resource required to display the page correctly.</p>
 
-<p>When someone visits your website, their browser doesn't just download the HTML document. It also downloads images, CSS stylesheets, JavaScript files, fonts, videos, icons, and third-party scripts. The combined size of all these resources is known as the <b>page size</b>
-(or sometimes called as "page weight").</p>
+    <h3>Common Causes of Large Page Size</h3>
 
-<p>For example, a webpage might consist of:</p>
+    <p>
+      Page weight tends to increase gradually as websites add content, features, integrations, and design elements. Common causes include:
+    </p>
 
-<ul>
-    <li><b>HTML:</b> 75 KB</li>
-    <li><b>CSS:</b> 150 KB</li>
-    <li><b>JavaScript:</b> 850 KB</li>
-    <li><b>Images:</b> 1.5 MB</li>
-    <li><b>Fonts:</b> 200 KB</li>
-    <li><b>Third-party scripts:</b> 300 KB</li>
-</ul>
-
-<p>Although the HTML document itself maybe relatively small, the total page size in this example exceeds 3 MB. Every additional image, script, stylesheet, or embedded resource increases the amount of data that visitors must download before the page is fully loaded in the visitor's computer.</p>
-
-<p>Keeping your webpage's page size as small as possible helps improve loading speed, reduces bandwidth consumption, and creates a faster, more enjoyable browsing experience for users across desktop and mobile devices.</p>
-      
-  
-<h3>Why Does Page Size Matter?</h3>
-
-<p>Page size has a direct impact on website performance, user experience, and it sometimes indirectly affects your website's SEO and visibility. Every additional resource that a browser needs to download increases the time it takes for a webpage to become fully usable. </p>
-<p>Here are some of the key reasons why keeping your page size under control is important:</p>
-
-<ol>
-    <li><b>Faster Page Load Times:</b> Smaller webpages require less data to download, allowing them to load more quickly across different devices and internet connections.</li>
-
-    <li><b>Better User Experience:</b> Visitors expect websites to load within a few seconds. Webpages that are Lightweight feel faster, more responsive, and encourage users to stay engaged with your content.</li>
-
-    <li><b>Improved Mobile Performance:</b> Mobile users often browse on slower networks or limited data plans. Optimizing page size ensures a smoother experience for visitors on smartphones and tablets.</li>
-
-    <li><b>Lower Bandwidth Consumption:</b> Smaller pages consume less bandwidth for both your visitors and your web server, helping reduce hosting costs while improving website efficiency.</li>
-
-    <li><b>Supports Better Core Web Vitals:</b> Reducing unnecessary page weight can improve important performance metrics such as Largest Contentful Paint (LCP) and Interaction to Next Paint (INP), both of which contribute to a better browsing experience.</li>
-
-    <li><b>Can Indirectly Benefit SEO:</b> While page size itself is not a direct Google ranking factor, faster-loading pages often provide a better user experience, improve Core Web Vitals, and make it easier for search engines to crawl your website efficiently.</li>
-</ol>
-
-<p>Optimizing page size isn't about achieving the smallest possible number. It's about delivering the right content in the most efficient way, helping visitors access your website quickly without sacrificing functionality or quality.</p>     
-  
-
-<h3>How to Reduce Page Size</h3>
-
-<p>Reducing your page size doesn't necessarily mean removing valuable content or compromising the design of your website. Instead, it's about delivering the same experience more efficiently by eliminating unnecessary resources and optimizing the files that visitors download.</p>
-<p> Here are some of the most effective ways to reduce your webpage size.</p>
-
-<h5>Optimize Images</h5>
-
-<p>Images are often the largest contributors to page size. Compressing and properly formatting your images can significantly reduce the amount of data users need to download without noticeably affecting visual quality.</p>
-
-<ul>
-    <li><b>Compress images before uploading:</b> Use image compression tools to reduce file size while maintaining acceptable visual quality. This is one of the quickest ways to improve page performance.</li>
-    <li><b>Use modern image formats:</b> Formats like WebP and AVIF typically produce much smaller files than traditional JPEG or PNG images while maintaining excellent image quality.</li>
-    <li><b>Resize images appropriately:</b> Avoid serving large desktop-sized images when only smaller versions are required. Always match image dimensions to where they will be displayed.</li>
-    <li><b>Enable lazy loading:</b> Load images only when they become visible on the user's screen instead of downloading every image immediately after the page loads.</li>
-</ul>
-
-<h5>Reduce JavaScript</h5>
-
-<p>JavaScript makes websites interactive, but excessive or poorly optimized scripts can significantly increase page size and delay rendering.</p>
-
-<ul>
-    <li><b>Remove unused libraries:</b> Audit your website regularly and eliminate JavaScript frameworks or plugins that are no longer being used.</li>
-    <li><b>Minify JavaScript files:</b> Remove unnecessary spaces, comments, and formatting from your code to reduce JavaScript file size without changing functionality.</li>
-    <li><b>Load scripts only when needed:</b> Delay loading non-essential JavaScript until after the main content has been displayed, helping users interact with the page sooner.</li>
-</ul>
-
-<h5>Optimize CSS</h5>
-
-<p>Stylesheets determine how your website looks, but large or inefficient CSS files can add unnecessary weight to every page.</p>
-
-<ul>
-    <li><b>Remove unused CSS:</b> Over time, websites often accumulate styles that are no longer required. Cleaning these up reduces download size.</li>
-    <li><b>Minify CSS files:</b> Compress your stylesheets by removing unnecessary whitespace and comments while preserving their functionality.</li>
-    <li><b>Avoid duplicate styles:</b> Consolidate repetitive CSS rules to keep your stylesheets organized and lightweight.</li>
-</ul>
-
-<h5>Optimize Fonts</h5>
-
-<p>Custom fonts could enhance the look and feel of your website but it can also increase the amount of data a browser must download before displaying your content.</p>
-
-<ul>
-    <li><b>Limit the number of font families:</b> Using fewer fonts reduces the number of files that browsers needs to download, before it can show your content to a visitor.</li>
-    <li><b>Load only required font weights:</b> If your website only uses regular and bold text, avoid downloading every available font variation. The fewer the number of font files required to show your content, the better.</li>
-    <li><b>Use modern font formats:</b> Formats such as WOFF2 offer better compression than older font formats, resulting in smaller downloads.</li>
-</ul>
-
-<h5>Review Third Party Scripts</h5>
-
-<p>Many websites rely on analytics platforms, chat widgets, advertising tags, and social media integrations. While these services provide valuable functionality, each additional script increases your page size.</p>
-
-<ul>
-    <li><b>Remove unnecessary integrations:</b> Periodically review third-party services and remove those that are no longer providing value.</li>
-    <li><b>Load external scripts asynchronously:</b> Where possible, prevent third-party scripts from blocking the rendering of your webpage.</li>
-    <li><b>Monitor their performance impact:</b> Use performance auditing tools to identify which third-party resources contribute the most to your page size and loading time.</li>
-</ul>
-
-<p>Page size optimization should be an ongoing process rather than a one time task. Regularly auditing your webpages helps you identify new opportunities to reduce unnecessary downloads, improve loading speed, and provide visitors with a faster, more responsive browsing experience.</p>      
-        
-<h3>Do's and Don'ts of Page Size Optimization</h3>
-
-<p>Optimizing page size is about making your website as efficient as possible without compromising the user experience. Following a few best practices can significantly improve loading speed, while avoiding common mistakes helps prevent unnecessary page bloat.</p>
-
-<div class="list green-list">
-    <h3>Do's</h3>
     <ul>
-        <li><b>Compress images before uploading:</b>&nbsp;Reduce image file sizes using compression tools to improve loading speed without noticeably affecting quality.</li>
+      <li>
+        <b>Unoptimized images:</b>&nbsp;Large images served at unnecessarily high resolutions can add significant page weight.
+      </li>
 
-        <li><b>Use modern image formats:</b>&nbsp;Choose formats like WebP or AVIF wherever possible, as they provide excellent image quality with much smaller file sizes.</li>
+      <li>
+        <b>Large JavaScript bundles:</b>&nbsp;Applications and frameworks can ship more JavaScript than a particular page actually needs.
+      </li>
 
-        <li><b>Minify CSS and JavaScript:</b>&nbsp;Remove unnecessary spaces, comments, and formatting from your code to reduce the amount of data downloaded by visitors.</li>
+      <li>
+        <b>Unused CSS:</b>&nbsp;Styles left behind by old components, plugins, or design changes can increase stylesheet size.
+      </li>
 
-        <li><b>Enable lazy loading:</b>&nbsp;Load images and other media only when users scroll to them, reducing the initial page size and improving perceived performance.</li>
+      <li>
+        <b>Unminified resources:</b>&nbsp;Whitespace, comments, and unnecessary formatting can increase the size of HTML, CSS, and JavaScript files.
+      </li>
 
-        <li><b>Audit third-party scripts regularly:</b>&nbsp;Review analytics tools, chat widgets, advertising tags, and plugins to ensure every external resource adds real value.</li>
+      <li>
+        <b>Large media files:</b>&nbsp;Videos and other media can contribute substantial amounts of data when loaded unnecessarily.
+      </li>
 
-        <li><b>Use browser caching and compression:</b>&nbsp;Enable technologies such as GZIP or Brotli compression and leverage browser caching to reduce repeat downloads.</li>
+      <li>
+        <b>Third-party scripts:</b>&nbsp;Analytics, advertising, chat, tracking, and other external services can add resources to every page.
+      </li>
 
-        <li><b>Test your page size frequently:</b>&nbsp;Monitor your website after major content updates or design changes to identify opportunities for further optimization.</li>
+      <li>
+        <b>Too many web fonts:</b>&nbsp;Loading several font families, weights, and styles can increase both requests and page weight.
+      </li>
+
+      <li>
+        <b>Duplicate resources:</b>&nbsp;Multiple versions of libraries or repeated resources can unnecessarily increase the amount of data loaded.
+      </li>
     </ul>
-</div>
-
-<div class="list red-list">
-    <h3>Don'ts</h3>
-    <ul>
-        <li><b>Don't upload full-resolution images:</b>&nbsp;Avoid using large images directly from cameras or design tools without resizing and compressing them first.</li>
-
-        <li><b>Don't load unnecessary JavaScript libraries:</b>&nbsp;Every additional library increases page size, so remove scripts that are no longer required.</li>
-
-        <li><b>Don't use too many custom fonts:</b>&nbsp;Loading multiple font families and font weights increases the number of files visitors must download.</li>
-
-        <li><b>Don't rely excessively on third-party widgets:</b>&nbsp;Chat tools, social feeds, advertising scripts, and tracking pixels can quickly increase page size and slow down your website.</li>
-
-        <li><b>Don't embed large media files unnecessarily:</b>&nbsp;Use streaming services for videos where appropriate instead of serving large media files directly from your webpage.</li>
-
-        <li><b>Don't ignore unused CSS and code:</b>&nbsp;Old stylesheets, plugins, and scripts often remain on websites long after they're needed, adding unnecessary page weight.</li>
-
-        <li><b>Don't assume better hosting alone will solve the problem:</b>&nbsp;Even the fastest servers cannot compensate for oversized webpages filled with unoptimized resources.</li>
-    </ul>
-</div>
-
-<p>Small improvements across images, scripts, stylesheets, and third-party resources can collectively make a significant difference to your website's performance. Regular optimization helps ensure your pages remain fast, efficient, and enjoyable for every visitor.</p>
 
 
-<h3>Good vs Bad Page Size Optimization Examples</h3>
+    <h3>How to Reduce Page Size</h3>
 
-<p>Understanding page size optimization becomes much easier when you compare good practices with common mistakes. The examples below illustrate how small changes can significantly improve website performance, while poor optimization choices can increase page size and slow down your website.</p>
+    <p>
+      Reducing page weight is usually more effective when you identify the largest contributors first rather than optimizing every resource equally.
+    </p>
 
-<p><b>Examples of Good Page Size Optimization</b></p>
+    <ol>
+      <li>
+        <b>Optimize images:</b>&nbsp;Resize images to appropriate dimensions and use efficient formats and compression.
+      </li>
 
-<table class="good-bad-example-table">
-    <tr>
-        <th>Example</th>
-        <th>Why this is good</th>
-    </tr>
-    <tr>
-        <td>Using WebP images instead of PNG or JPEG where supported</td>
-        <td>Modern image formats offer significantly smaller file sizes while maintaining excellent visual quality, helping pages load faster.</td>
-    </tr>
-    <tr>
-        <td>Compressing images before uploading them</td>
-        <td>Image compression removes unnecessary data without noticeably reducing image quality, lowering the overall page size.</td>
-    </tr>
-    <tr>
-        <td>Minifying CSS and JavaScript files</td>
-        <td>Removing unnecessary whitespace, comments, and formatting reduces file sizes without affecting functionality.</td>
-    </tr>
-    <tr>
-        <td>Lazy loading images below the fold</td>
-        <td>Only loading images when they are needed reduces the initial amount of data downloaded by visitors.</td>
-    </tr>
-    <tr>
-        <td>Removing unused plugins and third-party scripts</td>
-        <td>Eliminating unnecessary resources reduces both page size and the number of network requests made by the browser.</td>
-    </tr>
-    <tr>
-        <td>Using only the required font families and font weights</td>
-        <td>Loading fewer font files reduces download size while maintaining a consistent visual design.</td>
-    </tr>
-</table>
+      <li>
+        <b>Minify HTML, CSS, and JavaScript:</b>&nbsp;Remove unnecessary formatting and other redundant characters from production resources.
+      </li>
 
-<p><b>Examples of Poor Page Size Optimization</b></p>
+      <li>
+        <b>Enable GZIP or Brotli:</b>&nbsp;Compress text-based resources during transfer to reduce the amount of data sent over the network.
+      </li>
 
-<table class="good-bad-example-table">
-    <tr>
-        <th>Example</th>
-        <th>Why this is bad</th>
-    </tr>
-    <tr>
-        <td>Uploading original 8 MB camera images directly to the website</td>
-        <td>Oversized images dramatically increase page size and loading time, especially for visitors on mobile devices.</td>
-    </tr>
-    <tr>
-        <td>Loading multiple JavaScript libraries that perform similar tasks</td>
-        <td>Duplicate or unnecessary libraries increase page weight without providing additional value.</td>
-    </tr>
-    <tr>
-        <td>Using five or six different font families on a single page</td>
-        <td>Each additional font requires extra downloads, increasing page size and slowing rendering.</td>
-    </tr>
-    <tr>
-        <td>Embedding large self-hosted videos on every page</td>
-        <td>Video files are among the largest web assets and can significantly slow page loading if not optimized.</td>
-    </tr>
-    <tr>
-        <td>Leaving unused CSS, JavaScript, and plugins in production</td>
-        <td>Unused code increases page size and makes browsers download resources that serve no purpose.</td>
-    </tr>
-    <tr>
-        <td>Adding numerous chat widgets, trackers, and social media plugins</td>
-        <td>Excessive third-party scripts increase both page size and the number of requests required before the page becomes fully usable.</td>
-    </tr>
-</table>
+      <li>
+        <b>Remove unnecessary JavaScript:</b>&nbsp;Audit unused dependencies, duplicate libraries, and scripts that are not required by the page.
+      </li>
 
-<p>Page size optimization is rarely about one large improvement. Instead, it comes from making dozens of small optimizations that collectively reduce the amount of data users need to download. The result is a faster, more efficient website that delivers a better experience for both visitors and search engines.</p>    
-  
-      
-  <!-- Start FAQ -->
-<div class="getting-recover-main recover-faq-area">
-    <h3>FAQs on Page Size</h3>
-    <div class="accordion" id="accordionPanelsStayOpenExample">
+      <li>
+        <b>Remove unnecessary CSS:</b>&nbsp;Review unused or duplicated styles and remove them carefully after testing.
+      </li>
+
+      <li>
+        <b>Lazy-load non-critical resources:</b>&nbsp;Delay images and other resources that are not required for the initial viewport where appropriate.
+      </li>
+
+      <li>
+        <b>Use responsive images:</b>&nbsp;Serve image dimensions appropriate for the visitor's device rather than sending unnecessarily large files.
+      </li>
+
+      <li>
+        <b>Optimize web fonts:</b>&nbsp;Limit unnecessary font families and weights and use appropriate loading strategies.
+      </li>
+
+      <li>
+        <b>Review third-party resources:</b>&nbsp;Remove integrations that provide little value relative to their performance cost.
+      </li>
+
+      <li>
+        <b>Use caching:</b>&nbsp;Configure appropriate caching for static resources so returning visitors can reuse previously downloaded files.
+      </li>
+    </ol>
+
+
+    <h3>Page Size, Lazy Loading and Caching</h3>
+
+    <p>
+      Not every resource needs to be downloaded when the page initially loads. Lazy loading can delay non-critical resources until they are closer to being needed.
+    </p>
+
+    <p>
+      Images below the initial viewport are a common example. Instead of loading every image immediately, a website can allow suitable images to load as the visitor approaches them.
+    </p>
+
+    <p>
+      Lazy loading does not reduce the underlying file size of a resource. Instead, it can reduce the amount of data required during the initial page load by delaying resources that are not immediately necessary.
+    </p>
+
+    <p>
+      Caching and page-size optimization solve different problems. Reducing page weight decreases the amount of data that needs to be transferred, while caching allows previously downloaded resources to be reused.
+    </p>
+
+    <p>
+      Static resources such as CSS, JavaScript, images, and fonts can often benefit from browser and CDN caching. Effective caching can significantly reduce repeat downloads for returning visitors.
+    </p>
+
+    <p>
+      For best results, combine reasonable page weight with appropriate caching, compression, and cache-busting strategies.
+    </p>
+
+
+    <h3>Good vs. Bad Page Size Optimization Practices</h3>
+
+    <table class="good-bad-example-table">
+      <thead>
+        <tr>
+          <th>Good Practice</th>
+          <th>Bad Practice</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr>
+          <td>Resize images to dimensions appropriate for the device and layout.</td>
+          <td>Upload very large images and rely on CSS to display them at a smaller size.</td>
+        </tr>
+
+        <tr>
+          <td>Minify HTML, CSS, and JavaScript in production.</td>
+          <td>Serve large unminified production resources unnecessarily.</td>
+        </tr>
+
+        <tr>
+          <td>Use GZIP or Brotli to compress text-based resources during transfer.</td>
+          <td>Assume minification alone replaces HTTP response compression.</td>
+        </tr>
+
+        <tr>
+          <td>Audit and remove genuinely unused scripts and styles.</td>
+          <td>Delete CSS or JavaScript without checking whether other pages or interactions depend on it.</td>
+        </tr>
+
+        <tr>
+          <td>Lazy-load suitable below-the-fold images and non-critical resources.</td>
+          <td>Load every image, video, and resource immediately regardless of when it is needed.</td>
+        </tr>
+
+        <tr>
+          <td>Use caching for stable static resources.</td>
+          <td>Disable caching for resources that could safely be reused.</td>
+        </tr>
+
+        <tr>
+          <td>Identify the largest resources before deciding what to optimize.</td>
+          <td>Spend significant effort optimizing tiny resources while ignoring large images or scripts.</td>
+        </tr>
+      </tbody>
+    </table>
+
+
+    <h3>Does Page Size Affect SEO? And How much Page Weight is considered too much?</h3>
+
+    <p>
+      Page size is not a standalone search ranking factor with a universal size threshold. However, excessive page weight can affect how efficiently a webpage loads, particularly on slower connections and mobile devices.
+    </p>
+
+    <p>
+      Website performance is influenced by many factors, including resource size, network conditions, caching, server response time, rendering work, and JavaScript execution. Reducing unnecessary page weight can therefore support broader performance and user-experience improvements.
+    </p>
+
+    <p>
+      Page-size optimization should be treated as one part of technical SEO rather than a guarantee of higher search rankings. The objective is to create pages that deliver the required content and functionality without unnecessary resource weight.
+    </p>
+
+    <img src="{{ asset('new-assets/assets/images/bulk-tool/page-size-infographic.png') }}" alt="HTML Page size Infographic" width="600" height="400" class="img-fluid my-4">
+
+
+    <p>
+      There is no single page-size limit that applies to every website. A content-heavy article, an e-commerce product page, and a web application may naturally require different amounts of data.
+    </p>
+
+    <p>
+      Instead of targeting an arbitrary maximum size, focus on identifying unnecessary resources and reducing the largest contributors to page weight. A page that is significantly heavier than comparable pages in the same category may deserve closer investigation.
+    </p>
+
+    <p>
+      It is also important to consider how the page is delivered. A large resource that is effectively cached may have a different impact on repeat visits than the same resource downloaded on every request.
+    </p>
+
+
+    <h3>Conclusion</h3>
+
+    <p>
+      Page size is an important part of website performance because every resource required by a webpage contributes to the amount of data that may need to be downloaded and processed.
+    </p>
+
+    <p>
+      The most effective approach is not simply to make every page as small as possible. Instead, identify unnecessary or disproportionately large resources, optimize them appropriately, and combine those improvements with compression, caching, responsive delivery, and efficient resource loading.
+    </p>
+
+    <p>
+      A Page Size Test provides a useful starting point by showing how much weight a webpage carries and which types of resources are contributing most to that weight.
+    </p>
+
+
+    <!-- Start FAQ -->
+    <div class="getting-recover-main recover-faq-area">
+      <h3>FAQs</h3>
+
+      <div class="accordion" id="accordionPanelsStayOpenExample">
 
         @foreach([
-            [
-                'q' => 'What is page size?',
-                'a' => 'Page size is the total amount of data that a browser downloads to fully load a webpage. It includes the HTML document, images, CSS files, JavaScript, fonts, videos, and other resources required to display the page correctly.'
-            ],
-            [
-                'q' => 'What is considered a good page size?',
-                'a' => 'There is no official limit, but as a general guideline, keeping your total page size under 2 MB provides a good balance between performance and functionality. Smaller pages typically load faster and offer a better user experience.'
-            ],
-            [
-                'q' => 'Does page size affect SEO?',
-                'a' => 'Page size is not a direct Google ranking factor. However, larger pages often load more slowly, which can negatively impact user experience, Core Web Vitals, and overall website performance—all of which can indirectly influence SEO.'
-            ],
-            [
-                'q' => 'Is page size the same as page speed?',
-                'a' => 'No. Page size measures the amount of data downloaded by the browser, while page speed measures how quickly a webpage loads and becomes interactive. Although related, many other factors besides page size affect loading speed.'
-            ],
-            [
-                'q' => 'What usually makes a webpage large?',
-                'a' => 'Oversized images, unoptimized JavaScript, large CSS files, custom fonts, videos, and third-party scripts such as chat widgets and analytics tools are some of the most common contributors to a large page size.'
-            ],
-            [
-                'q' => 'How can I reduce my webpage size?',
-                'a' => 'Compress images, use modern image formats like WebP, remove unused CSS and JavaScript, minimize third-party scripts, enable compression such as GZIP or Brotli, and regularly audit your website for unnecessary resources.'
-            ],
-            [
-                'q' => 'Do images have the biggest impact on page size?',
-                'a' => 'In most cases, yes. Images are often the largest files downloaded by a webpage. Optimizing and compressing images can significantly reduce the total page size and improve loading performance.'
-            ],
-            [
-                'q' => 'How often should I check my page size?',
-                'a' => 'It is good practice to test your page size regularly, especially after adding new content, installing plugins, redesigning pages, or making significant updates to your website.'
-            ]
+          [
+            'q' => 'What is page size?',
+            'a' => 'Page size, or page weight, is the total amount of data associated with the resources a browser needs to load a webpage, including HTML, CSS, JavaScript, images, fonts, and other resources.'
+          ],
+          [
+            'q' => 'What is considered a good webpage size?',
+            'a' => 'There is no universal ideal page size. The goal should be to remove unnecessary resources and keep the page as efficient as possible while preserving the content and functionality visitors need.'
+          ],
+          [
+            'q' => 'What makes a webpage large?',
+            'a' => 'Large images, JavaScript bundles, videos, fonts, third-party scripts, unoptimized CSS, duplicated resources, and excessive HTML markup are common contributors to large page weight.'
+          ],
+          [
+            'q' => 'Does page size affect website speed?',
+            'a' => 'Yes. Larger pages generally require more data to be transferred, although actual loading performance also depends on factors such as network conditions, caching, server response time, and browser processing.'
+          ],
+          [
+            'q' => 'Does page size affect SEO?',
+            'a' => 'Page size is not a standalone ranking factor with a fixed size threshold, but excessive resource weight can contribute to slower loading and a poorer user experience. Optimizing page weight can support broader technical SEO and performance efforts.'
+          ],
+          [
+            'q' => 'How can I reduce my website page size?',
+            'a' => 'Start by identifying the largest resources. Common improvements include optimizing images, minifying HTML, CSS and JavaScript, removing unnecessary resources, enabling GZIP or Brotli, using lazy loading, and implementing effective caching.'
+          ],
+          [
+            'q' => 'Does page size include images, CSS and JavaScript?',
+            'a' => 'Yes. A webpage can load many different resource types, including HTML, stylesheets, JavaScript, images, fonts, videos, and third-party resources. These can all contribute to the overall page weight.'
+          ],
+          [
+            'q' => 'How does the Page Size Test help?',
+            'a' => 'The Page Size Test helps identify the resources contributing to a webpage’s overall weight so you can determine where optimization efforts are likely to have the greatest impact.'
+          ]
         ] as $faq)
 
         <div class="accordion-item">
-            <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
-                    aria-expanded="false"
-                    aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
-                    {{ $faq['q'] }}
-                </button>
-            </h2>
+          <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+            <button class="accordion-button collapsed"
+              type="button"
+              data-bs-toggle="collapse"
+              data-bs-target="#collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+              aria-expanded="false"
+              aria-controls="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+              {{ $faq['q'] }}
+            </button>
+          </h2>
 
-            <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
-                class="accordion-collapse collapse"
-                aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
+          <div id="collapse-{{ \Illuminate\Support\Str::slug($faq['q']) }}"
+            class="accordion-collapse collapse"
+            aria-labelledby="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
 
-                <div class="accordion-body">
-                    <p>{{ $faq['a'] }}</p>
-                </div>
-
+            <div class="accordion-body">
+              <p>{{ $faq['a'] }}</p>
             </div>
+
+          </div>
         </div>
 
         @endforeach
 
+      </div>
     </div>
-</div>
-<!-- End FAQ -->
-      
-      
-    </div>
+    <!-- End FAQ -->
+
   </div>
-  
+</div>

@@ -28,6 +28,9 @@
 <p>In a development environment, CSS is often formatted neatly with indentation, comments and other markup code which developers need for maintenance and technical reasons. In production, that formatting adds extra bytes. Compressing CSS makes stylesheets lighter, so they download faster and the browser can start rendering sooner thereby improving user experience.
 </p>
 
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/css-compression.png') }}" alt="CSS compression and minification explained" width="600" height="400" class="img-fluid my-4">
+
 <p>CSS compression commonly includes:</p>
 <ol>
   <li><b>Removing whitespace</b> - spaces, tabs, and line breaks.</li>
@@ -36,9 +39,11 @@
   <li><b>Optional optimizations</b> - Merging or reordering rules.</li>
 </ol>
 
+<div class="green-highlight-table">
 <p><b>Note:</b> CSS compression is different from Gzip compression. Minification reduces the CSS file size itself, while Gzip compression compresses the file size during transfer from server to browser. It is recommended to use both techniques for maximum performance gains.</p>
+</div>
 
-<h3>How CSS Compression Helps Performance</h3>
+<h3 style="margin-top:30px;">How CSS Compression Helps Performance</h3>
 <p> When you load a webpage on your browser, the browser needs to load essential CSS stylesheets before it can load the page properly. When the CSS files are smaller, it arrives faster in the visitor's computer and that helps the page render faster, leading to an improved user experience.</p>
 <p>Here is how CSS compression helps performance:</p>
 <ol>
@@ -48,6 +53,25 @@
 </ol>
 
 <p>Even small reductions in your main stylesheet can matter—especially if the same CSS is used on every page of your website.</p>
+
+<h3>CSS Compression vs. Removing Unused CSS</h3>
+
+<p>
+  CSS minification and removing unused CSS are two different optimization techniques. Minification makes an existing stylesheet more compact, while removing unused CSS attempts to eliminate styles that are not required by the website.
+</p>
+
+<ul>
+  <li><b>CSS minification:</b>&nbsp;Removes unnecessary whitespace, comments, and other formatting without changing the styling rules.</li>
+  <li><b>Removing unused CSS:</b>&nbsp;Identifies and removes selectors or rules that are not needed by the page or website.</li>
+</ul>
+
+<p>
+  Minification is generally lower risk because the stylesheet's styling rules remain intact. Removing unused CSS can result in larger file-size reductions, but it requires more careful testing because a style that appears unused on one page may be required by another page, component, or interactive element.
+</p>
+
+<p>
+  For best results, minify your CSS first and then audit unused styles separately. Test important page templates and interactive elements before deploying any CSS that has been removed.
+</p>
 
 <h3>What the CSS Compression Test Checks</h3>
 <p>When you test a webpage which contains links to external stylesheet files, our tool checks whether your CSS is delivered in an optimized way.This includes verifying if the CSS is minified, whether it’s served with transfer compression (Gzip) and whether there are obvious opportunities to reduce CSS payload.</p>
@@ -90,40 +114,81 @@
   </ul>
 </div>
 
+<h3>Good vs. Bad CSS Compression Practices</h3>
+
+<table class="good-bad-example-table">
+  <thead>
+    <tr>
+      <th>Good Practice</th>
+      <th>Bad Practice</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Minify CSS automatically as part of the production build process.</td>
+      <td>Manually compress CSS and repeat the process whenever styles change.</td>
+    </tr>
+    <tr>
+      <td>Serve minified CSS with Gzip or Brotli transfer compression.</td>
+      <td>Assume CSS minification and HTTP compression are the same thing.</td>
+    </tr>
+    <tr>
+      <td>Remove unused CSS only after testing all relevant page templates.</td>
+      <td>Delete CSS simply because a selector appears unused on one page.</td>
+    </tr>
+    <tr>
+      <td>Use browser caching with versioned CSS filenames.</td>
+      <td>Cache CSS aggressively without a reliable way to serve updated files.</td>
+    </tr>
+    <tr>
+      <td>Review third-party stylesheets and remove unnecessary dependencies.</td>
+      <td>Load multiple plugins or frameworks with overlapping CSS rules.</td>
+    </tr>
+    <tr>
+      <td>Test layouts and interactive elements after CSS optimization.</td>
+      <td>Deploy CSS changes without checking important pages and components.</td>
+    </tr>
+  </tbody>
+</table>
+
 <!-- Start FAQ -->
 <div class="getting-recover-main recover-faq-area">
   <h3>FAQs on CSS Compression</h3>
   <div class="accordion" id="accordionCssCompressionFaq">
     @foreach([
-      [
-        'q' => 'Is CSS compression the same as Gzip compression?',
-        'a' => 'Not exactly. “CSS compression” usually means minifying the CSS file which involved removing whitespace and comments. Gzip compression is a "transfer compression" that compress the file while it’s being sent from the server to the browser. Best practice is to use both.'
-      ],
-      [
-        'q' => 'Can minifying CSS break my website?',
-        'a' => 'Minification is generally safe and rarely breaks layouts. Problems are more common when removing “unused CSS” (purging) or when build tools are misconfigured. Always test templates like homepage, product/category pages, and important sections of your website before concluding minification.'
-      ],
-      [
-        'q' => 'How do I know if my CSS is compressed?',
-        'a' => 'Minified CSS typically appears as one long compact line with very little whitespace.'
-      ],
-      [
-        'q' => 'Should I combine all CSS into one file?',
-        'a' => 'Not always, but it is considered a good practice to let the browser render only one final CSS file, when compared to rendering multiple CSS files. The main goal is to reduce total bytes, avoid duplication, and ensure CSS is cached well. Combining CSS files into one can help in most setups but isn’t mandatory.'
-      ],
-      [
-        'q' => 'What’s the difference between minification and removing unused CSS?',
-        'a' => 'Minification reduces file size by removing formatting (spaces/comments) without changing what the CSS does. Removing unused CSS (purging) attempts to delete selectors that aren’t used on a page, which can create larger savings but carries more risk if done incorrectly.'
-      ],
-      [
-        'q' => 'Does CSS compression improve SEO?',
-        'a' => 'CSS compression does not directly influence SEO or rankings, but faster loading webpages generally improve user experience and performance metrics, which can support better SEO outcomes.'
-      ],
-      [
-        'q' => 'Why is my HTML compressed but my CSS is not?',
-        'a' => 'This usually happens when compression rules are enabled only for text/html, or when CSS is served with an incorrect Content-Type. It can also be a web server setting that compresses HTML by default but needs additional configuration for CSS and JS files.'
-      ]
-    ] as $faq)
+  [
+    'q' => 'Is CSS compression the same as Gzip compression?',
+    'a' => 'Not exactly. CSS compression usually means minifying the CSS file by removing unnecessary whitespace, comments, and formatting. Gzip compresses the file during transfer from the server to the browser. Using both provides better results.'
+  ],
+  [
+    'q' => 'Can minifying CSS break my website?',
+    'a' => 'CSS minification is generally safe, but incorrectly configured optimization tools can sometimes affect layouts or functionality. Always test important page templates after enabling CSS minification.'
+  ],
+  [
+    'q' => 'How do I know if my CSS is compressed?',
+    'a' => 'Minified CSS typically contains very little whitespace and appears as compact code, often across a small number of lines. A CSS compression test can also help identify whether your stylesheet is properly optimized.'
+  ],
+  [
+    'q' => 'Should I combine all CSS files into one file?',
+    'a' => 'Not necessarily. The goal is to reduce unnecessary requests and bytes while allowing CSS to be cached efficiently. Depending on your website and build setup, keeping a small number of optimized stylesheets may be better than combining everything.'
+  ],
+  [
+    'q' => 'What is the difference between CSS minification and removing unused CSS?',
+    'a' => 'Minification removes formatting characters such as whitespace and comments without changing the CSS rules. Removing unused CSS attempts to delete selectors that are not needed, which can produce larger savings but requires more careful testing.'
+  ],
+  [
+    'q' => 'Does CSS compression improve SEO?',
+    'a' => 'CSS compression is not a direct SEO ranking signal. However, reducing stylesheet size can improve loading efficiency and user experience, which can support overall website performance and technical SEO.'
+  ],
+  [
+    'q' => 'Why is my HTML compressed but my CSS is not?',
+    'a' => 'Your server may be configured to compress only HTML responses. CSS may require separate compression rules, and an incorrect Content-Type can also prevent compression from being applied correctly.'
+  ],
+  [
+    'q' => 'Should I compress CSS if I already use a CDN?',
+    'a' => 'Yes. A CDN can improve how CSS is delivered and cached, but minifying the stylesheet still reduces its underlying size. Combining minification, transfer compression, and effective caching provides a more efficient setup.'
+  ]
+] as $faq)
       <div class="accordion-item">
         <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"

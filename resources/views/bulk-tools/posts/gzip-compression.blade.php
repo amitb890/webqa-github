@@ -32,9 +32,11 @@
 
 <p>Your browser and the web server use HTTP headers to “agree” on compression:</p>
 <ul>
-  <li>The browser says what type of compression it supports via <code>Accept-Encoding</code> (for example: gzip or br).</li>
-  <li>If the server sends a compressed response, it includes <code>Content-Encoding: gzip</code> in the response headers.</li>
+  <li>The browser says what type of compression it supports via Accept-Encoding (for example: gzip or br).</li>
+  <li>If the server sends a compressed response, it includes Content-Encoding: gzip in the response headers.</li>
 </ul>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-gzip-compression-works.png') }}" alt="Meta Title in Browser Tab" width="600" height="400" class="img-fluid my-4">
 
 <p>If you see Content-Encoding: gzip or Content-Encoding: br (for Brotli), it usually means compression is enabled and working.If you don’t see a Content-Encoding header for text resources, your website may be sending larger, uncompressed files which may lead to slower load times and higher bandwidth usage.</p>
 <div class="red-highlight-table">
@@ -42,7 +44,157 @@
   or archives (ZIP). Compressing those again often gives little benefit and can waste server CPU.
 </p>
 </div>
-<h3>How the Gzip Compression Test Works</h3>
+
+
+<h3 style="margin-top:30px;">GZIP Compression vs Brotli Compression</h3>
+
+<p>
+  GZIP and Brotli are compression methods used to reduce the size of text-based web resources before they are sent from a server to a browser. Both can significantly reduce transfer size and improve page loading, but Brotli generally achieves better compression for many web resources.
+</p>
+
+<div class="table-responsive">
+  <table class="table good-bad-example-table">
+    <thead>
+      <tr>
+        <th style="width:50%;">Gzip Compression</th>
+        <th style="width:50%;">Brotli Compression</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <b>Widely supported:</b> GZIP has been supported by web servers, browsers, CDNs, and other web infrastructure for many years, making it a highly compatible compression method.
+        </td>
+        <td>
+          <b>Modern compression:</b> Brotli was developed by Google and is designed specifically with modern web content in mind. It generally achieves better compression than GZIP for many text-based resources.
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <b>Good compression:</b> It can significantly reduce the size of HTML, CSS, JavaScript, JSON, XML, and other text-based files.
+        </td>
+        <td>
+          <b>Smaller responses:</b> Brotli can often produce smaller compressed files than GZIP, reducing the amount of data transferred to visitors.
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <b>Excellent fallback:</b> Because of its broad compatibility, GZIP remains useful when Brotli is not supported by the requesting client or available in the server/CDN configuration.
+        </td>
+        <td>
+          <b>Preferred for modern browsers:</b> Brotli is widely supported by modern browsers and is generally the preferred choice when it is available.
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <b>Best for:</b> HTML, CSS, JavaScript, JSON, XML, SVG, and other compressible text-based resources.
+        </td>
+        <td>
+          <b>Best for:</b> HTML, CSS, JavaScript, JSON, SVG, and other text-based web resources where reducing transfer size is important.
+        </td>
+      </tr>
+
+      <tr>
+        <td>
+          <b>When to use:</b> Use GZIP when Brotli is unavailable or when broad compatibility is the priority.
+        </td>
+        <td>
+          <b>When to use:</b> Prefer Brotli where supported, while keeping GZIP available as a fallback.
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="margin-top:30px;">
+<p> 
+  <b>Which compression method should you use?</b> If your server and CDN support Brotli, it is generally the preferred option for modern websites because it can deliver smaller compressed responses. GZIP remains important because of its broad compatibility and works well as a fallback when Brotli is not available.
+</p>
+</div>
+
+
+<h3>How GZIP Compression Works</h3>
+
+<p>
+  GZIP compression works automatically between a visitor's browser and your web server. Before requesting a page, the browser tells the server which compression methods it supports. If GZIP is supported, the server compresses eligible files before sending them across the network. The browser then decompresses the response automatically and displays the original content to the visitor.
+</p>
+
+<div style="display:flex; flex-wrap:wrap; align-items:stretch; gap:16px; margin:20px 0;">
+
+  <!-- Step 1 -->
+  <div style="flex:1 1 200px; padding:20px; background:#E6F4F3; border:1px solid #e2e8f0; border-radius:12px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:8px;">01</div>
+    <h5 style="margin:0 0 8px;">Browser Request</h5>
+    <p style="margin:0 0 10px;">
+      The browser requests a webpage and tells the server which compression methods it supports.
+    </p>
+    <p style="font-size:13px;">Accept-Encoding: gzip, br</p>
+  </div>
+
+  <div style="display:flex; align-items:center; justify-content:center; font-size:24px; color:#64748b;">
+    →
+  </div>
+
+  <!-- Step 2 -->
+  <div style="flex:1 1 200px; padding:20px; background:#D9EFED; border:1px solid #e2e8f0; border-radius:12px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:8px;">02</div>
+    <h5 style="margin:0 0 8px;">Server Compresses</h5>
+    <p style="margin:0;">
+      The server compresses eligible text-based resources such as HTML, CSS, JavaScript, JSON, and SVG before sending them.
+    </p>
+  </div>
+
+  <div style="display:flex; align-items:center; justify-content:center; font-size:24px; color:#64748b;">
+    →
+  </div>
+
+  <!-- Step 3 -->
+  <div style="flex:1 1 200px; padding:20px; background:#E4F1F5; border:1px solid #e2e8f0; border-radius:12px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:8px;">03</div>
+    <h5 style="margin:0 0 8px;">Compressed Response</h5>
+    <p style="margin:0 0 10px;">
+      The smaller compressed response travels from the server to the visitor, reducing the amount of data transferred.
+    </p>
+    <p style="font-size:13px;">Content-Encoding: gzip</p>
+  </div>
+
+  <div style="display:flex; align-items:center; justify-content:center; font-size:24px; color:#64748b;">
+    →
+  </div>
+
+  <!-- Step 4 -->
+  <div style="flex:1 1 200px; padding:20px; background:#E3F3EE; border:1px solid #e2e8f0; border-radius:12px;">
+    <div style="font-size:13px; font-weight:600; margin-bottom:8px;">04</div>
+    <h5 style="margin:0 0 8px;">Browser Decompresses</h5>
+    <p style="margin:0;">
+      The browser automatically decompresses the response and uses the original content to render the webpage.
+    </p>
+  </div>
+
+</div>
+
+<p>
+  The entire process happens in the background. Visitors do not need to install software or manually unzip anything. The main benefit is that fewer bytes need to travel across the network, which can reduce transfer time and bandwidth usage, particularly on slower or mobile connections.
+</p>
+
+<div class="green-highlight-table">
+  <p style="margin:0;">
+    <h4>How to verify a webpage has Gzip compression enabled or not:</h4> 
+    <p>Open your browser's developer tools, select a text-based resource in the Network panel, and check the response headers.</p>
+    <p>You will likely see the below if Gzip compression is enabled on that resource</p> 
+    <p><b>Content-Encoding: gzip</b> indicates GZIP compression, while </p>
+    <p><b>Content-Encoding: br</b> indicates Brotli compression.</p>
+  </p>
+</div>
+
+
+
+
+
+<h3 style="margin-top:30px;">How the Gzip Compression Test Works</h3>
 <p>
   When you enter a URL, our tool checks whether the server or CDN is sending compressed responses for text-based resources such as HTML, CSS, and JavaScript. This is done by inspecting the HTTP response headers and validating whether compression is applied correctly or not.</p>
 
@@ -94,7 +246,7 @@
   </ul>
 </div>
 
-<h3>Common Reasons Gzip is Not Working</h3>
+<h3>Common Reasons Gzip is Not Working On your Website</h3>
 <p>If Gzip compression is disabled or only working on some pages of your website, it usually comes down to server/CDN configuration, incorrect content types, or conflicting rules in your delivery stack. Most issues are easy to fix once you know where to look.
 </p>
 
@@ -121,23 +273,67 @@
       <h3>FAQs</h3>
       <div class="accordion" id="accordionPanelsStayOpenExample">
         @foreach([
-          [
-            'q' => 'How do I know if Gzip is enabled?',
-            'a' => 'Check response headers. Look for Content-Encoding: gzip (or br for Brotli).'
-          ],
-          [
-            'q' => 'Does Gzip compression impact SEO and Rankings?',
-            'a' => 'Gzip compression does not directly impact SEO but enabling Gzip compression improves page speed and UX signals that helps support SEO performance.'
-          ],
-          [
-            'q' => 'Is GZIP Compression the same as compressing images?',
-            'a' => 'No, GZIP compresses text-based files like HTML, CSS, and JavaScript. Images should be compressed using image specific methods.'
-          ],
-          [
-            'q' => 'Should I use Gzip if I already use a CDN?',
-            'a' => 'Yes, CDNs can compress, but you should confirm if it’s correctly configured.'
-          ]
-        ] as $faq)
+  [
+    'q' => 'What is GZIP compression?',
+    'a' => 'GZIP compression reduces the size of text-based web resources before they are transferred from a server to a browser. Smaller responses require less bandwidth and can be transferred more quickly, particularly on slower or mobile connections.'
+  ],
+  [
+    'q' => 'How do I know if GZIP compression is enabled?',
+    'a' => 'Check the HTTP response headers for the resource you are testing. If compression is enabled with GZIP, you should typically see Content-Encoding: gzip. If Brotli is being used instead, the header will usually show Content-Encoding: br.'
+  ],
+  [
+    'q' => 'What does Content-Encoding: gzip mean?',
+    'a' => 'Content-Encoding: gzip indicates that the server compressed the response using GZIP before sending it to the browser. The browser recognizes the encoding and automatically decompresses the response before using the content.'
+  ],
+  [
+    'q' => 'What is Accept-Encoding?',
+    'a' => 'Accept-Encoding is an HTTP request header sent by a browser to tell the server which content compression methods it supports. For example, a browser may send Accept-Encoding: gzip, br, allowing the server to select an appropriate compression method.'
+  ],
+  [
+    'q' => 'Which files should be compressed with GZIP?',
+    'a' => 'GZIP works particularly well for text-based resources such as HTML, CSS, JavaScript, JSON, XML, and SVG. These files often contain repetitive text patterns that can be compressed significantly.'
+  ],
+  [
+    'q' => 'Should images be compressed with GZIP?',
+    'a' => 'Generally, no. Formats such as JPEG, PNG, WebP, and AVIF are already compressed using image-specific compression techniques. Applying GZIP to these files usually provides little additional benefit and can consume unnecessary server resources.'
+  ],
+  [
+    'q' => 'Is GZIP compression the same as image compression?',
+    'a' => 'No. GZIP is primarily used for compressing text-based web resources during HTTP delivery, while image compression reduces the size of image files using formats and techniques designed specifically for images.'
+  ],
+  [
+    'q' => 'Is Brotli better than GZIP?',
+    'a' => 'Brotli generally provides better compression than GZIP for many text-based web resources, which can result in smaller responses. However, GZIP has extremely broad compatibility and remains useful as a fallback when Brotli is unavailable.'
+  ],
+  [
+    'q' => 'Should I use GZIP if my website already uses Brotli?',
+    'a' => 'Yes. You can configure your server or CDN to use Brotli for browsers that support it and GZIP as a fallback for clients that do not. The browser and server negotiate the supported compression method through HTTP headers.'
+  ],
+  [
+    'q' => 'Does GZIP compression improve website speed?',
+    'a' => 'GZIP can improve loading performance by reducing the amount of data that needs to be transferred between the server and browser. The actual improvement depends on the size and type of resources, network conditions, server performance, and other factors affecting page speed.'
+  ],
+  [
+    'q' => 'Does GZIP compression affect SEO rankings?',
+    'a' => 'GZIP compression is not a direct Google ranking factor. However, reducing the size of web resources can contribute to better loading performance and user experience, which can support broader website performance and SEO efforts.'
+  ],
+  [
+    'q' => 'Can GZIP compression slow down my server?',
+    'a' => 'Compression requires some CPU processing on the server. In most cases the performance benefit of transferring smaller responses outweighs this overhead, but extremely aggressive compression settings can consume additional CPU. Compression levels should therefore be configured according to your server capacity.'
+  ],
+  [
+    'q' => 'Why is GZIP working for HTML but not CSS or JavaScript?',
+    'a' => 'This is often caused by server or CDN rules that only enable compression for certain MIME types or file extensions. Check the Content-Type and Content-Encoding response headers for the CSS and JavaScript files to determine whether they are being served with the expected compression settings.'
+  ],
+  [
+    'q' => 'Can caching affect GZIP compression?',
+    'a' => 'Yes. Caching layers can store and serve different versions of a response depending on whether compression is supported. The Vary: Accept-Encoding response header can help caches distinguish between compressed and uncompressed representations when necessary.'
+  ],
+  [
+    'q' => 'How does this GZIP Compression Tester work?',
+    'a' => 'This tool checks the HTTP response from the URL you submit and examines the response headers to determine whether eligible text-based content is being served with GZIP or another supported compression method. It helps identify missing compression and common configuration issues.'
+  ]
+] as $faq)
         <div class="accordion-item">
           <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"

@@ -33,18 +33,13 @@
 
 <p>Let's take a simple example to understand how JavaScript compression works.</p>
 
-    <h5>Before Compression:</h5>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_js_compression_1.png') }}" alt="Before JS Compression"
-      class="img-fluid my-4">
 
-    <h5>After Compression:</h5>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/bulk_js_compression_2.png') }}" alt="After JS Compression"
-      class="img-fluid my-4">
+<img src="{{ asset('new-assets/assets/images/bulk-tool/javascript-compression.png') }}" alt="JS Compression" class="img-fluid my-4">
 
-    <p>In this example, the function and variable names have been shortened, and unnecessary spaces and line breaks have been removed. The functionality remains unchanged, but the script is now more compact.</p>
+<p>In this example, the function and variable names have been shortened, and unnecessary spaces and line breaks have been removed. The functionality remains unchanged, but the script is now more compact.</p>
 
 
-<h3>Why Does JavaScript Compression Matters?</h3>
+<h3>Why Does JavaScript Compression Matter?</h3>
 <p>JavaScript is a core technology used in modern websites to create interactive and dynamic user experiences. However, large or unoptimized JavaScript files can significantly slow down page loading speed and negatively impact user experience.</p>
 <p>Here’s why JavaScript compression is important for websites:</p>
 <ul>
@@ -73,11 +68,15 @@
   <li>Removing unused and redundant code which is no longer necessary.</li>
 </ul>
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/js-conpression-vs-minification.png') }}" alt="Javascript compression vs Javascript minification" class="img-fluid my-4">
+
+<div class="green-highlight-table">
 <p>In simple terms - minification makes your code smaller by removing “visual” clutter, while compression can make it even smaller by restructuring parts of the code which can be more efficient. Many modern JavaScript compression and minification tools perform both type of operations, and the final output is still valid JavaScript that runs exactly the same as the original code.</p>
 
 <p>For best results, keep your original source files for editing and debugging and serve the compressed or minified version to real users in production.</p>
+</div>
 
-<h3>Do's and Don'ts of JavaScript Compression</h3>
+<h3 style="margin-top:30px;">Do's and Don'ts of JavaScript Compression</h3>
 
 <div class="list green-list">
   <h3>Do's</h3>

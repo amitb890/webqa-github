@@ -28,6 +28,8 @@
 <p>When an SSL certificate is correctly installed, your website loads over "HTTPS". Users see a padlock icon in the browser address bar. This indicates that sensitive data such as login credentials, payment details, or form submissions are protected from eavesdropping and attacks.</p>
 <p>Although SSL is the commonly used term, most modern websites actually use TLS  which stands for "Transport Layer Security" which is the updated and more secure version of SSL. The term “SSL” is still widely used as an umbrella term for both SSL and TLS.</p>
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/ssl-certificate.png') }}" alt="ssl certificate" width="600" height="400" class="img-fluid my-4">
+
 
 
 <h3>Why SSL Certificate Testing Matters</h3>

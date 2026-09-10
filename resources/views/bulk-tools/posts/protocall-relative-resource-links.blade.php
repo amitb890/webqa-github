@@ -14,19 +14,18 @@
 <div class="list yellow-content summary-block">
   <span class="summary-heading">Quick Summary</span>
   <p>
-    Protocol relative resource links are URLs that omit the "Protocall" meaning, they do not include "http:" or "https:" and the URL starts with "//".
-    This system was once common, but modern best practices generally recommend using explicit protocalls like "https://" URLs instead.
+    Protocol relative resource links are URLs that omit the "Protocol". They do not include "http:" or "https:" and the URL starts with "//". This system was once common, but modern web developement best practices generally recommend using explicit protocalls like "https://" URLs instead.
   </p>
   <ol>
     <li>Protocol relative URLs inherit the protocol (HTTP or HTTPS) of the page they’re loaded on.</li>
     <li>They were widely used to avoid mixed content warnings during HTTP to HTTPS migrations.</li>
-    <li>On today’s "HTTPS everywhere" web, they can create ambiguity and potential security risks if a page is accessed over HTTP.</li>
+    <li>In today’s "HTTPS everywhere" web environment, they can create ambiguity and potential security risks if a page is accessed over HTTP.</li>
     <li>Explicit "https://" links are clearer, more secure, and align better with modern SEO and browser expectations.</li>
     <li>This test finds protocol relative resource links on your page so you can replace them with safer, explicit URLs.</li>
   </ol>
 </div>
 
-<h3>What Are Protocol-Relative Resource Links?</h3>
+<h3>What Are Protocol Relative Resource Links?</h3>
 <p>
   Protocol relative resource links are URLs that do not explicitly specify a protocol such as
   <b>http://</b> or <b>https://</b>. Instead, they begin with <b>//</b> and automatically
@@ -41,17 +40,19 @@
     <span class="token-tag">&gt;&lt;/script&gt;</span>
   </code>
 </div>
-    <img src="{{ asset('new-assets/assets/images/bulk-tool/proto_1.png') }}" alt="Nested Table HTML Example" class="img-fluid my-4">
+<img src="{{ asset('new-assets/assets/images/bulk-tool/protocol-links.png') }}" alt="What are Prtocol relative resource links" width="600" height="400" class="img-fluid my-4">
 <p>
   While this approach was designed to provide flexibility across different protocols, it also introduces
   uncertainty and potential security issues on modern websites where HTTPS is the expected default.
 </p>
 
-<h5>Why Were Protocol-Relative URLs Used Historically?</h5>
+
+
+<h5>Why Were Protocol Relative URLs Used Historically?</h5>
 <p>Protocol-relative URLs became popular when many websites were transitioning from HTTP to HTTPS.During that time, it was common for websites to support both versions, and hardcoding "http://" in resource links could trigger mixed content warnings on secure pages.</p>
 <p>By using "//" instead of an explicit protocol, developers could ensure that resources such as scripts, stylesheets, and images would load using the same protocol as the page itself without maintaining two separate versions of the markup. </p>
 <div class="green-highlight-table">
-<p>They were primarily used to:</p>
+<p>Protocol Relative URLs were primarily used to:</p>
 <ol>
   <li><b>Avoid mixed content warnings</b> when HTTPS pages attempted to load HTTP resources.</li>
   <li><b>Support both HTTP and HTTPS</b> versions of a website during migrations.</li>
@@ -61,7 +62,7 @@
 </div>
 
 
-<h3>Why Fixing Protocol-Relative Links Matters</h3>
+<h3>Why Fixing Protocol Relative Links Matters</h3>
 <p>Fixing protocol relative URLs is a small technical cleanup that can deliver meaningful improvements in security, consistency, and long term maintainability of your website. On modern websites, explicit and predictable resourceloading is the safest approach.</p>
 
 <p>Here’s why replacing "//" links with "https://" matters:</p>
@@ -75,11 +76,63 @@
 
 <p>In most cases, the best fix is simply to replace protocol relative resource links with explicit "https://" URLs so your pages load securely and consistently in every environment (production and staging).</p>
 
-<h3>Good vs Bad Examples</h3>
+<h3>Protocol-Relative vs. Explicit HTTPS URLs</h3>
+
 <p>
-  Reviewing real-world examples makes it easier to understand why protocol-relative URLs are discouraged
-  on modern websites. Good examples use explicit, secure protocols, while bad examples rely on outdated
-  patterns that introduce ambiguity and potential risk.
+  Both URL formats can request the same resource when the page itself is
+  served over HTTPS. The important difference is that an explicit HTTPS URL
+  clearly defines how the resource should be requested.
+</p>
+
+<table class="good-bad-example-table">
+  <thead>
+    <tr>
+      <th>Protocol Relative URL</th>
+      <th>Explicit HTTPS URL</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>//cdn.example.com/app.js</td>
+      <td>https://cdn.example.com/app.js</td>
+    </tr>
+    <tr>
+      <td>Protocol is inherited from the page.</td>
+      <td>HTTPS is explicitly specified.</td>
+    </tr>
+    <tr>
+      <td>Can behave differently when the page is accessed over HTTP.</td>
+      <td>Always requests the resource over HTTPS.</td>
+    </tr>
+    <tr>
+      <td>Useful historically during HTTP/HTTPS transitions.</td>
+      <td>Preferred for modern HTTPS-first websites.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Where Are Protocol Relative URLs Commonly Found?</h3>
+
+<p>
+  Protocol relative URLs can remain in a website for years, particularly after
+  migrations, redesigns, CMS changes, or the introduction of third-party
+  resources.
+</p>
+
+<ol>
+  <li><b>JavaScript files</b> loaded from external CDNs.</li>
+  <li><b>CSS stylesheets</b> hosted on third-party domains.</li>
+  <li><b>Images</b> referenced from external asset servers.</li>
+  <li><b>Web fonts</b> loaded from external providers.</li>
+  <li><b>Analytics and tracking scripts.</b></li>
+  <li><b>Embedded media and widgets.</b></li>
+  <li><b>CMS themes and plugins.</b></li>
+  <li><b>Legacy website templates</b> created before HTTPS became the default.</li>
+</ol>
+
+<h3>Good vs Bad Examples OF URLs Using Different Protocols</h3>
+<p>
+  Reviewing real world examples makes it easier to understand why protocol relative URLs are discouraged on modern websites. Good examples use explicit, secure protocols, while bad examples rely on outdated patterns that introduce ambiguity and potential risk.
 </p>
 
 <p><b>Good Examples of Resource Linking</b></p>
@@ -126,7 +179,7 @@
 
 <!-- Start FAQ -->
 <div class="getting-recover-main recover-faq-area">
-  <h3>FAQs on Protocol-Relative Resource Links</h3>
+  <h3>FAQs on Protocol Relative Resource Links</h3>
   <div class="accordion" id="accordionProtocolRelativeLinksFaq">
     @foreach([
       [
