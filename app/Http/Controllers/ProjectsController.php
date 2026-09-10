@@ -107,14 +107,31 @@ class ProjectsController extends Controller
     }
 
     public function updateLabelStatus(Request $request){
-        $status = $request->input('status');
-        $test_title = $request->input('test_title');
-        $projectId = $request->input('projectId');
+        $status = ((int) $request->input('status')) ? 1 : 0;
+        $test_title = (string) $request->input('test_title');
+        $projectId = (int) $request->input('projectId');
 
-        if($test_title === "security_labels" || $test_title === "cbp_labels"){
-            TestLabel::where('project_id', $projectId)->where("dashboard_parent", $test_title)->update(['show_dashboard_status'=>$status]);
-        }else{
-            TestLabel::where('project_id', $projectId)->where("db_name", $test_title)->update(['show_dashboard_status'=>$status]);
+        if ($test_title === '' || $projectId < 1) {
+            return response()->json(['status' => 0, 'msg' => 'Invalid request.'], 422);
+        }
+
+        $project = Projects::where('id', $projectId)->where('user_id', Auth::id())->first();
+        if (!$project) {
+            return response()->json(['status' => 0, 'msg' => 'Project not found.'], 403);
+        }
+
+        if ($test_title === "security_labels" || $test_title === "cbp_labels") {
+            $exists = TestLabel::where('project_id', $projectId)->where("dashboard_parent", $test_title)->exists();
+            if (!$exists) {
+                return response()->json(['status' => 0, 'msg' => 'Label not found.'], 404);
+            }
+            TestLabel::where('project_id', $projectId)->where("dashboard_parent", $test_title)->update(['show_dashboard_status' => $status]);
+        } else {
+            $exists = TestLabel::where('project_id', $projectId)->where("db_name", $test_title)->exists();
+            if (!$exists) {
+                return response()->json(['status' => 0, 'msg' => 'Label not found.'], 404);
+            }
+            TestLabel::where('project_id', $projectId)->where("db_name", $test_title)->update(['show_dashboard_status' => $status]);
         }
 
         return response()->json(['status' => 1, 'msg' => 'Success.']);
@@ -594,8 +611,7 @@ class ProjectsController extends Controller
 
             $settingsSub = new SettingsSub();
             $settingsSub->project_settings_id = $settings->id;
-            $settingsSub->xml_sitemap_val = $request->input('xmlSitemap');
-            $settingsSub->html_sitemap_val = $request->input('htmlSitemap');
+            $this->persistSitemapSettings($settingsSub, $request, $homepage, true);
             $settingsSubState = $settingsSub->save();
 
             if ($projectState) {
@@ -757,8 +773,7 @@ class ProjectsController extends Controller
 
             // Update sub-settings
             $settingsSub = SettingsSub::find($request->input('settingsSubId'));
-            $settingsSub->xml_sitemap_val = $request->input('xmlSitemap');
-            $settingsSub->html_sitemap_val = $request->input('htmlSitemap');
+            $this->persistSitemapSettings($settingsSub, $request, $homepage, false);
             $settingsSubState = $settingsSub->save();
 
             // Return success or error response based on the update results
@@ -798,12 +813,14 @@ class ProjectsController extends Controller
         $project = Projects::where('id', $id)->with('urls')->first();
         $projectSettings = projectSettings::where('projects_id', $project->id)->first();
         $settingsSubId = '';
+        $htmlSitemap = [];
+        $xmlSitemap = [];
         if ($projectSettings) {
             $settingsSub = SettingsSub::where('project_settings_id', $projectSettings->id)->first();
             $settingsSubId = $settingsSub->id;
             if ($settingsSub) {
-                $htmlSitemap = explode(',', $settingsSub->html_sitemap_val);
-                $xmlSitemap = explode(',', $settingsSub->xml_sitemap_val);
+                $htmlSitemap = Helper::parseSitemapUrls($settingsSub->html_sitemap_val);
+                $xmlSitemap = Helper::parseSitemapUrls($settingsSub->xml_sitemap_val);
             }
         }
         return view('user.projects.edit', compact('project', 'htmlSitemap', 'xmlSitemap', 'settingsSubId', 'id'));
@@ -876,6 +893,33 @@ class ProjectsController extends Controller
         }
     }
 
+
+    /**
+     * Save XML/HTML sitemap URLs on the project. HTML sitemaps are auto-detected on create
+     * when the client did not send any (onboarding has no HTML sitemap field).
+     */
+    private function persistSitemapSettings(SettingsSub $settingsSub, Request $request, string $homepage, bool $detectHtmlIfEmpty): void
+    {
+        $xmlSitemap = Helper::normalizeSitemapValue((string) $request->input('xmlSitemap', ''));
+        $htmlSitemap = Helper::normalizeSitemapValue((string) $request->input('htmlSitemap', ''));
+
+        if ($htmlSitemap === '' && $detectHtmlIfEmpty) {
+            $htmlSitemap = implode(',', Helper::detectHtmlSitemapUrls($homepage));
+        }
+
+        $settingsSub->xml_sitemap_val = $xmlSitemap;
+        $settingsSub->html_sitemap_val = $htmlSitemap;
+
+        if ($xmlSitemap !== '') {
+            $settingsSub->xml_sitemap = 1;
+            $settingsSub->xml_sitemap_custom = 1;
+        }
+
+        if ($htmlSitemap !== '') {
+            $settingsSub->html_sitemap = 1;
+            $settingsSub->html_sitemap_custom = 1;
+        }
+    }
 
     public function checkUniqueProjectName(Request $request)
     {

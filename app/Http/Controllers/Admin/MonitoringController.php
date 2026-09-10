@@ -10,12 +10,23 @@ use App\Models\LighthouseResult;
 use App\Models\TestResults;
 use App\Models\User;
 use App\Models\UserActionEvent;
+use App\Services\TestContextService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 class MonitoringController extends Controller
 {
+    private const SOURCE_BULK_TOOL = 'Bulk tool';
+
+    private const SOURCE_ANALYSIS_PAGE = 'Analysis page';
+
+    private const SOURCE_DASHBOARD = 'Dashboard';
+
+    private const SOURCE_GOOGLE_LIGHTHOUSE = 'Google Lighthouse';
+
+    private const SOURCE_DASHBOARD_RECHECK = 'Dashboard Recheck';
+
     public function tests(Request $request)
     {
         $date = $request->input('date');
@@ -93,7 +104,7 @@ class MonitoringController extends Controller
                 'date' => $test->created_at,
                 'url' => $test->projectUrl ?: 'Not captured',
                 'type' => $test->web_app ? 'Webapp Analysis' : 'Webpage Analysis',
-                'source' => $test->web_app ? 'App analysis archive' : 'Website or bulk tool test',
+                'source' => self::SOURCE_ANALYSIS_PAGE,
                 'result' => $failed ? 'failed' : 'success',
                 'cached_url' => url(($test->web_app ? 'analysis-report/' : 'analysis-report/w/') . $test->test_key),
                 'error_url' => $failed ? route('admin.tests.error', ['source' => 'cached', 'id' => $test->id]) : null,
@@ -112,14 +123,17 @@ class MonitoringController extends Controller
         return $query->limit(200)->get()->map(function (TestResults $test) {
             $data = $this->decode($test->data);
             $failed = $this->hasFailures($data);
+            $source = $this->resolveTestResultSource($test);
 
             return [
                 'date' => $test->created_at,
                 'url' => $test->url,
                 'type' => $test->project_id ? 'Webapp Analysis' : 'Webpage Analysis',
-                'source' => $test->settings_mode ? Str::title(str_replace(['_', '-'], ' ', $test->settings_mode)) : 'Website test',
+                'source' => $source,
                 'result' => $failed ? 'failed' : 'success',
-                'cached_url' => url('analysis-report/w/' . $test->ref_id),
+                'cached_url' => $source === self::SOURCE_BULK_TOOL
+                    ? null
+                    : url('analysis-report/w/' . $test->ref_id),
                 'error_url' => $failed ? route('admin.tests.error', ['source' => 'test-result', 'id' => $test->id]) : null,
                 'error_preview' => $failed ? $this->summarizeContext($data) : null,
             ];
@@ -162,7 +176,7 @@ class MonitoringController extends Controller
                 'date' => $run->created_at,
                 'url' => $urlCount === 1 ? (optional($details->first())->url ?: 'Not captured') : ($urlCount . ' URLs'),
                 'type' => $isRecheck ? 'Full Website Re-check' : 'Dashboard Test',
-                'source' => 'Dashboard / Website Tracker',
+                'source' => $isRecheck ? self::SOURCE_DASHBOARD_RECHECK : self::SOURCE_DASHBOARD,
                 'result' => $result,
                 'cached_url' => null,
                 'error_url' => $failedCount > 0 ? route('admin.tests.error', ['source' => 'dashboard-run', 'id' => $run->id]) : null,
@@ -185,13 +199,46 @@ class MonitoringController extends Controller
                 'date' => $result->created_at,
                 'url' => $result->url,
                 'type' => 'Google PageSpeed Lighthouse',
-                'source' => 'Dashboard / Recheck',
+                'source' => self::SOURCE_GOOGLE_LIGHTHOUSE,
                 'result' => $failed ? 'failed' : ($result->status === 'completed' ? 'success' : 'pending'),
                 'cached_url' => null,
                 'error_url' => $failed ? route('admin.tests.error', ['source' => 'lighthouse-result', 'id' => $result->id]) : null,
                 'error_preview' => $result->error_message,
             ];
         });
+    }
+
+    protected function resolveTestResultSource(TestResults $test): string
+    {
+        if ($this->isBulkToolTest($test)) {
+            return self::SOURCE_BULK_TOOL;
+        }
+
+        return match ($test->settings_mode) {
+            TestContextService::MODE_ANALYSIS,
+            TestContextService::MODE_SNAPSHOT,
+            TestContextService::MODE_PROJECT,
+            TestContextService::MODE_DEFAULT => self::SOURCE_ANALYSIS_PAGE,
+            default => self::SOURCE_ANALYSIS_PAGE,
+        };
+    }
+
+    protected function isBulkToolTest(TestResults $test): bool
+    {
+        if ($test->settings_mode === TestContextService::MODE_BULK) {
+            return true;
+        }
+
+        if ($test->settings_mode !== TestContextService::MODE_SNAPSHOT) {
+            return false;
+        }
+
+        $decoded = json_decode($test->testLabels ?? '', true);
+        if (! is_array($decoded)) {
+            return false;
+        }
+
+        return ! array_is_list($decoded);
     }
 
     protected function resolveErrorPayload(string $source, int $id): ?array

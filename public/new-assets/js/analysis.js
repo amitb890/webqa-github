@@ -510,8 +510,8 @@ $( document ).ready(function() {
               </span>
             </div>
             ${!data.status ? 
-              `<div class="card-header-right data-test-name="${data.title}">
-                  <button class="btn rounded-pill fix-btn">
+              `<div class="card-header-right">
+                  <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                     How to fix it?
                   </button>
             </div>`
@@ -643,8 +643,8 @@ $( document ).ready(function() {
               </span>
             </div>
             ${!data.status ? 
-              `<div class="card-header-right data-test-name="${data.title}">
-                  <button class="btn rounded-pill fix-btn">
+              `<div class="card-header-right">
+                  <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                     How to fix it?
                   </button>
             </div>`
@@ -1752,6 +1752,17 @@ $( document ).ready(function() {
     }
   }
 
+  const normalizeTestLabels = (value) => {
+    const parsed = parseJsonSafely(value)
+    if (Array.isArray(parsed)) {
+      return parsed
+    }
+    if (parsed && typeof parsed === "object") {
+      return [parsed]
+    }
+    return []
+  }
+
   Controls.fetchCachedTestResult(testKey)
     .then(data => {
       const labels = parseJsonSafely(data?.test_labels)
@@ -2359,8 +2370,8 @@ $( document ).ready(function() {
           </div>
           
           ${!data.status ? 
-            `<div class="card-header-right data-test-name="${data.title}" data-test-name="${data.title}">
-                <button class="btn rounded-pill fix-btn">
+            `<div class="card-header-right">
+                <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                   How to fix it?
                 </button>
           </div>
@@ -2454,8 +2465,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>`
@@ -2673,8 +2684,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>`
@@ -3140,8 +3151,8 @@ $( document ).ready(function() {
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>`
@@ -3568,7 +3579,7 @@ $( document ).ready(function() {
         // build map: type -> array of blocks
         const map = {};
         data.blocks.forEach((blk, i) => {
-          const types = blk.types && blk.types.length ? blk.types : ['(unknown)'];
+          const types = blk.types && blk.types.length ? blk.types : ['JSON-LD (no @type)'];
           types.forEach(t => {
             if(!map[t]) map[t] = [];
             map[t].push(Object.assign({}, blk, { index: i+1 }));
@@ -3705,7 +3716,6 @@ $( document ).ready(function() {
           }catch(e){}
         }, 10);
       }
-  alert(data.showContent)
       // If Schema test is excluded (server signals showContent=false) do not render the schema card
       if(data && data.label && data.label.name === 'schema' && data.showContent === false){
         return;
@@ -3876,20 +3886,25 @@ $( document ).ready(function() {
       // Prepare schema subcards HTML if this is Schema test
       let schemaBlocksHtml = '';
       if((data.title === 'Schema' || data.tagName === 'Schema') && Array.isArray(data.blocks) && data.blocks.length){
+        const summaryTypes = (data.types && data.types.length) ? data.types.join(', ') : '';
         schemaBlocksHtml += '<div class="card-inner-content schema-blocks-container">';
+        if (summaryTypes) {
+          schemaBlocksHtml += `<div class="schema-types-summary" style="margin-bottom:10px;"><strong>Schema types:</strong> ${escapeHtml(summaryTypes)}</div>`;
+        }
         data.blocks.forEach((b, idx) => {
-          const typesText = (b.types && b.types.length) ? b.types.join(', ') : '(unknown)';
+          const hasTypes = b.types && b.types.length;
+          const typesText = hasTypes ? b.types.join(', ') : 'JSON-LD (no @type)';
           const snippet = b.snippet ? `<pre style="white-space:pre-wrap; background:#f8f9fa; padding:8px; border-radius:4px; max-height:220px; overflow:auto;">${escapeHtml(b.snippet)}</pre>` : '';
           const probsHtml = (b.problems && b.problems.length) ? UI.getProblemsElement(b.problems) : '<div class="no-problems">No problems</div>';
-          // Make header clickable by adding schema-sub-header with data-target
+          const startOpen = !hasTypes || (b.problems && b.problems.length);
           schemaBlocksHtml += `<div class="card mb-2 schema-subcard">
               <div class="card-body">
                 <div class="schema-sub-header d-flex justify-content-between align-items-center" data-target="#schema-sub-${idx}" role="button" tabindex="0" style="cursor:pointer;"
                      onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">
-                  <div><strong>${typesText}</strong></div>
+                  <div><strong>${escapeHtml(typesText)}</strong></div>
                   <div><a href="javascript:void(0)" class="schema-sub-toggle" data-target="#schema-sub-${idx}" onclick="toggleSchemaSubBySelector('#schema-sub-${idx}', this)">▾</a></div>
                 </div>
-                <div id="schema-sub-${idx}" style="display:none; margin-top:8px;">
+                <div id="schema-sub-${idx}" style="display:${startOpen ? 'block' : 'none'}; margin-top:8px;">
                   ${snippet}
                   ${probsHtml}
                 </div>
@@ -3936,14 +3951,14 @@ $( document ).ready(function() {
                                 fill="#D3D5D8" />
                             </svg>
                             <div class="card-help-body">
-                              <p>${data.description}</p>
+                              <p>${data.description || ''}</p>
                               <a href="${data.learnMoreURL}" target="_blank">Learn More</a>
                             </div>
                           </span>
                         </div>
                         ${!data.status ? 
-                          `<div class="card-header-right data-test-name="${data.title}" data-test-name="${data.title}">
-                              <button class="btn rounded-pill fix-btn">
+                          `<div class="card-header-right">
+                              <button class="btn rounded-pill fix-btn" data-test-name="${data.title}">
                                 How to fix it?
                               </button>
                         </div>
@@ -3970,7 +3985,7 @@ $( document ).ready(function() {
                           <div class="card-single-content ${data.status ? "text-success-custom" : "text-danger-custom"} problem-help">
                             <p>
                               <span class="badge status_pdf">${data.status ? "PASS" : "FAIL"}</span>
-                              <span class="message_pdf">${data.label.name === "broken_links"  ? `Your page has ${window.currentAnalysisData.totalBrokenLinks} broken links, please see the list below.` : data.message}</span>
+                              <span class="message_pdf">${data.label.name === "broken_links"  ? `Your page has ${window.currentAnalysisData.totalBrokenLinks} broken links, please see the list below.` : (data.message || (data.problems && data.problems[0]) || '')}</span>
                             </p>
 
                             ${data.showSnippet ? `
@@ -4812,7 +4827,16 @@ $( document ).ready(function() {
             let data = result.data
             projectUrl = data.url
 
-            const testLabels = JSON.parse(data.testLabels)
+            const testLabels = normalizeTestLabels(data.testLabels)
+            if (testLabels.length === 0) {
+              removeLoader()
+              displayAlert({
+                status: 0,
+                msg: "This test report does not include any saved test criteria."
+              })
+              return
+            }
+
             buildLoader(obj, testLabels)
 
             setTimeout(function (){
@@ -4976,18 +5000,36 @@ $( document ).ready(function() {
       }
     });
 
-      $(".fix-btn").on( "click", function(e) {
-        const val = e.target.parentElement.getAttribute("data-test-name")
-        const data = getModalFixContent(val)
+      $(document).off("click", ".fix-btn").on("click", ".fix-btn", function(e) {
+        const btn = e.target.closest(".fix-btn")
+        const testName = btn.getAttribute("data-test-name")
+
+        // The card wrapper carries the label name, which lets us pull the full
+        // result object back out of resultsData and pick the failure reason.
+        const card = btn.closest(".analysis-card")
+        const result = card ? getElementData(card.getAttribute("data-name")) : null
+
+        const data = getModalFixContent(testName, result)
+
+        $("#modalFixTestName").text(data.testName || "")
         $("#modalFixLabel").html(data.headerTitle)
         $(".modal-video-content").html(data.contentHTML)
+
+        if(data.learnMoreURL){
+          $("#modalFixLearnMore").attr("href", data.learnMoreURL).removeAttr("hidden")
+        }else{
+          $("#modalFixLearnMore").attr("hidden", "hidden")
+        }
+
         if(data.video_url != ""){
           $(".modal-video iframe").attr("src", data.video_url)
           $(".modal-video").css({display: "block"})
         }else{
+          $(".modal-video iframe").removeAttr("src")
           $(".modal-video").css({display: "none"})
         }
-        modalFix.toggle()
+
+        modalFix.show()
       })
 
       $(".intentional-btn").on( "click", function(e) {

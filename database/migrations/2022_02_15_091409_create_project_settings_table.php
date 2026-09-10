@@ -25,7 +25,7 @@ class CreateProjectSettingsTable extends Migration
             $table->boolean("twitter_tags")->default(1);
             $table->boolean("favicon")->default(1);
             $table->boolean("xml_sitemap")->default(1);
-            $table->boolean("html_sitemap")->default(0);
+            $table->boolean("html_sitemap")->default(1);
             $table->boolean("meta_viewport")->default(1);
             $table->boolean("frameset")->default(1);
             $table->boolean("doctype")->default(1);

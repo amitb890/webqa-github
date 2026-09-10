@@ -230,6 +230,10 @@ class TestController extends Controller
             }
         }
 
+        if ($test) {
+            $test->testLabels = $this->normalizeTestLabelsForStorage($test->testLabels ?? '[]');
+        }
+
         return response()->json(['status'=>1,'data'=>$test]);
     }
 
@@ -1832,32 +1836,16 @@ class TestController extends Controller
         $xmldata = "";
 
         if($isSitemap){
-            if(!$helpers->isValidUrl($isSitemapVal)){
-                $status = false;
-                $fileExists = false;
+            $lookup = $helpers->findUrlInXmlSitemaps($isSitemapVal, $urlValue, $urlValueTwo);
+            $fileExists = $lookup["fileExists"];
+            $xmldata = $lookup["xmldata"];
 
+            if(!$fileExists){
+                $status = false;
                 $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
             }else{
-                $xmldata = @simplexml_load_file($isSitemapVal);
-                if(!$xmldata){
-                    $status = false;
-                    $fileExists = false;
-
-                    $message = "XML Sitemap is missing, please make sure you have added the right sitemap file.";
-                }else{
-                    $fileExists = true;
-
-                    foreach($xmldata as $data){
-                        if(strcmp($data->loc,$urlValue) === 0 || strcmp($data->loc,$urlValueTwo) === 0){
-                            $status = true;
-                            $message = "Page is added in XML Sitemap";
-                            break;
-                        }else{
-                            $status = false;
-                            $message = "Page is not added in XML Sitemap";
-                        }
-                    }
-                }
+                $status = $lookup["status"];
+                $message = $status ? "Page is added in XML Sitemap" : "Page is not added in XML Sitemap";
             }
         }
 
@@ -1989,15 +1977,22 @@ class TestController extends Controller
         $object = new \stdClass();
         $object->title = "Schema";
         $object->name = "schema";
+        $object->tagName = "Schema";
         $object->status = true;
         $object->problems = [];
         $object->types = [];
         $object->sampleSnippet = "";
         $object->httpStatus = 0;
+        $object->message = "";
+        $object->showContent = false;
+        $object->showSnippet = false;
+        $object->description = "Schema markup (structured data) helps search engines understand your page. JSON-LD is the recommended format for adding schema.org types such as Organization, Article, Product, and FAQPage.";
+        $object->learnMoreURL = "https://schema.org/docs/gs.html";
 
         if(!$urlValue){
             $object->status = false;
             $object->problems[] = "No URL provided";
+            $object->message = "No URL provided";
             echo json_encode($object);
             return;
         }
@@ -2086,6 +2081,7 @@ class TestController extends Controller
         } catch (\Exception $e){
             $object->status = false;
             $object->problems[] = "Request failed: " . $e->getMessage();
+            $object->message = "Request failed: " . $e->getMessage();
             echo json_encode($object);
             return;
         }
@@ -2103,7 +2099,7 @@ class TestController extends Controller
 
         // extract JSON-LD blocks
         $matches = [];
-        preg_match_all('/<script[^>]*type=[\'"]application\\/ld\\+json[\'"][^>]*>([\\s\\S]*?)<\\/script>/i', $html, $matches);
+        preg_match_all('/<script[^>]*type\s*=\s*[\'"]application\\/ld\\+json[\'"][^>]*>([\\s\\S]*?)<\\/script>/i', $html, $matches);
         $rawBlocks = $matches[1] ?? [];
 
         $blocksInfo = [];
@@ -2114,14 +2110,9 @@ class TestController extends Controller
             }
         } else {
             foreach($rawBlocks as $idx => $blk){
-                $trimmed = trim($blk);
+                $trimmed = $this->normalizeJsonLdBlock($blk);
                 $blockProblems = [];
                 $decoded = json_decode($trimmed, true);
-                if($decoded === null){
-                    // try to clean up common issues (strip HTML comments etc)
-                    $clean = preg_replace('/<!--(.*?)-->/s','',$trimmed);
-                    $decoded = json_decode($clean, true);
-                }
                 if($decoded === null){
                     $blockProblems[] = "JSON-LD parse error in block " . ($idx+1);
                     $blocksInfo[] = [
@@ -2136,36 +2127,17 @@ class TestController extends Controller
                     continue;
                 }
 
-                // determine types for this block
-                $blockTypes = [];
-                if(isset($decoded['@type'])){
-                    if(is_array($decoded['@type'])){
-                        $blockTypes = array_merge($blockTypes, $decoded['@type']);
-                    } else {
-                        $blockTypes[] = $decoded['@type'];
-                    }
-                } else if (isset($decoded[0]) && isset($decoded[0]['@type'])) {
-                    foreach($decoded as $objItem){
-                        if(isset($objItem['@type'])){
-                            if(is_array($objItem['@type'])){
-                                $blockTypes = array_merge($blockTypes, $objItem['@type']);
-                            } else {
-                                $blockTypes[] = $objItem['@type'];
-                            }
-                        }
-                    }
-                }
+                $blockTypes = $this->extractJsonLdTypes($decoded);
 
                 // pretty snippet
                 $pretty = is_array($decoded) ? json_encode($decoded, JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES) : $trimmed;
 
                 $blocksInfo[] = [
-                    'types' => array_values(array_unique($blockTypes)),
+                    'types' => $blockTypes,
                     'snippet' => $pretty,
                     'problems' => $blockProblems
                 ];
 
-                // aggregate types
                 if(!empty($blockTypes)){
                     $object->types = array_merge($object->types, $blockTypes);
                 }
@@ -2182,8 +2154,104 @@ class TestController extends Controller
         }
 
         $object->blocks = $blocksInfo;
+        $object->message = $this->buildSchemaMessage($object, count($rawBlocks));
 
         echo json_encode($object);
+    }
+
+    private function normalizeJsonLdBlock($raw)
+    {
+        $trimmed = trim((string)$raw);
+        $trimmed = preg_replace('/<!--(.*?)-->/s', '', $trimmed);
+        $trimmed = preg_replace('/\/\/\s*<!\[CDATA\[/i', '', $trimmed);
+        $trimmed = preg_replace('/\/\/\s*\]\]>/', '', $trimmed);
+        $trimmed = preg_replace('/<!\[CDATA\[|\]\]>/', '', $trimmed);
+        return trim($trimmed);
+    }
+
+    private function extractJsonLdTypes($node)
+    {
+        $types = [];
+        $this->collectJsonLdTypes($node, $types);
+        $normalized = [];
+        foreach($types as $type){
+            if(!is_string($type) || $type === ''){
+                continue;
+            }
+            $type = preg_replace('#^https?://schema\.org/#i', '', $type);
+            $type = preg_replace('#^schema:#i', '', $type);
+            if($type !== ''){
+                $normalized[] = $type;
+            }
+        }
+        return array_values(array_unique($normalized));
+    }
+
+    private function collectJsonLdTypes($node, array &$types)
+    {
+        if(!is_array($node)){
+            return;
+        }
+
+        if($this->isJsonLdList($node)){
+            foreach($node as $item){
+                $this->collectJsonLdTypes($item, $types);
+            }
+            return;
+        }
+
+        if(isset($node['@type'])){
+            if(is_array($node['@type'])){
+                foreach($node['@type'] as $type){
+                    if(is_string($type)){
+                        $types[] = $type;
+                    }
+                }
+            } elseif(is_string($node['@type'])){
+                $types[] = $node['@type'];
+            }
+        }
+
+        foreach($node as $key => $value){
+            if($key === '@type' || $key === '@context' || $key === '@id'){
+                continue;
+            }
+            if(is_array($value)){
+                $this->collectJsonLdTypes($value, $types);
+            }
+        }
+    }
+
+    private function isJsonLdList(array $node)
+    {
+        if($node === []){
+            return true;
+        }
+        return array_keys($node) === range(0, count($node) - 1);
+    }
+
+    private function buildSchemaMessage($object, $blockCount)
+    {
+        if(!empty($object->message)){
+            return $object->message;
+        }
+
+        if($object->status){
+            if(!empty($object->types)){
+                $label = count($object->types) === 1 ? 'type' : 'types';
+                return "Your webpage has JSON-LD structured data with schema {$label}: " . implode(', ', $object->types) . ".";
+            }
+            if($blockCount > 0){
+                return "JSON-LD structured data was found on the page.";
+            }
+            return "Schema check passed.";
+        }
+
+        if(!empty($object->problems)){
+            return $object->problems[0];
+        }
+
+        return "Schema markup check failed.";
     }
     public function htmlSitemap(Request $request){
         $helpers = new Helper();
@@ -2197,7 +2265,6 @@ class TestController extends Controller
         $urlValue = $data["urlValue"];
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
-        $urlValueTwo = rtrim(str_replace("www.", "", $urlValue), "/");
         $isSitemap = $settings->settings_sub->html_sitemap;
         $sitemapVal = $settings->settings_sub->html_sitemap_val;
 
@@ -2207,36 +2274,15 @@ class TestController extends Controller
 
 
         if($isSitemap){
-            if(!$helpers->isValidUrl($sitemapVal)){
+            $lookup = $helpers->findUrlInHtmlSitemaps($sitemapVal, $urlValue, $domain);
+            $fileExists = $lookup["fileExists"];
+
+            if(!$fileExists){
                 $status = false;
-                $fileExists = false;
                 $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
             }else{
-                $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
-                $crawler = $goutteClient->request('GET', $sitemapVal);
-                $links = $crawler->filter("a")->each(function($node){
-                    return $node->extract(array('href'))[0];
-                });
-
-                if(count($links) > 0){
-                    for($i=0;$i<count($links);$i++){
-                        $content = $links[$i];
-                        $link = $helpers->getAbsolutePath($content, $domain);
-                        $linkCustom = str_replace("www.", "", $link);
-                        if($linkCustom === $urlValueTwo){
-                            $status = true;
-                            $message = "Page is added in HTML Sitemap";
-                            break;
-                        }else{
-                            $status = false;
-                            $message = "Page is not added in HTML Sitemap";
-                        }
-                    }
-                }else{
-                    $status = false;
-                    $fileExists = false;
-                    $message = "HTML Sitemap is missing, please make sure you have added the right sitemap file.";
-                }
+                $status = $lookup["status"];
+                $message = $status ? "Page is added in HTML Sitemap" : "Page is not added in HTML Sitemap";
             }
         }
 
@@ -4173,11 +4219,10 @@ class TestController extends Controller
     protected function persistTestRun(array $data, array $meta, string $html, array $testContext): string
     {
         $refId = $this->generateNextRefId();
-        $testLabels = $data['testLabels'] ?? [];
 
         $test = new TestResults();
         $test->url = $data['urlValue'];
-        $test->testLabels = is_string($testLabels) ? $testLabels : json_encode($testLabels);
+        $test->testLabels = $this->normalizeTestLabelsForStorage($data['testLabels'] ?? []);
         $test->ref_id = $refId;
         $test->data = json_encode($meta);
         $test->html_code = $html;
@@ -4205,6 +4250,31 @@ class TestController extends Controller
         }
 
         return (string) $refId;
+    }
+
+    /**
+     * @param  mixed  $testLabels
+     */
+    protected function normalizeTestLabelsForStorage($testLabels): string
+    {
+        if (is_string($testLabels)) {
+            $decoded = json_decode($testLabels, true);
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                return '[]';
+            }
+
+            $testLabels = $decoded;
+        }
+
+        if (! is_array($testLabels)) {
+            return '[]';
+        }
+
+        if ($testLabels !== [] && ! array_is_list($testLabels)) {
+            $testLabels = [$testLabels];
+        }
+
+        return json_encode(array_values($testLabels));
     }
 
     /**

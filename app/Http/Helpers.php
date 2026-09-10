@@ -293,6 +293,137 @@ class Helpers{
         return $faviconUrl;
     }
 
+    /**
+     * A project can have several XML or HTML sitemaps. They are stored in a single settings
+     * column, separated by commas or new lines.
+     */
+    public static function parseSitemapUrls($value){
+        if(!is_string($value) || trim($value) === ""){
+            return [];
+        }
+
+        $urls = preg_split('/[,\r\n]+/', $value);
+        $urls = array_filter(array_map('trim', $urls), function($url){
+            return $url !== "" && preg_match('/^http(s)?:\/\//i', $url);
+        });
+
+        return array_values(array_unique($urls));
+    }
+
+    /**
+     * Store sitemap URLs as a stable comma-separated list.
+     */
+    public static function normalizeSitemapValue($value){
+        return implode(',', self::parseSitemapUrls($value));
+    }
+
+    /**
+     * Detect HTML sitemaps at common paths. A candidate is kept when it returns HTTP 200.
+     *
+     * @return list<string>
+     */
+    public static function detectHtmlSitemapUrls($rootUrl){
+        $root = rtrim((string) $rootUrl, '/');
+        if($root === '' || !preg_match('#^https?://#i', $root)){
+            return [];
+        }
+
+        $found = [];
+        foreach(['/sitemap', '/sitemap.html', '/sitemap.php'] as $path){
+            $url = $root . $path;
+            try{
+                $res = Http::timeout(8)->withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0; +https://webqa.io)',
+                    'Accept' => 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+                ])->get($url);
+
+                if($res->status() === 200){
+                    $found[] = $url;
+                }
+            }catch(\Throwable $e){
+                continue;
+            }
+        }
+
+        return array_values(array_unique($found));
+    }
+
+    /**
+     * Look for the tested page in every XML sitemap of the project.
+     * fileExists stays true when at least one sitemap could be read, so one unreachable
+     * sitemap does not make the whole test report a missing sitemap.
+     */
+    public function findUrlInXmlSitemaps($sitemapValue, $urlValue, $urlValueTwo){
+        $result = ["fileExists" => false, "status" => false, "xmldata" => ""];
+
+        foreach(self::parseSitemapUrls($sitemapValue) as $sitemapUrl){
+            try{
+                $xmldata = @simplexml_load_file($sitemapUrl);
+            }catch(\Throwable $e){
+                $xmldata = false;
+            }
+
+            if(!$xmldata){
+                continue;
+            }
+
+            $result["fileExists"] = true;
+            if($result["xmldata"] === ""){
+                $result["xmldata"] = $xmldata;
+            }
+
+            foreach($xmldata as $node){
+                if(strcmp($node->loc, $urlValue) === 0 || strcmp($node->loc, $urlValueTwo) === 0){
+                    $result["status"] = true;
+
+                    return $result;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Look for the tested page in the links of every HTML sitemap of the project.
+     * A sitemap only counts as reachable when it answers 200 and contains links.
+     */
+    public function findUrlInHtmlSitemaps($sitemapValue, $urlValue, $domain){
+        $result = ["fileExists" => false, "status" => false];
+        $urlValueTwo = rtrim(str_replace("www.", "", $urlValue), "/");
+
+        foreach(self::parseSitemapUrls($sitemapValue) as $sitemapUrl){
+            $links = [];
+            try{
+                $goutteClient = new Client(HttpClient::create(['timeout' => 60]));
+                $crawler = $goutteClient->request('GET', $sitemapUrl);
+
+                if($goutteClient->getInternalResponse()->getStatusCode() !== 200){
+                    continue;
+                }
+
+                $links = $crawler->filter("a")->each(function($node){
+                    return $node->extract(array('href'))[0];
+                });
+            }catch(\Throwable $e){
+                continue;
+            }
+
+            $result["fileExists"] = true;
+
+            foreach($links as $href){
+                $link = $this->getAbsolutePath($href, $domain);
+                if(str_replace("www.", "", $link) === $urlValueTwo){
+                    $result["status"] = true;
+
+                    return $result;
+                }
+            }
+        }
+
+        return $result;
+    }
+
     
     function isValidUrl($url){
         // first do some quick sanity checks:

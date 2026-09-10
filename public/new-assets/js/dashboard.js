@@ -1,13 +1,13 @@
 $(document).ready(function () {
 
-  var projectId, originalUrls, urls, urlsToCheck = 10, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
+  var projectId, originalUrls, urls, urlsToCheck = 1, googleUrlsToCheck = 1, recheckSingleIntervalStatus = true
   /** recheckMax: main Recheck batch. recheckSingleMax: per-widget refresh (can be larger; server only pending-marks that batch). */
-  var recheckMax = 2000, recheckGoogle = 10, recheckSingleMax = 2000, urlsGoogleFinal = 0
+  var recheckMax = 1, recheckGoogle = 1, recheckSingleMax = 1, urlsGoogleFinal = 0
   /** When true, page speed progress denominator uses recheckGoogle (not googleUrlsToCheck). */
   var googleProgressIsRecheck = false
   /** Set from start-tests / check-status (url_count × 2). 0 = fall back to recheckGoogle or googleUrlsToCheck. */
   var googleProgressExpectedResults = 0
-  var htmlSitemapData, lastXmlSitemapCardPayload = null, recheckAllowed = true
+  var recheckAllowed = true
   var useCachedDashboardData = false
   var allResults = [], urlUpdatedList = []
   var projectSettings, projectFinal
@@ -17,7 +17,8 @@ $(document).ready(function () {
   var modalSidebar = new bootstrap.Offcanvas(document.querySelector('.sidebar-modal'), {     
     keyboard: false 
   })
-  let removeTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
+  let removeTileDisabled = false, addTileDisabled = false, refreshTileDisabled = false, refreshTileDbName
+  let lastDashboardResults = null, lastGoogleResults = null
   const ignore_tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
   let obj = {
     meta_title: [],
@@ -290,14 +291,22 @@ $(document).ready(function () {
 
 
     static getTestDetails(label, element){
+        const requestData = {
+            data: JSON.stringify(element),
+            "_token": $('meta[name="csrf-token"]').attr('content'),
+        }
+        if (
+          (label.db_name === "xml_sitemap" || label.db_name === "html_sitemap")
+          && projectFinal
+          && projectFinal.homepage
+        ) {
+          requestData.homepage = projectFinal.homepage
+        }
         return $.ajax({
             url : label.urlDetails,
             type : 'post',
             aysnc: false,
-            data: {
-                data: JSON.stringify(element),
-                "_token": $('meta[name="csrf-token"]').attr('content'),
-            },       
+            data: requestData,
             success: function(data) {
             },error: function(data){
             }
@@ -669,7 +678,7 @@ $(document).ready(function () {
       if(heading != "Security" && heading != "Coding Best Practices"){
         listItems.forEach(item=>{
           if(item.is_dashboard_status){
-            if(!item.show_dashboard_status){
+            if(!Controls.isDashboardStatusOn(item.show_dashboard_status)){
               showStatus = true
               ul.innerHTML+=`<li>${item.display_name}<a data-label="${item.db_name}" class="add-tile add_widget_btn">+Add</a></li>`
             }
@@ -747,46 +756,20 @@ $(document).ready(function () {
         for (const [key, value] of Object.entries(data)) {
             const element = data[key]
             if(key === "security_labels" || key === "cbp_labels" || element.length > 0 || key === "images"){
-              let status = false
-              let label 
-              let show_dashboard_status = Controls.getShowDashboardStatus(element)
-
-
-
-              if(key === "security_labels"){
-                  status = show_dashboard_status
-                  label = {
-                    display_name: "Security Headers",
-                    urlDetails: "/test-details/security-headers",
-                    reportsUrl: "/reports/security-headers",
-                    db_name: "security_labels"
-                  }
-
-              }else if(key === "cbp_labels"){
-                status = show_dashboard_status
-                label = {
-                  display_name: "Best Practices",
-                  urlDetails: "/test-details/coding-best-practices",
-                  reportsUrl: "/reports/coding-best-practices",
-                  db_name: "cbp_labels"
-                }
-
-              }else{
-                // Use the results bucket key (e.g. robot_text_test), not element[0].label.db_name.
-                // Stale rows can embed the wrong label while still sitting under the correct key; the key must win.
-                label = Controls.getActiveLabel(key)
-                if (!label) {
+              let label = Controls.getActiveLabel(key)
+              if (!label) {
                   console.warn("buildLoaderCards: no label for results key", key)
                   continue
-                }
-
-                if(label.db_name === "xml_sitemap"){
-                  label.display_name = "Sitemap"
-                }
               }
 
 
-              if(label.show_dashboard_status || status){ // making sure the test has at least one url
+              const groupedVisible = key === "security_labels"
+                ? Controls.isGroupedDashboardTileVisible(securityLabels)
+                : key === "cbp_labels"
+                  ? Controls.isGroupedDashboardTileVisible(cbpLabels)
+                  : false
+              const regularVisible = key !== "security_labels" && key !== "cbp_labels" && Controls.isDashboardStatusOn(label.show_dashboard_status)
+              if(groupedVisible || regularVisible){
                 promises.push(Controls.manageSingleCard(element, key, label, false))
               }
             }
@@ -822,26 +805,15 @@ $(document).ready(function () {
 
         let label
         if(key === "security_labels"){
-          label = {
-            display_name: "Security Headers",
-            urlDetails: "/test-details/security-headers",
-            reportsUrl: "/reports/security-headers",
-            db_name: "security_labels"
-          }
+          if (!Controls.isGroupedDashboardTileVisible(securityLabels)) continue
+          label = Controls.getActiveLabel(key)
         }else if(key === "cbp_labels"){
-          label = {
-            display_name: "Best Practices",
-            urlDetails: "/test-details/coding-best-practices",
-            reportsUrl: "/reports/coding-best-practices",
-            db_name: "cbp_labels"
-          }
+          if (!Controls.isGroupedDashboardTileVisible(cbpLabels)) continue
+          label = Controls.getActiveLabel(key)
         }else{
           label = Controls.getActiveLabel(key)
           if (!label) continue
-          if (label.db_name === "xml_sitemap") {
-            label.display_name = "Sitemap"
-          }
-          if (label.show_dashboard_status === false) continue
+          if (!Controls.isDashboardStatusOn(label.show_dashboard_status)) continue
         }
 
         UI.buildSingleLoaderCard(label, false)
@@ -855,12 +827,102 @@ $(document).ready(function () {
         const dbName = ignore_tests[i]
         const label = Controls.getActiveLabel(dbName)
         if (!label) continue
-        if (label.show_dashboard_status === false) continue
+        if (!Controls.isDashboardStatusOn(label.show_dashboard_status)) continue
         if (document.getElementById("card_" + dbName)) continue
         UI.buildSingleLoaderCard(label, false)
       }
     }
 
+
+    static dashboardUrlLinks(rawUrl, withCopyIcon = true) {
+      const urls = String(rawUrl || "")
+        .split(/[,\r\n]+/)
+        .map((url) => url.trim())
+        .filter(Boolean)
+      if (!urls.length) {
+        return "<span>—</span>"
+      }
+      const copyIcon = withCopyIcon
+        ? `<img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
+        : ""
+      return urls.map((url) => {
+        const href = url.replace(/"/g, "&quot;")
+        const text = url.replace(/</g, "&lt;")
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>${copyIcon}`
+      }).join("<br>")
+    }
+
+    static getSitemapCardMarkup(kindLabel, data, reportsUrl){
+        const sitemapSettingsKey = kindLabel === "XML" ? "xml_sitemap_val" : "html_sitemap_val"
+        const settingsSub = projectSettings && (projectSettings.settings_sub || projectSettings.settingsSub)
+        const officialUrl = (data.officialUrl || (projectFinal && projectFinal.homepage) || "").trim()
+        const sitemapUrl = (
+          data.sitemapUrl
+          || (settingsSub && settingsSub[sitemapSettingsKey])
+          || (projectSettings && projectSettings[sitemapSettingsKey])
+          || ""
+        ).trim()
+        let missingUrls = (Array.isArray(data.sitemapNotFound) ? data.sitemapNotFound : [])
+          .map((url) => String(url || "").trim())
+          .filter(Boolean)
+        if (!missingUrls.length && data.sitemapNotFoundString) {
+          missingUrls = String(data.sitemapNotFoundString)
+            .split(/\r?\n/)
+            .map((line) => line.replace(/^\s*\d+[.)]\s*/, "").trim())
+            .filter(Boolean)
+        }
+        const missingText = missingUrls
+          .map((url, i) => `${i + 1}) ${url.replace(/</g, "&lt;")}`)
+          .join("\n")
+        const missingRows = Math.max(1, missingUrls.length)
+        if (data.fileExists) {
+          return `
+                <div class="deshboard_inner_description">
+                  <div class="roboto_url">
+                    <p>
+                      <span>${kindLabel} Sitemap URL: </span>
+                      <span>${UI.dashboardUrlLinks(sitemapUrl)}</span>
+                    </p>
+                  </div>
+                  <div class="deshboard_inner_description">
+                    <p>URL's found on ${kindLabel} sitemap<span class="${data.sitemapExists === data.totalUrls ? 'success' : 'danger'}">${data.sitemapExists}</span></p>
+                    <p>URL's found on website<span>${data.totalUrls}</span></p>
+                  </div>
+
+                  ${missingUrls.length > 0 ? `
+                  <div class="dashboard_sitemap_textarea">
+                    <p>URL's not included on ${kindLabel} sitemap</p>
+                    <textarea disabled readonly rows="${missingRows}">${missingText}</textarea>
+                  </div>
+                  ` : ``}
+                </div>
+                <div class="inner_dashboard_footer">
+                  <a href="${reportsUrl}">View Report</a>
+                </div>`
+        }
+
+        return `
+                <div class="deshboard_inner_description border_bottom">
+                  <div class="roboto_url">
+                    <p>
+                      <span>${kindLabel} Sitemap URL: </span>
+                      <span>${UI.dashboardUrlLinks(sitemapUrl)}</span>
+                    </p>
+                  </div>
+                  <div class="blank_sitemap_content">
+                    <img
+                      src="/new-assets/assets/images/blank-sitemap.svg"
+                      alt="icon"
+                    />
+                    <p>
+                      We could not find ${kindLabel} sitemap on your website
+                    </p>
+                  </div>
+                </div>
+                <div class="inner_dashboard_footer">
+                  <a href="${reportsUrl}">View Report</a>
+                </div>`
+    }
 
     static getSingleLoaderCardElement(label, data){
         let element
@@ -2177,193 +2239,12 @@ $(document).ready(function () {
             </div>
               `
               break;    
-            case "xml_sitemap": {
-            const xmlSitemapReportsUrl = reportsUrl
-            const htmlLabel = Controls.getActiveLabel("html_sitemap")
-            const htmlSitemapReportsUrl = (htmlLabel && htmlLabel.reportsUrl) || "#"
-            const xmlRobotsAttr = (data.robotsTxtUrl || "").replace(/"/g, "&quot;")
-            const xmlRobotsText = data.robotsTxtUrl || ""
-            let htmlRobotsAttr = ""
-            let htmlRobotsText = ""
-            if (htmlSitemapData != null) {
-              htmlRobotsText = htmlSitemapData.robotsTxtUrl || ""
-              htmlRobotsAttr = htmlRobotsText.replace(/"/g, "&quot;")
-            }
-            element = `
-              <div class="dashboard_sitemap_content common_tab">
-                      <ul class="nav nav-tabs" id="myTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                          <button
-                            class="nav-link active"
-                            id="xml-sitemap-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#xml-sitemap"
-                            type="button"
-                            role="tab"
-                            aria-controls="xml-sitemap"
-                            aria-selected="true"
-                          >
-                            XML Sitemap
-                          </button>
-                        </li>
-
-                        ${htmlSitemapData != null ? `       
-                        <li class="nav-item " role="presentation">
-                          <button
-                            class="nav-link"
-                            id="html-sitemap-tab"
-                            data-bs-toggle="tab"
-                            data-bs-target="#html-sitemap"
-                            type="button"
-                            role="tab"
-                            aria-controls="html-sitemap"
-                            aria-selected="false"
-                          >
-                            HTML Sitemap
-                          </button>
-                        </li>` : 
-                        ""}
-
-                        
-                      </ul>
-                      <div class="tab-content" id="myTabContent">
-                        <div
-                          class="tab-pane fade show active"
-                          id="xml-sitemap"
-                          role="tabpanel"
-                          aria-labelledby="xml-sitemap-tab"
-                        >
-
-                        ${data.fileExists ? `
-                          
-                          <div class="deshboard_inner_description border_bottom">
-                            <div class="roboto_url">
-                              <p>
-                                <span>Robots.txt URL: </span>
-                                <span>
-                                  ${xmlRobotsText
-                                    ? `<a href="${xmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${xmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
-                                    : "<span>—</span>"}
-                                </span>
-                              </p>
-                            </div>
-                            <div class="deshboard_inner_description">
-                              <p>URL's found on XML sitemap<span class="${data.sitemapExists === data.totalUrls ? 'success' : 'danger'}">${data.sitemapExists}</span></p>
-                              <p>URL's found on website<span>${data.totalUrls}</span></p>
-                            </div>
-
-
-                            ${data.sitemapNotFound.length > 0 ? `
-                            <div class="dashboard_sitemap_textarea">
-                              <p>URL's not included on XML sitemap</p>
-                              <textarea>
-                                  ${data.sitemapNotFoundString}
-                              </textarea>
-                            </div>
-                            ` : ``}
-
-                          </div>
-
-                          <div class="inner_dashboard_footer">
-                            <a href="${xmlSitemapReportsUrl}">View Report</a>
-                          </div>
-                          ` 
-                          
-                          
-                          : `
-                          
-                          <div class="deshboard_inner_description border_bottom">
-                            <div class="blank_sitemap_content">
-                              <img
-                                src="/new-assets/assets/images/blank-sitemap.svg"
-                                alt="icon"
-                              />
-                              <p>
-                                We could not find XML sitemap on your website
-                              </p>
-                            </div>
-                          </div>
-
-                           <div class="inner_dashboard_footer">
-                            <a href="${xmlSitemapReportsUrl}">View Report</a>
-                            </div>
-                          `
-                        
-                        }
-                        </div>
-
-
-
-
-                        <div
-                          class="tab-pane fade"
-                          id="html-sitemap"
-                          role="tabpanel"
-                          aria-labelledby="html-sitemap-tab">
-                          
-
-
-                    
-                          
-                      ${htmlSitemapData != null ? htmlSitemapData.fileExists ? `
-                          
-                      <div class="deshboard_inner_description border_bottom">
-                        <div class="roboto_url">
-                          <p>
-                            <span>Robots.txt URL: </span>
-                            <span>
-                              ${htmlRobotsText
-                                ? `<a href="${htmlRobotsAttr}" target="_blank" rel="noopener noreferrer">${htmlRobotsText}</a><img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
-                                : "<span>—</span>"}
-                            </span>
-                          </p>
-                        </div>
-                        <div class="deshboard_inner_description">
-                          <p>URL's found on HTML sitemap<span class="${htmlSitemapData.sitemapExists === htmlSitemapData.totalUrls ? 'success' : 'danger'}">${htmlSitemapData.sitemapExists}</span></p>
-                          <p>URL's found on website<span>${htmlSitemapData.totalUrls}</span></p>
-                        </div>
-
-
-                        ${htmlSitemapData.sitemapNotFound.length > 0 ? `
-                        <div class="dashboard_sitemap_textarea">
-                          <p>URL's not included on HTML sitemap</p>
-                          <textarea>
-                              ${htmlSitemapData.sitemapNotFoundString}
-                          </textarea>
-                        </div>
-                        ` : ``}
-
-                      </div>
-
-                      <div class="inner_dashboard_footer">
-                        <a href="${htmlSitemapReportsUrl}">View Report</a>
-                      </div>
-                      ` 
-                      
-                      
-                      : `
-                      
-                      <div class="deshboard_inner_description border_bottom">
-                        <div class="blank_sitemap_content">
-                          <img
-                            src="/new-assets/assets/images/blank-sitemap.svg"
-                            alt="icon"
-                          />
-                          <p>
-                            We could not find HTML sitemap on your website
-                          </p>
-                        </div>
-                      </div>
-
-                       <div class="inner_dashboard_footer">
-                        <a href="${htmlSitemapReportsUrl}">View Report</a>
-                        </div>
-                      `
-                    
-                      : "" }
-            `
+            case "xml_sitemap":
+              element = UI.getSitemapCardMarkup("XML", data, reportsUrl)
               break;
-            }
+            case "html_sitemap":
+              element = UI.getSitemapCardMarkup("HTML", data, reportsUrl)
+              break;
               case "images":
                 element = `
                 <div div class="dashboard_image_content">
@@ -2407,7 +2288,7 @@ $(document).ready(function () {
         div.innerHTML = UI.getSingleLoaderCardElement(label, parsed)
         const cardShell = document.getElementById(`card_${label}`)?.querySelector(".single_dashboard_card")
         if (!cardShell) return
-        // First update removes .broken_links_content; later updates (e.g. XML sitemap + htmlSitemapData) must remove .single_dashboard_card_content instead.
+        // First update removes .broken_links_content; later updates (e.g. tile refresh) must remove .single_dashboard_card_content instead.
         const block =
           cardShell.querySelector(".page_speed_content") ||
           cardShell.querySelector(".single_dashboard_card_content") ||
@@ -2780,9 +2661,12 @@ $(document).ready(function () {
     
 
     static finalizeGoogleElements(results){
+      if (results) lastGoogleResults = results
       const tests = ["google_overall", "google_lighthouse", "core_web_vitals"]
       tests.forEach(test=>{
+        if (!document.getElementById(`card_${test}`)) return
         const testLabel = Controls.getActiveLabel(test)
+        if (!testLabel || !Controls.isDashboardStatusOn(testLabel.show_dashboard_status)) return
         DB.getTestDetails(testLabel, results)
         .done(function(data) {
           UI.updateSingleLoaderCard(data, results, test, testLabel)
@@ -3214,13 +3098,78 @@ $(document).ready(function () {
 
   
         
+    static isDashboardStatusOn(value){
+      return value === true || value === 1 || value === "1"
+    }
+
+    static isGroupedDashboardTileVisible(list){
+      if (!Array.isArray(list) || list.length === 0) return false
+      return list.every((el) => Controls.isDashboardStatusOn(el.show_dashboard_status))
+    }
+
+    static hasTilePayload(value){
+      if (value == null) return false
+      if (Array.isArray(value)) return value.length > 0
+      if (typeof value === "object") {
+        const keys = Object.keys(value)
+        if (!keys.length) return false
+        const hasNestedData = keys.some((k) => {
+          const nested = value[k]
+          if (Array.isArray(nested)) return nested.length > 0
+          if (nested && typeof nested === "object") return Object.keys(nested).length > 0
+          return nested != null && nested !== ""
+        })
+        if (hasNestedData) return true
+        return keys.some((k) => !Array.isArray(value[k]))
+      }
+      return Boolean(value)
+    }
+
+    static setLocalShowDashboardStatus(dbName, status){
+      const flag = Controls.isDashboardStatusOn(status) ? 1 : 0
+      const apply = (list) => {
+        if (!Array.isArray(list)) return
+        list.forEach((label) => {
+          if (dbName === "security_labels" || dbName === "cbp_labels") {
+            if (label.dashboard_parent === dbName) label.show_dashboard_status = flag
+          } else if (label.db_name === dbName) {
+            label.show_dashboard_status = flag
+          }
+        })
+      }
+      apply(allLabels)
+      apply(seoLabels)
+      apply(performanceLabels)
+      apply(cbpLabels)
+      apply(securityLabels)
+    }
+
+    static showDashboardTileAlert(ok, msg){
+      displayAlert(".analysis-content-body-message", {
+        status: ok ? 1 : 0,
+        msg: msg,
+        notHide: !ok
+      })
+      $('.analysis-content-body-message').show()
+    }
+
+    static syncTileActionStateAfterMutation(){
+      if (document.querySelector(".dashboard_recheck_area .main-tricker-progress")) {
+        UI.updateTileActionState("full")
+      } else if (refreshTileDisabled && refreshTileDbName) {
+        UI.updateTileActionState("single", refreshTileDbName)
+      } else {
+        UI.updateTileActionState("default")
+      }
+    }
+
     static getShowDashboardStatus(element){
-      for (const [key, value] of Object.entries(element)) {
+      for (const [key, value] of Object.entries(element || {})) {
         const el = element[key]
-        if(el.length > 0){
-          const labelDbName = el[0].label.db_name
+        if(el && el.length > 0){
+          const labelDbName = el[0] && el[0].label && el[0].label.db_name
           const activeLabel = Controls.getActiveLabel(labelDbName)
-          if(!activeLabel.show_dashboard_status){
+          if(!activeLabel || !Controls.isDashboardStatusOn(activeLabel.show_dashboard_status)){
             return false
           }
         }
@@ -3230,14 +3179,7 @@ $(document).ready(function () {
     }
 
     static getShowDashboardStatus2(element){
-      for (let i = 0;i < element.length;i++) {
-        const el = element[i]
-          if(!el.show_dashboard_status){
-            return false
-          }
-      }
-
-      return true
+      return Controls.isGroupedDashboardTileVisible(element)
     }
 
     static finalizeTestLabels(labels){
@@ -3275,27 +3217,11 @@ $(document).ready(function () {
 
 
     static applyDashboardCardResponse(data, element, key, label){
-      if(label.db_name == "html_sitemap"){
-          console.log("HTML Sitemap data", data)
-          htmlSitemapData = typeof data === "string" ? JSON.parse(data) : data
-          if (lastXmlSitemapCardPayload && document.getElementById("card_xml_sitemap")) {
-            UI.updateSingleLoaderCard(
-              lastXmlSitemapCardPayload.data,
-              element,
-              lastXmlSitemapCardPayload.key,
-              lastXmlSitemapCardPayload.label
-            )
-          }
-      }else{
-          if (label.db_name === "xml_sitemap") {
-            lastXmlSitemapCardPayload = { data, key, label }
-          }
-          UI.updateSingleLoaderCard(data, element, key, label)
-      }
+      UI.updateSingleLoaderCard(data, element, key, label)
     }
 
     static manageSingleCard(element, key, label, appendStatus, status = true){
-      if(label.db_name != "html_sitemap" && status){
+      if(status){
         UI.buildSingleLoaderCard(label, appendStatus)
       }
       if(ignore_tests.includes(key)){
@@ -3312,7 +3238,8 @@ $(document).ready(function () {
           display_name: "Security Headers",
           urlDetails: "/test-details/security-headers",
           reportsUrl: "/reports/security-headers",
-          db_name: "security_labels"
+          db_name: "security_labels",
+          show_dashboard_status: Controls.isGroupedDashboardTileVisible(securityLabels) ? 1 : 0
         }
       }
 
@@ -3321,7 +3248,8 @@ $(document).ready(function () {
           display_name: "Best Practices",
           urlDetails: "/test-details/coding-best-practices",
           reportsUrl: "/reports/coding-best-practices",
-          db_name: "cbp_labels"
+          db_name: "cbp_labels",
+          show_dashboard_status: Controls.isGroupedDashboardTileVisible(cbpLabels) ? 1 : 0
         }
       }
 
@@ -3394,20 +3322,19 @@ $(document).ready(function () {
 
     static renderDashboardFromTestData(data, dashboardStatus) {
       useCachedDashboardData = data.use_cached_dashboard === true
+      lastDashboardResults = data.results || null
       projectSettings = data.settings
-      if(data.results.security_labels){
+      if(data.results && data.results.security_labels){
         data.results.security_labels = Controls.cleanNulls(data.results.security_labels)
       }
 
-      if(data.results.cbp_labels){
+      if(data.results && data.results.cbp_labels){
         data.results.cbp_labels = Controls.cleanNulls(data.results.cbp_labels)
       }
 
       const testDetails = data.results
       projectFinal = data.project
       $(".dashboard_top_items_main").html("")
-      htmlSitemapData = null
-      lastXmlSitemapCardPayload = null
       UI.buildWidgetSidebar()
 
       function finishDashboardTiles(cardsDeferred){
@@ -3626,24 +3553,30 @@ $(document).ready(function () {
 
 
     static activeSidebarEvents(){
-      $(".remove-tile").on("click", (e)=>{
-        console.log("Remove Tile Disabled")
-        // if(!removeTileDisabled){
-        //   removeTileDisabled = true
-        //   const target = e.target.closest(".single_dashboard_card_main")
-        //   const elementDbName = target.getAttribute("data-label")
-        //   Controls.removeTile(elementDbName, target)
-        // }
-      })
-
-      $(".refresh-tile").on("click", (e)=>{
-          Controls.refreshSingleTile(e)
-      })
-
-      $(".add-tile").on("click", (e)=>{
+      $(document).off("click.dashboardRemoveTile", ".remove-tile").on("click.dashboardRemoveTile", ".remove-tile", (e)=>{
         e.preventDefault()
-        const target = e.target
+        e.stopPropagation()
+        if (removeTileDisabled) return
+        const target = e.target.closest(".single_dashboard_card_main")
+        if (!target) return
         const elementDbName = target.getAttribute("data-label")
+        if (!elementDbName) return
+        if (document.querySelector(".dashboard_recheck_area .main-tricker-progress")) return
+        if (target.querySelector(".page_speed_content")) return
+        removeTileDisabled = true
+        Controls.removeTile(elementDbName, target)
+      })
+
+      $(document).off("click.dashboardRefreshTile", ".refresh-tile").on("click.dashboardRefreshTile", ".refresh-tile", (e)=>{
+        e.preventDefault()
+        Controls.refreshSingleTile(e)
+      })
+
+      $(document).off("click.dashboardAddTile", ".add-tile").on("click.dashboardAddTile", ".add-tile", (e)=>{
+        e.preventDefault()
+        const btn = e.target.closest(".add-tile")
+        const elementDbName = btn && btn.getAttribute("data-label")
+        if (!elementDbName) return
         Controls.addTile(elementDbName)
       })
     }
@@ -3658,47 +3591,105 @@ $(document).ready(function () {
 
 
     static addTile(dbName){
+      if (addTileDisabled) return
+      if (!dbName || document.getElementById(`card_${dbName}`)) return
       const label = Controls.getActiveLabel(dbName)
-      const element = Controls.getActiveElement(dbName)
+      if (!label) return
 
-      // Disable recheck button when adding a new tile (which starts tests)
-      UI.updateRecheckButtonState(true)
+      addTileDisabled = true
+      const title = label.display_name || "Tile"
 
-      Controls.manageSingleCard(element, dbName, label, true)
       DB.updateLabelStatus(dbName, 1)
       .done(function(){
-        getAllTestLabels2(projectId)
-        .done(function(data) {
-            allLabels = data.all_labels
-            seoLabels = data.seo_labels
-            performanceLabels = data.performance_labels
-            cbpLabels = data.cbp_labels
-            securityLabels = data.security_labels
-            Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
-
-
-            UI.buildWidgetSidebar()
-            let title
-            if(element[0]){
-              title = element[0].title
-            }else if(element.css_caching_enable){
-              title = "Coding Best Practices"
-
-            }else{
-              title = "Security Headers"
-            }
-            const msg = `"${title}" was successfully added to dashboard.`
-            displayAlert(".analysis-content-body-message", {
-              status: 1,
-              msg: msg,
-              notHide: false
+        try {
+          Controls.setLocalShowDashboardStatus(dbName, 1)
+          UI.buildSingleLoaderCard(label, true)
+          Controls.restoreAddedTileContent(dbName, label)
+          UI.buildWidgetSidebar()
+          Controls.syncTileActionStateAfterMutation()
+          if (dbName === "images") {
+            UI.ensureWidgetNotice("images", "Images has not been tested. To check your entire website, please re-check this widget once.")
+          } else if (ignore_tests.includes(dbName)) {
+            UI.ensureWidgetNotice(dbName, "Page speed scores has only been checked for the homepage. To check your entire project, please re-check this widget once.")
+          }
+          Controls.showDashboardTileAlert(true, `"${title}" was successfully added to dashboard.`)
+          scrollToTop()
+          modalSidebar.toggle()
+          getAllTestLabels2(projectId)
+            .done(function(data) {
+              Controls.applyLabelsPayload(data)
+              UI.buildWidgetSidebar()
             })
-            $('.analysis-content-body-message').show()
-            scrollToTop()
-            modalSidebar.toggle()
-            Controls.activeSidebarEvents()
-        });
+            .fail(function() {
+              UI.buildWidgetSidebar()
+            })
+        } finally {
+          addTileDisabled = false
+        }
       })
+      .fail(function(){
+        addTileDisabled = false
+        Controls.showDashboardTileAlert(false, "Could not add this tile. Please try again.")
+      })
+    }
+
+    static restoreAddedTileContent(dbName, label){
+      if (ignore_tests.includes(dbName)) {
+        Controls.fillGoogleTile(dbName, label)
+        return
+      }
+
+      const liveElement = Controls.getActiveElement(dbName)
+      if (Controls.hasTilePayload(liveElement)) {
+        DB.getTestDetails(label, liveElement)
+          .done(function(data) {
+            Controls.applyDashboardCardResponse(data, liveElement, dbName, label)
+          })
+        return
+      }
+
+      const payload = lastDashboardResults ? lastDashboardResults[dbName] : null
+      if (useCachedDashboardData && Controls.hasTilePayload(payload)) {
+        Controls.applyDashboardCardResponse(payload, [], dbName, label)
+        return
+      }
+
+      const element = Controls.hasTilePayload(liveElement) ? liveElement : payload
+      if (!label || !label.urlDetails) return
+      DB.getTestDetails(label, element)
+        .done(function(data) {
+          Controls.applyDashboardCardResponse(data, element, dbName, label)
+        })
+        .fail(function() {
+          console.error("Could not restore tile content for", dbName)
+        })
+    }
+
+    static fillGoogleTile(dbName, label){
+      const applyResults = (results) => {
+        if (!results || !label) return
+        lastGoogleResults = results
+        DB.getTestDetails(label, results).done(function(data) {
+          if (document.getElementById(`card_${dbName}`)) {
+            UI.updateSingleLoaderCard(data, results, dbName, label)
+          }
+        })
+      }
+
+      if (Controls.hasTilePayload(lastGoogleResults)) {
+        applyResults(lastGoogleResults)
+        return
+      }
+
+      fetch(`/api/check-status/${projectId}`)
+        .then((response) => response.ok ? response.json() : null)
+        .then((payload) => {
+          if (!payload || !payload.results) return
+          applyResults(payload.results)
+        })
+        .catch((err) => {
+          console.error("Could not restore Page Speed tile:", err)
+        })
     }
 
     static refreshTileGoogle(dbName, target){
@@ -3902,30 +3893,36 @@ $(document).ready(function () {
     }
 
     static removeTile(dbName, target){
+      if (!target || !dbName) {
+        removeTileDisabled = false
+        return
+      }
+      const titleEl = target.querySelector(".dashboard_title p")
+      const title = titleEl && titleEl.textContent ? titleEl.textContent.trim() : "Tile"
+
       DB.updateLabelStatus(dbName, 0)
       .done(function(){
-        target.remove()
-        getAllTestLabels2(projectId)
-        .done(function(data) {
-            allLabels = data.all_labels
-            seoLabels = data.seo_labels
-            performanceLabels = data.performance_labels
-            cbpLabels = data.cbp_labels
-            securityLabels = data.security_labels
-            Controls.finalizeLabels(allLabels, seoLabels, performanceLabels, cbpLabels, securityLabels)
-            UI.buildWidgetSidebar()
-            const title = target.querySelector(".dashboard_title p").textContent
-            const msg = `"${title}" was successfully removed from dashboard.`
-            displayAlert(".analysis-content-body-message", {
-              status: 1,
-              msg: msg,
-              notHide: false
+        try {
+          target.remove()
+          Controls.setLocalShowDashboardStatus(dbName, 0)
+          UI.buildWidgetSidebar()
+          Controls.showDashboardTileAlert(true, `"${title}" was successfully removed from dashboard.`)
+          scrollToTop()
+          getAllTestLabels2(projectId)
+            .done(function(data) {
+              Controls.applyLabelsPayload(data)
+              UI.buildWidgetSidebar()
             })
-            $('.analysis-content-body-message').show()
-            scrollToTop()
-            Controls.activeSidebarEvents()
-            removeTileDisabled = false
-        });
+            .fail(function() {
+              UI.buildWidgetSidebar()
+            })
+        } finally {
+          removeTileDisabled = false
+        }
+      })
+      .fail(function(){
+        removeTileDisabled = false
+        Controls.showDashboardTileAlert(false, "Could not remove this tile. Please try again.")
       })
     }
 
@@ -3984,9 +3981,6 @@ $(document).ready(function () {
 
       }else{
         label = Controls.getActiveLabel(key)
-        if(label.db_name === "xml_sitemap"){
-          label.display_name = "Sitemap"
-        }
       }
 
 

@@ -153,49 +153,7 @@ class TestDetailsController extends Controller
 
 
     public function xmlSitemap(Request $request){
-        $elements = json_decode($request->input("data"));
-        $fileExists = isset($elements[0]->fileExists) ? $elements[0]->fileExists : false;
-        $object = new \stdClass();
-        $object->fileExists = $fileExists;
-        $robotsTxtUrl = '';
-        if (is_array($elements) || is_object($elements)) {
-            foreach ($elements as $element) {
-                if (! is_object($element)) {
-                    continue;
-                }
-                $candidateUrl = self::resolveRobotsTxtUrlFromStoredResult($element);
-                if ($robotsTxtUrl === '' && $candidateUrl !== '') {
-                    $robotsTxtUrl = $candidateUrl;
-                }
-            }
-        }
-        $object->robotsTxtUrl = $robotsTxtUrl;
-
-        if($fileExists){
-            $sitemapExists = 0;
-            $sitemapNotFound = [];
-            $sitemapNotFoundString = "";
-            $index = 1;
-            foreach($elements as $element){
-                if(!$element->testerrorcaught){
-                    $index++;
-                    if($element->status){
-                        $sitemapExists+=1;
-                    }else{
-                        array_push($sitemapNotFound, $element->tested_url);
-                        $sitemapNotFoundString .= $index . ". " . $element->tested_url;
-                    }
-                }
-            }
-
-
-
-            $object->sitemapExists = $sitemapExists;
-            $object->sitemapNotFound = $sitemapNotFound;
-            $object->sitemapNotFoundString = $sitemapNotFoundString;
-            $object->totalUrls = count($elements);
-        }
-        echo json_encode($object);
+        echo json_encode($this->summarizeSitemapCard($request, 'xml_sitemap'));
     }
 
 
@@ -251,49 +209,7 @@ class TestDetailsController extends Controller
 
 
     public function htmlSitemap(Request $request){
-        $elements = json_decode($request->input("data"));
-        $fileExists = isset($elements[0]->fileExists) ? $elements[0]->fileExists : false;
-        $object = new \stdClass();
-        $object->fileExists = $fileExists;
-        $robotsTxtUrl = '';
-        if (is_array($elements) || is_object($elements)) {
-            foreach ($elements as $element) {
-                if (! is_object($element)) {
-                    continue;
-                }
-                $candidateUrl = self::resolveRobotsTxtUrlFromStoredResult($element);
-                if ($robotsTxtUrl === '' && $candidateUrl !== '') {
-                    $robotsTxtUrl = $candidateUrl;
-                }
-            }
-        }
-        $object->robotsTxtUrl = $robotsTxtUrl;
-
-        if($fileExists){
-            $sitemapExists = 0;
-            $sitemapNotFound = [];
-            $sitemapNotFoundString = "";
-            $index = 1;
-            foreach($elements as $element){
-                if(!$element->testerrorcaught){
-                    $index++;
-                    if($element->status){
-                        $sitemapExists+=1;
-                    }else{
-                        array_push($sitemapNotFound, $element->tested_url);
-                        $sitemapNotFoundString .= $index . ". " . $element->tested_url;
-                    }
-                }
-            }
-
-
-
-            $object->sitemapExists = $sitemapExists;
-            $object->sitemapNotFound = $sitemapNotFound;
-            $object->sitemapNotFoundString = $sitemapNotFoundString;
-            $object->totalUrls = count($elements);
-        }
-        echo json_encode($object);
+        echo json_encode($this->summarizeSitemapCard($request, 'html_sitemap'));
     }
 
 
@@ -734,6 +650,112 @@ class TestDetailsController extends Controller
         $object->totalBrokenExternal = $totalBrokenExternal;
 
         echo json_encode($object);
+    }
+
+    /**
+     * Shared dashboard-card summary for XML and HTML sitemap widgets.
+     */
+    private function summarizeSitemapCard(Request $request, string $widgetKey): \stdClass
+    {
+        $elements = json_decode($request->input("data"));
+        $object = new \stdClass();
+        $object->fileExists = false;
+        $object->sitemapUrl = '';
+        $object->officialUrl = trim((string) $request->input('homepage', ''));
+        $object->sitemapExists = 0;
+        $object->sitemapNotFound = [];
+        $object->sitemapNotFoundString = "";
+        $object->totalUrls = 0;
+
+        if (! is_array($elements) && ! is_object($elements)) {
+            return $object;
+        }
+
+        $valKey = $widgetKey === 'html_sitemap' ? 'html_sitemap_val' : 'xml_sitemap_val';
+        $list = is_array($elements) ? $elements : iterator_to_array($elements);
+        $object->totalUrls = count($list);
+        $sitemapExists = 0;
+        $sitemapNotFound = [];
+        $notFoundLines = [];
+        $index = 0;
+
+        foreach ($list as $element) {
+            if (! is_object($element)) {
+                continue;
+            }
+            $candidateSitemapUrl = self::resolveSitemapUrlFromStoredResult($element, $valKey);
+            if ($object->sitemapUrl === '' && $candidateSitemapUrl !== '') {
+                $object->sitemapUrl = $candidateSitemapUrl;
+            }
+            $candidateOfficialUrl = self::resolveOfficialUrlFromStoredResult($element);
+            if ($object->officialUrl === '' && $candidateOfficialUrl !== '') {
+                $object->officialUrl = $candidateOfficialUrl;
+            }
+            if (! empty($element->fileExists)) {
+                $object->fileExists = true;
+            }
+            if (! empty($element->testerrorcaught)) {
+                continue;
+            }
+            if (! empty($element->status)) {
+                $sitemapExists++;
+            } else {
+                $index++;
+                $testedUrl = trim((string) ($element->tested_url ?? ''));
+                $sitemapNotFound[] = $testedUrl;
+                $notFoundLines[] = $index.') '.$testedUrl;
+            }
+        }
+
+        $object->sitemapExists = $sitemapExists;
+        $object->sitemapNotFound = $sitemapNotFound;
+        $object->sitemapNotFoundString = implode("\n", $notFoundLines);
+
+        return $object;
+    }
+
+    /**
+     * Prefer stored sitemap settings; fall back to sitemap_url on the result row.
+     */
+    private static function resolveSitemapUrlFromStoredResult(object $element, string $valKey): string
+    {
+        $settings = $element->settings ?? null;
+        if (is_object($settings) && ! empty($settings->{$valKey}) && is_string($settings->{$valKey})) {
+            return trim($settings->{$valKey});
+        }
+        if (is_array($settings) && ! empty($settings[$valKey]) && is_string($settings[$valKey])) {
+            return trim($settings[$valKey]);
+        }
+
+        foreach (['sitemap_url', 'sitemapUrl'] as $prop) {
+            if (! empty($element->{$prop}) && is_string($element->{$prop})) {
+                return trim($element->{$prop});
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Derive the project's main URL from a tested page URL when homepage is not supplied.
+     */
+    private static function resolveOfficialUrlFromStoredResult(object $element): string
+    {
+        $testedUrl = $element->tested_url ?? '';
+        if (! is_string($testedUrl) || $testedUrl === '') {
+            return '';
+        }
+
+        $p = parse_url($testedUrl);
+        if (empty($p['host'])) {
+            return '';
+        }
+        $scheme = $p['scheme'] ?? '';
+        if ($scheme === '') {
+            $scheme = 'https';
+        }
+
+        return $scheme.'://'.$p['host'];
     }
 
     /**

@@ -606,6 +606,7 @@ class DashboardTrackerCacheService
             }
             $now = now();
             $dashboardKeysToUpdate = self::resolveDashboardWidgetKeysToUpdate($testType, $recheckLabel);
+            $projectHomepage = (string) (Projects::find($projectId)?->homepage ?? '');
             $dashboardRows = [];
             foreach ($dashboardKeysToUpdate as $widgetKey) {
                 $dashboardRows[] = [
@@ -613,7 +614,7 @@ class DashboardTrackerCacheService
                     'user_id' => $userId,
                     'widget_key' => $widgetKey,
                     'widget_data_json' => json_encode(
-                        self::buildDashboardCardSummary($widgetKey, $aggregated[$widgetKey] ?? [])
+                        self::buildDashboardCardSummary($widgetKey, $aggregated[$widgetKey] ?? [], $projectHomepage)
                     ),
                     'created_at' => $now,
                     'updated_at' => $now,
@@ -1659,7 +1660,7 @@ class DashboardTrackerCacheService
         return [];
     }
 
-    private static function buildDashboardCardSummary(string $widgetKey, mixed $widgetData): array
+    private static function buildDashboardCardSummary(string $widgetKey, mixed $widgetData, string $homepage = ''): array
     {
         if (! is_array($widgetData)) {
             return self::compactPrimitiveWidgetSummary($widgetData);
@@ -1689,7 +1690,10 @@ class DashboardTrackerCacheService
         ];
 
         if (isset($formatterMap[$widgetKey])) {
-            $summary = self::invokeDashboardFormatter($formatterMap[$widgetKey], $widgetData);
+            $extraRequest = in_array($widgetKey, ['xml_sitemap', 'html_sitemap'], true) && $homepage !== ''
+                ? ['homepage' => $homepage]
+                : [];
+            $summary = self::invokeDashboardFormatter($formatterMap[$widgetKey], $widgetData, $extraRequest);
             if (! empty($summary)) {
                 return self::sanitizeDashboardSummary($widgetKey, $summary);
             }
@@ -1729,13 +1733,13 @@ class DashboardTrackerCacheService
         return [];
     }
 
-    private static function invokeDashboardFormatter(string $methodName, array $widgetData): array
+    private static function invokeDashboardFormatter(string $methodName, array $widgetData, array $extraRequest = []): array
     {
         try {
             $controller = app(TestDetailsController::class);
-            $request = Request::create('/', 'POST', [
+            $request = Request::create('/', 'POST', array_merge([
                 'data' => json_encode($widgetData),
-            ]);
+            ], $extraRequest));
 
             ob_start();
             $response = $controller->{$methodName}($request);
@@ -1788,6 +1792,18 @@ class DashboardTrackerCacheService
                 'robotsTxtUrl',
                 'urlsBlockedThroughRobots',
                 'resourcesBlockedThroughRobots',
+                'totalUrls',
+            ]);
+        }
+
+        if (in_array($widgetKey, ['xml_sitemap', 'html_sitemap'], true)) {
+            return self::pickKeys($summary, [
+                'fileExists',
+                'officialUrl',
+                'sitemapUrl',
+                'sitemapExists',
+                'sitemapNotFound',
+                'sitemapNotFoundString',
                 'totalUrls',
             ]);
         }
