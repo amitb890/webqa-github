@@ -9,7 +9,7 @@ class DashboardTests extends Model
 {
     use HasFactory;
     protected $table = 'dashboard_tests';
-    protected $fillable = ['user_id', 'project_id', 'test_id', 'urls', 'status', 'results'];
+    protected $fillable = ['user_id', 'project_id', 'test_id', 'urls', 'status', 'results', 'run_kind', 'recheck_label'];
 
     public function dashboardTestsDetails()
     {

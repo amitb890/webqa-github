@@ -7,10 +7,14 @@ use App\Models\CachedTest;
 use App\Models\DashboardTests;
 use App\Models\DashboardTestsDetails;
 use App\Models\LighthouseResult;
+use App\Models\LighthouseTest;
+use App\Models\Projects;
+use App\Models\TestLabel;
 use App\Models\TestResults;
 use App\Models\User;
 use App\Models\UserActionEvent;
 use App\Services\TestContextService;
+use App\Support\LighthouseUrlParser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -26,6 +30,14 @@ class MonitoringController extends Controller
     private const SOURCE_GOOGLE_LIGHTHOUSE = 'Google Lighthouse';
 
     private const SOURCE_DASHBOARD_RECHECK = 'Dashboard Recheck';
+
+    private const SOURCE_DASHBOARD_PREPARATION = 'Dashboard Preparation';
+
+    private const SOURCE_DASHBOARD_PAGESPEED_PREPARATION = 'Dashboard Page speed preparation';
+
+    private const SOURCE_DASHBOARD_WIDGET = 'Dashboard Widget';
+
+    private const TYPE_NEW_ACCOUNT = 'New account';
 
     public function tests(Request $request)
     {
@@ -142,27 +154,171 @@ class MonitoringController extends Controller
 
     protected function dashboardTestRows(?string $date): Collection
     {
-        // A dashboard test / full re-check is a single action, even though it
-        // stores one detail row per URL. Group by the parent run so the admin
-        // panel shows one row per action instead of one row per URL.
-        $query = DashboardTests::with('dashboardTestsDetails')->latest();
+        // Rechecks reuse one dashboard_tests row, so admin history must come from
+        // each start event (otherwise only the original prep date is visible).
+        $query = UserActionEvent::query()
+            ->where('action', 'dashboard_test_start')
+            ->where('status', 'success')
+            ->latest();
+
         if ($date) {
             $query->whereDate('created_at', $date);
         }
 
-        return $query->limit(200)->get()->map(function (DashboardTests $run) {
-            $details = $run->dashboardTestsDetails;
-            $urlCount = $details->count();
+        $events = $query->limit(200)->get();
+        $latestEventIdByProject = $events
+            ->groupBy(fn (UserActionEvent $event) => (int) ($event->subject_id ?? 0))
+            ->map(fn (Collection $group) => optional($group->sortByDesc('id')->first())->id);
 
-            $failedCount = $details->filter(function (DashboardTestsDetails $detail) {
-                return $detail->status === 'failed' || (bool) $detail->error_message;
+        $dashboardByProject = DashboardTests::query()
+            ->whereIn('project_id', $events->pluck('subject_id')->filter()->unique()->all())
+            ->with('dashboardTestsDetails')
+            ->latest()
+            ->get()
+            ->groupBy('project_id')
+            ->map->first();
+
+        return $events->map(function (UserActionEvent $event) use ($latestEventIdByProject, $dashboardByProject) {
+            $context = is_array($event->context) ? $event->context : [];
+            $testType = (string) ($context['test_type'] ?? 'default');
+            $recheckLabel = $context['recheck_label'] ?? null;
+            $urlCount = (int) ($context['url_count'] ?? 0);
+            $projectId = (int) ($event->subject_id ?? 0);
+            $dashboard = $dashboardByProject->get($projectId);
+            $isLatestForProject = $latestEventIdByProject->get($projectId) === $event->id;
+
+            [$type, $source] = $this->resolveDashboardEventLabels($testType, is_string($recheckLabel) ? $recheckLabel : null);
+            [$result, $errorUrl, $errorPreview] = $this->resolveDashboardEventResult(
+                $dashboard,
+                $isLatestForProject,
+                $urlCount
+            );
+
+            return [
+                'date' => $event->created_at,
+                'url' => $this->formatDashboardEventUrl($dashboard, $projectId, $urlCount),
+                'type' => $type,
+                'source' => $source,
+                'result' => $result,
+                'cached_url' => null,
+                'error_url' => $errorUrl,
+                'error_preview' => $errorPreview,
+            ];
+        });
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    protected function resolveDashboardEventLabels(string $testType, ?string $recheckLabel): array
+    {
+        if ($testType === 'single_recheck') {
+            return [
+                'Account / ' . $this->resolveDashboardWidgetName($recheckLabel),
+                self::SOURCE_DASHBOARD_WIDGET,
+            ];
+        }
+
+        if ($testType === 'recheck') {
+            return ['Full Website Re-check', self::SOURCE_DASHBOARD_RECHECK];
+        }
+
+        return [self::TYPE_NEW_ACCOUNT, self::SOURCE_DASHBOARD_PREPARATION];
+    }
+
+    /**
+     * @return array{0: string, 1: ?string, 2: ?string}
+     */
+    protected function resolveDashboardEventResult(?DashboardTests $dashboard, bool $isLatestForProject, int $urlCount): array
+    {
+        if (! $isLatestForProject || ! $dashboard) {
+            return ['success', null, null];
+        }
+
+        $details = $dashboard->dashboardTestsDetails;
+        $failedCount = $details->filter(function (DashboardTestsDetails $detail) {
+            return $detail->status === 'failed' || (bool) $detail->error_message;
+        })->count();
+
+        $pendingCount = $details->filter(function (DashboardTestsDetails $detail) {
+            return ! in_array($detail->status, ['completed', 'failed'], true);
+        })->count();
+
+        if ($failedCount > 0) {
+            return [
+                'failed',
+                route('admin.tests.error', ['source' => 'dashboard-run', 'id' => $dashboard->id]),
+                $failedCount . ' of ' . max($urlCount, $details->count(), 1) . ' URL checks failed in this run.',
+            ];
+        }
+
+        if ($pendingCount > 0 || in_array($dashboard->status, ['pending', 'in_progress', 'recheck', 'recheck-single'], true)) {
+            return ['pending', null, null];
+        }
+
+        return ['success', null, null];
+    }
+
+    protected function formatDashboardEventUrl(?DashboardTests $dashboard, int $projectId, int $urlCount): string
+    {
+        if ($urlCount > 1) {
+            return $urlCount . ' URLs';
+        }
+
+        if ($dashboard) {
+            $runUrls = json_decode($dashboard->urls ?? '[]', true);
+            if (is_array($runUrls) && isset($runUrls[0]) && is_string($runUrls[0]) && $runUrls[0] !== '') {
+                return $runUrls[0];
+            }
+
+            $detailUrl = optional($dashboard->dashboardTestsDetails->first())->url;
+            if ($detailUrl) {
+                return $detailUrl;
+            }
+        }
+
+        $homepage = Projects::where('id', $projectId)->value('homepage');
+
+        return $homepage ?: '1 URL';
+    }
+
+    protected function resolveDashboardWidgetName(?string $recheckLabel): string
+    {
+        if (! $recheckLabel || $recheckLabel === 'na') {
+            return 'Widget';
+        }
+
+        $label = TestLabel::where('db_name', $recheckLabel)->value('display_name');
+        if ($label) {
+            return (string) $label;
+        }
+
+        return Str::title(str_replace(['_', '-'], ' ', $recheckLabel));
+    }
+
+    protected function lighthouseRows(?string $date): Collection
+    {
+        // One admin row per page-speed run (not per URL / strategy), matching
+        // how dashboard prep is shown as a single "N URLs" action.
+        $query = LighthouseTest::with('results')->latest();
+        if ($date) {
+            $query->whereDate('created_at', $date);
+        }
+
+        return $query->limit(200)->get()->map(function (LighthouseTest $run) {
+            $urls = LighthouseUrlParser::fromStoredJson($run->urls);
+            $urlCount = count($urls);
+            $results = $run->results;
+
+            $failedCount = $results->filter(function (LighthouseResult $result) {
+                return $result->status === 'failed' || (bool) $result->error_message;
             })->count();
 
-            $pendingCount = $details->filter(function (DashboardTestsDetails $detail) {
-                return ! in_array($detail->status, ['completed', 'failed'], true);
+            $pendingCount = $results->filter(function (LighthouseResult $result) {
+                return ! in_array($result->status, ['completed', 'failed'], true);
             })->count();
 
-            if ($failedCount > 0) {
+            if ($failedCount > 0 || $run->status === 'failed') {
                 $result = 'failed';
             } elseif ($pendingCount > 0 || $run->status !== 'completed') {
                 $result = 'pending';
@@ -170,42 +326,37 @@ class MonitoringController extends Controller
                 $result = 'success';
             }
 
-            $isRecheck = in_array($run->status, ['recheck', 'recheck-single'], true);
+            $isPreparation = $this->isDashboardPagespeedPreparation($run);
 
             return [
                 'date' => $run->created_at,
-                'url' => $urlCount === 1 ? (optional($details->first())->url ?: 'Not captured') : ($urlCount . ' URLs'),
-                'type' => $isRecheck ? 'Full Website Re-check' : 'Dashboard Test',
-                'source' => $isRecheck ? self::SOURCE_DASHBOARD_RECHECK : self::SOURCE_DASHBOARD,
+                'url' => $urlCount === 1 ? ($urls[0] ?? 'Not captured') : ($urlCount . ' URLs'),
+                'type' => $isPreparation ? self::TYPE_NEW_ACCOUNT : 'Google PageSpeed Lighthouse',
+                'source' => $isPreparation
+                    ? self::SOURCE_DASHBOARD_PAGESPEED_PREPARATION
+                    : self::SOURCE_GOOGLE_LIGHTHOUSE,
                 'result' => $result,
                 'cached_url' => null,
-                'error_url' => $failedCount > 0 ? route('admin.tests.error', ['source' => 'dashboard-run', 'id' => $run->id]) : null,
-                'error_preview' => $failedCount > 0 ? ($failedCount . ' of ' . $urlCount . ' URL checks failed in this run.') : null,
+                'error_url' => $failedCount > 0
+                    ? route('admin.tests.error', ['source' => 'lighthouse-run', 'id' => $run->id])
+                    : null,
+                'error_preview' => $failedCount > 0
+                    ? ($failedCount . ' of ' . max($results->count(), 1) . ' page-speed checks failed in this run.')
+                    : null,
             ];
         });
     }
 
-    protected function lighthouseRows(?string $date): Collection
+    protected function isDashboardPagespeedPreparation(LighthouseTest $run): bool
     {
-        $query = LighthouseResult::with('test')->latest();
-        if ($date) {
-            $query->whereDate('created_at', $date);
+        if (! $run->project_id) {
+            return false;
         }
 
-        return $query->limit(300)->get()->map(function (LighthouseResult $result) {
-            $failed = $result->status === 'failed' || (bool) $result->error_message;
-
-            return [
-                'date' => $result->created_at,
-                'url' => $result->url,
-                'type' => 'Google PageSpeed Lighthouse',
-                'source' => self::SOURCE_GOOGLE_LIGHTHOUSE,
-                'result' => $failed ? 'failed' : ($result->status === 'completed' ? 'success' : 'pending'),
-                'cached_url' => null,
-                'error_url' => $failed ? route('admin.tests.error', ['source' => 'lighthouse-result', 'id' => $result->id]) : null,
-                'error_preview' => $result->error_message,
-            ];
-        });
+        // First page-speed run for a project is the new-account dashboard prep.
+        return ! LighthouseTest::where('project_id', $run->project_id)
+            ->where('id', '<', $run->id)
+            ->exists();
     }
 
     protected function resolveTestResultSource(TestResults $test): string
@@ -299,6 +450,33 @@ class MonitoringController extends Controller
                 'error_message' => $record->error_message,
                 'data' => $record->data,
             ], $record->created_at) : null;
+        }
+
+        if ($source === 'lighthouse-run') {
+            $run = LighthouseTest::with('results')->find($id);
+            if (! $run) {
+                return null;
+            }
+
+            $failed = $run->results
+                ->filter(function (LighthouseResult $result) {
+                    return $result->status === 'failed' || (bool) $result->error_message;
+                })
+                ->map(function (LighthouseResult $result) {
+                    return [
+                        'url' => $result->url,
+                        'strategy' => $result->strategy,
+                        'status' => $result->status,
+                        'error_message' => $result->error_message,
+                    ];
+                })->values()->all();
+
+            $urls = LighthouseUrlParser::fromStoredJson($run->urls);
+
+            return $this->payload('Page Speed Run Errors', count($urls) . ' URLs', [
+                'run_status' => $run->status,
+                'failed_checks' => $failed,
+            ], $run->created_at);
         }
 
         return null;

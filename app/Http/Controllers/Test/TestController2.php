@@ -157,7 +157,9 @@ class TestController2 extends Controller
             $dashboardTest = DashboardTests::where("project_id", $project_id)->latest()->first();
             if ($dashboardTest) {
                 $dashboardTest->update([
-                    'status' => 'recheck',
+                    'status' => 'recheck-single',
+                    'run_kind' => 'widget_recheck',
+                    'recheck_label' => ($recheck_label !== null && $recheck_label !== 'na') ? (string) $recheck_label : null,
                     'urls' => json_encode($targetUrls),
                 ]);
                 DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
@@ -170,7 +172,9 @@ class TestController2 extends Controller
                     'user_id' => Auth::id(),
                     'project_id' => $project_id,
                     'urls' => json_encode($targetUrls),
-                    'status' => 'in_progress'
+                    'status' => 'recheck-single',
+                    'run_kind' => 'widget_recheck',
+                    'recheck_label' => ($recheck_label !== null && $recheck_label !== 'na') ? (string) $recheck_label : null,
                 ]);
             }
         } else if($type === "recheck"){
@@ -178,6 +182,8 @@ class TestController2 extends Controller
             if ($dashboardTest) {
                 $dashboardTest->update([
                     'status' => 'recheck',
+                    'run_kind' => 'full_recheck',
+                    'recheck_label' => null,
                     'urls' => json_encode($targetUrls),
                 ]);
                 DashboardTestsDetails::where("dashboard_test_id", $dashboardTest->id)
@@ -189,7 +195,9 @@ class TestController2 extends Controller
                     'user_id' => Auth::id(),
                     'project_id' => $project_id,
                     'urls' => json_encode($targetUrls),
-                    'status' => 'in_progress'
+                    'status' => 'recheck',
+                    'run_kind' => 'full_recheck',
+                    'recheck_label' => null,
                 ]);
             }
         }else{
@@ -198,7 +206,9 @@ class TestController2 extends Controller
                 'user_id' => Auth::id(),
                 'project_id' => $project_id,
                 'urls' => json_encode($targetUrls),
-                'status' => 'in_progress'
+                'status' => 'in_progress',
+                'run_kind' => 'preparation',
+                'recheck_label' => null,
             ]);
         }
     
@@ -237,6 +247,9 @@ class TestController2 extends Controller
             'subject_id' => $project_id,
             'test_id' => $testId,
             'test_type' => $type ?: 'default',
+            'recheck_label' => ($type === 'single_recheck' && $recheck_label !== null && $recheck_label !== 'na')
+                ? (string) $recheck_label
+                : null,
             'url_count' => count($targetUrls),
         ], $request);
 
