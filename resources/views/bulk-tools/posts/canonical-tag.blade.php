@@ -43,6 +43,9 @@
   </code>
 </div>
 
+<p>Here is how the canonical tag looks in the HTML source code of a webpage:</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/canonical-tag-source-code.png') }}" alt="Canonical Tag Source Code" class="img-fluid my-4">
+
 <p>The goal is to keep your website’s indexing signals focused on one clean, consistent URL especially when parameters,filters, or alternate paths can create multiple versions of the same page.</p>
 
 <h3>Why Canonical URLs Matter for SEO</h3>
@@ -65,10 +68,10 @@
 <h5>Tracking parameters and campaign URLs</h5>
 <p>Let's say you have a page on your website whose URL is:</p>
 
-<div class="code-block-grey">https://example.com/services/plumbing-hvac</div>
+<div class="code-block">https://example.com/services/plumbing-hvac</div>
 
 <p>Your digital marketing team member may add UTM sources to this URL to be able to measure the traffic that visits the website through the weekly newsletter. After adding the UTM sources, the URL could look something like this:</p>
-<div class="code-block-grey">https://example.com/services/plumbing-hvac?utm_source=email&utm_medium=august-newsletter-weekly</div>
+<div class="code-block">https://example.com/services/plumbing-hvac?utm_source=email&utm_medium=august-newsletter-weekly</div>
 
 <p>Notice that both the URLs will essentially load the same page, and have the same content. And it is possible that search engines may choose to index the URL with the UTM parameters and not the "cleaner" one without the UTM parameters.</p>
 
@@ -82,10 +85,8 @@
   </code>
 </div>
 
-<p>This instruction tells Google that this url - </p>
-<p><i>https://example.com/services/plumbing-hvac</i><br><b>is the original version and to be indexed</b></p>
-<p>while this URL - </p>
-<p><i>https://example.com/services/plumbing-hvac?utm_source=email&utm_medium=august-newsletter-weekly</i><br><b> is a copy and should be ignored.</b></p>
+<p>This instruction tells Google that this url - <i>https://example.com/services/plumbing-hvac</i><b> is the original version and to be indexed</b> while this URL - 
+<i>https://example.com/services/plumbing-hvac?utm_source=email&utm_medium=august-newsletter-weekly</i><b> is a copy and should be ignored.</b></p>
 
 <h5>URLs with Ecommerce filters, faceted navigation, and sort URLs</h5>
 <p>The above logic also applies to e-commerce sites with category pages, URLs with specific filters such as sorting and urls which supports faceted navigation. Such website structures can produce thousands of near duplicates because of presence of specific filters and query parameters in the URL. Common examples include URLs of this nature - <code>?color=black</code>, <code>?size=9</code>, <code>?brand=nike</code>, <code>?sort=price_asc</code>.

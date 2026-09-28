@@ -5571,6 +5571,7 @@ h6 {
   display: none;
 }
 
+
 .analysis-lealthImg img {
   max-width: 245px;
   object-fit: contain;
@@ -8614,7 +8615,7 @@ h6 {
 }
 .single-post-content h2 {
   font-weight: 500;
-  font-size: 32px;
+  font-size: 38px;
   line-height: 42px;
   color: #373737;
   margin-bottom: 0px;
@@ -9929,11 +9930,10 @@ table.bulk-table td:last-child {
   margin-top: 80px;
 }
 .main_tools_meta_description .single-post-content p {
-  font-size: 16px;
+  font-size: 18px;
 }
 .main_tools_meta_description .tools_des_fastheading {
   margin-top: -40px;
-  text-align: center;
   margin-bottom: 50px;
 }
 .tools_video_popup {
@@ -13810,10 +13810,7 @@ nav .nav-tabs{
 }
 
 /* ANALYSIS HEADINGS END*/
-.bulk-tool-test.single-post-content-main {
-  margin-left: 10%;
-  margin-right: 10%;
-}
+
 
 .bulk-tool-test .single-post-content > h3 {
   font-size: 24px;
@@ -17523,63 +17520,29 @@ background-color:#f5f8ff !important;
 
 /* CSS added by Amit for Bulk Tool Pages - Design Improvements - 29 Nov, 2025 */
 
-  /* Regular */
-  @font-face {
-    font-family: 'Opensauceone';
-    src: url('../assets/fonts/Opensauceone/OpenSauceOne-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-  }
-
-  /* Bold */
-  @font-face {
-    font-family: 'Opensauceone';
-    src: url('../assets/fonts/Opensauceone/OpenSauceOne-Bold.ttf') format('truetype');
-    font-weight: 800; /* or 800 if that file is extra-bold */
-    font-style: normal;
-  }
-
-  .single-post-content {
-    font-family: 'Opensauceone', sans-serif;
-    color: #0b081b;
-    line-height:1.77778;
-    -webkit-font-smoothing: antialiased;
-    font-weight:400;
-  }
-
-
-.single-post-content h2{
-    font-size: 44px !important;
-    text-align:left !important;
-    font-family: 'Opensauceone', sans-serif;
-    font-weight: 800;
-}
-  .single-post-content h3 {
-    font-size: 32px !important;
-    margin-top: 25px;
-    margin-bottom: 30px;
-    font-family: 'Opensauceone', sans-serif;
-    font-size: 32px;
-    font-weight: 800; 
-    line-height: 1.22222;
-  }
+ 
   
   
-.single-post-content ul{padding-left: 1.75rem;margin-top:15px;margin-bottom:15px !important;}
-.single-post-content p{margin-bottom:0px;color:#0b081b;margin-bottom:15px;}
+  
+.single-post-content ul{padding-left: 1.75rem;margin-top:15px;margin-bottom:15px !important;font-size: 18px;line-height: 35px;}
+.single-post-content p{margin-bottom:0px;margin-bottom:15px;}
 .getting-recover-main{max-width:1400px;}
 .single-post-content .list ul li {
     list-style: none;
     display: flex;
     align-items: baseline;
     display:block;
-    font-size: 16px;
-    line-height: 46px;
+    font-size: 18px;
     position: relative;
     padding-left: 25px;
 }
 .single-post-content .list h3{font-weight:700;margin-top:0px;margin-bottom:0px;}
 .single-post-content a{color:#3a7cec;}
+
+.single-post-content strong,
+.single-post-content b {
+    color: rgb(45, 45, 45);
+}
 
 /* Start summary Block */
 .summary-block {
@@ -17797,6 +17760,15 @@ background-color:#f5f8ff !important;
   display: inline-block;
   vertical-align: middle;
   margin-left: 5px;
+}
+
+/* added to ensure in small screen there is enough left and right margin, but the same is not required in large screens */
+
+@media (max-width: 1500px) {
+  .single-post-content {
+      margin-left: 20% !important;
+      margin-right: 20% !important;
+  }
 }
 
 /* CSS added by Amit Ends */

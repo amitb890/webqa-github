@@ -18,7 +18,7 @@
   <span class="summary-heading">Quick Summary</span>
   <p>An X Frame Options Header Test checks whether your website sends the "X-Frame-Options" response header to control if your pages can be embedded inside an iframe.</p>
   <ol>
-    <li>X-Frame-Options helps protects your website from clickjacking attacks by restricting framing.</li>
+    <li>X Frame Options helps protects your website from clickjacking attacks by restricting framing.</li>
     <li>The two primary values are "DENY" (block all framing) and "SAMEORIGIN" (allow only same-origin framing).</li>
     <li>The "ALLOW-FROM" directive is obsolete and is generally not recommended to be used.</li>
     <li>Modern best practice is to use "Content-Security-Policy: frame-ancestors" for more flexible control, often alongside X-Frame-Options for ensuring maximum compatibility.</li>
@@ -27,30 +27,32 @@
 </div>
 
 
-<h3>What Is the X-Frame-Options Header and How Does It Work?</h3>
-<p>The X-Frame-Options header is a browser security mechanism that controls whether a webpage is allowed to be displayed inside a frame or iframe.</p>
+<h3>What Is the X Frame Options Header and How Does It Work?</h3>
+<p>The X Frame Options header is a browser security mechanism that controls whether a webpage is allowed to be displayed inside a frame or iframe.</p>
 
 <p>Its primary purpose is to protect websites from clickjacking attacks, where a malicious site embeds your webpage in a hidden or deceptive iframe and tricks users into clicking buttons, links, or controls they didn’t intend to interact with.</p>
 
-<p>When a browser attempts to load a page inside an iframe, it checks the "X-Frame-Options response header" sent by the embedded page. Based on the directive set in that header, the browser decides whether to allow or block the page from being displayed in the iframe.</p>
+<p>When a browser attempts to load a page inside an iframe, it checks the "X Frame Options response header" sent by the embedded page. Based on the directive set in that header, the browser decides whether to allow or block the page from being displayed in the iframe.</p>
 
 <p>If framing is not allowed, the browser prevents the page from rendering inside the iframe entirely. If framing is restricted to the same origin, the browser allows it only when the parent page comes from the same protocol, domain, and port.</p>
 
-<p>Because this protection is enforced directly by the browser, it remains effective even if an attacker controls the page that is attempting to embed your site. This makes X-Frame-Options a reliable defense against UI redress and framing based attacks.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/x-frame-options.png') }}" alt="X Frame Options" width="600" height="400" class="img-fluid my-4">
+
+<p>Because this protection is enforced directly by the browser, it remains effective even if an attacker controls the page that is attempting to embed your site. This makes X Frame Options a reliable defense against UI redress and framing based attacks.</p>
 
 
-<h3>X-Frame-Options Directives</h3>
-<p>The X-Frame-Options header supports a few directives that determine whether your pages can be embedded inside an iframe. Choosing the right value depends on whether you want to block all framing, allow framing only on your own website, or allow specific external domains to embed your website as an iFrame.</p>
+<h3>X Frame Options Header Directives</h3>
+<p>The X Frame Options header supports a few directives that determine whether your pages can be embedded inside an iframe. Choosing the right value depends on whether you want to block all framing, allow framing only on your own website, or allow specific external domains to embed your website as an iFrame.</p>
 
-<h5>DENY</h5>
+<h5>1. DENY</h5>
 <p>The DENY directive blocks the webpage from being framed by any website, including your own website.</p>
 <p><b>Best for:</b> Login pages, checkout pages, admin panels, account settings, and any page where a user can take sensitive actions.</p>
 
-<h5>SAMEORIGIN</h5>
+<h5>2. SAMEORIGIN</h5>
 <p>SAMEORIGIN allows the page to be framed only by pages from the same origin (same protocol, domain, and port).</p>
 <p><b>Best for:</b> Sites that legitimately embed their own webpages within their own domain, such as internal dashboards or embedded sections of the same website on other pages. If you want to retain the absolute control of embedded your own webpages within your website and do not want to allow any other website to be able to embed your webpage, use this directive.</p>
 
-<h5>ALLOW-FROM</h5>
+<h5>3. ALLOW-FROM</h5>
 <p>ALLOW-FROM attempts to allow framing only from a specific URL, but browser support is limited and it’s considered obsolete in modern web development implementations.</p>
 <p>If you need to allow framing from specific trusted partner domains, the recommended approach is to use "Content-Security-Policy: frame-ancestors", which provides reliable allow listing across modern browsers.</p>
 
@@ -71,7 +73,7 @@
 
 <!-- Start FAQ -->
 <div class="getting-recover-main recover-faq-area">
-  <h3>FAQs on X-Frame-Options Header Test</h3>
+  <h3>FAQs on X Frame Options Header Test</h3>
   <div class="accordion" id="accordionPanelsStayOpenExample">
     @foreach([
       [

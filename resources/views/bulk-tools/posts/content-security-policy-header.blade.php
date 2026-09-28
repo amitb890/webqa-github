@@ -34,26 +34,25 @@
   <li>Which domains can embed your website in frames</li>
 </ul>
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/csp-header.png') }}" alt="CSP Header" width="600" height="400" class="img-fluid my-4">
+
 <p>CSP is most commonly used to control JavaScript execution. Because many cyber attacks rely on injecting or running malicious scripts, CSP is widely recommended as a strong mitigation against "cross site scripting (XSS) attacks".</p>
 
 
-<h3>Why CSP Matters</h3>
+<h3>Why a Content Security Policy Headers Matters For Your Website</h3>
 <p>Content Security Policy (CSP) is one of the most practical security controls you can add to a website. It works at the browser level and helps reduce the impact of common web attacks, especially those involving malicious scripts.</p>
 
-<h5>Strong protection against XSS</h5>
-<p>Cross site scripting (XSS) attacks often work by injecting malicious JavaScript into a webpage. CSP helps reduce this risk by limiting which scripts are allowed to load and which types of script execution are permitted.</p>
-
-<h5>Limits damage from third party scripts</h5>
-<p>Many websites use analytics, tag managers, ads, chat widgets, and other third party tools for different purposes. A Content Security Policy Header helps ensure those resources load only from trusted sources, reducing the risk of unexpected script injection.</p>
-
-<h5>Clickjacking defense with frame ancestors</h5>
-<p>CSP can also protect against "framing based" attacks by using the frame-ancestors directive, which controls which websites are allowed to embed your pages in an iframe.</p>
-
-<h5>Safer rollout with Report Only mode</h5>
-<p>CSP can break websites if it blocks required scripts, styles, or API calls that are essential for the loading and functioning of a website. A safer approach is to start with "Report-Only" mode to monitor violations, fix issues, and then enforce the policy once you’re confident that nothing will break once a CSP header is enforced.</p>
+<ol>
+<li>
+  <b>Strong protection against XSS</b>:Cross site scripting (XSS) attacks often work by injecting malicious JavaScript into a webpage. CSP helps reduce this risk by limiting which scripts are allowed to load and which types of script execution are permitted. 
+</li>
+<li><b>Limits damage from third party scripts</b>: Many websites use analytics, tag managers, ads, chat widgets, and other third party tools for different purposes. A Content Security Policy Header helps ensure those resources load only from trusted sources, reducing the risk of unexpected script injection.</li>
+<li><b>Clickjacking defense with frame ancestors</b>:CSP can also protect against "framing based" attacks by using the frame-ancestors directive, which controls which websites are allowed to embed your pages in an iframe.</li>
+<li><b>Safer rollout with Report Only mode</b>:CSP can break websites if it blocks required scripts, styles, or API calls that are essential for the loading and functioning of a website. A safer approach is to start with "Report-Only" mode to monitor violations, fix issues, and then enforce the policy once you’re confident that nothing will break once a CSP header is enforced.</li>
+</ol>
 
 
-<h3>Common CSP Directives</h3>
+<h3>Common Content Security Policy Directives</h3>
 <p>A Content Security Policy header is made up of directives separated by semicolons. Each directive controls what the browser is allowed to load or execute for a specific type of resource.</p>
 
 <p>Here are the most commonly used CSP directives:</p>

@@ -27,7 +27,7 @@
   </ol>
 </div>
 
-<h3>What Is CSS Caching?</h3>
+<h3>What is CSS Caching?</h3>
 <p>CSS caching is the process of storing CSS (cascading style sheets) files in a user’s browser so they don’t need to be downloaded again on every page load.</p>
 <p>
   When a visitor loads your website for the first time, the browser downloads your CSS files and saves them locally based on caching rules sent by the server. On subsequent visits, the browser reuses these cached files instead of requesting them again, which makes your website pages load faster.
@@ -37,7 +37,7 @@
 </p>
 
 <h3>How CSS Caching Works</h3>
-<p>When a browser requests a CSS file, the server responds with the file along with caching instructions that tell the browser how long it can store and reuse that file.
+<p>When a browser requests a CSS file, the server responds with the file along with caching instructions that tells the browser how long it can store and reuse that file.
 </p>
 <p>
   These instructions are sent through HTTP response headers. Based on these headers, the browser decides whether to load the CSS from its local cache or download it again from the server.
@@ -45,6 +45,8 @@
 <p>
   Here’s how it typically works in practice:
 </p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/how-css-caching-works.png') }}" alt="How CSS Caching actually works" width="600" height="400" class="img-fluid my-4">
 <ol>
   <li>
     <b>First visit:</b> The browser downloads the CSS file and stores it locally according to the cache rules.

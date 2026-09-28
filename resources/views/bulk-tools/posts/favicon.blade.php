@@ -27,6 +27,9 @@
 
 <p>A clear, recognizable favicon helps users quickly identify your website, especially when multiple browser tabs are open. Favicons play a big role in branding, usability, and professionalism. </p><p>Favicons are defined using HTML link tags inside the &lt;head&gt; section of a webpage. Since different browsers and devices use different icon standards, websites often provide multiple favicon files, formats and sizes for full compatibility.</p>
 
+<p>Here is how a Favicon appears in the top left corner of a browser tab</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon.png') }}" class="img-fluid my-4" alt="favicon in browser tab">
+
 <p>Here’s a simple example of how a favicon is added to a webpage:</p>
 
 <div class="code-block">
@@ -67,21 +70,28 @@
 <h3>Where do Favicons appear?</h3>
 <p>Favicons have become an integral part of web navigation and branding, often seen in places you might not initially notice but where they make a difference. Here are some prominent areas where favicons frequently appear:</p>
 
-<b>Browser Tabs:</b> One of the most common places is that small icon next to your webpage title, giving a visual cue of the website.
-<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon_8.png') }}" alt="Overcrowding example" class="img-fluid my-4">
+<h4>Browser Tabs</h4>
+<p>One of the most common places is that small icon next to your webpage title, giving a visual cue of the website.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/multiple-favicons-browser tab.png') }}" class="img-fluid my-4" alt="Multiple favicons browser tab">
 
-<b>Browser History:</b> As users browse, the favicon alongside the website title aids in easily and quickly identifying previously visited sites.
-<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon_image_7.png') }}" alt="Overcrowding example" class="img-fluid my-4">
+<h4>Browser History</h4>
+<p>As users browse, the favicon alongside the website title aids in easily and quickly identifying previously visited sites.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon-browser-history.png') }}" class="img-fluid my-4" alt="Favicons in Browser history">
 
-<b>Search Bar:</b> When typing a URL or searching, the favicon can appear to the left of the website name or URL, helping in quicker recognition.
-<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon_image_4.png') }}" alt="Overcrowding example" class="img-fluid my-4">
+<h4>Browser Search Bar</b>
+<p>When typing a URL or searching, the favicon can appear to the left of the website name or URL, helping in quicker recognition.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon-browser-search-bar.png') }}" alt="Favicon in browser search bar" class="img-fluid my-4">
 
-<b>Toolbar Apps:</b> Some browser toolbars have shortcuts or apps; a favicon can represent its associated website.
-<b>Browser History Dropdown:</b> When you click on a browser's back or forward button, the dropdown list will display the favicon next to each website.
-<b>Search Bar Recommendations:</b> As you type, browsers may suggest websites based on history, with the favicon assisting in rapid identification.
-<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon_image_2.png') }}" alt="Overcrowding example" class="img-fluid my-4">
-<b>Bookmarks Dropdown Menu:</b> For users who have bookmarked pages, the favicon next to the title helps navigate to the desired webpage swiftly.
-<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon_image_1.png') }}" alt="Overcrowding example" class="img-fluid my-4">
+<h4>Toolbar Apps:</h4>
+<p>Some browser toolbars have shortcuts or apps, a favicon can represent its associated website.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/favicon-browser-toolbar.png') }}" alt="Favicon in browser toolbar" class="img-fluid my-4">
+<h4>Browser History Dropdown:</h4>
+<p>When you click on a browser's back or forward button, the dropdown list will display the favicon next to each website.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/browser-history-dropdown.png') }}" alt="Favicon in browser history dropdown" class="img-fluid my-4">
+
+<h4>Bookmarks Dropdown Menu</h4>
+<p>For users who have bookmarked pages, the favicon next to the title helps navigate to the desired webpage swiftly.</p>
+<img src="{{ asset('new-assets/assets/images/bulk-tool/browser-bookmarks-favicon.png') }}" alt="Browser bookmarks favicon" class="img-fluid my-4">
 
 <h3>Understanding Favicon Dimensions</h3>
 <p>Favicons appear in many different places - browser tabs, bookmarks, mobile home screens, and app interfaces. Because each platform has its own display requirements, there is no single “perfect” favicon size.</p>

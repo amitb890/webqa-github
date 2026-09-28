@@ -38,12 +38,12 @@
 
       <h3>Examples of How Meta Titles Look</h3>
       <p>Top browser tab of the page:</p>
-      <img src="{{ asset('new-assets/assets/images/bulk-tool/meta-title-browser-tab.png') }}" alt="Meta Title in Browser Tab" class="img-fluid my-4">
+      <img src="{{ asset('new-assets/assets/images/bulk-tool/meta-title-browser-tab.png') }}" alt="Meta Title in Browser Tab" width="600" height="400" class="img-fluid my-4">
       <p>On the page’s HTML markup:</p>
-      <img src="{{ asset('new-assets/assets/images/bulk-tool/meta-title-code-html.png') }}" alt="Meta Title HTML Markup" class="img-fluid my-4">
+      <img src="{{ asset('new-assets/assets/images/bulk-tool/meta-title-code-html.png') }}" alt="Meta Title HTML Markup" width="600" height="400" class="img-fluid my-4">
 
       <p>On the SERPs page:</p>
-      <img src="{{ asset('new-assets/assets/images/bulk-tool/meta-title-serp.png') }}" alt="Meta Title in SERPs" class="img-fluid my-4">
+      <img src="{{ asset('new-assets/assets/images/bulk-tool/meta-title-serp.png') }}" alt="Meta Title in SERPs" width="600" height="400" class="img-fluid my-4">
 
       <h3>Why Does a Meta Title Matter?</h3>
       <p>The meta title content is often the very first interaction a user has with your brand. </p>

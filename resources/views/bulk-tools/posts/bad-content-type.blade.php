@@ -15,10 +15,10 @@
 
 <div class="list yellow-content summary-block">
   <span class="summary-heading">Quick Summary</span>
-  <p>A Bad Content Type Test checks whether your pages and files are being served with the correct "Content-Type (MIME type)"" header.</p>
+  <p>A Bad Content Type Test checks whether your pages and files are being served with the correct "Content Type (MIME type)"" header.</p>
   <ol>
-    <li>"Content-Type" tells browsers and bots what a URL actually is (HTML, CSS, JS, image, PDF, JSON, etc).</li>
-    <li>If the "Content-Type" is wrong, browsers may download files instead of rendering them, or render the files incorrectly.</li>
+    <li>"Content Type" tells browsers and bots what a URL actually is (HTML, CSS, JS, image, PDF, JSON, etc).</li>
+    <li>If the "Content Type" is wrong, browsers may download files instead of rendering them, or render the files incorrectly.</li>
     <li>Search engines can struggle to understand and index pages served with incorrect content types or MIME types.</li>
     <li>Incorrect Content-Type can also create security risks, especially when combined with missing protections like "X-Content-Type-Options: nosniff".</li>
     <li>Fixing content-type issues improves user experience, crawlability, and website security.</li>
@@ -26,12 +26,12 @@
 </div>
 
 
-<h3>What Is a Content-Type (MIME Type)?</h3>
+<h3>What Is a Content Type (MIME Type)?</h3>
 <p>"Content-Type" is an HTTP response header that tells a browser and search engines what kind of content a URL is returning, so it knows how to handle it. For example - render the file as a webpage, apply it as a stylesheet, execute it as a script, display it as an image, or download it as a file in the user's computer.</p>
 
 <p>This header is also commonly referred to as a "MIME type":. MIME stands for "Multipurpose Internet Mail Extensions". While MIME was originally created for email attachments, the same standardized format is now used across the web to describe content types in HTTP responses.</p>
 
-<p>Here are some common Content-Type (MIME type) examples:</p>
+<p>Here are some common Content Type (MIME type) examples:</p>
 <ol>
   <li><b>text/html</b> - This signifies a HTML web page.</li>
   <li><b>text/css</b> → This signifies that the file is a CSS stylesheet and hence to be used for styling the elements of the webpage.</li>
@@ -41,7 +41,10 @@
   <li><b>application/json</b> → This signifies that the file is a JSON API response, and should be used by other files in the webpage which may need that response.</li>
 </ol>
 
-<p>If the "Content-Type" is missing or incorrect, browsers and bots may interpret the response incorrectly. This could lead to broken layouts, blocked scripts, unexpected downloads, or indexing issues.</p>
+
+<img src="{{ asset('new-assets/assets/images/bulk-tool/bad-content-type.png') }}" alt="Content Type" width="600" height="400" class="img-fluid my-4">
+
+<p>If the "Content Type" is missing or incorrect, browsers and bots may interpret the response incorrectly. This could lead to broken layouts, blocked scripts, unexpected downloads, or indexing issues.</p>
 
 <h3>What Is a “Bad Content Type”?</h3>
 <p>A “bad content type” usually means the Content-Type (MIME type) header sent by the server does not match the actual content being returned. When this happens, browsers and search engines may handle the URL incorrectly - causing broken pages, blocked resources, or indexing issues.</p>
@@ -49,31 +52,31 @@
 <p>Here are the most common types of bad Content Type issues with a suitable example included for better understanding:</p>
 <ul>
   <li>
-    <b>Content-Type doesn’t match the real content</b><br>
-    <br><b>Example</b>: Your webpage returns actual HTML, but the server sends "Content-Type: text/plain". 
+    <b>Content Type doesn’t match the real content</b><br>
+    <br><b>Example</b>: Your webpage returns actual HTML, but the server sends "Content Type: text/plain". 
     <br><b>Result</b>: The browser may display raw HTML code instead of rendering the page.
   </li><br>
   <li>
-    <b>Invalid or non-standard MIME types:</b><br>
-    <br><b>Example</b>: The server sends something malformed like "Content-Type: text/htm" or "Content-Type: application/x-javascript".
+    <b>Invalid or non standard MIME types:</b><br>
+    <br><b>Example</b>: The server sends something malformed like "Content Type: text/htm" or "Content-Type: application/x-javascript".
     <br>Result</b>: Some browsers, tools, or crawlers may not interpret this consistently.
   </li><br>
   <li>
-    <b>Wrong Content-Type for critical resources</b>&nbsp;
-   <br><b>Example</b>: your stylesheet URL "/assets/styles.css" is served as "Content-Type: text/html". 
+    <b>Wrong Content Type for critical resources</b>&nbsp;
+   <br><b>Example</b>: your stylesheet URL "/assets/styles.css" is served as "Content Type: text/html". 
    <br><b>Result</b>: the browser treats it as HTML, so CSS won’t load and the site may appear unstyled or completely broken.
   </li><br>
   <li>
     <b>Mismatch between file extension and response headers</b>&nbsp;
-    <br><b>Example</b>: A specific JavaScript file such as "/app.js" returns "Content-Type: text/html" because the server is actually returning a 404 page, a login page, or a redirect response. 
+    <br><b>Example</b>: A specific JavaScript file such as "/app.js" returns "Content Type: text/html" because the server is actually returning a 404 page, a login page, or a redirect response. 
     <br><b>Result</b>: The script fails to load because the browser does not understand that it is JavaScript. So it never executes it and the website features breaks.
   </li>
 </ul>
 
 <p>In many cases, a “bad content type” is a symptom of a deeper issue like redirects, blocked files, caching problems, or a server returning an HTML error page instead of the intended resource or file.</p>
 
-<h3>Common Causes of Bad Content-Type Issues</h3>
-<p>Bad Content-Type issues rarely happen in isolation.</p> 
+<h3>Common Causes of Bad Content Type Issues</h3>
+<p>Bad Content Type issues rarely happen in isolation.</p> 
 <p>In most cases, they are symptoms of deeper configuration or application level problems. Understanding the root cause of content type issues makes it much easier to fix content type issues on your website.</p>
 
 <ul>
@@ -113,7 +116,7 @@
 <h3>Good vs Bad Content-Type Examples</h3>
 <p>Content-Type issues are easiest to understand with real examples. A good Content-Type header correctly describes the content being returned, so browsers can render it properly and search engines can interpret it reliably. A bad Content-Type header often causes broken pages, missing styles/scripts, unexpected downloads, or indexing problems.</p>
 
-<p><b>Examples of Good Content-Type headers</b></p>
+<p><b>Examples of Good Content Type headers</b></p>
 <table class="good-bad-example-table">
   <tr>
     <th>URL type and Content type</th>
@@ -145,7 +148,7 @@
   </tr>
 </table>
 
-<p><b>Examples of Bad Content-Type headers</b></p>
+<p><b>Examples of Bad Content Type headers</b></p>
 <table class="good-bad-example-table">
   <tr>
     <th>URL type and Content type</th>
@@ -180,7 +183,7 @@
 <p>As a rule, if you see text/html being returned for CSS/JS/images/fonts, it often means the server is responding with an HTML page (error, redirect, or login) instead of the file you expected.</p>
 
 
-<h3>How to Fix Bad Content-Type Issues</h3>
+<h3>How to Fix Bad Content Type Issues</h3>
 <p>If this test flags a URL, it usually means either the server is sending the wrong Content-Type header, or  the URL is returning the wrong content altogether (like an HTML error page instead of a CSS/JS/image file). Use the steps below to diagnose and fix the issue.</p>
 
 <ol>
@@ -200,8 +203,6 @@
 
 <p>Once you apply the fix, re-run the test to confirm that each URL returns the correct Content-Type and the right response body.</p>
 
-
-<!-- Old content -->    
 
 
 

@@ -39,6 +39,8 @@
   </code>
 </div>
 
+<img src="{{ asset('new-assets/assets/images/bulk-tool/what-are-twitter-tags.png') }}" class="img-fluid my-4" alt="What are twitter tags">
+
 <p>When these tags are set correctly, your shared links look professional and visually appealing, helping you earn more attention in fast moving timelines.</p>
 
 <h3>Types of Twitter Cards</h3>
@@ -105,23 +107,47 @@
           <h3>FAQs</h3>
           <div class="accordion" id="accordionPanelsStayOpenExample">
               @foreach([
-                  [
-                      'q' => 'Do Twitter tags affect SEO?',
-                      'a' => 'No — Twitter tags do not impact search rankings, but they do influence social engagement metrics which indirectly support traffic and brand visibility.',
-                  ],
-                  [
-                      'q' => 'What size should Twitter card images be?',
-                      'a' => 'A recommended size is 1200 × 675 pixels (a 16:9 ratio) for large image cards.',
-                  ],
-                  [
-                      'q' => 'Why isn’t my Twitter card showing the right image?',
-                      'a' => 'Common reasons include caching issues, blocked images, or missing tags. Use the Twitter Card Validator to debug.',
-                  ],
-                  [
-                      'q' => 'Can Twitter use OG tags instead?',
-                      'a' => 'Yes. X.com or Twitter can fall back to Open Grapgh tags, but Twitter specific tags gives you more control over how the card displays.',
-                  ],
-              ] as $faq)
+[
+'q' => 'What are Twitter (X) Card tags?',
+'a' => 'Twitter Card tags are HTML <meta> elements placed inside the <head> section of a webpage. They tell X (formerly Twitter) which title, description, image, and card type should be displayed when someone shares your webpage on the platform.',
+],
+[
+'q' => 'Do Twitter tags affect SEO?',
+'a' => 'No. Twitter Card tags are not a direct Google ranking factor and do not influence search engine rankings. However, they improve how your content appears when shared on X, often leading to higher engagement, more clicks, and increased referral traffic.',
+],
+[
+'q' => 'What is the difference between Twitter Cards and Open Graph tags?',
+'a' => 'Open Graph tags were originally introduced by Facebook and are supported by many social platforms. Twitter Cards are Twitter-specific meta tags that provide additional control over how links appear on X. If Twitter Card tags are missing, X can often fall back to Open Graph tags.',
+],
+[
+'q' => 'What are the different types of Twitter Cards?',
+'a' => 'The most common card types are summary and summary_large_image. Summary Cards display a smaller thumbnail, while Summary Large Image Cards display a large landscape image that generally attracts more attention and clicks.',
+],
+[
+'q' => 'What Twitter meta tags are required?',
+'a' => 'At a minimum, most pages should include twitter:card, twitter:title, twitter:description, and twitter:image. You can also specify twitter:site, twitter:creator, and twitter:image:alt for additional context.',
+],
+[
+'q' => 'What size should Twitter Card images be?',
+'a' => 'For Summary Large Image Cards, Twitter recommends images that closely match a 16:9 aspect ratio. A resolution of approximately 1200 × 675 pixels provides excellent quality across desktop and mobile devices.',
+],
+[
+'q' => 'Why isn’t my Twitter Card showing the correct image?',
+'a' => 'Common reasons include cached previews, inaccessible image URLs, unsupported image formats, missing Twitter Card tags, or images that do not meet the recommended dimensions. Refreshing the cache using Twitter Card Validator or waiting for the cache to expire usually resolves the issue.',
+],
+[
+'q' => 'Can Twitter use Open Graph tags instead?',
+'a' => 'Yes. X (formerly Twitter) often falls back to Open Graph tags when Twitter-specific tags are not present. However, implementing dedicated Twitter Card tags gives you greater control over how your content is displayed on the platform.',
+],
+[
+'q' => 'Can I use different images for Twitter and Open Graph?',
+'a' => 'Yes. Many websites use separate images for twitter:image and og:image. This allows you to optimize visuals independently for different social media platforms if needed.',
+],
+[
+'q' => 'What happens if my page has no Twitter Card tags?',
+'a' => 'If Twitter-specific tags are missing, X may attempt to generate a preview using Open Graph tags or information extracted from the page. This can result in inconsistent titles, descriptions, or images, making the shared link less visually appealing and potentially reducing click-through rates.',
+],
+] as $faq)
               <div class="accordion-item">
                   <h2 class="accordion-header" id="heading-{{ \Illuminate\Support\Str::slug($faq['q']) }}">
                       <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
