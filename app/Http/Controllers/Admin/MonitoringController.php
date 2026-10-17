@@ -249,7 +249,7 @@ class MonitoringController extends Controller
                 ? (($only->url ?? '') !== '' ? $only->url : 'Not captured')
                 : ($count . ' URLs'),
             'urls' => $count > 1 ? $urls : [],
-            'type' => 'Webpage Analysis',
+            'type' => 'Bulk Tool',
             'source' => self::SOURCE_TOOLS . ' / ' . $run['name'],
             'result' => $failed->isNotEmpty() ? 'failed' : 'success',
             'cached_url' => null,
