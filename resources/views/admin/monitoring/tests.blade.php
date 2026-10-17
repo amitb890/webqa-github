@@ -58,7 +58,11 @@
                             <tr>
                                 <td>{{ optional($row['date'])->format('Y-m-d H:i') }}</td>
                                 <td>
-                                    @if($row['url'] && \Illuminate\Support\Str::startsWith($row['url'], ['http://', 'https://']))
+                                    @if(!empty($row['urls']) && count($row['urls']) > 1)
+                                        <button type="button" class="btn btn-link p-0 test-urls-trigger" data-title="{{ $row['url'] }} — {{ $row['source'] }}" data-urls="{{ json_encode(array_values($row['urls'])) }}">
+                                            {{ $row['url'] }}
+                                        </button>
+                                    @elseif($row['url'] && \Illuminate\Support\Str::startsWith($row['url'], ['http://', 'https://']))
                                         <a href="{{ $row['url'] }}" target="_blank">{{ \Illuminate\Support\Str::limit($row['url'], 70) }}</a>
                                     @else
                                         {{ $row['url'] }}
@@ -101,4 +105,63 @@
         </div>
     </div>
 </section>
+
+<div class="modal fade" id="testUrlsModal" tabindex="-1" role="dialog" aria-labelledby="testUrlsModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testUrlsModalTitle">Tested URLs</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ol id="testUrlsList" class="mb-0 pl-3" style="max-height: 60vh; overflow: auto;"></ol>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('js')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.jQuery) {
+        return;
+    }
+
+    var modal = jQuery('#testUrlsModal');
+    var list = jQuery('#testUrlsList');
+    var title = jQuery('#testUrlsModalTitle');
+
+    jQuery(document).on('click', '.test-urls-trigger', function () {
+        var urls = jQuery(this).attr('data-urls');
+        try {
+            urls = JSON.parse(urls);
+        } catch (error) {
+            urls = [];
+        }
+
+        title.text(jQuery(this).attr('data-title') || 'Tested URLs');
+        list.empty();
+
+        (urls || []).forEach(function (url) {
+            var item = jQuery('<li class="mb-2"></li>');
+            if (typeof url === 'string' && (url.indexOf('http://') === 0 || url.indexOf('https://') === 0)) {
+                item.append(
+                    jQuery('<a target="_blank" rel="noopener noreferrer"></a>').attr('href', url).text(url)
+                );
+            } else {
+                item.text(url);
+            }
+            list.append(item);
+        });
+
+        modal.modal('show');
+    });
+});
+</script>
 @endsection

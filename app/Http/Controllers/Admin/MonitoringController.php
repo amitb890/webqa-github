@@ -236,11 +236,19 @@ class MonitoringController extends Controller
         $firstFailed = $failed->first();
         $only = $tests->first();
 
+        $urls = $tests
+            ->pluck('url')
+            ->map(fn ($url) => is_string($url) ? trim($url) : '')
+            ->filter(fn ($url) => $url !== '')
+            ->values()
+            ->all();
+
         return [
             'date' => $only ? $only->created_at : null,
             'url' => $count === 1
                 ? (($only->url ?? '') !== '' ? $only->url : 'Not captured')
                 : ($count . ' URLs'),
+            'urls' => $count > 1 ? $urls : [],
             'type' => 'Webpage Analysis',
             'source' => self::SOURCE_TOOLS . ' / ' . $run['name'],
             'result' => $failed->isNotEmpty() ? 'failed' : 'success',
@@ -330,6 +338,7 @@ class MonitoringController extends Controller
             return [
                 'date' => $event->created_at,
                 'url' => $this->formatDashboardEventUrl($dashboard, $projectId, $urlCount),
+                'urls' => $this->dashboardEventUrlList($dashboard, $urlCount, $isLatestForProject),
                 'type' => $type,
                 'source' => $source,
                 'result' => $result,
@@ -415,6 +424,55 @@ class MonitoringController extends Controller
         return $homepage ?: '1 URL';
     }
 
+    /**
+     * URL list behind a "N URLs" dashboard row. Older runs only keep a count,
+     * so the list is included when it still matches that run.
+     *
+     * @return list<string>
+     */
+    protected function dashboardEventUrlList(?DashboardTests $dashboard, int $urlCount, bool $isLatestForProject): array
+    {
+        if (! $dashboard || $urlCount < 2) {
+            return [];
+        }
+
+        $stored = $this->normalizeUrlList(json_decode($dashboard->urls ?? '[]', true));
+        if ($stored !== [] && ($isLatestForProject || count($stored) === $urlCount)) {
+            return $stored;
+        }
+
+        $details = $this->normalizeUrlList($dashboard->dashboardTestsDetails->pluck('url')->all());
+        if ($details !== [] && ($isLatestForProject || count($details) === $urlCount)) {
+            return $details;
+        }
+
+        return [];
+    }
+
+    /**
+     * @param  mixed  $urls
+     * @return list<string>
+     */
+    protected function normalizeUrlList($urls): array
+    {
+        if (! is_array($urls)) {
+            return [];
+        }
+
+        $normalized = [];
+        foreach ($urls as $url) {
+            if (! is_string($url)) {
+                continue;
+            }
+            $url = trim($url);
+            if ($url !== '') {
+                $normalized[] = $url;
+            }
+        }
+
+        return array_values(array_unique($normalized));
+    }
+
     protected function resolveDashboardWidgetName(?string $recheckLabel): string
     {
         if (! $recheckLabel || $recheckLabel === 'na') {
@@ -464,6 +522,7 @@ class MonitoringController extends Controller
             return [
                 'date' => $run->created_at,
                 'url' => $urlCount === 1 ? ($urls[0] ?? 'Not captured') : ($urlCount . ' URLs'),
+                'urls' => $urlCount > 1 ? $urls : [],
                 'type' => $isPreparation ? self::TYPE_NEW_ACCOUNT : 'Google PageSpeed Lighthouse',
                 'source' => $isPreparation
                     ? self::SOURCE_DASHBOARD_PAGESPEED_PREPARATION
