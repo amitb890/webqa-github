@@ -4801,11 +4801,29 @@
             <div class="learn_more_content">
               <h4>Learn more about WebQA. Watch the video</h4>
 
-              <div class="video-wrapper">
-                <video width="100%" height="100%" loop autoplay muted>
-                  <source src="/new-assets/assets/images/home-video.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-                </video>
+              <div
+                class="video-wrapper"
+                id="homeExplainerTrigger"
+                role="button"
+                tabindex="0"
+                aria-haspopup="dialog"
+                aria-controls="videoModal"
+                aria-label="Watch the WebQA explainer video"
+              >
+                <video
+                  id="homeExplainerPreview"
+                  muted
+                  loop
+                  playsinline
+                  preload="none"
+                  tabindex="-1"
+                  data-src="/new-assets/assets/webqa-explainer.mp4"
+                ></video>
+                <span class="video-play-btn" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="28" height="32" viewBox="0 0 28 32" fill="none">
+                    <path d="M26.5 14.268c1.333.77 1.333 2.694 0 3.464L3.25 30.99c-1.333.77-3-.192-3-1.732V2.742C.25 1.202 1.917.24 3.25 1.01L26.5 14.268z" fill="#fff"/>
+                  </svg>
+                </span>
               </div>
             </div>
           </div>
@@ -5592,6 +5610,10 @@
 
 
 
+
+    @section("modals")
+        @include("components.video-modal")
+    @endsection
 
     @section("js")
 <script src="{{ asset('/new-assets/js/home.js') }}"></script>

@@ -1,10 +1,14 @@
+<?php
+require_once dirname(__DIR__, 4) . '/shared/laravel-context.php';
+webqa_boot_laravel_context();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="icon" type="image/x-icon" href="https://webqa.co/new-assets/assets/images/favicon.ico">
+<meta name="csrf-token" content="<?php echo webqa_e(webqa_csrf_token()); ?>">
 <?php if (is_tag()) { ?>
 <meta name="robots" content="noindex, follow">
 <?php } ?>
@@ -15,7 +19,6 @@
 <?php endif; ?>
 <meta name="description" content="<?php echo get_the_excerpt(); ?>" />
 <link rel="canonical" href="<?php echo wp_get_canonical_url(); ?>" />
-
 
 <meta property="og:title" content="<?php wp_title( '| Webqa', true, 'right' ); ?>"/>
 <meta property="og:description" content="<?php echo get_the_excerpt(); ?>"/>
@@ -29,19 +32,8 @@
 <meta property="twitter:image" content="<?php echo get_the_post_thumbnail_url(get_the_ID(), 'large'); ?>"/>
 <meta property="twitter:card" content="summary_large_image"/>
 
-
-<!-- bootstrap styles -->
-<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/bootstrap.min.css" />
-<!-- custom styles -->
-<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/font-styles.css" />
-<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/main.css" />
-<link rel="stylesheet" href="https://webqa.co/articles/wp-content/themes/theme-assets/main.res.css" />
-	
-	
-	
+<?php webqa_include_shared('site-head.php'); ?>
 </head>
 
 <body class="body_padding">
-<?php include('top-navigation.php'); ?>
-
-
+<?php include __DIR__ . '/top-navigation.php'; ?>

@@ -615,3 +615,100 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+  const trigger = document.getElementById("homeExplainerTrigger");
+  const preview = document.getElementById("homeExplainerPreview");
+  const modalEl = document.getElementById("videoModal");
+  const modalVideo = document.getElementById("videoExplainer");
+
+  if (!trigger || !preview || !modalEl || !modalVideo || typeof bootstrap === "undefined") {
+    return;
+  }
+
+  const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+  const previewSrc = preview.dataset.src;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let previewArmed = false;
+  let modalOpen = false;
+
+  function armPreview() {
+    if (previewArmed || !previewSrc) {
+      return;
+    }
+    preview.src = previewSrc;
+    preview.load();
+    previewArmed = true;
+  }
+
+  function playPreview() {
+    if (modalOpen || reduceMotion) {
+      return;
+    }
+    armPreview();
+    preview.muted = true;
+    const attempt = preview.play();
+    if (attempt && typeof attempt.catch === "function") {
+      attempt.catch(() => {});
+    }
+  }
+
+  function pausePreview() {
+    if (!preview.paused) {
+      preview.pause();
+    }
+  }
+
+  function openExplainerModal() {
+    modalOpen = true;
+    pausePreview();
+    document.body.classList.add("video-modal-open");
+    modal.show();
+    modalVideo.muted = false;
+    try {
+      modalVideo.currentTime = 0;
+    } catch (error) {}
+    const attempt = modalVideo.play();
+    if (attempt && typeof attempt.catch === "function") {
+      attempt.catch(() => {});
+    }
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        playPreview();
+      } else {
+        pausePreview();
+      }
+    });
+  }, { threshold: 0.4 });
+
+  observer.observe(trigger);
+
+  trigger.addEventListener("click", openExplainerModal);
+  trigger.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openExplainerModal();
+    }
+  });
+
+  modalEl.addEventListener("hide.bs.modal", () => {
+    modalVideo.pause();
+  });
+
+  modalEl.addEventListener("hidden.bs.modal", () => {
+    modalOpen = false;
+    document.body.classList.remove("video-modal-open");
+    modalVideo.pause();
+    try {
+      modalVideo.currentTime = 0;
+    } catch (error) {}
+
+    const rect = trigger.getBoundingClientRect();
+    if (rect.bottom > 0 && rect.top < window.innerHeight) {
+      playPreview();
+    }
+  });
+});
+

@@ -11920,10 +11920,157 @@ canvas {
 .video-wrapper {
   position: relative;
   cursor: pointer;
+  background: #eceff3;
+  border-radius: 28px;
+  padding: 18px;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.06);
+}
+
+.video-wrapper:focus-visible {
+  outline: 3px solid #1e63b8;
+  outline-offset: 4px;
 }
 
 .video-wrapper video {
-  border-radius: 20px;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 18px;
+  background: #1a6dff;
+  pointer-events: none;
+}
+
+.video-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 84px;
+  height: 84px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 3px solid #fff;
+  background: rgba(15, 23, 42, 0.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.video-play-btn svg {
+  margin-left: 4px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
+}
+
+.video-modal.modal {
+  z-index: 10050;
+}
+
+.video-modal.modal .modal-dialog,
+.video-modal.modal.show .modal-dialog {
+  top: 0;
+  transform: none;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 960px;
+  width: calc(100% - 40px);
+  pointer-events: none;
+}
+
+.video-modal .modal-content {
+  pointer-events: auto;
+  width: 100%;
+  border: 0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.28);
+}
+
+.video-modal .modal-body {
+  padding: 14px 14px 22px;
+}
+
+.video-modal .close-btn {
+  position: absolute;
+  top: 22px;
+  right: 36px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border: 0;
+  background: transparent;
+  color: #f5f8fa;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.video-modal .close-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+.explainer-modal-video {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 12px;
+}
+
+.explainer-modal-cta {
+  display: flex;
+  width: fit-content;
+  margin: 22px auto 4px;
+  min-width: 148px;
+  justify-content: center;
+}
+
+body.video-modal-open .modal-backdrop.show {
+  z-index: 10040;
+  opacity: 1;
+  background-color: rgba(17, 24, 39, 0.78);
+}
+
+@media (max-width: 767px) {
+  .video-wrapper {
+    padding: 10px;
+    border-radius: 18px;
+  }
+
+  .video-wrapper video {
+    border-radius: 12px;
+  }
+
+  .video-play-btn {
+    width: 64px;
+    height: 64px;
+  }
+
+  .video-play-btn svg {
+    width: 22px;
+    height: 24px;
+  }
+
+  .video-modal.modal .modal-dialog,
+  .video-modal.modal.show .modal-dialog {
+    width: calc(100% - 20px);
+  }
+
+  .video-modal .close-btn {
+    top: 68px;
+    right: 14px;
+    font-size: 14px;
+  }
 }
 
 

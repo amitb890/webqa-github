@@ -29,7 +29,11 @@ add_user_meta( $user_id, 'blankslate_notice_dismissed_8', 'true', true );
 add_action( 'wp_enqueue_scripts', 'blankslate_enqueue' );
 function blankslate_enqueue() {
 wp_enqueue_style( 'blankslate-style', get_stylesheet_uri() );
-wp_enqueue_script( 'jquery' );
+}
+add_action( 'wp_enqueue_scripts', 'webqa_dequeue_wordpress_jquery', 100 );
+function webqa_dequeue_wordpress_jquery() {
+wp_dequeue_script( 'jquery' );
+wp_deregister_script( 'jquery' );
 }
 add_action( 'wp_footer', 'blankslate_footer' );
 function blankslate_footer() {

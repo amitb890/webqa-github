@@ -20,6 +20,13 @@ use Symfony\Component\HttpClient\HttpClient;
 Route::get('/login/google', [App\Http\Controllers\LoginController::class, 'redirectToGoogle']);
 Route::get('/login/google/callback', [App\Http\Controllers\LoginController::class, 'handleGoogleCallback']);
 
+Route::get('/auth/context', function () {
+    return response()->json([
+        'csrf' => csrf_token(),
+        'authenticated' => Auth::check(),
+    ]);
+})->name('auth.context');
+
 Route::get('/logout', function () {
     Auth::guard('web')->logout();
 
