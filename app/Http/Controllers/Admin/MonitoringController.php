@@ -23,6 +23,8 @@ class MonitoringController extends Controller
 {
     private const SOURCE_BULK_TOOL = 'Bulk tool';
 
+    private const SOURCE_TOOLS = 'Tools';
+
     private const SOURCE_ANALYSIS_PAGE = 'Analysis page';
 
     private const SOURCE_DASHBOARD = 'Dashboard';
@@ -132,24 +134,155 @@ class MonitoringController extends Controller
             $query->whereDate('created_at', $date);
         }
 
-        return $query->limit(200)->get()->map(function (TestResults $test) {
-            $data = $this->decode($test->data);
-            $failed = $this->hasFailures($data);
-            $source = $this->resolveTestResultSource($test);
+        $tests = $query->limit(200)->get();
+        $bulk = $tests->filter(fn (TestResults $test) => $this->isBulkToolTest($test))->values();
+        $analysis = $tests->reject(fn (TestResults $test) => $this->isBulkToolTest($test))->values();
 
-            return [
-                'date' => $test->created_at,
-                'url' => $test->url,
-                'type' => $test->project_id ? 'Webapp Analysis' : 'Webpage Analysis',
-                'source' => $source,
-                'result' => $failed ? 'failed' : 'success',
-                'cached_url' => $source === self::SOURCE_BULK_TOOL
-                    ? null
-                    : url('analysis-report/w/' . $test->ref_id),
-                'error_url' => $failed ? route('admin.tests.error', ['source' => 'test-result', 'id' => $test->id]) : null,
-                'error_preview' => $failed ? $this->summarizeContext($data) : null,
-            ];
-        });
+        return $analysis
+            ->map(fn (TestResults $test) => $this->mapAnalysisTestRow($test))
+            ->merge($this->bulkToolRunRows($bulk))
+            ->values();
+    }
+
+    protected function mapAnalysisTestRow(TestResults $test): array
+    {
+        $data = $this->decode($test->data);
+        $failed = $this->hasFailures($data);
+
+        return [
+            'date' => $test->created_at,
+            'url' => $test->url,
+            'type' => $test->project_id ? 'Webapp Analysis' : 'Webpage Analysis',
+            'source' => $this->resolveTestResultSource($test),
+            'result' => $failed ? 'failed' : 'success',
+            'cached_url' => url('analysis-report/w/' . $test->ref_id),
+            'error_url' => $failed ? route('admin.tests.error', ['source' => 'test-result', 'id' => $test->id]) : null,
+            'error_preview' => $failed ? $this->summarizeContext($data) : null,
+        ];
+    }
+
+    /**
+     * One admin row per bulk-tool run. Runs are inferred from existing rows:
+     * the same test, consecutive saves, and no repeated URL. No batch id is stored.
+     *
+     * @param  Collection<int, TestResults>  $tests
+     */
+    protected function bulkToolRunRows(Collection $tests): Collection
+    {
+        $sorted = $tests->sortBy(function (TestResults $test) {
+            $timestamp = $test->created_at ? $test->created_at->getTimestamp() : 0;
+
+            return sprintf('%010d-%010d', $timestamp, $test->id);
+        })->values();
+
+        $runs = [];
+        $current = null;
+
+        foreach ($sorted as $test) {
+            $meta = $this->bulkLabelMeta($test);
+            if (! $this->bulkRunContinues($current, $test, $meta['key'])) {
+                if ($current) {
+                    $runs[] = $current;
+                }
+                $current = [
+                    'key' => $meta['key'],
+                    'name' => $meta['name'],
+                    'tests' => collect(),
+                    'urls' => [],
+                ];
+            }
+
+            $current['tests']->push($test);
+            $current['urls'][$test->url] = true;
+        }
+
+        if ($current) {
+            $runs[] = $current;
+        }
+
+        return collect($runs)->map(fn (array $run) => $this->mapBulkRunRow($run));
+    }
+
+    /**
+     * @param  array{key: string, name: string, tests: Collection<int, TestResults>, urls: array<string, bool>}|null  $current
+     */
+    protected function bulkRunContinues(?array $current, TestResults $test, string $key): bool
+    {
+        if (! $current || $current['key'] !== $key || isset($current['urls'][$test->url])) {
+            return false;
+        }
+
+        $previous = $current['tests']->last();
+        if (! $previous || ! $previous->created_at || ! $test->created_at) {
+            return false;
+        }
+
+        // Bulk checks one URL at a time and each URL is capped at 60s.
+        return abs($previous->created_at->diffInSeconds($test->created_at)) <= 180;
+    }
+
+    /**
+     * @param  array{key: string, name: string, tests: Collection<int, TestResults>, urls: array<string, bool>}  $run
+     * @return array<string, mixed>
+     */
+    protected function mapBulkRunRow(array $run): array
+    {
+        /** @var Collection<int, TestResults> $tests */
+        $tests = $run['tests'];
+        $count = $tests->count();
+        $failed = $tests->filter(function (TestResults $test) {
+            return $this->hasFailures($this->decode($test->data));
+        })->values();
+        $firstFailed = $failed->first();
+        $only = $tests->first();
+
+        return [
+            'date' => $only ? $only->created_at : null,
+            'url' => $count === 1
+                ? (($only->url ?? '') !== '' ? $only->url : 'Not captured')
+                : ($count . ' URLs'),
+            'type' => 'Webpage Analysis',
+            'source' => self::SOURCE_TOOLS . ' / ' . $run['name'],
+            'result' => $failed->isNotEmpty() ? 'failed' : 'success',
+            'cached_url' => null,
+            'error_url' => $firstFailed
+                ? route('admin.tests.error', ['source' => 'test-result', 'id' => $firstFailed->id])
+                : null,
+            'error_preview' => $failed->isNotEmpty()
+                ? ($failed->count() . ' of ' . $count . ' URL checks failed in this run.')
+                : null,
+        ];
+    }
+
+    /**
+     * @return array{key: string, name: string}
+     */
+    protected function bulkLabelMeta(TestResults $test): array
+    {
+        $labels = json_decode($test->testLabels ?? '', true);
+        if (is_array($labels) && array_is_list($labels)) {
+            $labels = $labels[0] ?? [];
+        }
+        if (! is_array($labels)) {
+            $labels = [];
+        }
+
+        $key = (string) ($labels['dbName'] ?? $labels['db_name'] ?? $labels['name'] ?? $labels['displayName'] ?? 'bulk');
+        $name = $labels['displayName'] ?? $labels['display_name'] ?? $labels['title'] ?? null;
+
+        if (! is_string($name) || $name === '') {
+            $dbName = $labels['dbName'] ?? $labels['db_name'] ?? null;
+            if (is_string($dbName) && $dbName !== '') {
+                $name = TestLabel::where('db_name', $dbName)->value('display_name');
+            }
+        }
+
+        if (! is_string($name) || $name === '') {
+            $raw = (string) ($labels['name'] ?? $key);
+            $name = Str::title(str_replace(['_', '-'], ' ', $raw));
+        }
+
+        return ['key' => $key, 'name' => $name];
     }
 
     protected function dashboardTestRows(?string $date): Collection
