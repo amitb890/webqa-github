@@ -20,7 +20,7 @@
               <p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1a1a1a;">Hi,</p>
               <p style="margin:0 0 24px;font-size:15px;line-height:1.6;color:#3d3d3d;">A new lead from the about us page</p>
               <p style="margin:0 0 10px;font-size:14px;font-weight:600;color:#1a1a1a;">Name</p>
-              <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#3d3d3d;word-break:break-word;">{{ $leadName }}</p>
+              <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#3d3d3d;word-break:break-word;">{{ $leadName !== '' ? $leadName : 'Not provided' }}</p>
               <p style="margin:0 0 10px;font-size:14px;font-weight:600;color:#1a1a1a;">Email address</p>
               <p style="margin:0 0 18px;font-size:15px;line-height:1.6;color:#3d3d3d;word-break:break-word;"><a href="mailto:{{ $leadEmail }}" style="color:#1e63b8;text-decoration:none;">{{ $leadEmail }}</a></p>
               <p style="margin:0 0 10px;font-size:14px;font-weight:600;color:#1a1a1a;">Subject</p>

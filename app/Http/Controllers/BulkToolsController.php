@@ -16,6 +16,10 @@ class BulkToolsController extends Controller
 
 
     public function show($slug){
+        if ($slug === 'robotstxt-test') {
+            return redirect()->route('tools', ['slug' => 'robotstxt']);
+        }
+
         $helpers = new Helper();
         $data = $helpers->getAllTests();
 

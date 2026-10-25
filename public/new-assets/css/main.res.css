@@ -2242,24 +2242,24 @@
     margin-left: 40px;
   }
        .navbar_main .container-fluid-main {
-        max-width: 1360px !important;
-        padding-left: 55px !important;
-        padding-right:60px !important;
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
     }
      .navbar_main .container-fluid-main.aup {
-        max-width: 1380px !important;
-        padding-left:40px  !important;
-        padding-right:45px  !important;
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
       }
       .navbar_main .container-fluid-main.frp {
-        max-width: 1100px !important;
-        padding-left: 75px !important;
-        padding-right:60px !important;
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
       }
      .navbar_main .container-fluid-main.wst {
-        max-width: 950px !important;
-        padding-right: 0px !important;
-        padding-left: 0px !important;
+        max-width: none !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
       }
       .container-fluid-main.wst .container-fluid-inner {
           display: flex;
@@ -2282,15 +2282,14 @@
         padding-right:60px !important; */
       }
      .navbar_main .container-fluid.fcpr {
-        max-width: 1300px !important;
-        padding-left: 75px !important;
-        padding-right:50px !important;
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
       }
      .navbar_main .container-fluid.fcpwa {
-        max-width: 1100px !important;
-        padding-left: 60px !important;
-        /* padding-left: 75px !important;
-        padding-right:50px !important; */
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
       }
       .fcat4 .fcat4-mainD{
         max-width: 950px;
@@ -2302,20 +2301,20 @@
       }
 
       .navbar_main .container-fluid-main.tool_pages {
-        max-width: 1520px !important;
-        padding-left: 60px !important;
-        padding-right:60px !important;
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
     }
       .navbar_main .container-fluid-main.tools_landing_page {
-        max-width: 1300px !important;
-        padding-left: 15px !important;
-        padding-right:50px !important;
+        max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
     }
 
     .navbar_main .container-fluid-main.public-test-archives{
-      max-width: 1390px !important;
-        padding-left: 25px !important;
-        padding-right:15px !important;
+      max-width: none !important;
+        padding-left: clamp(16px, 4vw, 72px) !important;
+        padding-right: clamp(16px, 4vw, 72px) !important;
     }
     .main-sections .tools-landingpage-container{
       max-width: 1320px !important;
@@ -2362,9 +2361,6 @@
       max-width: 1000px;
       margin: 0 auto;
       margin-top: 150px;
-  }
-  .fr4-inner {
-    max-height:316px ;
   }
   .fcs1{
     max-width: 1200px;
@@ -2417,23 +2413,73 @@
   #fcat3-d2-card-7 img {
     padding-top: 60px;
   }
+  .fr4 {
+    padding-left: clamp(64px, 5vw, 120px);
+    padding-right: clamp(64px, 5vw, 120px);
+  }
   .fr4-inner {
-        max-width: 950px;
-        margin: 0 auto;
-    }
-    .fr4-d1 {
-    padding-left: 40px;
-    }
+    max-width: 1900px;
+    width: 100%;
+    margin: 0 auto;
+    align-items: stretch;
+    min-height: clamp(360px, 26vw, 520px);
+  }
+  .fr4-d1 {
+    flex: 1 1 54%;
+    justify-content: center;
+    padding: 40px 28px 40px clamp(56px, 4vw, 96px);
+  }
   .fr4-d1 h3 {
-        max-width: 800px;
-        font-size: 30px;
-    }
+    max-width: 12em;
+    font-size: clamp(34px, 2.35vw, 48px);
+    line-height: 1.18;
+  }
+  .fr4-d1 p {
+    max-width: 26em;
+    font-size: clamp(17px, 1.1vw, 20px);
+  }
+  .fr4-d1-button {
+    padding: 14px 44px;
+    font-size: 18px;
+  }
+  .fr4-d2 {
+    flex: 1 1 46%;
+    height: auto;
+    align-self: stretch;
+  }
+  .fr4-d2 img {
+    height: 100%;
+    min-height: clamp(360px, 26vw, 520px);
+  }
+  .frlast {
+    padding-left: clamp(64px, 5vw, 120px);
+    padding-right: clamp(64px, 5vw, 120px);
+  }
   .frlast-inner {
-    max-width: 950px;
-        margin: 0 auto;
+    max-width: 1900px;
+    width: 100%;
+    margin: 0 auto;
+    min-height: clamp(340px, 24vw, 480px);
   }
   .frlast-d1 {
-    padding-left: 40px;
+    max-width: 680px;
+    padding-left: clamp(56px, 4vw, 96px);
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+  .frlast-d1 h3 {
+    max-width: 12em !important;
+    font-size: clamp(34px, 2.35vw, 48px);
+    line-height: 1.18;
+  }
+  .frlast-d1 p {
+    max-width: 26em;
+    font-size: clamp(17px, 1.1vw, 20px);
+  }
+  .frlast-d2 img {
+    width: auto;
+    height: clamp(340px, 24vw, 480px);
+    max-width: none;
   }
   .fr2-d {
     max-width: 950px;
@@ -3126,7 +3172,85 @@
     }
 }
 
+@media (max-width: 767px) {
+  .genarel_header_items .dropdown2 {
+    width: 100%;
+  }
+
+  .genarel_header_items .dropdown2::after {
+    display: none;
+  }
+
+  .genarel_header_items .nav-drop-toggle {
+    width: 100%;
+    min-height: 40px;
+  }
+
+  .genarel_header_items .nav-mega {
+    position: static;
+    top: auto;
+    left: auto;
+    width: 100%;
+    margin-top: 8px;
+    padding: 16px 14px 14px;
+    border-radius: 18px;
+    box-shadow: none;
+    background: #fbfcfe;
+    text-align: left;
+  }
+
+  .nav-mega-grid {
+    column-gap: 4px;
+  }
+
+  .genarel_header_items .nav-mega-link {
+    min-height: 44px;
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .nav-mega-pills {
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav-mega-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .genarel_header_items .nav-mega-pill {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
 
 
 
-/* Imran responsive code for order 28 Dec End
+
+/* Imran responsive code for order 28 Dec End */
+
+/* Public header: equal left and right gutters on every page and viewport */
+.header_main.genarel_header_main .navbar_main > .container-fluid {
+  width: 100% !important;
+  max-width: none !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: clamp(16px, 4vw, 72px) !important;
+  padding-right: clamp(16px, 4vw, 72px) !important;
+  box-sizing: border-box;
+}
+
+.header_main.genarel_header_main .navbar-brand {
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.header_main.genarel_header_main .login_area {
+  margin-right: 0;
+}
+
+.header_main.genarel_header_main .header_menu_btn {
+  margin-right: 0;
+}

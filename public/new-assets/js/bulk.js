@@ -163,7 +163,7 @@ class UI{
         }
         
         // Add table header
-        html += `<table class="bulk-broken-links-table">
+        html += `<table class="tools-list-table">
           <thead>
             <tr>
               <th>#</th>
@@ -177,13 +177,9 @@ class UI{
         brokenUrls.forEach((item, index) => {
           
           html+=`<tr>
-            <td class="serial-number">${index+1}</td>
-            <td>
-              <div class="url-cell">
-                <a href="${item.url}" target="_blank"><span class="broken-link-url">${item.url}</span></a>
-              </div>
-            </td>
-            <td><strong>${item.status}</strong></td>
+            <td class="tools-list-index">${index+1}</td>
+            <td><a href="${item.url}" target="_blank" rel="noopener noreferrer" title="${item.url}">${item.url}</a></td>
+            <td><span class="tools-status-code">${item.status}</span></td>
           </tr>`
         })
         
@@ -235,12 +231,10 @@ static getTableTop(label, slug){
                 <div class="table-cat-element" data-name="table_og_image"><span>Open Graph Image</span></div>
             </div>
             <div class="download_result bulk-download-result">
-                <ul>
-                    
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    <li class='download-csv-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as a CSV file" aria-label="Download these results as a CSV file"><img src="/new-assets/assets/images/csv_icon.png" alt=""></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as an Excel file" aria-label="Download these results as an Excel file"><img src="/new-assets/assets/images/xl.png" alt=""></button></li>
                 </ul>
-                </div>
             </div>
             `
         }else if(label === "twitter:title"){
@@ -251,20 +245,18 @@ static getTableTop(label, slug){
                 <div class="table-cat-element" data-name="table_twitter_image_alt"><span>Twitter Image Alt</span></div>
             </div>
             <div class="download_result bulk-download-result">
-                <ul>
-                    
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li>
+                <ul class="datatable_download_result bulk-datatable-download-result">
+                    <li class='download-csv-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as a CSV file" aria-label="Download these results as a CSV file"><img src="/new-assets/assets/images/csv_icon.png" alt=""></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as an Excel file" aria-label="Download these results as an Excel file"><img src="/new-assets/assets/images/xl.png" alt=""></button></li>
                 </ul>
-                </div>
             </div>`
         }else if(label === "img"){
             div = `
             <div class="download_result bulk-download-result">
                 <ul class="datatable_download_result bulk-datatable-download-result">
                     
-                    <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+                    <li class='download-csv-bulk website-tracker-csv' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as a CSV file" aria-label="Download these results as a CSV file"><img src="/new-assets/assets/images/csv_icon.png" alt=""></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as an Excel file" aria-label="Download these results as an Excel file"><img src="/new-assets/assets/images/xl.png" alt=""></button></li>
 
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -278,9 +270,9 @@ static getTableTop(label, slug){
                 <ul class="datatable_download_result bulk-datatable-download-result">
                     
                 <!--   <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
-                    <li class='download-csv-bulk download-csv-bulk-rowspan website-tracker-csv' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
+                    <li class='download-csv-bulk download-csv-bulk-rowspan website-tracker-csv' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as a CSV file" aria-label="Download these results as a CSV file"><img src="/new-assets/assets/images/csv_icon.png" alt=""></button></li>
                 <!--    <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as an Excel file" aria-label="Download these results as an Excel file"><img src="/new-assets/assets/images/xl.png" alt=""></button></li>
 
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -295,8 +287,8 @@ static getTableTop(label, slug){
                 <ul class="datatable_download_result bulk-datatable-download-result">
                     
                 <!--   <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+                    <li class='download-csv-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as a CSV file" aria-label="Download these results as a CSV file"><img src="/new-assets/assets/images/csv_icon.png" alt=""></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as an Excel file" aria-label="Download these results as an Excel file"><img src="/new-assets/assets/images/xl.png" alt=""></button></li>
                <!-- <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
 
                     <li class='datatable_download_result_li' style="">
@@ -312,8 +304,8 @@ static getTableTop(label, slug){
                 <ul class="datatable_download_result bulk-datatable-download-result">
                     
           <!--         <li class='pdf-bulk'><button><img src="/new-assets/assets/images/pdf_icon.png" alt="icon" title="Download PDF"></button></li> -->
-                    <li class='download-csv-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/csv_icon.png" alt="icon" title="Download CSV"></button></li>
-                    <li class='download-xlsx-bulk' data-csv=${csvName}><button><img src="/new-assets/assets/images/xl.png" alt="icon" title="Download XLSX"></button></li>
+                    <li class='download-csv-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as a CSV file" aria-label="Download these results as a CSV file"><img src="/new-assets/assets/images/csv_icon.png" alt=""></button></li>
+                    <li class='download-xlsx-bulk' data-csv=${csvName}><button type="button" class="bulk-export-tip" data-tooltip="Download these results as an Excel file" aria-label="Download these results as an Excel file"><img src="/new-assets/assets/images/xl.png" alt=""></button></li>
                 <!--     <li class='email-bulk'><button><img src="/new-assets/assets/images/email.png" alt="icon" title="Email this"></button></li> -->
                     <li class='datatable_download_result_li' style="">
                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
@@ -693,6 +685,15 @@ $( document ).ready(function() {
             
             url_list = unique_url_list
             url_list_length = url_list.length
+            const sitemapFieldError = validateBulkSitemapFields()
+            if (sitemapFieldError) {
+                AlertManager.afterElement("#urlValue", sitemapFieldError, {
+                    type: AlertManager.types.ERROR,
+                    autoHide: false
+                })
+                e.preventDefault()
+                return
+            }
             const inputs = document.querySelectorAll(".bulk-test-criteria input,.bulk-test-criteria textarea")
             settingsVal = getSettingsVal(inputs)
 
@@ -759,6 +760,65 @@ function toggleTestResultAreaVisibility() {
     /** Max time per URL for collect + run test (Lighthouse / bulk can hang on bad URLs). */
     const BULK_PER_URL_TIMEOUT_MS = 60000
 
+    function sitemapPartIsValid(part) {
+        let url = (part || "").trim()
+        if (!url || /\s/.test(url)) {
+            return false
+        }
+        if (url.startsWith("//")) {
+            url = "https:" + url
+        }
+        if (!/^https?:\/\//i.test(url)) {
+            url = "https://example.com/" + url.replace(/^\/+/, "")
+        }
+        return isValidURL(url)
+    }
+
+    function validateBulkSitemapFields() {
+        const fields = [
+            ["html_sitemap_val", "HTML sitemap URL"],
+            ["xml_sitemap_val", "XML sitemap URL"],
+        ]
+        for (let i = 0; i < fields.length; i++) {
+            const el = document.getElementById(fields[i][0])
+            if (!el || !el.value.trim()) {
+                continue
+            }
+            const parts = el.value.split(/[\n,]+/).map(function (part) { return part.trim() }).filter(Boolean)
+            for (let j = 0; j < parts.length; j++) {
+                if (!sitemapPartIsValid(parts[j])) {
+                    return fields[i][1] + " is not valid: " + parts[j]
+                }
+            }
+        }
+        return ""
+    }
+
+    function resolveBulkSitemapField(fieldId, origin, whenMissing, whenEmpty) {
+        const el = document.getElementById(fieldId)
+        if (!el) {
+            return whenMissing
+        }
+        const raw = (el.value || "").trim()
+        if (!raw) {
+            return whenEmpty
+        }
+        const urls = []
+        raw.split(/[\n,]+/).forEach(function (part) {
+            part = part.trim()
+            if (!part) {
+                return
+            }
+            if (part.startsWith("//")) {
+                part = "https:" + part
+            } else if (!/^https?:\/\//i.test(part)) {
+                part = origin + "/" + part.replace(/^\/+/, "")
+            }
+            urls.push(part.replace(/\/+$/, ""))
+        })
+        return [...new Set(urls)].join(",")
+    }
+
     /**
      * Skip current URL and advance progress (never leave the bulk run stuck).
      * Completion uses results.length + resultsError.length vs url_list_length.
@@ -789,8 +849,8 @@ function toggleTestResultAreaVisibility() {
             abortCurrentBulkUrl("Invalid URL")
             return
         }
-        const htmlSitemap = `${origin}/sitemap`
-        const xmlSitemap = `${origin}/sitemap.xml`
+        const htmlSitemap = resolveBulkSitemapField("html_sitemap_val", origin, `${origin}/sitemap`, "")
+        const xmlSitemap = resolveBulkSitemapField("xml_sitemap_val", origin, `${origin}/sitemap.xml`, `${origin}/sitemap.xml`)
 
         obj["urlValue"] = url
         // Use the processed full URLs stored in window.bulkFullUrls (set before startTest was called)
@@ -1148,8 +1208,9 @@ function toggleTestResultAreaVisibility() {
             <h2>Test Results</h2>
             <span class="failed-list"></span>
             <div class="test_result_table">
-              <div class="table-responsive">
               ${UI.getTableTop(label.name, label.slug)}
+              <div class="table-responsive">
+              </div>
             </div>`;
         
         toggleFailedListVisibility(); // hides it initially
@@ -1196,7 +1257,7 @@ function toggleTestResultAreaVisibility() {
                     <td class="align-left content-td">${result.content != null ? result.content : "-"}</td>
                     <td class="${result.lengthClass} ${settings.max_title_length || settings.min_title_length ? "" : "d-none hidden-element"}" style="text-align:center;">${result.content != null ? result.content.length : 0}</td>
                     <td class="${settings.is_title_equal_h1 ? "" : "d-none hidden-element"}" style="text-align:center;">No</td>
-                    <td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "d-none hidden-element"}" style="text-align:center;">${result.casing ? result.casing : "-"}</td>
+                    <td class="${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "d-none hidden-element"}" style="text-align:center;"><span class="${result.casingClass}">${result.casing ? result.casing : "-"}</span></td>
                     <td class="${result.status ? "result_pass" : "result_fail"} ${result.status ? "result_pass-imran" : "result_fail-imran"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                     `
                     tbody.appendChild(tr)
@@ -1225,7 +1286,7 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td class="text-center">${i+1}</td>
-                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left content-td">${result.content != null ? result.content : "-"}</td>
                     <td class="${result.lengthClass} ${settings.max_desc_length || settings.min_desc_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
                     <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
@@ -1243,7 +1304,6 @@ function toggleTestResultAreaVisibility() {
                     <th class="result_header"><span>URL</span>  <img src="/new-assets/assets/images/search.png" alt="icon"></th>
                     <th class="${settings.live_urls_robots_meta? "" : "d-none hidden-element"}">Robots Tag Exists</th>
                     <th class="align-left">Content</th>
-                    <th class="export-hidden-element"></th>
                     <th>Result</th>
                 </tr>
                 </thead>`
@@ -1255,7 +1315,6 @@ function toggleTestResultAreaVisibility() {
                     <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="${result.isExists ? "result_fail" : "result_pass"} strong  ${settings.live_urls_robots_meta? "" : "d-none hidden-element"}">${result.contentExists ? "Yes" : "No"}</td>
                     <td class="text-center">${result.content != null && result.content != "" ? result.content : "-"}</td>
-                    ${!result.status && result.isExists ? `<td class="export-hidden-element"><a data-name="${data.title}" class="intentional-btn" id="intentional_${i}">Is this is intentional?</a></td>` : "<td class='export-hidden-element'>-</td>"}              
                     <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                     `
                     tbody.appendChild(tr)
@@ -1292,7 +1351,7 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left content-td">${result.content != null ? result.content : "-"}</td>
                     <td class="${settings.canonical_url_equal_url ? "" : "d-none hidden-element"} ${result.statusIsEqualURL || result.statusIsEqualURL === null ? "result_pass" : "result_fail"}">${msg}</td>
                     <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
@@ -1365,7 +1424,7 @@ function toggleTestResultAreaVisibility() {
                     <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
                     <td class="text-center ${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
-                    <td class="${result.casingClass} ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
+                    <td class="text-center ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "d-none hidden-element"}"><span class="${result.casingClass}">${result.casing ? result.casing : "-"}</span></td>
                     <td class="${result.isEqualClass} ${settings.is_og_title_equal_title ? "" : "d-none hidden-element"}">${result.isEqualStatus ? "Yes" : "No"}</td>
                     <td class="text-center ${result.statusTitle ? "result_pass" : "result_fail"}">${result.statusTitle ? "PASS" : "FAIL"}</td>
                     `
@@ -1462,7 +1521,7 @@ function toggleTestResultAreaVisibility() {
                     <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                     <td class="align-left">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
                     <td class="text-center ${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "d-none hidden-element"}">${result.content != null ? result.content.length : 0}</td>
-                    <td class="text-center ${result.casingClass} ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "d-none hidden-element"}">${result.casing ? result.casing : "-"}</td>
+                    <td class="text-center ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "d-none hidden-element"}"><span class="${result.casingClass}">${result.casing ? result.casing : "-"}</span></td>
                     <td class="text-center ${result.isEqualClass} ${settings.is_twitter_title_equal_title ? "" : "d-none hidden-element"}">${result.isEqualStatus ? "Yes" : "No"}</td>
                     <td class="text-center ${result.statusTitle ? "result_pass" : "result_fail"}">${result.statusTitle ? "PASS" : "FAIL"}</td>
                     `
@@ -1531,8 +1590,8 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td class="text-center">${i+1}</td>
-                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
-                    <td class="align-left content-td">${result.content != null ? result.content : "-"}</td>
+                    <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
+                    <td class="align-left content-td">${result.content ? `<a href="${String(result.content).replace(/"/g, "&quot;")}" target="_blank" rel="noopener noreferrer">${String(result.content).replace(/</g, "&lt;")}</a>` : "-"}</td>
                     <td class="${result.status ? "result_pass" : "result_fail"} strong" ><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
 
                     `
@@ -1556,7 +1615,7 @@ function toggleTestResultAreaVisibility() {
                         const tr = document.createElement("tr")
                         tr.innerHTML = `
                         <td>${i+1}</td>
-                        <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                        <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                         <td class="align-left">${result.message}</td>
                         <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                         `
@@ -1580,7 +1639,7 @@ function toggleTestResultAreaVisibility() {
                         const tr = document.createElement("tr")
                         tr.innerHTML = `
                         <td>${i+1}</td>
-                        <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                        <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                         <td class="align-left">${result.message}</td>
                         <td class="${result.status ? "result_pass" : "result_fail"} strong" ><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                         `
@@ -1604,22 +1663,30 @@ function toggleTestResultAreaVisibility() {
                     window.schemaResultsData = results.slice()
                     // Ensure schema content modal exists
                     let schemaContentModal = document.getElementById("schemaContentModal")
+                    if(schemaContentModal && !schemaContentModal.classList.contains("schema-content-modal")){
+                        schemaContentModal.remove()
+                        schemaContentModal = null
+                    }
                     if(!schemaContentModal){
                         schemaContentModal = document.createElement("div")
-                        schemaContentModal.className = "modal fade meta-list-brokenBody"
+                        schemaContentModal.className = "modal fade tools-list-modal schema-content-modal"
                         schemaContentModal.id = "schemaContentModal"
                         schemaContentModal.setAttribute("aria-labelledby", "schemaContentModalLabel")
                         schemaContentModal.setAttribute("tabindex", "-1")
                         schemaContentModal.setAttribute("aria-hidden", "true")
                         schemaContentModal.innerHTML = `
-                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title schema-content-heading" id="schemaContentModalLabel">Schema (JSON-LD)</h5>
+                                        <div class="schema-modal-heading">
+                                            <p class="schema-modal-kicker">JSON-LD</p>
+                                            <h2 class="modal-title" id="schemaContentModalLabel">Schema</h2>
+                                            <p class="schema-modal-url" id="schemaContentModalUrl"></p>
+                                        </div>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <div class="modal-body" style="overflow-x: auto;">
-                                        <pre id="schemaContentModalBody" class="schema-json-pre" style="white-space: pre-wrap; word-break: break-word; margin: 0; font-size: 13px;"></pre>
+                                    <div class="modal-body">
+                                        <div id="schemaContentModalBody"></div>
                                     </div>
                                 </div>
                             </div>
@@ -1638,7 +1705,7 @@ function toggleTestResultAreaVisibility() {
                         const tr = document.createElement("tr")
                         tr.innerHTML = `
                         <td class="text-center">${i+1}</td>
-                        <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}<img src="/new-assets/assets/images/copy-link.png" alt="icon"></a></td>
+                        <td class="align-left result_data_url content-td"><a href="${result.tested_url}" target="_blank">${result.tested_url}</a></td>
                         <td class="align-left content-td">${typesHtml}</td>
                         <td class="align-left content-td">${problemsStr}</td>
                         <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
@@ -1648,17 +1715,55 @@ function toggleTestResultAreaVisibility() {
                     $(document).off('click', '.schema-type-link').on('click', '.schema-type-link', function(e){
                         e.preventDefault()
                         e.stopPropagation()
+                        const escapeSchemaHtml = (value) => String(value)
+                            .replace(/&/g, '&amp;')
+                            .replace(/</g, '&lt;')
+                            .replace(/>/g, '&gt;')
+                        const highlightSchemaJson = (raw) => {
+                            const text = String(raw || '')
+                            const re = /("(?:\\.|[^"\\])*")(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g
+                            let html = ''
+                            let last = 0
+                            let match
+                            while ((match = re.exec(text))) {
+                                html += escapeSchemaHtml(text.slice(last, match.index))
+                                if (match[1]) {
+                                    html += `<span class="${match[2] ? 'json-key' : 'json-string'}">${escapeSchemaHtml(match[1])}</span>`
+                                    if (match[2]) html += escapeSchemaHtml(match[2])
+                                } else if (match[3]) {
+                                    html += `<span class="json-literal">${escapeSchemaHtml(match[3])}</span>`
+                                } else {
+                                    html += `<span class="json-number">${escapeSchemaHtml(match[0])}</span>`
+                                }
+                                last = match.index + match[0].length
+                            }
+                            html += escapeSchemaHtml(text.slice(last))
+                            return html
+                        }
                         const rowIndex = parseInt($(this).data('result-index'), 10)
                         const typeName = $(this).data('type')
                         const rowData = window.schemaResultsData && window.schemaResultsData[rowIndex]
                         if(!rowData || !rowData.blocks){ return }
                         const blocks = rowData.blocks
                         const matching = blocks.filter(b => b.types && b.types.indexOf(typeName) !== -1)
-                        const snippets = matching.length ? matching.map((b, idx) => (matching.length > 1 ? `/* Block ${idx + 1} */\n` : '') + (b.snippet || '')).join('\n\n') : 'No content for this type.'
                         const titleEl = document.querySelector('#schemaContentModalLabel')
-                        if(titleEl) titleEl.textContent = `Schema content for "${typeName}"`
+                        if(titleEl) titleEl.textContent = typeName || 'Schema'
+                        const urlEl = document.getElementById('schemaContentModalUrl')
+                        if(urlEl) urlEl.textContent = rowData.tested_url || ''
                         const bodyEl = document.getElementById('schemaContentModalBody')
-                        if(bodyEl){ bodyEl.textContent = snippets }
+                        if(bodyEl){
+                            if(!matching.length){
+                                bodyEl.innerHTML = '<p class="schema-modal-empty">No JSON-LD content for this type.</p>'
+                            } else {
+                                bodyEl.innerHTML = matching.map((b, idx) => {
+                                    const label = matching.length > 1 ? `<p class="schema-json-label">Block ${idx + 1}</p>` : ''
+                                    const problems = (b.problems && b.problems.length)
+                                        ? `<p class="schema-json-problems">${b.problems.map(p => escapeSchemaHtml(p)).join(' · ')}</p>`
+                                        : ''
+                                    return `<div class="schema-json-block">${label}${problems}<pre class="schema-json-pre">${highlightSchemaJson(b.snippet || '')}</pre></div>`
+                                }).join('')
+                            }
+                        }
                         const modalEl = document.getElementById('schemaContentModal')
                         if(modalEl){
                             let inst = bootstrap.Modal.getInstance(modalEl)
@@ -1756,7 +1861,7 @@ function toggleTestResultAreaVisibility() {
                             const tr = document.createElement("tr")
                             tr.innerHTML = `
                             <td style="text-align:center;">${i+1}</td>
-                            <td class="align-left">${result.tested_url}</td>
+                            <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                             <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                             `
                             tbody.appendChild(tr)
@@ -1783,7 +1888,7 @@ function toggleTestResultAreaVisibility() {
                             tr1.innerHTML = `
                                 <tr>
                                     <td>${i+1}</td>
-                                    <td class="align-left">${result.tested_url}</td>
+                                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                                     <td class="${result.statusDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreDesktop)}</td>
                                     <td class="${result.statusMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreMobile)}</td>
                                     <td class="${result.statusDesktop && result.statusMobile ? "result_pass" : "result_fail"} strong">${result.statusDesktop && result.statusMobile ? "PASS" : "FAIL"}</td>
@@ -1846,7 +1951,7 @@ function toggleTestResultAreaVisibility() {
                         const tr1 = document.createElement("tr")
                         let rowHtml = `<tr>
                             <td class="text-center">${i+1}</td>
-                            <td class="align-left">${result.tested_url}</td>`;
+                            <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>`;
 
                         if (showPerfDesktop) rowHtml += `<td class="text-center ${result.statusPerformanceDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreDesktop)}</td>`;
                         if (showPerfMobile)  rowHtml += `<td class="text-center ${result.statusPerformanceMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.scoreMobile)}</td>`;
@@ -1922,16 +2027,6 @@ function toggleTestResultAreaVisibility() {
                 if (tbtCount > 0) firstRowCore += `<th colspan="${tbtCount}" class="text-center custom-tooltip-imran" data-tooltip="${tooltipMap['TBT']}">TBT</th>`;
                 firstRowCore += `<th></th></tr>`;
 
-                let secondRowCore = `<tr><th></th><th></th>`;
-                if (lcpCount > 0) secondRowCore += `<th colspan="${lcpCount}" class="text-center">(seconds)</th>`;
-                if (fidCount > 0) secondRowCore += `<th colspan="${fidCount}" class="text-center">(milliseconds)</th>`;
-                if (clsCount > 0) secondRowCore += `<th colspan="${clsCount}" class="text-center">(seconds)</th>`;
-                if (fcpCount > 0) secondRowCore += `<th colspan="${fcpCount}" class="text-center">(milliseconds)</th>`;
-                if (ttiCount > 0) secondRowCore += `<th colspan="${ttiCount}" class="text-center">(milliseconds)</th>`;
-                if (siCount > 0) secondRowCore += `<th colspan="${siCount}" class="text-center">(seconds)</th>`;
-                if (tbtCount > 0) secondRowCore += `<th colspan="${tbtCount}" class="text-center">(seconds)</th>`;
-                secondRowCore += `<th></th></tr>`;
-
                 let thirdRowCore = `<tr><th></th><th></th>`;
                 if (showLcpDesktop) thirdRowCore += `<th>Desktop</th>`;
                 if (showLcpMobile) thirdRowCore += `<th>Mobile</th>`;
@@ -1949,13 +2044,13 @@ function toggleTestResultAreaVisibility() {
                 if (showTbtMobile) thirdRowCore += `<th>Mobile</th>`;
                 thirdRowCore += `<th>Result</th></tr>`;
 
-                thead = `<thead class="result_data_header">${firstRowCore}${secondRowCore}${thirdRowCore}</thead>`;
+                thead = `<thead class="result_data_header">${firstRowCore}${thirdRowCore}</thead>`;
 
                 results.forEach((result, i)=>{
                     const tr1 = document.createElement("tr")
                     let rowHtml = `<tr>
                         <td class="text-center">${i+1}</td>
-                        <td class="align-left">${result.tested_url}</td>`;
+                        <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>`;
 
                     if (showLcpDesktop) rowHtml += `<td class="text-center ${result.statusLCPDesktop ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpDesktop)}</td>`;
                     if (showLcpMobile)  rowHtml += `<td class="text-center ${result.statusLCPMobile ? "result_pass" : "result_fail"}">${getRoundedNumber(result.lcpMobile)}</td>`;
@@ -2003,7 +2098,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
                 tbody.appendChild(tr)
@@ -2023,7 +2118,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
                 tbody.appendChild(tr)
@@ -2042,7 +2137,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
                 tbody.appendChild(tr)
@@ -2062,7 +2157,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
                 tbody.appendChild(tr)
@@ -2082,7 +2177,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
                 tbody.appendChild(tr)
@@ -2102,7 +2197,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
                 tbody.appendChild(tr)
@@ -2125,7 +2220,7 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left">${result.tested_url}</td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                     <td class="export-hidden-element">${result.message}</td>
                     <td class="${result.status ? "result_pass" : "result_fail"} strong">${result.status ? "PASS" : "FAIL"}</td>
                     `
@@ -2149,7 +2244,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td style="text-align:center;">${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="export-hidden-element" style="text-align:center;">${result.message}</td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;font-weight:bold;">${result.status ? "PASS" : "FAIL"}
                 <span class="export-hidden-element">
@@ -2212,55 +2307,58 @@ function toggleTestResultAreaVisibility() {
             </tr>
             </thead>`
 
+            document.querySelectorAll(".protocol-links-modal").forEach((el) => el.remove())
+
             results.forEach((result, i)=>{
+                const protocolLinks = Array.isArray(result.protocolRelativeResourceData) ? result.protocolRelativeResourceData : []
+                const hasProtocolLinks = protocolLinks.length > 0
+                const outputMessage = hasProtocolLinks ? "Protocol relative resource links found" : (result.message || "No protocol relative resource links found")
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
-                <td class="export-hidden-element">${result.message}</td>
-                <td class="${result.status ? "result_pass" : "result_fail"} strong">${result.status ? "PASS" : "FAIL"}
-                <span class="export-hidden-element">
-                <br><br>
-                <span class="" data-bs-toggle="modal" data-bs-target="#protocolModal${i}" 
-                                style="cursor: pointer;">List of Links</span>
-
-                
-                <div class="modal custom-modal" id="protocolModal${i}">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                  <!-- Modal Header -->
-                    <div class="modal-header">
-                     <span class="modal-title">Protocol Relative Resource Links</span>
-                     <span  class="tool-test-close close modal-close" data-bs-dismiss="modal">&times;</span>
-                    </div>
-                 <!-- Modal Body -->
-                 <div class="modal-body">
-                 <span style="padding-bottom: 10px;" class="analysis-body-css">Below are the links found on this page which qualify as Protocol resource links.</span>
-                 <div class="modal-table-div">
-                 <table class="tool-table">
-
-          <tbody>          
-                 ${result.protocolRelativeResourceData.map((item, index) => `
-                       <tr>
-                         <td>${index + 1}</td>
-                         <td>
-                         <span><a href="${item}" target="_blank"><i class="fas fa-external-link-alt" style="color:#c3c9d1"></i></a></span><span><a href="${item}" target="_blank">${item}</a></span>
-                         </td>
-                     </tr>
-                     `).join('')}   
-                           </tbody>  
-                </table>
-                </div>
-                </div>
-               <!-- Modal Footer -->
-             </div>
-           </div>
-          </div></div>
-         </div>
-          </div>
-          </span>
-          </td>   `
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
+                <td class="export-hidden-element tool-output-cell">
+                  <span class="tool-output-message">${outputMessage}</span>
+                  ${hasProtocolLinks ? `<button type="button" class="tool-output-link" data-bs-toggle="modal" data-bs-target="#protocolModal${i}">List of Links</button>` : ""}
+                </td>
+                <td class="${result.status ? "result_pass" : "result_fail"} strong">${result.status ? "PASS" : "FAIL"}</td>`
                 tbody.appendChild(tr)
+
+                if(hasProtocolLinks){
+                    const modal = document.createElement("div")
+                    modal.className = "modal fade tools-list-modal protocol-links-modal"
+                    modal.id = `protocolModal${i}`
+                    modal.tabIndex = -1
+                    modal.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h2 class="modal-title">Protocol Relative Resource Links</h2>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                          <p class="tools-list-modal-lead">Below are the links found on this page which qualify as protocol-relative resource links.</p>
+                          <table class="tools-list-table">
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>URL</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${protocolLinks.map((item, index) => `
+                                <tr>
+                                  <td class="tools-list-index">${index + 1}</td>
+                                  <td><a href="${item}" target="_blank" rel="noopener noreferrer" title="${item}">${item}</a></td>
+                                </tr>
+                              `).join("")}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>`
+                    document.body.appendChild(modal)
+                }
             })
             createDatatableElement();
             break;
@@ -2292,31 +2390,25 @@ function toggleTestResultAreaVisibility() {
                     brokenLinksModal.setAttribute("tabindex", "1")
                     brokenLinksModal.setAttribute("aria-hidden", "true")
                     brokenLinksModal.style.display = "none"
+                    brokenLinksModal.classList.add("tools-list-modal")
                     brokenLinksModal.innerHTML = `
                         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <div>
-                                        <h1 class="modal-title fs-5" id="staticBackdropLabel">
-                                            List of broken links
-                                        </h1>
-                                    </div>
+                                    <h2 class="modal-title" id="staticBackdropLabel">List of broken links</h2>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <div class="modal-body" style="overflow-x: hidden;">
-                                    <div class="card-body bulk-broken-links-modal">
-                                        <div class="meta-list-single" id="brokenLinksModalContent" style="overflow-x: hidden;">
-                                            <!-- Content will be dynamically updated here -->
-                                        </div>
-                                    </div>
+                                <div class="modal-body">
+                                    <p class="tools-list-modal-lead">These links on the page did not return a successful response.</p>
+                                    <div id="brokenLinksModalContent"></div>
                                 </div>
-                                <div class="modal-footer-alert"></div>
                             </div>
                         </div>
                     `
                     // Append modal to body (outside table)
                     document.body.appendChild(brokenLinksModal)
                 }
+                brokenLinksModal.classList.add("tools-list-modal")
                 
                 // Initialize or get Bootstrap modal instance
                 let brokenLinksModalInstance = bootstrap.Modal.getInstance(brokenLinksModal)
@@ -2364,7 +2456,7 @@ function toggleTestResultAreaVisibility() {
                 
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="align-left">${result.status_url ? result.internal != null ? result.internal.length  : 0 : "NA"}</td>
                 <td class="align-left">${result.status_url ? result.external != null ? result.external.length  : 0 : "NA"}</td>
 
@@ -2428,7 +2520,7 @@ function toggleTestResultAreaVisibility() {
                     const tr = document.createElement("tr")
                     tr.innerHTML = `
                     <td>${i+1}</td>
-                    <td class="align-left">${result.tested_url}</td>
+                    <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                     <td>
                     <div class="bulk-headings-message">
                     <span>${result.message}</span>
@@ -2706,7 +2798,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td style="text-align:center;">${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "Yes" : "No"}</strong></td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong" style="text-align:center;"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                 `
@@ -2729,7 +2821,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "Yes" : "No"}</strong></td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                 `
@@ -2752,7 +2844,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.httpCode} ${result.httpCodeName}</strong></td>
                 <td class="${result.status ? "result_pass" : "result_fail"} strong"><strong>${result.status ? "PASS" : "FAIL"}</strong></td>
                 `
@@ -2777,7 +2869,7 @@ function toggleTestResultAreaVisibility() {
                 const tr = document.createElement("tr")
                 tr.innerHTML = `
                 <td>${i+1}</td>
-                <td class="align-left">${result.tested_url}</td>
+                <td class="align-left result_data_url"><a href="${result.tested_url}" target="_blank" rel="noopener noreferrer">${result.tested_url}</a></td>
                 <td class="content-td">${result.message}</td>
                 <td class="${result.status ? "result_pass" : "result_fail"}">${result.status ? "PASS" : "FAIL"}</td>
                 `
@@ -3245,12 +3337,7 @@ function toggleTestResultAreaVisibility() {
                         }
                     }
                     
-                    // Update the link text, keeping full URL in href
-                    if (hasImage) {
-                        link.innerHTML = truncatedUrl + '<img src="/new-assets/assets/images/copy-link.png" alt="icon">';
-                    } else {
-                        link.textContent = truncatedUrl;
-                    }
+                    link.textContent = truncatedUrl;
                     
                     // Store full URL in data attribute for reference
                     link.setAttribute('data-full-url', fullUrl);

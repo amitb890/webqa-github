@@ -834,7 +834,7 @@ $(document).ready(function () {
     }
 
 
-    static dashboardUrlLinks(rawUrl, withCopyIcon = true) {
+    static dashboardUrlLinks(rawUrl) {
       const urls = String(rawUrl || "")
         .split(/[,\r\n]+/)
         .map((url) => url.trim())
@@ -842,13 +842,10 @@ $(document).ready(function () {
       if (!urls.length) {
         return "<span>—</span>"
       }
-      const copyIcon = withCopyIcon
-        ? `<img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />`
-        : ""
       return urls.map((url) => {
         const href = url.replace(/"/g, "&quot;")
         const text = url.replace(/</g, "&lt;")
-        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>${copyIcon}`
+        return `<a href="${href}" target="_blank" rel="noopener noreferrer">${text}</a>`
       }).join("<br>")
     }
 
@@ -1012,7 +1009,6 @@ $(document).ready(function () {
                       <span>Robots.txt URL: </span>
                       <span>
                         <a href="${rtUrl}" target="_blank" rel="noopener noreferrer">${data.robotsTxtUrl || ""}</a>
-                        <img src="/new-assets/assets/images/copy-link2.png" alt="" width="14" height="14" style="margin-left:6px;vertical-align:middle;" />
                       </span>
                     </p>
                   </div>

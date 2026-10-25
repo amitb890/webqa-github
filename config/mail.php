@@ -110,6 +110,8 @@ return [
 
     'contact_lead_to' => env('CONTACT_LEAD_EMAIL', 'iamamitb@gmail.com'),
 
+    'about_contact_to' => env('ABOUT_CONTACT_EMAIL', 'contact@webqa.co'),
+
     /*
     | Max upload size (KB) for dashboard sidebar “Submit your idea” attachment.
     | Laravel validates file size in kilobytes (e.g. 5120 ≈ 5 MB).

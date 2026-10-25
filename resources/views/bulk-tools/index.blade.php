@@ -132,7 +132,7 @@
                           <img src="/new-assets/assets/images/tools-root/robots_txt.svg" alt="icon">
                         </div>
                         <div class="root-content">
-                          <a href="{{route('tools', ['slug'=>'robotstxt-test'])}}">Robots.txt</a>
+                          <a href="{{route('tools', ['slug'=>'robotstxt'])}}">Robots.txt</a>
                           <p>Test to see if your website is using HTTPS, a secure protocol for sending and receiving data over the Internet. Google is increasingly adopting SSL as a good ranking criterion.</p>
                         </div>
                       </div>

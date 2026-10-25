@@ -53,27 +53,27 @@
             <div class="fcs3-d2-inner">
                 <div class="fcs3-d2-card">
                     <h6>Meta Headers</h6>
-                    <p>Easily customize your website’s meta titles to improve search visibility.</p>
+                    <p>Require at least one H1 and set the maximum number of H1 through H6 tags a page may use.</p>
                 </div>
                 <div class="fcs3-d2-card card-active">
                     <h6>Meta Title</h6>
-                    <p>Easily customize your website’s meta titles to improve search visibility.</p>
+                    <p>Set minimum and maximum title length, sentence or camel casing, and whether the title may match the H1.</p>
                 </div>
                 <div class="fcs3-d2-card">
                     <h6>Meta Description</h6>
-                    <p>Easily customize your website’s meta titles to improve search visibility.</p>
+                    <p>Set the shortest and longest meta description a page can have so every snippet follows the same length rule.</p>
                 </div>
                 <div class="fcs3-d2-card">
                     <h6>Images</h6>
-                    <p>Easily customize your website’s meta titles to improve search visibility.</p>
+                    <p>Require alt text, cap file size and filename length, and allow only hyphen-separated lowercase names.</p>
                 </div>
                 <div class="fcs3-d2-card">
                     <h6>URL Slug</h6>
-                    <p>Easily customize your website’s meta titles to improve search visibility.</p>
+                    <p>Require lowercase URLs, set a maximum length, and choose hyphens, underscores, or either as word separators.</p>
                 </div>
                 <div class="fcs3-d2-card">
                     <h6>Keywords</h6>
-                    <p>Easily customize your website’s meta titles to improve search visibility.</p>
+                    <p>Skip chosen words in title casing checks and block stop words in URLs so keyword rules stay the same on every page.</p>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                 Define your acceptance criteria for performance tests
             </h1>
             <p class="fr2-d-p">
-                Our Customized Auditing Settings let you define exactly what matters for your website’s success. Choose specific metrics, focus areas, and performance goals tailored to your business. From SEO to speed optimization, our flexible settings ensure every audit delivers precise insights, empowering you to take targeted, impactful action.
+                Set the scores a page must reach before a performance check passes. Choose minimum PageSpeed scores for desktop and mobile, then apply the same Lighthouse, Core Web Vitals, and mobile-friendliness bars to every audit in the project.
             </p>
             <img class="fr2-d-img zoomable-img" src="{{ asset('new-assets/assets/images/feature-childpage-settings/Group-1009-(1).svg') }}" alt="">
         </div>
@@ -106,7 +106,7 @@
      <section class="fcs5">
         <div class="fcs5-d">
             <h1>Coding Best Practices</h1>
-            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+            <p>Set the markup and delivery rules every page must meet. These checks cover compression, caching, page weight, and HTML patterns that slow rendering or make pages harder to crawl.</p>
             <div class="fcs5-inner container">
                 <div class="fcs5-cards">
                     <div class="fcs5-card">
@@ -118,7 +118,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>A page passes when its HTML is minified and extra whitespace and comments have been removed.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -129,7 +129,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>Set the maximum HTML document size in kilobytes. Images and external CSS or JavaScript files are left out of that total.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -140,7 +140,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>External stylesheets must be compressed and minified before the page can pass.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -151,7 +151,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>The page must not use a frameset. Frames split the window into separate documents and are difficult for users and crawlers.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -162,7 +162,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>External JavaScript files must be compressed and minified.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -173,7 +173,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>Flag links that do not return a 200 status, and keep an ignore list for URLs you want this check to skip.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -184,7 +184,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>The HTML response must be served with GZIP compression enabled.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -195,7 +195,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>Stylesheets must send cache headers such as Cache-Control or an ETag so returning visitors are not forced to download them again.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -206,7 +206,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>The page must not contain a table inside another table. Nested tables slow rendering.</p>
                         </div>
                     </div>
                     <div class="fcs5-card">
@@ -217,7 +217,7 @@
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="fcs5-card-toggle">
-                            <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                            <p>JavaScript files must send cache headers such as Cache-Control or an ETag so repeat visits can reuse them.</p>
                         </div>
                     </div>
                 </div>
@@ -233,34 +233,46 @@
         <div class="fcs6-inner">
             <div class="fcs6-d1">
                 <h1>Security Settings</h1>
-                <p>Web QA offers solutions for every daily task handled by SEO specialists. We deliver high-precision data so you can make informed decisions.</p>
+                <p>Turn on the security checks a project must pass. Each card opens that test in Tools so you can run it on its own.</p>
             </div>
             <div class="fcs6-cards-wrapper cards-paddings">
                 <div class="fcs6-cards">
-                    <div class="fcs6-card">
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'safe-browsing-test']) }}">
                         <h6>Safe Browsing</h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword usage that may be affecting your search engine rankings.</p>
-                    </div>
-                    <div class="fcs6-card">
-                        <h6>Unsafe Cross Origin <br> Links</h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword usage that may be affecting your search engine rankings.</p>
-                    </div>
-                    <div class="fcs6-card">
+                        <p>Fail the project if Google Safe Browsing flags the site for malware, phishing, or other harmful content.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'unsafe-cross-origin-links-test']) }}">
+                        <h6>Unsafe Cross Origin Links</h6>
+                        <p>Links that open in a new tab must include rel="noopener" or rel="noreferrer" so the original page cannot be controlled by the destination.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'protocall-relative-resource-links-test']) }}">
                         <h6>Protocol Relative Resource Links</h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword usage that may be affecting your search engine rankings.</p>
-                    </div>
-                    <div class="fcs6-card">
+                        <p>Require full HTTPS URLs for page resources. Protocol-relative links that start with // are not allowed.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'content-security-policy-header-test']) }}">
                         <h6>Content Security Policy Header</h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword usage that may be affecting your search engine rankings.</p>
-                    </div>
-                    <div class="fcs6-card">
-                        <h6>Content Security Policy Header</h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword usage that may be affecting your search engine rankings.</p>
-                    </div>
-                    <div class="fcs6-card">
-                        <h6>Content Security Policy Header</h6>
-                        <p>Identifies issues like broken links, slow page speed, and poor keyword usage that may be affecting your search engine rankings.</p>
-                    </div>
+                        <p>The response must include a Content-Security-Policy header that limits where scripts and other resources can load from.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'x-frame-options-header-test']) }}">
+                        <h6>X Frame Options Header</h6>
+                        <p>The response must send X-Frame-Options so other sites cannot embed the page and attempt clickjacking.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'hsts-header-test']) }}">
+                        <h6>HSTS Header</h6>
+                        <p>The site must send Strict-Transport-Security so browsers keep using HTTPS on later visits.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'bad-content-type-test']) }}">
+                        <h6>Bad Content Type</h6>
+                        <p>HTML, CSS, JavaScript, and images must be served with the correct Content-Type so browsers do not guess the file type.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'ssl-certificate-test']) }}">
+                        <h6>SSL Certificate</h6>
+                        <p>The certificate must be valid, unexpired, trusted, and matched to the domain, with the page served over HTTPS.</p>
+                    </a>
+                    <a class="fcs6-card" href="{{ route('tools', ['slug' => 'directory-browsing-test']) }}">
+                        <h6>Directory Browsing</h6>
+                        <p>Directory listings must be turned off so visitors cannot open folders and browse files on the server.</p>
+                    </a>
                 </div>
             </div>
                 
@@ -283,47 +295,56 @@
                 <div class="as6-cards">
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I retrieve my password?</h5>
+                            <h5 class="as6-card-question-h5">What do Settings control?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Settings are the pass and fail rules for a project. Audits and bulk tools use those same rules, so a page is judged the same way in every check.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">What's included in the free trial?</h5>
+                            <h5 class="as6-card-question-h5">Can each project have its own rules?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Yes. Title length, casing, image rules, URL rules, and which checks are required are saved on the project. Updating one project leaves the others unchanged.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I remove extra keywords/projects after switching to a subscription plan with lower limits?</h5>
+                            <h5 class="as6-card-question-h5">Which SEO rules can I customize?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>You can set title and description length, title casing, whether the title may match the H1, heading counts, image alt text and filenames, and URL length, case, and separators.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How do I change my login and password?</h5>
+                            <h5 class="as6-card-question-h5">Do coding and security tests have numeric limits?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>Most of them are on or off. Compression, caching, framesets, security headers, SSL, and Safe Browsing either meet the rule or they fail. HTML page size, image size, and the broken-link ignore list are the checks with extra options.</p>
                         </div>
                     </div>
                     <div class="as6-card">
                         <div class="as6-card-question">
-                            <h5 class="as6-card-question-h5">How to set the location where I want to track keywords?</h5>
+                            <h5 class="as6-card-question-h5">Will a settings change update results I already have?</h5>
                             <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
                         </div>
                         <div class="as6-card-toggle">
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos libero quos sint nulla sapiente, sunt veniam ullam doloremque aperiam? Voluptate, accusantium enim dolores atque maxime nesciunt repudiandae dignissimos expedita ipsum quisquam tempora sequi saepe nostrum eum error molestiae, unde quis!</p>
+                            <p>New audits and tool runs use the updated rules. Results that are already saved stay as they are until you run those checks again.</p>
+                        </div>
+                    </div>
+                    <div class="as6-card">
+                        <div class="as6-card-question">
+                            <h5 class="as6-card-question-h5">Where can I run a single security test?</h5>
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/down-arrow.svg') }}" alt="">
+                        </div>
+                        <div class="as6-card-toggle">
+                            <p>Each card under Security Settings links to that test in Tools. Open the card to run the check without starting a full project audit.</p>
                         </div>
                     </div>
                 </div>

@@ -635,7 +635,9 @@ function getSettingsVal(inputs){
     const elementArray = ["excludedWordsCasingVal", "UrlStopWordsVal", "excluded_words", "brokenLinksExcludedUrlsVal"]
     inputs.forEach(el=>{
         let val
-        if(elementArray.includes(el.id)){
+        if(el.id === "html_sitemap_val" || el.id === "xml_sitemap_val"){
+            val = (el.value || "").trim()
+        }else if(elementArray.includes(el.id)){
             val = el.value
             val = val.split(",")
             val = trimArray(val)

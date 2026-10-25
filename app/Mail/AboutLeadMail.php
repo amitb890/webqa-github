@@ -32,8 +32,11 @@ class AboutLeadMail extends Mailable
             ? 'About us contact: '.$this->leadSubject
             : 'New lead from About us page';
 
-        return $this
+        $mail = $this
             ->subject($subject)
+            ->replyTo($this->leadEmail, $this->leadName !== '' ? $this->leadName : null)
             ->view('emails.about-lead');
+
+        return $mail;
     }
 }

@@ -468,45 +468,31 @@ window.filterSidebarReports = filterSidebarReports;
 
 
 
-// So the features and tools dropdown in the header gets naviagted to their respective web pages
-
-
-// Remove Bootstrap's built-in click behavior for these specific dropdowns
-document.querySelectorAll('.dropdown-toggle').forEach(link => {
-  link.addEventListener('click', function (e) {
-    // Go straight to the href link
-    window.location.href = this.getAttribute('href');
-  });
-
-  // Hover → open dropdown
+// Header Features and Tools menus: hover on large screens, tap to open on small screens.
+document.querySelectorAll(".nav-drop-toggle").forEach((link) => {
   const parent = link.parentElement;
+  let hideTimer;
 
-  parent.addEventListener('mouseenter', () => {
-    const dropdown = bootstrap.Dropdown.getOrCreateInstance(link);
-    dropdown.show();
+  parent.addEventListener("mouseenter", () => {
+    if (window.innerWidth < 768) return;
+    clearTimeout(hideTimer);
+    bootstrap.Dropdown.getOrCreateInstance(link).show();
   });
 
-  parent.addEventListener('mouseleave', () => {
-    const dropdown = bootstrap.Dropdown.getOrCreateInstance(link);
-    dropdown.hide();
+  parent.addEventListener("mouseleave", () => {
+    if (window.innerWidth < 768) return;
+    hideTimer = setTimeout(() => {
+      bootstrap.Dropdown.getOrCreateInstance(link).hide();
+    }, 180);
   });
-});
 
-
-
-
-document.querySelectorAll('.dropdown-toggle').forEach(link => {
-  link.addEventListener('click', function (e) {
-    const target = e.target.closest('a');
-    const dropdownMenu = target.nextElementSibling;
-
-    if (dropdownMenu && !dropdownMenu.classList.contains('show')) {
-      // First click → open dropdown
-      e.preventDefault();
-    } else {
-      // Second click → navigate to href
-      window.location.href = target.getAttribute('href');
+  link.addEventListener("click", (event) => {
+    if (window.innerWidth < 768) {
+      event.preventDefault();
+      return;
     }
+    const href = link.getAttribute("href");
+    if (href) window.location.href = href;
   });
 });
 
@@ -556,6 +542,21 @@ document.querySelectorAll('.dropdown-toggle').forEach(link => {
   $("#header_menuBtn").click(function () {
     $(".genarel_header_items").slideToggle();
   });
+
+  var headerToolTabs = {
+    seo: "#v-pills-home-tab",
+    performance: "#v-pills-six-tab",
+    "best-practices": "#v-pills-messages-tab",
+    security: "#v-pills-five-tab"
+  };
+  function openHeaderToolTab() {
+    var headerToolTab = headerToolTabs[(window.location.hash || "").replace("#", "")];
+    if (!headerToolTab) return;
+    var headerToolTabButton = document.querySelector(headerToolTab);
+    if (headerToolTabButton) headerToolTabButton.click();
+  }
+  openHeaderToolTab();
+  window.addEventListener("hashchange", openHeaderToolTab);
 
 
   // tracker-advance-search
@@ -1643,17 +1644,13 @@ $(document).on("submit", "#footer_search_box_home", function (e) {
 function aboutUsFaqFunctionality(){
   document.querySelectorAll(".as6-card").forEach((card) => {
   card.addEventListener("click", function () {
-    const toggle = card.querySelector(".as6-card-toggle");
-    const arrow  = card.querySelector(".as6-card-question img");
-
-    // Toggle active class directly on the card
     card.classList.toggle("active");
 
-    // Change arrow source smoothly
-    if (card.classList.contains("active")) {
-      arrow.src = "../new-assets/assets/images/aboutUs/up-arrow.svg";
-    } else {
-      arrow.src = "../new-assets/assets/images/aboutUs/down-arrow.svg";
+    const arrow = card.querySelector(".as6-card-question img");
+    if (arrow) {
+      arrow.src = card.classList.contains("active")
+        ? "../new-assets/assets/images/aboutUs/up-arrow.svg"
+        : "../new-assets/assets/images/aboutUs/down-arrow.svg";
     }
   });
 });
@@ -1694,20 +1691,24 @@ const cardsContainer = document.querySelector(".as5-cards");
   function applyUI({ leftDisabled, rightDisabled }) {
     if (leftDisabled) {
       leftBtn.style.background = "#e4e4e4";
+      leftBtn.style.color = "#4b5563";
       leftBtn.style.cursor = "not-allowed";
       leftBtn.dataset.disabled = "true";
     } else {
-      leftBtn.style.background = "#2b56a5";
+      leftBtn.style.background = "#1e63b8";
+      leftBtn.style.color = "#fff";
       leftBtn.style.cursor = "pointer";
       leftBtn.dataset.disabled = "false";
     }
 
     if (rightDisabled) {
       rightBtn.style.background = "#e4e4e4";
+      rightBtn.style.color = "#4b5563";
       rightBtn.style.cursor = "not-allowed";
       rightBtn.dataset.disabled = "true";
     } else {
-      rightBtn.style.background = "#2b56a5";
+      rightBtn.style.background = "#1e63b8";
+      rightBtn.style.color = "#fff";
       rightBtn.style.cursor = "pointer";
       rightBtn.dataset.disabled = "false";
     }

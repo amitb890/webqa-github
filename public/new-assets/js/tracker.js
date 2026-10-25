@@ -1739,7 +1739,7 @@ $(document).ready(function () {
                 }
                 
                 if (projectSettings.title_casing_both == 1 || projectSettings.title_casing_camel == 1 || projectSettings.title_casing_sentence == 1) {
-                td.innerHTML+=`<td class="${result.casingClass} ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
+                td.innerHTML+=`<td class="text-center ${settings.title_casing_both || settings.title_casing_camel || settings.title_casing_sentence ? "" : "hidden-element-tracker"}"><span class="${result.casingClass}">${result.casing ? result.casing : "-"}</span></td>
                   `
                 }
                   break;
@@ -2095,7 +2095,7 @@ $(document).ready(function () {
                       td.innerHTML+=`
                       <td class="align-left meta-content-imran">${result.content != null ? result.content : "Open Graph Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_og_title_length || settings.min_og_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
-                      <td class="${result.casingClass} ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
+                      <td class="text-center ${settings.og_title_casing_both || settings.og_title_casing_camel || settings.og_title_casing_sentence ? "" : "hidden-element-tracker"}"><span class="${result.casingClass}">${result.casing ? result.casing : "-"}</span></td>
                       <td class="${result.isEqualClass} ${settings.is_og_title_equal_title ? "" : "hidden-element-tracker"}">${result.isEqualStatus ? "Yes" : "No"}</td>
                       <td class="align-left meta-content-imran">${result.contentDesc != null ? result.contentDesc : "Open Graph Description does not exist."}</td>
                       <td class="${result.lengthDescClass} ${settings.max_og_desc_length || settings.min_og_desc_length ? "" : "hidden-element-tracker"}">${result.contentDesc != null ? result.contentDesc.length : 0}</td>
@@ -2124,7 +2124,7 @@ $(document).ready(function () {
                       td.innerHTML+=`
                       <td class="align-left meta-content-imran">${result.content != null ? result.content : "Twitter Title does not exist."}</td>
                       <td class="${result.lengthClass} ${settings.max_twitter_title_length || settings.min_twitter_title_length ? "" : "hidden-element-tracker"}">${result.content != null ? result.content.length : 0}</td>
-                      <td class="${result.casingClass} ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker"}">${result.casing ? result.casing : "-"}</td>
+                      <td class="text-center ${settings.twitter_title_casing_both || settings.twitter_title_casing_camel || settings.twitter_title_casing_sentence ? "" : "hidden-element-tracker"}"><span class="${result.casingClass}">${result.casing ? result.casing : "-"}</span></td>
                       <td class="${result.isEqualClass} ${settings.is_twitter_title_equal_title ? "" : "hidden-element-tracker"}">${result.isEqualStatus ? "Yes" : "No"}</td>
                       <td class="align-left">${result.contentImage != null && result.contentImage != "" ? result.contentImage : "Twitter Image does not exist."}</td>
                       <td class="${settings.twitter_image_dimensions_min || settings.twitter_image_dimensions_exact ? "" : "hidden-element-tracker"}"><span class="${result.widthImageClass}">${result.dimensions != null ? result.dimensions.w : "-"}</span>, <span class="${result.heightImageClass}">${result.dimensions != null ? result.dimensions.h : ""}</span></td>

@@ -3,6 +3,9 @@ namespace App\Http;
 
 use Goutte\Client;
 use Symfony\Component\HttpClient\HttpClient;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Http\Client\Response as HttpResponse;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 use GuzzleHttp\Client as GuzzleClient;
@@ -318,6 +321,47 @@ class Helpers{
     }
 
     /**
+     * Common HTML sitemap locations, most likely paths first.
+     *
+     * @return list<string>
+     */
+    public static function htmlSitemapCandidatePaths(){
+        $extensions = ['', '.html', '.htm', '.php', '.asp', '.aspx', '.jsp', '.shtml', '.xhtml', '.cfm'];
+        $paths = [];
+        foreach($extensions as $extension){
+            $paths[] = '/sitemap' . $extension;
+        }
+
+        return $paths;
+    }
+
+    /**
+     * Use a sitemap URL the user entered. When none was entered, look for an HTML sitemap
+     * at /sitemap, /sitemap.html, /sitemap.php, and other common page extensions.
+     */
+    public static function resolveHtmlSitemapValue($sitemapVal, $domain){
+        $raw = is_string($sitemapVal) ? trim($sitemapVal) : '';
+        if($raw !== '' && strcasecmp($raw, 'nan') !== 0 && $raw !== '0'){
+            return $raw;
+        }
+
+        $root = rtrim((string) $domain, '/');
+        if($root === '' || !preg_match('#^https?://#i', $root)){
+            return '';
+        }
+
+        $found = Cache::remember('html_sitemap_detect:' . md5(strtolower($root)), 600, function() use ($root){
+            return self::detectHtmlSitemapUrls($root);
+        });
+
+        if(is_array($found) && count($found) > 0){
+            return implode(',', $found);
+        }
+
+        return $root . '/sitemap';
+    }
+
+    /**
      * Detect HTML sitemaps at common paths. A candidate is kept when it returns HTTP 200.
      *
      * @return list<string>
@@ -328,21 +372,33 @@ class Helpers{
             return [];
         }
 
-        $found = [];
-        foreach(['/sitemap', '/sitemap.html', '/sitemap.php'] as $path){
-            $url = $root . $path;
-            try{
-                $res = Http::timeout(8)->withHeaders([
-                    'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0; +https://webqa.io)',
-                    'Accept' => 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
-                ])->get($url);
+        $paths = self::htmlSitemapCandidatePaths();
+        $headers = [
+            'User-Agent' => 'Mozilla/5.0 (compatible; WebQA/1.0; +https://webqa.io)',
+            'Accept' => 'text/html,application/xhtml+xml;q=0.9,*/*;q=0.8',
+        ];
 
-                if($res->status() === 200){
-                    $found[] = $url;
+        try{
+            $responses = Http::pool(function(Pool $pool) use ($root, $paths, $headers){
+                foreach($paths as $path){
+                    $pool->as($path)->timeout(6)->withHeaders($headers)->get($root . $path);
                 }
-            }catch(\Throwable $e){
+            });
+        }catch(\Throwable $e){
+            $responses = [];
+        }
+
+        $found = [];
+        foreach($paths as $path){
+            $res = $responses[$path] ?? null;
+            if(!$res instanceof HttpResponse || $res->status() !== 200){
                 continue;
             }
+            $type = strtolower((string) $res->header('Content-Type'));
+            if($type !== '' && strpos($type, 'xml') !== false){
+                continue;
+            }
+            $found[] = $root . $path;
         }
 
         return array_values(array_unique($found));
@@ -769,11 +825,15 @@ class Helpers{
      */
     function resolveMetaElementContent($node, ?string $name): mixed
     {
-        if ($name === 'link') {
-            return $node->extract(['href'])[0] ?? null;
+        $tagName = strtolower($node->getNode(0)->tagName ?? '');
+
+        // Link rel is renamed to canonical/icon/stylesheet before content is read.
+        // The URL lives on href, not in the element's text.
+        if ($tagName === 'link' || $name === 'link') {
+            return $node->attr('href');
         }
-        if ($name === 'a') {
-            return $node->extract(['href'])[0] ?? null;
+        if ($tagName === 'a' || $name === 'a') {
+            return $node->attr('href');
         }
         if ($name === 'img') {
             return $this->extractImgElementContent($node);
@@ -805,7 +865,8 @@ class Helpers{
             $name = $this->resolveMetaElementName($node);
 
             if ($name === 'link') {
-                $name = $node->extract(['rel'])[0] ?? 'link';
+                $rel = $node->attr('rel');
+                $name = is_string($rel) && trim($rel) !== '' ? strtolower(trim($rel)) : 'link';
             }
 
             $content = $this->resolveMetaElementContent($node, $name);
@@ -863,6 +924,55 @@ class Helpers{
     }
 
     /**
+     * First href for a link rel token, e.g. rel="canonical".
+     * Used when the DOM crawl stored an empty canonical (href was never read).
+     */
+    function extractLinkRelHrefFromHtml(string $html, string $rel): ?string
+    {
+        if ($html === '' || $rel === '') {
+            return null;
+        }
+
+        if (!preg_match_all('/<link\b[^>]*>/i', $html, $matches)) {
+            return null;
+        }
+
+        $wanted = strtolower($rel);
+
+        foreach ($matches[0] as $tag) {
+            $relValue = null;
+            $href = null;
+
+            if (preg_match('/\brel\s*=\s*(["\'])([^"\']*)\1/i', $tag, $relMatch)) {
+                $relValue = strtolower(trim(html_entity_decode($relMatch[2], ENT_QUOTES | ENT_HTML5)));
+            } elseif (preg_match('/\brel\s*=\s*([^\s"\'>]+)/i', $tag, $relMatch)) {
+                $relValue = strtolower(trim(html_entity_decode($relMatch[1], ENT_QUOTES | ENT_HTML5)));
+            }
+
+            if ($relValue === null || $relValue === '') {
+                continue;
+            }
+
+            $tokens = preg_split('/\s+/', $relValue) ?: [];
+            if (!in_array($wanted, $tokens, true)) {
+                continue;
+            }
+
+            if (preg_match('/\bhref\s*=\s*(["\'])([^"\']*)\1/i', $tag, $hrefMatch)) {
+                $href = trim(html_entity_decode($hrefMatch[2], ENT_QUOTES | ENT_HTML5));
+            } elseif (preg_match('/\bhref\s*=\s*([^\s"\'>]+)/i', $tag, $hrefMatch)) {
+                $href = trim(html_entity_decode($hrefMatch[1], ENT_QUOTES | ENT_HTML5));
+            }
+
+            if ($href !== null && $href !== '') {
+                return $href;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Fill empty known meta keys from a raw-HTML regex scan.
      */
     function mergeMetaTagsFromHtml(array $obj, string $html): array
@@ -875,6 +985,13 @@ class Helpers{
             }
             if (($obj[$name] === '' || $obj[$name] === null) && $content !== '') {
                 $obj[$name] = $content;
+            }
+        }
+
+        if (array_key_exists('canonical', $obj) && ($obj['canonical'] === '' || $obj['canonical'] === null)) {
+            $canonical = $this->extractLinkRelHrefFromHtml($html, 'canonical');
+            if ($canonical !== null && $canonical !== '') {
+                $obj['canonical'] = $canonical;
             }
         }
 
@@ -1388,22 +1505,38 @@ class Helpers{
         // Construct the base URL
         $base_url = $parsed_url['scheme'] . '://' . $parsed_url['host'];
         $robotsTxtUrl = $base_url . '/robots.txt';
-        $httpResponse = $this->httpGetContent($robotsTxtUrl);
-        // Check the HTTP status code
+        try {
+            $httpResponse = $this->httpGetContent($robotsTxtUrl);
+        } catch (\Throwable $e) {
+            return [[], false, false];
+        }
+        // Check the HTTP status code. A redirect to an HTML page is not a robots.txt file.
         $statusCode = $httpResponse->status();
+        $contentType = strtolower((string) $httpResponse->header('Content-Type'));
 
-        if ($statusCode != 200) {
+        if ($statusCode != 200 || str_contains($contentType, 'text/html')) {
             return [[], false, false];
         }
 
         // Create a Guzzle client
         $client = new GuzzleClient();
 
-        // Make a GET request to the robots.txt URL
-        $response = $client->request('GET', $robotsTxtUrl);
+        try {
+            // Follow same-host redirects (www -> locale) but reject HTML pages served in place of robots.txt.
+            $response = $client->request('GET', $robotsTxtUrl, ['http_errors' => false]);
+        } catch (\Throwable $e) {
+            return [[], false, false];
+        }
 
-        // Get the content of the robots.txt file
+        if ($response->getStatusCode() !== 200) {
+            return [[], false, false];
+        }
+
+        $guzzleType = strtolower($response->getHeaderLine('Content-Type'));
         $robotsTxtContent = $response->getBody()->getContents();
+        if (str_contains($guzzleType, 'text/html') || str_starts_with(ltrim($robotsTxtContent), '<')) {
+            return [[], false, false];
+        }
         $urlArray = $this->parseRobotsTxt($robotsTxtContent);
         // Check if the URL is allowed based on the robots.txt rules
         return $isUrlAllowed = $this->isUrlAllowedByRobotsTxt($url, $robotsTxtContent, $urlArray);
@@ -1545,7 +1678,7 @@ private function checkUserAgent($urlArray, $url, $type, $secondaryBlockedUserAge
                     $disallowedPathCommon = str_replace('*', '', $disallowedPath);
                     $disallowedPathCommon = str_replace('/*/*,*,*', '', $disallowedPathCommon);
                     if (strpos($compareString, $disallowedPathCommon) === 0) {
-                         $blockedUserAgent = $this->checkUserAgent($urlArray, $disallowedPath, 'wild');
+                         $blockedUserAgent = $this->checkUserAgent($urlArray, $disallowedPath, 'wild', $secondaryBlockedUserAgentRes);
                         if(in_array($blockedUserAgent, $userAgents)) {
                             
                             $status = false;
@@ -2136,7 +2269,7 @@ public function getContentType($response)
                 'displayName' => 'Robots.txt',
                 'name' => 'robotstxt-test',
                 'dbName' => 'robotstxt',
-                'url' => '/test/robotstxt',
+                'url' => '/test/robot-text-test',
                 'slug' => 'robotstxt',
                 'route' => 'tools/robotstxt',
                 'main_heading' => 'Robots.txt Test',

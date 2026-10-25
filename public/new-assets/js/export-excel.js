@@ -4070,7 +4070,7 @@ function addBadContentTypeSection(worksheet, data, startRow) {
     
     // Use message from data if available, otherwise use default messages
     const resultMessage = data.message && data.message !== "N/A" ? data.message : 
-                         (isPass ? "Content type defined" : "Content type not define");
+                         (isPass ? "No content type is declared on this page" : "The declared content type does not match the response");
     
     resultRow.getCell(2).value = resultMessage;
     resultRow.getCell(2).fill = {

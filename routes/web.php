@@ -275,7 +275,8 @@ Route::namespace("Test")->prefix('test')->group(function(){
     Route::post('/h1-heading-tag', [App\Http\Controllers\Test\TestController::class, 'h1HeadindTag'])->name('test.h1-heading-tag');
     // Alias route for bulk tool compatibility
     Route::post('/headings', [App\Http\Controllers\Test\TestController::class, 'h1HeadindTag'])->name('test.headings');
-    Route::post('/robot-text-test', [App\Http\Controllers\Test\TestController::class, 'robotTextTtest'])->name('test.robot-text-test');    
+    Route::post('/robot-text-test', [App\Http\Controllers\Test\TestController::class, 'robotTextTtest'])->name('test.robot-text-test');
+    Route::post('/robotstxt', [App\Http\Controllers\Test\TestController::class, 'robotTextTtest']);    
     Route::post('/broken-links', [App\Http\Controllers\Test\TestController::class, 'brokenLinks'])->name('test.broken-links');
     
     Route::post('/title', [App\Http\Controllers\Test\TestController::class, 'title'])->name('test.title');

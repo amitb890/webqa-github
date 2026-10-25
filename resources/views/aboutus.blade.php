@@ -9,21 +9,25 @@
 @section('og-image', 'https://webqa.co/new-assets/assets/images/meta-tags/open-graph-image.png')
 @section('og-image-alt', 'About Webqa')
 
-@section("content")
+@section('css')
+<link rel="stylesheet" href="{{ asset('new-assets/css/about-page.css') }}{{ \App\Http\Helpers::getCacheBuster() }}">
+@endsection
 
+@section("content")
+<div class="about-page">
         <!--Section 1 starts -->
         <section class="as1">
                 <div class="as1-left">
-                    <img class="as1-left-img1"  src="{{ asset('new-assets/assets/images/aboutUs/as1-left-img.svg') }}" alt="SEO professional">
-                    <img class="as1-left-img2"  src="{{ asset('new-assets/assets/images/aboutUs/as1-left-img-absolute.svg') }}" alt="marketing analyst">
+                    <img class="as1-left-img1" width="560" height="560" src="{{ asset('new-assets/assets/images/aboutUs/hero-left.png') }}" alt="SEO professional">
+                    <img class="as1-left-img2" width="72" height="72" src="{{ asset('new-assets/assets/images/aboutUs/hero-badge-left.png') }}" alt="">
                 </div>
                 <div class="as1-center">
-                    <h1 class="as1-center-h1">We bring <span style="color: #417cec;">control</span> to website audits.</h1>
+                    <h1 class="as1-center-h1">We bring <span class="as1-accent">control</span> to website audits.</h1>
                     <p class="as1-center-p">Modern teams shape higher quality websites with audits that adapt to their standards, not the other way around.</p>
                 </div>
                 <div class="as1-right">
-                    <img class="as1-right-img2" src="{{ asset('new-assets/assets/images/aboutUs/as1-right-img-absolute.svg') }}" alt="reports">
-                    <img class="as1-right-img1"  src="{{ asset('new-assets/assets/images/aboutUs/as1-right-img.svg') }}" alt="audit">
+                    <img class="as1-right-img2" width="72" height="72" src="{{ asset('new-assets/assets/images/aboutUs/hero-badge-right.png') }}" alt="">
+                    <img class="as1-right-img1" width="560" height="520" src="{{ asset('new-assets/assets/images/aboutUs/hero-right.png') }}" alt="Audit specialist">
                 </div>
         </section>
         <!-- Section 1 ends -->
@@ -49,7 +53,7 @@
                 </div>
                 <div class="as2-dmid">
                     <div class="as2-dmid-img">
-                        <img  src="{{ asset('new-assets/assets/images/aboutUs/Layer-2.svg') }}" alt="Webqa mission">
+                        <img src="{{ asset('new-assets/assets/images/aboutUs/mission.png') }}" width="120" height="186" alt="Webqa mission">
                     </div>
                     <div class="as2-dmid-right">
                         <h2 class="as2-dmid-right-h" style="color: #fff;">Our Mission</h2>
@@ -60,7 +64,7 @@
                 </div>
                 <div class="as2-dlast">
                     <div class="as2-dlast-img">
-                        <img  src="{{ asset('new-assets/assets/images/aboutUs/Layer-3.svg') }}" alt="Webqa vision">
+                        <img src="{{ asset('new-assets/assets/images/aboutUs/vision.png') }}" width="120" height="120" alt="Webqa vision">
                     </div>
                     
                     <div class="as2-dlast-right">
@@ -84,7 +88,7 @@
             <div class="as3-down">
                 <div class="as3-down-card">
                     <div class="as3-down-card-imgcon">
-                        <img class="as3-down-one-img2" src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(1).svg') }}" alt="webpage audit icon">
+                        <img src="{{ asset('new-assets/assets/images/aboutUs/icons/audit.png') }}" width="44" height="44" alt="">
                     </div>
                     <h4 class="as3-down-one-h">Webpage Audit</h4>
                     <p class="as3-down-one-p">Analyze a page against your standards and instantly share or export findings to prioritize SEO, performance, and quality fixes.</p>
@@ -92,9 +96,8 @@
 
                 </div>
                 <div class="as3-down-card">
-                    <div class="as3-down-card-imgcon2">
-                           <img class="as3-down-two-img-div1" src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="website tracker icon 1">
-                           <img class="as3-down-two-img-div2" src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="website tracker icon 2"> 
+                    <div class="as3-down-card-imgcon">
+                           <img src="{{ asset('new-assets/assets/images/aboutUs/icons/tracker.png') }}" width="44" height="44" alt="">
                     </div>
                     <h4 class="as3-down-two-h">Website Tracker</h4>
                     <p class="as3-down-two-p">See every metric for every URL in one big, filterable table - perfect for spotting patterns across templates and catching regressions early.</p>
@@ -104,7 +107,7 @@
                 </div>
                 <div class="as3-down-card">
                     <div class="as3-down-card-imgcon">
-                        <img class="as3-down-three-img2" src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="reports icon">
+                        <img src="{{ asset('new-assets/assets/images/aboutUs/icons/reports.png') }}" width="44" height="44" alt="">
                     </div>
                     <h4 class="as3-down-three-h">Reports</h4>
                     <p class="as3-down-three-p">Drill into tabular, per-metric reports (titles, descriptions, canonicals, speed etc) for fast triage and fixes.</p>
@@ -114,7 +117,7 @@
                 </div>
                 <div class="as3-down-card">
                     <div class="as3-down-card-imgcon">
-                        <img class="as3-down-four-img2" src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(3).svg') }}" alt="settings icon">
+                        <img src="{{ asset('new-assets/assets/images/aboutUs/icons/settings.png') }}" width="44" height="44" alt="">
                     </div>
                     <h4 class="as3-down-four-h">Settings</h4>
                     <p class="as3-down-four-p">Define project level rules that defines acceptance criteria for each test. Help teams align on exactly what “good” looks like.</p>
@@ -139,9 +142,8 @@
                 <div class="as4-cards">
                     <a target="_blank" href="{{ url('/tool/http-status-code') }}">
                         <div class="as4-card">
-                        <div class="as4-card-imgs">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="http status code checker icon 1">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="http status code checker icon 2">
+                        <div class="as4-card-img">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/icons/http.png') }}" width="44" height="44" alt="">
                         </div>
                         <h4>HTTP Status Code</h4>
                         <p>Check live response codes for single pages or bulk URL lists, then fix redirects, 4xx/5xxs, and other crawl issues before they hurt your website's SEO.</p>
@@ -150,7 +152,7 @@
                     <a target="_blank" href="{{ url('/tool/meta-title') }}">
                         <div class="as4-card">
                         <div class="as4-card-img">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(1).svg') }}" alt="meta title test icon">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/icons/title.png') }}" width="44" height="44" alt="">
                         </div>
                         <h4>Meta Title</h4>
                         <p>Keep page titles consistent and in shape: set your preferred length and casing, ensure they differ from H1s, and get a clear pass/fail for every page.</p>
@@ -160,7 +162,7 @@
                     
                         <div class="as4-card">
                         <div class="as4-card-img">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="core web vitals test icon">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/icons/vitals.png') }}" width="44" height="44" alt="">
                         </div>
                         <h4>Core Web Vitals</h4>
                         <p>Measure core web vitals metrics (LCP, CLS, INP) to find what’s slowing your pages down, then focus on the fixes that improve UX and performance.</p>
@@ -169,7 +171,7 @@
                     <a target="_blank" href="{{ url('/tool/broken-links') }}">
                         <div class="as4-card">
                         <div class="as4-card-img">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(2).svg') }}" alt="broken link checker icon">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/icons/links.png') }}" width="44" height="44" alt="">
                         </div>
                         <h4>Broken Links</h4>
                         <p>Check any page for broken links in seconds. Find 404s and dead internal or external links before they hurt your users and SEO.</p>
@@ -177,9 +179,8 @@
                     </a>
                    <a target="_blank" href="{{ url('/tool/robotstxt') }}">
                         <div class="as4-card">
-                        <div class="as4-card-imgs">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Vector.svg') }}" alt="robotstxt checker icon 1">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Vector-(1).svg') }}" alt="robotstxt checker icon 2">
+                        <div class="as4-card-img">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/icons/robots.png') }}" width="44" height="44" alt="">
                         </div>
                         <h4>Robots.txt</h4>
                         <p>Validate crawl directives and catch disallow rules before they block pages from indexing. Great for website migrations and template changes.</p>
@@ -188,7 +189,7 @@
                     <a target="_blank" href="{{ url('/tool/images') }}">
                         <div class="as4-card">
                         <div class="as4-card-img">
-                            <img src="{{ asset('new-assets/assets/images/aboutUs/Layer_1-(3).svg') }}" alt="Images checker icon">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/icons/images.png') }}" width="44" height="44" alt="">
                         </div>
                         <h4>Images</h4>
                         <p>Scan any page for image issues: missing or weak alt text and other problems that affect accessibility, relevance, and how fast images feel.</p>
@@ -213,7 +214,7 @@
                     <div class="as5-cards">
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-8.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 1">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-8.png') }}" width="56" height="56" alt="Nigel Tan">
                                 <div class="as5-card-img-p">
                                     <h6>Nigel Tan</h6>
                                     <p>Marketing, NovaTrade</p>
@@ -223,7 +224,7 @@
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-2.jpeg') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-2.jpeg') }}" width="56" height="56" alt="Riya Salgaonkar">
                                 <div class="as5-card-img-p">
                                     <h6>Riya Salgaonkar</h6>
                                     <p>Project Manager, Sealink Capital</p>
@@ -233,7 +234,7 @@
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-4.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-4.png') }}" width="56" height="56" alt="Edward Clarke">
                                 <div class="as5-card-img-p">
                                     <h6>Edward Clarke</h6>
                                     <p>Software Engineer, Autodesk</p>
@@ -243,7 +244,7 @@
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-5.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-5.png') }}" width="56" height="56" alt="Miguel Perez">
                                 <div class="as5-card-img-p">
                                     <h6>Miguel Perez</h6>
                                     <p>Product Manager, TestGorilla</p>
@@ -253,7 +254,7 @@
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-3.jpeg') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-3.jpeg') }}" width="56" height="56" alt="Arun Mohan">
                                 <div class="as5-card-img-p">
                                     <h6>Arun Mohan</h6>
                                     <p>Developer, Redian Software</p>
@@ -265,7 +266,7 @@
                         
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-6.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 2">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-6.png') }}" width="56" height="56" alt="Hadia Saeed">
                                 <div class="as5-card-img-p">
                                     <h6>Hadia Saeed</h6>
                                     <p>SEO Manager, Clicktap Digital</p>
@@ -275,7 +276,7 @@
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-7.png') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 3">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-7.png') }}" width="56" height="56" alt="Claire Wang">
                                 <div class="as5-card-img-p">
                                     <h6>Claire Wang</h6>
                                     <p>Marketing, Nytelock Digital</p>
@@ -285,7 +286,7 @@
                         </div>
                         <div class="as5-card">
                             <div class="as5-card-img">
-                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-1.jpeg') }}" style="border-radius: 35px;" alt="Customer testimonial on webqa - 4">
+                                <img src="{{ asset('new-assets/assets/images/aboutUs/t-1.jpeg') }}" width="56" height="56" alt="Neo Ramatla">
                                 <div class="as5-card-img-p">
                                     <h6>Neo Ramatla</h6>
                                     <p>Consultant, Chilli Media</p>
@@ -297,12 +298,12 @@
                 </div>
                 
                 <div class="as5-bottom">
-                    <div class="as5-bottom1">
-                        <img src="{{ asset('new-assets/assets/images/aboutUs/left-arrow.svg') }}" alt="Left arrow icon">
-                    </div>
-                    <div class="as5-bottom2">
-                        <img src="{{ asset('new-assets/assets/images/aboutUs/right-arrow.svg') }}" alt="Right arrow icon">
-                    </div>
+                    <button type="button" class="as5-bottom1" aria-label="Previous testimonials">
+                        <span class="as5-arrow as5-arrow-left"></span>
+                    </button>
+                    <button type="button" class="as5-bottom2" aria-label="Next testimonials">
+                        <span class="as5-arrow as5-arrow-right"></span>
+                    </button>
                 </div>
             </div>
          </section>
@@ -313,103 +314,130 @@
          @include('components.imran-components.as6')
         <!-- Section 6 ends -->
 
-<!-- Contact us form section starts -->
-<style>
-  /* Hide placeholder text on focus */
-  .contact-us-form input::placeholder,
-  .contact-us-form textarea::placeholder {
-    transition: color 0.15s ease;
-  }
-  .contact-us-form input:focus::placeholder,
-  .contact-us-form textarea:focus::placeholder {
-    color: transparent;
-  }
-</style>
+<section class="about-contact" id="contact">
+  <div class="about-contact-card">
+    <h2>Contact us</h2>
+    <p class="about-contact-byline">Please use the contact form below if you have any questions or if you need any assistance.</p>
 
-<div class="contact-us-about-page" style="margin-top:160px;margin-bottom:160px;">
-  <h1 class="as6-h" style="text-align:center;">Contact us</h1>
-  <div class="contact-us-byline" style="text-align: center;margin-top: 80px;font-size: 20px;">
-    Please use the contact form below if you have any questions or if you need any assistance.
-  </div>
-
-  <div class="contact-us-form" style="width: 550px;margin: 0 auto;padding-top: 50px;">
-    <form action="{{ route('contact.store') }}" method="post">
-      @csrf
-      <div class="name" style="margin-bottom: 15px;">
-        <label for="name" style="margin-right: 50px;">Name</label>
-        <input
-          type="text"
-          style="width:350px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;"
-          id="name"
-          name="name"
-          placeholder="Your name"
-          autocomplete="name"
-          required
-        />
-      </div>
-
-      <div class="email" style="margin-bottom: 15px;">
-        <label style="margin-right: 53px;" for="email">Email</label>
-        <input
-          type="email"
-          style="width:350px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;"
-          id="email"
-          name="email"
-          placeholder="Your email"
-          autocomplete="email"
-          required
-        />
-      </div>
-
-      <div class="subject" style="margin-bottom: 15px;">
-        <label style="margin-right: 37px;" for="subject">Subject</label>
-        <input
-          type="text"
-          style="width:350px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;"
-          id="subject"
-          name="subject"
-          placeholder="Subject"
-        />
-      </div>
-
-      <div class="message" style="margin-bottom: 15px; position: relative;">
-        <label for="message" style="margin-right: 28px; display:flex; position:absolute;">Message</label>
-        <textarea
-          style="width:350px;height:200px;border: 2px solid #EEE;padding: 5px;border-radius: 4px;margin-left:95px;"
-          id="message"
-          name="message"
-          rows="5"
-          placeholder="Write your message..."
-          required
-        ></textarea>
-      </div>
-
-      <div class="submit_button" style="margin-left: 38%;margin-top: 50px;">
-        <button type="submit" style="background-color: var(--primary);color: var(--white);text-decoration: none;font-weight: 500;border: 1px solid var(--primary);padding: 7px;width: 125px;border-radius: 4px;">
-          Submit
-        </button>
-      </div>
     @if(session('contact_success'))
-    <div role="alert" class="alert webqa__alert alert-custom alert-dismissible fade show" style="margin-top:50px;text-align:center;">Your message has been sent. You will hear from us shortly.
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+      <div id="about-contact-status" class="about-form-success" role="status" tabindex="-1">
+        Your message has been sent. You will hear from us shortly.
+      </div>
     @endif
     @if(session('contact_error'))
-    <div role="alert" class="alert webqa__alert alert-danger alert-dismissible fade show" style="margin-top:50px;text-align:center;">{{ session('contact_error') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
+      <div id="about-contact-status" class="about-form-error" role="alert" tabindex="-1">
+        {{ session('contact_error') }}
+      </div>
     @endif
 
+    <form id="about-contact-form" action="{{ route('contact.store') }}" method="post" novalidate>
+      @csrf
+      <input type="hidden" name="about_contact" value="1">
+
+      <div class="about-field {{ $errors->has('name') ? 'is-invalid' : '' }}">
+        <label for="name">Name <span>Optional</span></label>
+        <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" maxlength="100" value="{{ old('name') }}">
+        <p class="about-field-error" id="name-error">@error('name'){{ $message }}@enderror</p>
+      </div>
+
+      <div class="about-field {{ $errors->has('email') ? 'is-invalid' : '' }}">
+        <label for="email">Email <span class="is-required">Required</span></label>
+        <input type="email" id="email" name="email" placeholder="you@company.com" autocomplete="email" maxlength="255" value="{{ old('email') }}" aria-describedby="email-error">
+        <p class="about-field-error" id="email-error">@error('email'){{ $message }}@enderror</p>
+      </div>
+
+      <div class="about-field {{ $errors->has('subject') ? 'is-invalid' : '' }}">
+        <label for="subject">Subject <span>Optional</span></label>
+        <input type="text" id="subject" name="subject" placeholder="What is this about?" autocomplete="off" maxlength="200" value="{{ old('subject') }}">
+        <p class="about-field-error" id="subject-error">@error('subject'){{ $message }}@enderror</p>
+      </div>
+
+      <div class="about-field {{ $errors->has('message') ? 'is-invalid' : '' }}">
+        <label for="message">Message <span class="is-required">Required</span></label>
+        <textarea id="message" name="message" rows="6" maxlength="5000" placeholder="How can we help?" aria-describedby="message-error">{{ old('message') }}</textarea>
+        <p class="about-field-error" id="message-error">@error('message'){{ $message }}@enderror</p>
+      </div>
+
+      <button class="about-submit" type="submit">Send message</button>
     </form>
   </div>
+</section>
 </div>
-
-
-<!-- Contact us form section ends -->
-
-
 
          @section("js")
 <script src="{{ asset('/new-assets/js/home.js') }}"></script>
+<script>
+(function () {
+  var form = document.getElementById("about-contact-form");
+  var status = document.getElementById("about-contact-status");
+  if (status) {
+    status.focus({ preventScroll: true });
+    status.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+  if (!form) return;
+
+  var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var namePattern = /^[\p{L}][\p{L}\s.'’-]{0,99}$/u;
+
+  function validate(input) {
+    var field = input.closest(".about-field");
+    var error = field.querySelector(".about-field-error");
+    var value = input.value.trim();
+    var message = "";
+
+    if (input.id === "name") {
+      if (value.length > 100) message = "Name must be 100 characters or fewer.";
+      else if (value !== "" && !namePattern.test(value)) message = "Use letters, spaces, apostrophes, or hyphens.";
+    } else if (input.id === "email") {
+      if (value === "") message = "Email is required.";
+      else if (!emailPattern.test(value) || value.length > 255) message = "Enter a valid email address.";
+    } else if (input.id === "subject") {
+      if (value.length > 200) message = "Subject must be 200 characters or fewer.";
+    } else if (input.id === "message") {
+      if (value === "") message = "Message is required.";
+      else if (value.length < 10) message = "Message should be at least 10 characters.";
+      else if (value.length > 5000) message = "Message must be 5,000 characters or fewer.";
+    }
+
+    error.textContent = message;
+    field.classList.toggle("is-invalid", message !== "");
+    field.classList.toggle("is-valid", message === "" && value !== "");
+    if (message) input.setAttribute("aria-invalid", "true");
+    else input.removeAttribute("aria-invalid");
+    return message === "";
+  }
+
+  Array.prototype.forEach.call(form.querySelectorAll("input, textarea"), function (input) {
+    if (input.type === "hidden") return;
+    input.addEventListener("blur", function () {
+      input.dataset.touched = "1";
+      validate(input);
+    });
+    input.addEventListener("input", function () {
+      if (input.dataset.touched === "1" || input.value.trim() !== "") {
+        input.dataset.touched = "1";
+        validate(input);
+      }
+    });
+  });
+
+  form.addEventListener("submit", function (event) {
+    var ok = true;
+    var firstInvalid = null;
+    Array.prototype.forEach.call(form.querySelectorAll("input, textarea"), function (input) {
+      if (input.type === "hidden") return;
+      input.dataset.touched = "1";
+      if (!validate(input)) {
+        ok = false;
+        if (!firstInvalid) firstInvalid = input;
+      }
+    });
+    if (!ok) {
+      event.preventDefault();
+      if (firstInvalid) firstInvalid.focus();
+    }
+  });
+})();
+</script>
 @endsection
 @endsection

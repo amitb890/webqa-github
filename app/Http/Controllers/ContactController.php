@@ -14,20 +14,37 @@ class ContactController extends Controller
      */
     public function store(Request $request)
     {
-        // About Us page: name, email, subject, message
-        if ($request->has('message') && $request->has('name')) {
-            $validated = $request->validate([
-                'name' => ['required', 'string', 'max:100'],
+        // About Us page. Name and subject are optional; email and message are required.
+        if ($request->boolean('about_contact')) {
+            $validator = \Validator::make($request->all(), [
+                'name' => ['nullable', 'string', 'max:100', 'regex:/^[\p{L}][\p{L}\s.\'’-]{0,99}$/u'],
                 'email' => ['required', 'string', 'email', 'max:255'],
                 'subject' => ['nullable', 'string', 'max:200'],
-                'message' => ['required', 'string', 'max:5000'],
+                'message' => ['required', 'string', 'min:10', 'max:5000'],
+            ], [
+                'email.required' => 'Email is required.',
+                'email.email' => 'Enter a valid email address.',
+                'name.max' => 'Name must be 100 characters or fewer.',
+                'name.regex' => 'Use letters, spaces, apostrophes, or hyphens.',
+                'subject.max' => 'Subject must be 200 characters or fewer.',
+                'message.required' => 'Message is required.',
+                'message.min' => 'Message should be at least 10 characters.',
+                'message.max' => 'Message must be 5,000 characters or fewer.',
             ]);
 
-            $leadTo = config('mail.contact_lead_to');
+            if ($validator->fails()) {
+                return redirect()->to(url()->previous().'#contact')
+                    ->withErrors($validator)
+                    ->withInput();
+            }
+
+            $validated = $validator->validated();
+
+            $leadTo = config('mail.about_contact_to', 'contact@webqa.co');
 
             try {
                 Mail::to($leadTo)->send(new AboutLeadMail(
-                    $validated['name'],
+                    trim((string) ($validated['name'] ?? '')),
                     $validated['email'],
                     trim((string) ($validated['subject'] ?? '')),
                     $validated['message']
@@ -35,13 +52,13 @@ class ContactController extends Controller
             } catch (\Throwable $e) {
                 Log::warning('About us lead email failed: '.$e->getMessage());
 
-                return redirect()->back()->withInput()->with(
+                return redirect()->to(url()->previous().'#contact')->withInput()->with(
                     'contact_error',
-                    'We could not send your message. Please try again or email support@webqa.co.'
+                    'We could not send your message. Please try again or email contact@webqa.co.'
                 );
             }
 
-            return redirect()->back()->with('contact_success', true);
+            return redirect()->to(url()->previous().'#contact')->with('contact_success', true);
         }
 
         // Legacy: nested "data" payload (e.g. tools) — keep prior behaviour

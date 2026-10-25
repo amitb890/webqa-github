@@ -379,7 +379,7 @@
                         @endif
                         
 
-                        @if($d['slug'] === 'robotstxt-test')
+                        @if($d['slug'] === 'robotstxt')
                         <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="robot_text_test_block_url">
                             <label class="form-check-label" for="robot_text_test_block_url">Live URLs Must Not have Robots meta tag (noindex,nofollow), Unless intentionally added on a case by case basis</label>
@@ -735,6 +735,11 @@
                             <input class="form-check-input" checked type="checkbox" id="html_sitemap">
                             <label class="form-check-label" for="html_sitemap">Every page must be added to HTML sitemap</label>
                         </div>
+                        <div class="sitemap-url-field">
+                            <label for="html_sitemap_val">HTML sitemap URL</label>
+                            <input type="text" id="html_sitemap_val" placeholder="https://domain.com/sitemap.html" autocomplete="off">
+                            <p class="sitemap-url-hint">Leave blank to check /sitemap, /sitemap.html, /sitemap.php, and other common page extensions. Separate multiple URLs with commas.</p>
+                        </div>
                         @endif
 
 
@@ -742,6 +747,11 @@
                         <div class="form-check">
                             <input class="form-check-input" checked type="checkbox" id="xml_sitemap">
                             <label class="form-check-label" for="xml_sitemap">Every page must be added to XML sitemap</label>
+                        </div>
+                        <div class="sitemap-url-field">
+                            <label for="xml_sitemap_val">XML sitemap URL</label>
+                            <input type="text" id="xml_sitemap_val" placeholder="https://domain.com/sitemap.xml" autocomplete="off">
+                            <p class="sitemap-url-hint">Leave blank to use /sitemap.xml. Separate multiple URLs with commas.</p>
                         </div>
                         @endif
 
@@ -2942,7 +2952,7 @@
 
 @section("js")
 <script src="/new-assets/js/exceljs.min.js"></script>
-<script src="/new-assets/js/bulk.js"></script>
+<script src="{{ asset('new-assets/js/bulk.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="/new-assets/js/exportXlsx.js"></script>
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <!-- Custom script to rotate the Footer CTA text in individual tools pages -->

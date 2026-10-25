@@ -45,13 +45,13 @@
                     >
                       
                       <li class="download-xlsx-bulk">
-                        <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/xlsx-icon.svg" alt="icon" /> XLSX</a
+                        <a class="dropdown-item bulk-export-tip" href="#" data-tooltip="Download this report as an Excel file" aria-label="Download this report as an Excel file"
+                          ><img src="/new-assets/assets/images/xlsx-icon.svg" alt="" /> XLSX</a
                         >
                       </li>
                       <li id="downloadCSV">
-                        <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/csv_icon.png" alt="icon" /> CSV</a
+                        <a class="dropdown-item bulk-export-tip" href="#" data-tooltip="Download this report as a CSV file" aria-label="Download this report as a CSV file"
+                          ><img src="/new-assets/assets/images/csv_icon.png" alt="" /> CSV</a
                         >
                       </li>
                     </ul>

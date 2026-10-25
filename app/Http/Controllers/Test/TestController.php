@@ -2266,7 +2266,7 @@ class TestController extends Controller
         $urlParse = parse_url($urlValue);
         $domain = $urlParse["scheme"] . "://" . $urlParse["host"];
         $isSitemap = $settings->settings_sub->html_sitemap;
-        $sitemapVal = $settings->settings_sub->html_sitemap_val;
+        $sitemapVal = Helper::resolveHtmlSitemapValue($settings->settings_sub->html_sitemap_val ?? '', $domain);
 
         $title = "HTML Sitemap";
         $description = "An HTML Sitemap is the same as an XML Sitemap, except that it is meant for actual users. An HTML Sitemap allows your site visitors to find all the content of a website from a single reference page. <br><br>HTML Sitemap is also used by search engines to crawl and index pages, which search engines cannot otherwise find and crawl.";
@@ -3624,11 +3624,11 @@ class TestController extends Controller
             // Check if the content contains typical directory listing keywords
             if (strpos($html, '<title>Index of /</title>') !== false) {
                 // These are common keywords found in directory listing pages.
-                $message = "Directory listing is likely enabled for $url";
+                $message = "Directory browsing is enabled";
                 $status = false;
             } else {
                 // The URL is accessible, but it does not appear to be a directory listing page.
-                $message = "Directory listing is likely disabled for $url";
+                $message = "Directory browsing is disabled";
                 $status = true;
             }
        
@@ -3676,15 +3676,15 @@ class TestController extends Controller
             
             if ($contentTypeHtml != $contentType) {
                 $status = false;
-                $message = 'Bad content type found';
+                $message = 'The declared content type does not match the response';
             } else {
                 $status = true;
-                $message = 'Bad content type not found';
+                $message = 'The declared content type matches the response';
             }
             // return $contentType;
         } else {
             $status = true;
-            $message = 'Content type not define';
+            $message = 'No content type is declared on this page';
             }
         }
 
@@ -4060,9 +4060,6 @@ class TestController extends Controller
         $data = $request->input('data');
         $project = json_decode(Session::get('project'));
         $settings = $this->resolveTestSettings($request);
-        $html = session()->get('html_code');
-        $internalResponse = session()->get('internal_response');
-        $contentSecurityVal = $internalResponse->getHeader('Content-Security-Policy');
         $title = "Robots.txt";
         $description = "Robots.txt";
         $url = $data["urlValue"];

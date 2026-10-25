@@ -44,13 +44,13 @@
                       class="dropdown-menu dropdown-menu-start tracker_downloading_link tracker_downloading_link-imran tracker_downloading_link-imran2"
                     >
                       <li class="download-xlsx-bulk">
-                        <a class="dropdown-item" href="#"
-                          ><img src="/new-assets/assets/images/xlsx-icon.svg" alt="icon" />XLSX</a
+                        <a class="dropdown-item bulk-export-tip" href="#" data-tooltip="Download this report as an Excel file" aria-label="Download this report as an Excel file"
+                          ><img src="/new-assets/assets/images/xlsx-icon.svg" alt="" />XLSX</a
                         >
                       </li>
                       <li id="downloadCSV">
-                        <a class="dropdown-item website-tracker-csv" href="#"
-                          ><img src="/new-assets/assets/images/csv_icon.png" alt="icon" /> CSV</a
+                        <a class="dropdown-item website-tracker-csv bulk-export-tip" href="#" data-tooltip="Download this report as a CSV file" aria-label="Download this report as a CSV file"
+                          ><img src="/new-assets/assets/images/csv_icon.png" alt="" /> CSV</a
                         >
                       </li>
                     </ul>
