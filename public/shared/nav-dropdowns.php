@@ -1,7 +1,7 @@
 <?php
 if (!function_exists('webqa_nav_icon')) {
   function webqa_nav_icon($paths) {
-    return '<span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">' . $paths . '</svg></span>';
+    return '<span class="nav-mega-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">' . $paths . '</svg></span>';
   }
 }
 ?>
@@ -21,19 +21,19 @@ if (!function_exists('webqa_nav_icon')) {
     <div class="dropdown-menu nav-mega">
       <div class="nav-mega-grid">
         <a class="nav-mega-link" href="/features/webpage-audit">
-          <?php echo webqa_nav_icon('<path d="M8 3.5h8"/><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M8.5 12.5l2.2 2.2 4.3-4.4"/>'); ?>
+          <?php echo webqa_nav_icon('<rect x="8" y="2.5" width="8" height="4" rx="1"/><path d="M16 4.5h2a2 2 0 0 1 2 2v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-13a2 2 0 0 1 2-2h2"/><path d="M9 14l2 2 4-4"/>'); ?>
           <span class="nav-mega-label">Webpage Audit</span>
         </a>
         <a class="nav-mega-link" href="/features/website-tracker">
-          <?php echo webqa_nav_icon('<rect x="3.5" y="4" width="17" height="16" rx="2"/><path d="M3.5 9h17M3.5 14h17M9 9v11"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M3 3v16a2 2 0 0 0 2 2h16"/><path d="M19 9l-5 5-4-4-3 3"/>'); ?>
           <span class="nav-mega-label">Website Tracker</span>
         </a>
         <a class="nav-mega-link" href="/features/reports">
-          <?php echo webqa_nav_icon('<path d="M7 3.5h7l4.5 4.5V20a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4.5a1 1 0 0 1 1-1z"/><path d="M14 3.5V8h4.5M8.5 13h7M8.5 16.5h4.5"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M14.5 2.5H6a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2.5V8h6M8 13h8M8 17h5"/>'); ?>
           <span class="nav-mega-label">Reports</span>
         </a>
         <a class="nav-mega-link" href="/features/settings">
-          <?php echo webqa_nav_icon('<path d="M4 7h16M4 12h16M4 17h16"/><circle cx="8" cy="7" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="10" cy="17" r="1.7"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M21 5h-7M10 5H3M21 12h-9M8 12H3M21 19h-5M12 19H3M14 3v4M8 10v4M16 17v4"/>'); ?>
           <span class="nav-mega-label">Settings</span>
         </a>
       </div>
@@ -63,27 +63,27 @@ if (!function_exists('webqa_nav_icon')) {
     <div class="dropdown-menu nav-mega">
       <div class="nav-mega-grid">
         <a class="nav-mega-link" href="/tools/meta-title">
-          <?php echo webqa_nav_icon('<rect x="3.5" y="5" width="17" height="14" rx="2"/><path d="M7 10h10M7 14h6"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M4 7V5h16v2"/><path d="M12 5v14"/><path d="M9 19h6"/>'); ?>
           <span class="nav-mega-label">Meta title</span>
         </a>
         <a class="nav-mega-link" href="/tools/images">
-          <?php echo webqa_nav_icon('<rect x="3.5" y="5" width="17" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.4"/><path d="M4 16.5l4.2-3.4 3.3 2.6 2.6-2 5.4 4.2"/>'); ?>
+          <?php echo webqa_nav_icon('<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>'); ?>
           <span class="nav-mega-label">Images</span>
         </a>
         <a class="nav-mega-link" href="/tools/google-page-speed-insights">
-          <?php echo webqa_nav_icon('<path d="M5 16.5a7 7 0 1 1 14 0"/><path d="M12 16.5l3.6-3.8"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M12 14l4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/>'); ?>
           <span class="nav-mega-label">Page speed</span>
         </a>
         <a class="nav-mega-link" href="/tools/google-core-web-vitals">
-          <?php echo webqa_nav_icon('<path d="M3 12h4l2.2-5 4.2 10L16 12h5"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M22 12h-4l-3 9L9 3l-3 9H2"/>'); ?>
           <span class="nav-mega-label">Core Web Vitals</span>
         </a>
         <a class="nav-mega-link" href="/tools/broken-links">
-          <?php echo webqa_nav_icon('<rect x="6" y="11" width="12" height="8.5" rx="2"/><path d="M8.5 11V8.2a3.5 3.5 0 0 1 7 0V11"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M12 21.5s7.5-3.2 7.5-9.5V5.5L12 2.5l-7.5 3V12c0 6.3 7.5 9.5 7.5 9.5z"/><path d="M9 12l2 2 4-4"/>'); ?>
           <span class="nav-mega-label">Security</span>
         </a>
         <a class="nav-mega-link" href="/tools/http-status-code">
-          <?php echo webqa_nav_icon('<path d="M9 8L5 12l4 4M15 8l4 4-4 4"/>'); ?>
+          <?php echo webqa_nav_icon('<path d="M18 16l4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/>'); ?>
           <span class="nav-mega-label">HTTP status</span>
         </a>
       </div>
@@ -97,3 +97,5 @@ if (!function_exists('webqa_nav_icon')) {
     </div>
   </div>
 </li>
+<li><a class="nav-plain-link" href="/articles/">Articles</a></li>
+<li><a class="nav-plain-link" href="/support/">Support</a></li>

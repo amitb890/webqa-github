@@ -33,46 +33,44 @@
         <!-- Section 1 ends -->
 
         <!-- Section 2 starts -->
-        <section class="as2 container-fluid">
-            <div class="container-fluid as2-inner">
-                <div class="as2-dtop">
-                    <div class="as2-dtop-left">
-                        <div class="as2-dtop-left-hs">
-                            <h1 style="color: #fff;">About Webqa</h1>
-                            <h1 style="color: #fff;"></h1>
+        <section class="as2" aria-labelledby="about-webqa-heading">
+            <div class="as2-inner">
+                <div class="as2-head">
+                    <h2 id="about-webqa-heading">About Webqa</h2>
+                    <p>Webqa is a website auditing and testing platform. We help teams understand, improve, and maintain the quality of their websites across SEO, performance, security, and web development best practices.</p>
+                </div>
+
+                <div class="as2-columns">
+                    <div class="as2-col">
+                        <p class="as2-lead">Auditing a website properly is getting harder - not because there aren’t enough tools, but because none of them let you truly define your own standards.</p>
+                        <p>Most website auditors lock you into their rules, apply the same checks to every website, and leave you stitching together results from multiple sources just to get a complete picture.</p>
+                    </div>
+                    <div class="as2-col">
+                        <p class="as2-turn">Webqa exists to change that.</p>
+                        <p>It’s built for teams who care about doing audits the right way for their context. You decide what “good” looks like and align the checks to match, instead of settling for generic, one-size-fits-all reports. By bringing everything into one place and letting you shape how audits work from project to project, Webqa turns website QA from an exhausting chore into a repeatable, standards-driven practice.</p>
+                    </div>
+                </div>
+
+                <div class="as2-principles">
+                    <article class="as2-principle">
+                        <div class="as2-principle-icon">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/mission.png') }}" width="176" height="272" alt="">
                         </div>
-                        <p class="as2-dtop-left-p">Webqa is a website auditing and testing platform. <br><br>We help teams understand, improve, and maintain the quality of their websites across SEO, performance, security, and web development best practices.</p>
-                    </div>
-                    <div class="as2-dtop-right">
-                        <p class="as2-dtop-right-p1">
-                            Auditing a website properly is getting harder - not because there aren’t enough tools, but because none of them let you truly define your own standards.
-                        </p>
-                        <p class="as2-dtop-right-p2">Most website auditors lock you into their rules, apply the same checks to every website, and leave you stitching together results from multiple sources just to get a complete picture.<br><br>Webqa exists to change that.<br><br>It’s built for teams who care about doing audits the right way for their context. You decide what “good” looks like and align the checks to match, instead of settling for generic, one-size-fits-all reports. By bringing everything into one place and letting you shape how audits work from project to project, Webqa turns website QA from an exhausting chore into a repeatable, standards-driven practice.</p>
-                    </div>
-                    <div class="as2-line1"></div>
-                </div>
-                <div class="as2-dmid">
-                    <div class="as2-dmid-img">
-                        <img src="{{ asset('new-assets/assets/images/aboutUs/mission.png') }}" width="120" height="186" alt="Webqa mission">
-                    </div>
-                    <div class="as2-dmid-right">
-                        <h2 class="as2-dmid-right-h" style="color: #fff;">Our Mission</h2>
-                        <p class="as2-dmid-right-p">Our mission is to make website auditing calm, consistent and standards driven.<br><br>You shouldn’t need ten different tools, conflicting rules, or scattered spreadsheets to test a single page. With Webqa, teams define what “good” looks like once, audit against those standards, and align around a single source of truth.
-                        </p>
-                    </div>
-                    <div class="as2-line2"></div>
-                </div>
-                <div class="as2-dlast">
-                    <div class="as2-dlast-img">
-                        <img src="{{ asset('new-assets/assets/images/aboutUs/vision.png') }}" width="120" height="120" alt="Webqa vision">
-                    </div>
-                    
-                    <div class="as2-dlast-right">
-                        <h2 class="as2-dlast-right-h" style="color: #fff;">Our Vision</h2>
-                        <p class="as2-dlast-right-p">
-                            A web where quality is measurable and consistent - where you are empowered to define standards, audit with confidence, and fix what matters without friction.
-                        </p>
-                    </div>
+                        <div class="as2-principle-copy">
+                            <h3>Our Mission</h3>
+                            <p class="as2-principle-lead">Our mission is to make website auditing calm, consistent and standards driven.</p>
+                            <p>You shouldn’t need ten different tools, conflicting rules, or scattered spreadsheets to test a single page. With Webqa, teams define what “good” looks like once, audit against those standards, and align around a single source of truth.</p>
+                        </div>
+                    </article>
+                    <article class="as2-principle">
+                        <div class="as2-principle-icon">
+                            <img src="{{ asset('new-assets/assets/images/aboutUs/vision.png') }}" width="176" height="176" alt="">
+                        </div>
+                        <div class="as2-principle-copy">
+                            <h3>Our Vision</h3>
+                            <p>A web where quality is measurable and consistent - where you are empowered to define standards, audit with confidence, and fix what matters without friction.</p>
+                        </div>
+                    </article>
                 </div>
             </div>
         </section>

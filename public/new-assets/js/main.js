@@ -469,13 +469,32 @@ window.filterSidebarReports = filterSidebarReports;
 
 
 // Header Features and Tools menus: hover on large screens, tap to open on small screens.
-document.querySelectorAll(".nav-drop-toggle").forEach((link) => {
+const navDropToggles = document.querySelectorAll(".nav-drop-toggle");
+
+// Close any other open header menu straight away (no fade), so two panels
+// never overlap when the pointer moves from Features to Tools.
+function closeOtherNavMenus(current) {
+  navDropToggles.forEach((other) => {
+    if (other === current || !other.classList.contains("show")) return;
+    const menu = other.nextElementSibling;
+    if (menu) menu.classList.add("nav-mega-instant");
+    bootstrap.Dropdown.getOrCreateInstance(other).hide();
+    if (menu) {
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => menu.classList.remove("nav-mega-instant"))
+      );
+    }
+  });
+}
+
+navDropToggles.forEach((link) => {
   const parent = link.parentElement;
   let hideTimer;
 
   parent.addEventListener("mouseenter", () => {
     if (window.innerWidth < 768) return;
     clearTimeout(hideTimer);
+    closeOtherNavMenus(link);
     bootstrap.Dropdown.getOrCreateInstance(link).show();
   });
 

@@ -14163,6 +14163,13 @@ nav .nav-tabs{
   line-height: 1.2;
   cursor: pointer;
 }
+.genarel_header_items .nav-plain-link {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1.2;
+  transition: color 0.15s ease;
+}
+.genarel_header_items .nav-plain-link:hover,
 .genarel_header_items .nav-drop-toggle:hover,
 .genarel_header_items .nav-drop-toggle.show,
 .genarel_header_items .dropdown2.show > .nav-drop-toggle {
@@ -14194,6 +14201,36 @@ nav .nav-tabs{
   box-shadow: 0 18px 48px rgba(15, 23, 42, 0.12), 0 2px 8px rgba(15, 23, 42, 0.04);
   z-index: 30;
 }
+/* Desktop: keep the panel rendered and fade/slide it in, instead of
+   Bootstrap's instant display:none -> block switch. */
+@media (min-width: 768px) {
+  .genarel_header_items .nav-mega {
+    display: block;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s linear 0.22s;
+  }
+  .genarel_header_items .nav-mega.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1), visibility 0s;
+  }
+  /* Used by main.js to close the other menu instantly when switching. */
+  .genarel_header_items .nav-mega.nav-mega-instant {
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .genarel_header_items .nav-mega,
+  .genarel_header_items .nav-mega.show {
+    transform: none;
+    transition: none;
+  }
+}
 .nav-mega-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -14203,34 +14240,34 @@ nav .nav-tabs{
 .genarel_header_items .nav-mega-link {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
   min-height: 48px;
-  padding: 6px 8px;
+  padding: 10px 12px;
   border-radius: 12px;
-  color: #3d4b5c;
+  color: #1b2533;
   font-size: 15px;
   font-weight: 500;
   line-height: 1.25;
   text-decoration: none;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .genarel_header_items .nav-mega-link:hover {
-  background: #f4f7fb;
-  color: #243140;
+  background: #f3f6fb;
+  color: var(--primary);
 }
+/* Plain line icon in the brand colour, no filled box. */
 .nav-mega-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
-  border-radius: 9px;
-  background: var(--primary);
-  color: #fff;
+  width: 24px;
+  height: 24px;
+  color: var(--primary);
 }
 .nav-mega-icon svg {
-  width: 18px;
-  height: 18px;
+  width: 22px;
+  height: 22px;
 }
 .nav-mega-label {
   min-width: 0;
@@ -14238,22 +14275,22 @@ nav .nav-tabs{
 .nav-mega-pills {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 8px;
-  max-width: 360px;
-  margin-top: 16px;
-  padding-top: 2px;
+  gap: 8px;
+  margin: 14px 12px 0;
+  padding-top: 16px;
+  border-top: 1px solid #eef1f5;
 }
 .genarel_header_items .nav-mega-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
+  min-height: 32px;
   padding: 6px 14px;
-  border: 1px solid #d5dee8;
+  border: 1px solid #dde4ec;
   border-radius: 999px;
   background: #fff;
-  color: #5c6b7c;
-  font-size: 14px;
+  color: #4a5868;
+  font-size: 13.5px;
   font-weight: 500;
   line-height: 1;
   text-decoration: none;
