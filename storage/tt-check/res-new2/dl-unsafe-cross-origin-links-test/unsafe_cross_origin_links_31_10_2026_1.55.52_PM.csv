@@ -1,0 +1,39 @@
+#,URL,Result,
+1,"https://example.com/",Unsafe cross-origin links not found,"PASS
+                
+                
+             
+                
+                
+
+                
+                
+                
+                  
+                  
+                    
+                     Unsafe cross origin links
+                     
+                    
+                 
+                 
+                 Below are the cross-origin links found on this page."
+2,"https://www.python.org/",Unsafe cross-origin links not found,"PASS
+                
+                
+             
+                
+                
+
+                
+                
+                
+                  
+                  
+                    
+                     Unsafe cross origin links
+                     
+                    
+                 
+                 
+                 Below are the cross-origin links found on this page."

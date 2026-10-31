@@ -1,0 +1,78 @@
+{
+ "slug": "broken-links",
+ "mode": "new",
+ "errors": [],
+ "notes": [],
+ "table": true,
+ "seconds": 10,
+ "alerts": [],
+ "tableCount": 1,
+ "tables": [
+  {
+   "id": "DataTables_Table_0",
+   "headers": [
+    "#",
+    "URL",
+    "Internal",
+    "External",
+    "List of broken links",
+    "Result"
+   ],
+   "rows": [
+    [
+     "1",
+     "https://example.com",
+     "0",
+     "0",
+     "There were 0 broken links found in your web page.",
+     "PASS"
+    ],
+    [
+     "2",
+     "https://www.python.org",
+     "0",
+     "0",
+     "List of Broken link",
+     "FAIL"
+    ]
+   ],
+   "classes": [
+    [
+     "",
+     "align-left result_data_url",
+     "align-left",
+     "align-left",
+     "align-left",
+     "result_pass"
+    ],
+    [
+     "",
+     "align-left result_data_url",
+     "align-left",
+     "align-left",
+     "align-left",
+     "result_fail"
+    ]
+   ]
+  }
+ ],
+ "pagination": "Showing 1 - 2 of 2",
+ "pills": 2,
+ "badTextOverflow": 0,
+ "csv": "#,URL,Internal,External,List of broken links,Result\n1,\"https://example.com/\",0,0,There were 0 broken links found in your web page.,PASS\n2,\"https://www.python.org/\",0,0,List of Broken link,FAIL",
+ "xlsxSheet": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<worksheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:r=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\"><dimension ref=\"A1:F3\"/><sheetFormatPr defaultRowHeight=\"15\" outlineLevelRow=\"0\" outlineLevelCol=\"0\" x14ac:dyDescent=\"55\"/><cols><col min=\"1\" max=\"1\" width=\"10\" customWidth=\"1\"/><col min=\"2\" max=\"2\" width=\"24\" customWidth=\"1\"/><col min=\"3\" max=\"4\" width=\"10\" customWidth=\"1\"/><col min=\"5\" max=\"5\" width=\"51\" customWidth=\"1\"/><col min=\"6\" max=\"6\" width=\"10\" customWidth=\"1\"/></cols><sheetData><row r=\"1\" spans=\"1:6\" x14ac:dyDescent=\"0.25\"><c r=\"A1\" s=\"1\" t=\"s\"><v>0</v></c><c r=\"B1\" s=\"1\" t=\"s\"><v>1</v></c><c r=\"C1\" s=\"1\" t=\"s\"><v>2</v></c><c r=\"D1\" s=\"1\" t=\"s\"><v>3</v></c><c r=\"E1\" s=\"1\" t=\"s\"><v>4</v></c><c r=\"F1\" s=\"1\" t=\"s\"><v>5</v></c></row><row r=\"2\" spans=\"1:6\" x14ac:dyDescent=\"0.25\"><c r=\"A2\" s=\"2\" t=\"s\"><v>6</v></c><c r=\"B2\" s=\"2\" t=\"s\"><v>7</v></c><c r=\"C2\" s=\"2\" t=\"s\"><v>8</v></c><c r=\"D2\" s=\"2\" t=\"s\"><v>8</v></c><c r=\"E2\" s=\"2\" t=\"s\"><v>9</v></c><c r=\"F2\" s=\"3\" t=\"s\"><v>10</v></c></row><row r=\"3\" spans=\"1:6\" x14ac:dyDescent=\"0.25\"><c r=\"A3\" s=\"4\" t=\"s\"><v>11</v></c><c r=\"B3\" s=\"4\" t=\"s\"><v>12</v></c><c r=\"C3\" s=\"4\" t=\"s\"><v>8</v></c><c r=\"D3\" s=\"4\" t=\"s\"><v>8</v></c><c r=\"E3\" s=\"4\" t=\"s\"><v>13</v></c><c r=\"F3\" s=\"5\" t=\"s\"><v>14</v></c></row></sheetData><pageMargins left=\"0.7\" right=\"0.7\" top=\"0.75\" bottom=\"0.75\" header=\"0.3\" footer=\"0.3\"/><pageSetup orientation=\"portrait\" horizontalDpi=\"4294967295\" verticalDpi=\"4294967295\" scale=\"100\" fitToWidth=\"1\" fitToHeight=\"1\"/></worksheet>",
+ "interactions": {
+  "rowsBefore": 2,
+  "rowsAfterNoMatchSearch": 1,
+  "infoAfterSearch": "Showing 1 - 0 of 2",
+  "rowsAfterClear": 2,
+  "rowsAfterExample": 1,
+  "infoRows30": "Showing 1 - 2 of 2",
+  "infoAfterNext": "Showing 1 - 2 of 2",
+  "infoAfterPrev": "Showing 1 - 2 of 2",
+  "downloads": [
+   "broken_links_31_10_2026_1.56.11_PM.csv",
+   "broken_links_31_10_2026_1.56.11_PM.xlsx"
+  ]
+ }
+}

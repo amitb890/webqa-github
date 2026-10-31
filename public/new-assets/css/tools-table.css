@@ -1,0 +1,840 @@
+/* ==========================================================================
+   Tools page: results table design
+   --------------------------------------------------------------------------
+   Visual layer only. Every rule is scoped under `.inner_content-tools
+   .test_result_area`, so nothing outside the tools pages is touched, and no
+   table markup / DataTables / export logic depends on anything in this file.
+
+   Loaded after main.css (see resources/views/bulk-tools/show.blade.php), which
+   is why some rules need !important: main.css and the inline widths written by
+   bulk.js use it as well.
+
+   Design reference: /tools-page-table (Inter, light-blue header, pill results).
+   ========================================================================== */
+
+/* ---------- Font: Inter (self-hosted, Latin). Licence: ../tools-table/fonts/LICENSE.txt (SIL OFL 1.1) ---------- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../tools-table/fonts/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../tools-table/fonts/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../tools-table/fonts/inter-latin-600-normal.woff2") format("woff2");
+}
+
+/* ---------- Design tokens: change these to retheme every tools table ---------- */
+.inner_content-tools .test_result_area {
+  --tpt-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --tpt-text: #101828;
+  --tpt-text-secondary: #344054;
+  --tpt-text-muted: #667085;
+  --tpt-text-faint: #98a2b3;
+  --tpt-accent: #2563eb;
+  --tpt-accent-ring: rgba(37, 99, 235, 0.14);
+  --tpt-border: #e4e7ec;
+  --tpt-control-border: #d0d5dd;
+  --tpt-header-bg: #e3e9f7;
+  --tpt-header-line: #c3cee6;
+  --tpt-row-divider: #eef0f3;
+  --tpt-row-hover: #f6f8fd;
+  --tpt-footer-bg: #fcfcfd;
+  --tpt-good-text: #067647;
+  --tpt-good-bg: #ecfdf3;
+  --tpt-good-border: #abefc6;
+  --tpt-bad-text: #b42318;
+  --tpt-bad-bg: #fef3f2;
+  --tpt-bad-border: #fecdca;
+  --tpt-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --tpt-edge: 20px;
+}
+
+/* ==========================================================================
+   Card
+   ========================================================================== */
+.inner_content-tools .test_result_area .test_result_table {
+  background: #fff;
+  border: 1px solid var(--tpt-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px -16px rgba(16, 24, 40, 0.14);
+  color: var(--tpt-text);
+  font-family: var(--tpt-font);
+  overflow: clip;
+}
+/* The paging bar sits right under the card, so make the two read as one card */
+.inner_content-tools .test_result_area .test_result_table:has(+ .table-pagination) {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-width: 0;
+  box-shadow: none;
+}
+
+/* On most tools bulk.js closes the card early, so the card box only holds the toolbar and the table
+   (`.table-responsive`) and paging bar follow it as siblings. Draw those three pieces as one card:
+   toolbar = top, table = middle (side borders), paging bar (or the table, if there is none) = bottom. */
+.inner_content-tools .test_result_area .test_result_table:not(:has(.table-responsive)) {
+  border-bottom-width: 0;
+  border-radius: 12px 12px 0 0;
+  box-shadow: none;
+}
+.inner_content-tools .test_result_area > .table-responsive {
+  background: #fff;
+  border: solid var(--tpt-border);
+  border-width: 0 1px;
+}
+.inner_content-tools .test_result_area > .table-responsive:not(:has(+ .table-pagination)) {
+  border-bottom-width: 1px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 32px -16px rgba(16, 24, 40, 0.14);
+}
+
+/* ==========================================================================
+   Toolbar: downloads (left), search (right)
+   ========================================================================== */
+.inner_content-tools .test_result_area .bulk-download-result {
+  position: relative;
+  z-index: 3; /* keeps the download tooltips above the table header */
+}
+.inner_content-tools .test_result_area .bulk-download-result ul.datatable_download_result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start !important;
+  gap: 8px !important;
+  width: 100%;
+  margin: 0;
+  padding: 14px var(--tpt-edge) !important;
+  background: #fff;
+  border-bottom: 1px solid var(--tpt-border);
+}
+.inner_content-tools .test_result_area .bulk-download-result ul li {
+  margin: 0;
+  list-style: none;
+}
+.inner_content-tools .test_result_area .bulk-download-result ul li button.bulk-export-tip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: #fff center / 26px 26px no-repeat;
+  border: 1px solid var(--tpt-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+/* The original PNG icons stay in the markup; the design swaps them for the SVG file icons */
+.inner_content-tools .test_result_area .bulk-download-result ul li button.bulk-export-tip img { display: none; }
+.inner_content-tools .test_result_area .bulk-download-result li.download-csv-bulk button.bulk-export-tip { background-image: url("../tools-table/images/file-csv.svg"); }
+.inner_content-tools .test_result_area .bulk-download-result li.download-xlsx-bulk button.bulk-export-tip { background-image: url("../tools-table/images/file-xlsx.svg"); }
+.inner_content-tools .test_result_area .bulk-download-result ul li button.bulk-export-tip:hover {
+  background-color: #f9fafb;
+  border-color: var(--tpt-control-border);
+  transform: translateY(-1px);
+}
+.inner_content-tools .test_result_area .bulk-download-result ul li button.bulk-export-tip:focus-visible {
+  outline: none;
+  border-color: var(--tpt-accent);
+  box-shadow: 0 0 0 4px var(--tpt-accent-ring);
+}
+
+/* Tooltip: centred under the button, with a small pointer */
+.inner_content-tools .test_result_area .bulk-export-tip::before,
+.inner_content-tools .test_result_area .bulk-export-tip::after {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 10;
+}
+.inner_content-tools .test_result_area .bulk-export-tip::after {
+  content: attr(data-tooltip);
+  top: calc(100% + 8px);
+  width: max-content;
+  max-width: 260px;
+  padding: 6px 10px;
+  font-family: var(--tpt-font);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  text-align: center;
+  color: #fff;
+  background: #101828;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.18);
+  transform: translate(-50%, -2px);
+}
+.inner_content-tools .test_result_area .bulk-export-tip::before {
+  content: "";
+  top: calc(100% + 4px);
+  width: 8px;
+  height: 8px;
+  background: #101828;
+  transform: translate(-50%, -2px) rotate(45deg);
+}
+.inner_content-tools .test_result_area .bulk-export-tip:hover::after,
+.inner_content-tools .test_result_area .bulk-export-tip:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+.inner_content-tools .test_result_area .bulk-export-tip:hover::before,
+.inner_content-tools .test_result_area .bulk-export-tip:focus-visible::before {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0) rotate(45deg);
+}
+
+/* Search box (with the magnifier icon drawn inside) */
+.inner_content-tools .test_result_area .bulk-download-result ul li.datatable_download_result_li {
+  position: relative;
+  display: block;
+  margin-left: auto;
+}
+.inner_content-tools .test_result_area .bulk-download-result ul li.datatable_download_result_li::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  background: url("../tools-table/images/search.svg") center / contain no-repeat;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.inner_content-tools .test_result_area .bulk-datatable-download-result #custom-search {
+  display: block;
+  width: 260px;
+  height: 40px;
+  margin: 0;
+  padding: 0 12px 0 36px;
+  font-family: var(--tpt-font);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--tpt-text);
+  background: #fff;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.inner_content-tools .test_result_area .bulk-datatable-download-result #custom-search::placeholder {
+  color: var(--tpt-text-faint);
+}
+.inner_content-tools .test_result_area .bulk-datatable-download-result #custom-search:focus {
+  border-color: var(--tpt-accent);
+  box-shadow: var(--tpt-shadow-xs), 0 0 0 4px var(--tpt-accent-ring);
+}
+
+/* Category tabs on the Open Graph / Twitter tables */
+.inner_content-tools .test_result_area .bulk-table-category {
+  font-family: var(--tpt-font);
+}
+
+/* ==========================================================================
+   Table
+   ========================================================================== */
+.inner_content-tools .test_result_area .table-responsive {
+  background: #fff;
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .row {
+  --bs-gutter-x: 0;
+  margin: 0;
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .row > * {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.inner_content-tools .test_result_area table.bulk-table {
+  margin: 0 !important;
+  border: 0;
+  border-collapse: collapse !important;
+  background: transparent;
+  color: var(--tpt-text);
+  font-family: var(--tpt-font);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  font-variant-numeric: normal;
+  -webkit-font-smoothing: antialiased;
+}
+/* Bootstrap / DataTables draw heavy lines between thead + tbody and under the table: not wanted */
+.inner_content-tools .test_result_area table.bulk-table > :not(:first-child),
+.inner_content-tools .test_result_area table.bulk-table > thead,
+.inner_content-tools .test_result_area table.bulk-table > tbody,
+.inner_content-tools .test_result_area table.bulk-table > thead > tr,
+.inner_content-tools .test_result_area table.bulk-table > tbody > tr {
+  border: 0 !important;
+}
+.inner_content-tools .test_result_area table.bulk-table.no-footer {
+  border-bottom: 0 !important;
+}
+
+/* ---- Header ---- */
+.inner_content-tools .test_result_area table.bulk-table thead th {
+  padding: 12px 16px;
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0;
+  color: var(--tpt-text-secondary);
+  text-align: center !important;
+  vertical-align: middle;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  background: var(--tpt-header-bg) !important;
+  /* column separator (right) + bottom line, drawn as inset shadows so they never double up */
+  border: 0 !important;
+  box-shadow: inset -1px 0 0 var(--tpt-header-line), inset 0 -1px 0 var(--tpt-header-line);
+  user-select: none;
+}
+.inner_content-tools .test_result_area table.bulk-table thead th:last-child {
+  box-shadow: inset 0 -1px 0 var(--tpt-header-line);
+}
+.inner_content-tools .test_result_area table.bulk-table thead th.align-left,
+.inner_content-tools .test_result_area table.bulk-table thead th.result_header {
+  text-align: left !important;
+}
+.inner_content-tools .test_result_area table.bulk-table thead th.transparent {
+  background: var(--tpt-header-bg) !important;
+}
+.inner_content-tools .test_result_area table.bulk-table thead th span,
+.inner_content-tools .test_result_area table.bulk-table thead th label {
+  font: inherit;
+  letter-spacing: inherit;
+}
+/* Keep the first / last column away from the card edge a little more */
+.inner_content-tools .test_result_area table.bulk-table thead th:first-child,
+.inner_content-tools .test_result_area table.bulk-table tbody td:first-child {
+  padding-left: 12px;
+  padding-right: 8px;
+  text-align: center;
+}
+.inner_content-tools .test_result_area table.bulk-table thead th:last-child,
+.inner_content-tools .test_result_area table.bulk-table tbody td:last-child {
+  padding-right: var(--tpt-edge);
+}
+.inner_content-tools .test_result_area table.bulk-table thead th:last-child,
+.inner_content-tools .test_result_area table.bulk-table tbody td:last-child {
+  padding-left: 12px;
+}
+
+/* ---- Body ---- */
+.inner_content-tools .test_result_area table.bulk-table tbody tr {
+  background: transparent;
+  transition: background-color 0.12s;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody tr:hover {
+  background: var(--tpt-row-hover);
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td {
+  padding: 14px 16px;
+  font-family: var(--tpt-font);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+  color: var(--tpt-text);
+  text-align: center;
+  vertical-align: top;
+  background: transparent !important;
+  box-shadow: none !important;
+  /* hairline between rows only: no vertical lines */
+  border: 0 !important;
+  border-bottom: 1px solid var(--tpt-row-divider) !important;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+/* Cells that hold a value / pill rather than text are centred under their (centred) heading */
+.inner_content-tools .test_result_area table.bulk-table tbody td.text-center,
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_pass,
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_fail,
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_pass-imran,
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_fail-imran,
+.inner_content-tools .test_result_area table.bulk-table tbody td.image-table-link {
+  text-align: center !important;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td.align-left,
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_data_url,
+.inner_content-tools .test_result_area table.bulk-table tbody td.bulk-headings-message {
+  text-align: left !important;
+}
+/* "#" column */
+.inner_content-tools .test_result_area table.bulk-table tbody td:first-child {
+  font-size: 13px;
+  color: var(--tpt-text-faint);
+  overflow-wrap: normal;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td p {
+  margin-bottom: 0;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td strong {
+  font-weight: inherit;
+}
+
+/* The URL column (always the 2nd one) may break anywhere so long URLs wrap instead of widening the table */
+.inner_content-tools .test_result_area table.bulk-table tbody td:nth-child(2),
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_data_url {
+  overflow-wrap: anywhere;
+}
+
+/* URLs and other links: wrap instead of being cut off */
+.inner_content-tools .test_result_area table.bulk-table tbody td.result_data_url,
+.inner_content-tools .test_result_area table.bulk-table td.result_data_url {
+  width: auto;
+  max-width: none;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow: visible;
+  vertical-align: top;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td a,
+.inner_content-tools .test_result_area .result_data_body tr td a,
+.inner_content-tools .test_result_area .result_data_url a {
+  display: inline;
+  max-width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--tpt-accent);
+  text-decoration: none;
+  text-underline-offset: 3px;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  border-bottom: 0;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td a:hover,
+.inner_content-tools .test_result_area .result_data_body tr td a:hover {
+  color: var(--tpt-accent);
+  text-decoration: underline;
+}
+.inner_content-tools .test_result_area table.bulk-table tbody td a:focus-visible {
+  outline: 2px solid var(--tpt-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.inner_content-tools .test_result_area .result_data_url img {
+  height: 12px;
+  width: 12px;
+  margin-left: 6px;
+}
+
+/* Lighthouse / Core Web Vitals have many narrow columns: keep their cells on one line and let the table scroll sideways */
+.inner_content-tools .test_result_area table.bulk-table-core td,
+.inner_content-tools .test_result_area table.bulk-table-core th,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse td,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse th {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal;
+}
+.inner_content-tools .test_result_area table.bulk-table-core td.result_data_url,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse td.result_data_url {
+  overflow-wrap: normal;
+}
+.inner_content-tools .test_result_area table.bulk-table-core td.result_data_url a,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse td.result_data_url a {
+  white-space: nowrap;
+  overflow-wrap: normal;
+}
+
+/* ...and with tighter padding / smaller pills, so most of them still fit without scrolling */
+.inner_content-tools .test_result_area table.bulk-table-core thead th,
+.inner_content-tools .test_result_area table.bulk-table-core tbody td,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse thead th,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse tbody td {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+.inner_content-tools .test_result_area table.bulk-table-core thead th:first-child,
+.inner_content-tools .test_result_area table.bulk-table-core tbody td:first-child,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse thead th:first-child,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse tbody td:first-child {
+  padding-left: 12px;
+}
+.inner_content-tools .test_result_area table.bulk-table-core thead th:last-child,
+.inner_content-tools .test_result_area table.bulk-table-core tbody td:last-child,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse thead th:last-child,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse tbody td:last-child {
+  padding-right: 12px;
+}
+.inner_content-tools .test_result_area table.bulk-table-core .tpt-pill,
+.inner_content-tools .test_result_area table.bulk-table-lighthouse .tpt-pill {
+  min-width: 40px;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+/* Image link column: the chain-link icon in a small bordered button */
+.inner_content-tools .test_result_area table.bulk-table td.image-table-link a {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  vertical-align: top;
+  background: #fff;
+  border: 1px solid var(--tpt-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.inner_content-tools .test_result_area table.bulk-table td.image-table-link a:hover {
+  background: var(--tpt-row-hover);
+  border-color: var(--tpt-control-border);
+  text-decoration: none;
+}
+.inner_content-tools .test_result_area table.bulk-table td.image-table-link svg {
+  width: 18px;
+  height: 18px;
+}
+.inner_content-tools .test_result_area table.bulk-table td.image-table-link svg path {
+  fill: var(--tpt-accent) !important;
+}
+
+/* ==========================================================================
+   Pass / Fail pills
+   --------------------------------------------------------------------------
+   Cells keep their `result_pass` / `result_fail` classes (the CSV / XLSX export
+   reads them). tools-table.js wraps the cell text in `.tpt-pill`; without it the
+   cell text is simply coloured.
+   ========================================================================== */
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass,
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass-imran {
+  color: var(--tpt-good-text) !important;
+}
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail-imran {
+  color: var(--tpt-bad-text) !important;
+}
+/* main.css paints a tinted block behind these cells: the pill replaces it */
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass::before,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail::before,
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass-imran::before,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail-imran::before {
+  content: none;
+}
+/* The cell itself: no minimum width or heavy weight, slightly less top padding so the pill lines up with text */
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail,
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass-imran,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail-imran {
+  min-width: 0;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-weight: 600;
+  letter-spacing: 0;
+  white-space: normal;
+}
+
+.inner_content-tools .test_result_area .tpt-pill,
+.inner_content-tools .test_result_area .result_data_body tr span.result_pass,
+.inner_content-tools .test_result_area .result_data_body tr span.result_fail {
+  display: inline-block;
+  min-width: 48px;
+  max-width: 100%;
+  margin: 0;
+  padding: 3px 10px;
+  font-family: var(--tpt-font);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: break-word;
+  vertical-align: top;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-shadow: none !important;
+  font-variant-numeric: tabular-nums;
+}
+/* PASS / FAIL read as "Pass" / "Fail", like the reference design (Yes / No / numbers are untouched) */
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass > .tpt-pill.tpt-pill-word,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail > .tpt-pill.tpt-pill-word {
+  text-transform: lowercase;
+}
+.inner_content-tools .test_result_area .result_data_body tr td > .tpt-pill.tpt-pill-word::first-letter {
+  text-transform: uppercase;
+}
+
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass .tpt-pill,
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass-imran .tpt-pill,
+.inner_content-tools .test_result_area .result_data_body tr span.result_pass {
+  color: var(--tpt-good-text) !important;
+  background: var(--tpt-good-bg) !important;
+  border-color: var(--tpt-good-border);
+}
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail .tpt-pill,
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail-imran .tpt-pill,
+.inner_content-tools .test_result_area .result_data_body tr span.result_fail {
+  color: var(--tpt-bad-text) !important;
+  background: var(--tpt-bad-bg) !important;
+  border-color: var(--tpt-bad-border);
+}
+/* An empty chip (e.g. a missing height on the Open Graph Image table) would only draw a stray sliver */
+.inner_content-tools .test_result_area .result_data_body tr span.result_pass:empty,
+.inner_content-tools .test_result_area .result_data_body tr span.result_fail:empty {
+  display: none;
+}
+/* Pills that sit inside an otherwise plain cell (casing, Yes/No chips) line up with text rows */
+.inner_content-tools .test_result_area .result_data_body tr td > span.result_pass,
+.inner_content-tools .test_result_area .result_data_body tr td > span.result_fail {
+  margin-top: -1px;
+}
+/* Cell-level classes from the markup that should not tint a cell once a pill is shown */
+.inner_content-tools .test_result_area .result_data_body tr td.result_pass:has(.tpt-pill),
+.inner_content-tools .test_result_area .result_data_body tr td.result_fail:has(.tpt-pill) {
+  color: inherit !important;
+}
+
+/* ==========================================================================
+   Footer: row summary (left), Go to / Show rows / previous-next (right)
+   ========================================================================== */
+.inner_content-tools .test_result_area .table-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px 16px;
+  margin: 0 !important;
+  padding: 12px var(--tpt-edge);
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--tpt-text-muted);
+  background: var(--tpt-footer-bg);
+  border: 1px solid var(--tpt-border);
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 12px 32px -16px rgba(16, 24, 40, 0.14);
+}
+.inner_content-tools .test_result_area .table-pagination.ms-auto {
+  margin-left: 0 !important;
+}
+/* Flatten the nested wrapper so "Showing…" can sit on the left and the buttons on the right */
+.inner_content-tools .test_result_area .table-pagination .showing-pagination {
+  display: contents;
+}
+.inner_content-tools .test_result_area .table-pagination span {
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--tpt-text-muted);
+}
+.inner_content-tools .test_result_area .table-pagination #pagination-info {
+  order: 0;
+  margin-right: auto;
+}
+.inner_content-tools .test_result_area .table-pagination .total-row,
+.inner_content-tools .test_result_area .table-pagination .show-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+.inner_content-tools .test_result_area .table-pagination .total-row { order: 1; }
+.inner_content-tools .test_result_area .table-pagination .show-row { order: 2; }
+.inner_content-tools .test_result_area .table-pagination .showing-pagination-btn {
+  order: 3;
+  display: inline-flex;
+  gap: 8px;
+  margin: 0 !important;
+}
+
+/* Inputs: "Go to" and "Show rows" */
+.inner_content-tools .test_result_area .table-pagination .can-page-go-control,
+.inner_content-tools .test_result_area .table-pagination #rows-per-page {
+  height: 32px;
+  margin: 0;
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--tpt-text-secondary);
+  background-color: #fff;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  outline: none;
+}
+.inner_content-tools .test_result_area .table-pagination .can-page-go-control {
+  width: 52px;
+  padding: 0 8px;
+  text-align: center;
+}
+.inner_content-tools .test_result_area .table-pagination #rows-per-page {
+  width: auto;
+  padding: 0 30px 0 10px;
+  background: #fff url("../tools-table/images/chevron-down.svg") no-repeat right 8px center / 14px 14px;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+}
+.inner_content-tools .test_result_area .table-pagination .can-page-go-control:focus,
+.inner_content-tools .test_result_area .table-pagination #rows-per-page:focus {
+  border-color: var(--tpt-accent);
+  box-shadow: 0 0 0 4px var(--tpt-accent-ring);
+}
+
+/* Previous / next */
+.inner_content-tools .test_result_area .table-pagination .showing-pagination-btn .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px !important;
+  padding: 0 !important;
+  font-size: 13px;
+  line-height: 1;
+  color: var(--tpt-text-secondary);
+  background: #fff;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px !important;
+  box-shadow: var(--tpt-shadow-xs);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.inner_content-tools .test_result_area .table-pagination .showing-pagination-btn .btn:hover {
+  color: var(--tpt-text);
+  background: #f9fafb;
+  border-color: var(--tpt-control-border);
+}
+.inner_content-tools .test_result_area .table-pagination .showing-pagination-btn .btn:focus-visible {
+  outline: none;
+  border-color: var(--tpt-accent);
+  box-shadow: 0 0 0 4px var(--tpt-accent-ring);
+}
+.inner_content-tools .test_result_area .table-pagination .showing-pagination-btn .btn svg,
+.inner_content-tools .test_result_area .table-pagination .showing-pagination-btn .btn i {
+  width: 14px;
+  height: 14px;
+  margin: 0 !important;
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   Default DataTables controls (Open Graph / Twitter tables, which have no custom paging bar)
+   ========================================================================== */
+/* Each tab has its own DataTables wrapper; the inactive ones carry a hidden table, so hide their controls too */
+.inner_content-tools .test_result_area .dataTables_wrapper:has(table.d-none) {
+  display: none;
+}
+.inner_content-tools .test_result_area:not(:has(.table-pagination)) .dataTables_wrapper > .row:not(.dt-row) {
+  align-items: center;
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  line-height: 20px;
+  color: var(--tpt-text-muted);
+}
+.inner_content-tools .test_result_area:not(:has(.table-pagination)) .dataTables_wrapper > .row:first-child {
+  padding: 10px var(--tpt-edge);
+  border-bottom: 1px solid var(--tpt-border);
+}
+.inner_content-tools .test_result_area:not(:has(.table-pagination)) .dataTables_wrapper > .row:last-child {
+  padding: 12px var(--tpt-edge);
+  background: var(--tpt-footer-bg);
+  border-top: 1px solid var(--tpt-border);
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_length label,
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0 !important;
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--tpt-text-muted);
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_length select {
+  width: auto;
+  height: 32px;
+  padding: 0 30px 0 10px;
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tpt-text-secondary);
+  background: #fff url("../tools-table/images/chevron-down.svg") no-repeat right 8px center / 14px 14px;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_paginate .pagination {
+  gap: 8px;
+  margin: 0;
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_paginate .page-link {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--tpt-font);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--tpt-text-secondary);
+  background: #fff;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px !important;
+  box-shadow: var(--tpt-shadow-xs);
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_paginate .page-item.active .page-link {
+  color: #fff;
+  background: var(--tpt-accent);
+  border-color: var(--tpt-accent);
+}
+.inner_content-tools .test_result_area .dataTables_wrapper .dataTables_paginate .page-item.disabled .page-link {
+  color: var(--tpt-text-faint);
+  background: #f9fafb;
+  border-color: var(--tpt-border);
+  box-shadow: none;
+}
+
+/* ==========================================================================
+   Small screens
+   ========================================================================== */
+@media (max-width: 600px) {
+  .inner_content-tools .test_result_area .bulk-download-result ul li.datatable_download_result_li {
+    width: 100%;
+    margin-left: 0;
+  }
+  .inner_content-tools .test_result_area .bulk-datatable-download-result #custom-search {
+    width: 100%;
+  }
+  .inner_content-tools .test_result_area .table-pagination {
+    justify-content: space-between;
+  }
+  .inner_content-tools .test_result_area .table-pagination #pagination-info {
+    flex: 1 0 100%;
+    margin-right: 0;
+  }
+}

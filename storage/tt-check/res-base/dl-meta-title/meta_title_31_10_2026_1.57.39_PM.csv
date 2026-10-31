@@ -1,0 +1,3 @@
+#,URL,Content,Length,Title Equal to H1?,Casing,Result
+1,"https://example.com/",Example Domain,14,No,Camel Casing,PASS
+2,"https://www.python.org/",Welcome to Python.org,21,No,Neither Camel Case nor Sentence Case,FAIL

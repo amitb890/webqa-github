@@ -1,5 +1,8 @@
 @extends('layouts.master')
 @include("components.test-title")
+@section("css")
+<link rel="stylesheet" href="{{ asset('new-assets/css/tools-table.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
+@endsection
 @section("content")
 @include("components.modal-update-status-robots")
 @include("components.modal-failed-urls")
@@ -2955,6 +2958,7 @@
 <script src="{{ asset('new-assets/js/bulk.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="/new-assets/js/exportXlsx.js"></script>
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
+<script src="{{ asset('new-assets/js/tools-table.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <!-- Custom script to rotate the Footer CTA text in individual tools pages -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -20167,3 +20167,21 @@ table.dataTable>tbody>tr .amitBannerJi{
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Article hero (featured) image: any uploaded size is fitted to a uniform frame */
+.post-hero-image {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 12px;
+}
+.post-hero-image img {
+  display: block;
+  width: 100% !important;
+  max-width: 100%;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 12px;
+}

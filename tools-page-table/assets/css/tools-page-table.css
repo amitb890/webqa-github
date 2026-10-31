@@ -1,0 +1,483 @@
+/* ==========================================================================
+   Tools Page Table: styles for the results table only.
+   Every rule is scoped under .table-card, so it won't affect other tables on the site.
+   ========================================================================== */
+
+/* ---------- Font: Inter, self-hosted (Latin). Licence: assets/fonts/inter/LICENSE.txt (SIL OFL 1.1) ---------- */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/inter/inter-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../fonts/inter/inter-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../fonts/inter/inter-latin-600-normal.woff2") format("woff2");
+}
+
+/* ---------- Table component: toolbar, sorting, resizing, pills, pagination ---------- */
+
+/* Design tokens: change these to retheme the whole table */
+.table-card {
+  --tpt-text: #101828;
+  --tpt-text-secondary: #344054;
+  --tpt-text-muted: #667085;
+  --tpt-text-faint: #98a2b3;
+  --tpt-accent: #2563eb;
+  --tpt-accent-ring: rgba(37, 99, 235, 0.14);
+  --tpt-border: #e4e7ec;
+  --tpt-control-border: #d0d5dd;
+  --tpt-header-bg: #e3e9f7;
+  --tpt-header-line: #c3cee6;
+  --tpt-row-divider: #eef0f3;
+  --tpt-row-hover: #f6f8fd;
+  --tpt-footer-bg: #fcfcfd;
+  --tpt-good-text: #067647;
+  --tpt-good-bg: #ecfdf3;
+  --tpt-good-border: #abefc6;
+  --tpt-bad-text: #b42318;
+  --tpt-bad-bg: #fef3f2;
+  --tpt-bad-border: #fecdca;
+  --tpt-info-text: #175cd3;
+  --tpt-info-bg: #eff8ff;
+  --tpt-info-border: #b2ddff;
+  --tpt-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --tpt-edge-padding: 20px; /* inner padding at the left/right edges of the card */
+}
+
+.table-card, .table-card * { box-sizing: border-box; }
+.table-card {
+  /* Full width of its container: the page decides the side margins */
+  background: #fff;
+  border: 1px solid var(--tpt-border);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px -16px rgba(16, 24, 40, 0.14);
+  overflow: clip; /* clips the rounded corners without blocking the sticky header (overflow: hidden would) */
+  color: var(--tpt-text);
+}
+
+/* ---- Toolbar: downloads (left), search (right) ---- */
+.table-card .toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px var(--tpt-edge-padding);
+  border-bottom: 1px solid var(--tpt-border);
+  /* Sit above the sticky header row (z-index 2) so the download tooltips aren't hidden behind it */
+  position: relative;
+  z-index: 3;
+}
+.table-card .downloads { display: flex; gap: 8px; }
+.table-card .file-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: #fff;
+  border: 1px solid var(--tpt-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.table-card .file-btn:hover { background: #f9fafb; border-color: var(--tpt-control-border); transform: translateY(-1px); }
+.table-card .file-btn:focus-visible { outline: none; border-color: var(--tpt-accent); box-shadow: 0 0 0 4px var(--tpt-accent-ring); }
+.table-card .file-btn img { width: 26px; height: 26px; }
+/* Hover tooltip: "Download CSV" / "Download XLSX", with a small pointer */
+.table-card .file-btn::before,
+.table-card .file-btn::after {
+  position: absolute;
+  left: 50%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s;
+  z-index: 10;
+}
+.table-card .file-btn::after {
+  content: attr(data-tooltip);
+  top: calc(100% + 8px);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  color: #fff;
+  white-space: nowrap;
+  background: #101828;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.18);
+  transform: translate(-50%, -2px);
+}
+.table-card .file-btn::before {
+  content: "";
+  top: calc(100% + 4px);
+  width: 8px;
+  height: 8px;
+  background: #101828;
+  transform: translate(-50%, -2px) rotate(45deg);
+}
+.table-card .file-btn:hover::after, .table-card .file-btn:focus-visible::after { opacity: 1; transform: translate(-50%, 0); }
+.table-card .file-btn:hover::before, .table-card .file-btn:focus-visible::before { opacity: 1; transform: translate(-50%, 0) rotate(45deg); }
+
+.table-card .search { position: relative; }
+.table-card .search img {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.table-card .search input {
+  width: 260px;
+  height: 40px;
+  padding: 0 12px 0 36px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--tpt-text);
+  background: #fff;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.table-card .search input::placeholder { color: var(--tpt-text-faint); }
+.table-card .search input:focus { border-color: var(--tpt-accent); box-shadow: var(--tpt-shadow-xs), 0 0 0 4px var(--tpt-accent-ring); }
+
+/* ---- Table ---- */
+.table-card .table-wrap { overflow-x: auto; }
+/* When the table fits its container there's nothing to scroll sideways, so drop the scroll box:
+   that lets the header's position: sticky work against the page (smooth, no jerking) */
+.table-card .table-wrap.fits { overflow: visible; }
+.table-card table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Inter", "Circular Std", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+}
+/* Columns marked numeric: digits line up */
+.table-card .col-numeric { font-variant-numeric: tabular-nums; }
+/* Once columns are measured, widths come from <col> elements and the user can resize them */
+.table-card table.resizable { table-layout: fixed; }
+.table-card th, .table-card td {
+  padding: 14px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--tpt-row-divider);
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+/* A little more breathing room at the card's left and right edges (first / last column) */
+.table-card .col-first { padding-left: var(--tpt-edge-padding); }
+.table-card .col-last { padding-right: var(--tpt-edge-padding); }
+
+/* ---- Header row ---- */
+.table-card th {
+  /* Sticky header: the browser pins it to the top of the window while the page scrolls.
+     Set --table-sticky-top on the page if it has a fixed site header (e.g. 64px). */
+  position: sticky;
+  top: var(--table-sticky-top, 0px);
+  padding-top: 12px;
+  padding-bottom: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  color: var(--tpt-text-secondary);
+  background: var(--tpt-header-bg);
+  border-bottom: 0;
+  /* Bottom line drawn as a shadow so it stays attached while the header is sticky */
+  box-shadow: inset 0 -1px 0 var(--tpt-header-line);
+  /* Headings wrap between words so short columns can stay narrow */
+  white-space: normal;
+  overflow-wrap: normal;
+  vertical-align: middle;
+  overflow: hidden;
+  user-select: none;
+  z-index: 2; /* stays above the rows while the header is stuck */
+}
+/* Compact columns (Yes/No, Length): as narrow as possible, with tighter side padding */
+.table-card th.col-compact, .table-card td.col-compact { padding-left: 8px; padding-right: 8px; }
+.table-card th.col-compact .sort-btn { gap: 4px; }
+
+/* Headings that must stay on one line (the column starts wide enough to fit them) */
+.table-card th.no-wrap { white-space: nowrap; }
+/* Soft shadow under the header row while it is pinned to the top of the window */
+.table-card table.header-stuck th:not(.th-group) { box-shadow: inset 0 -1px 0 var(--tpt-header-line), 0 6px 12px -6px rgba(16, 24, 40, 0.18); }
+
+/* Column groups (two-row header): the shared group cell spans its columns, with lines below and to its right */
+.table-card th.th-group {
+  text-align: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  box-shadow: inset 0 -1px 0 var(--tpt-header-line), inset -1px 0 0 var(--tpt-header-line);
+}
+.table-card th.th-group.col-last { box-shadow: inset 0 -1px 0 var(--tpt-header-line); }
+.table-card thead tr.sub-head th { padding-top: 10px; padding-bottom: 10px; }
+
+/* Column separators / resize handles */
+.table-card .col-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+}
+.table-card .col-resizer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%; /* column separator runs the full height of the header row */
+  background: var(--tpt-header-line);
+  transition: background-color 0.15s;
+}
+.table-card th.col-last .col-resizer::after { background: transparent; }
+.table-card th:hover .col-resizer::after,
+.table-card .col-resizer.dragging::after { width: 2px; background: var(--tpt-accent); }
+body.resizing { cursor: col-resize; user-select: none; }
+
+/* Sort buttons */
+.table-card .sort-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.table-card .sort-btn:hover { color: var(--tpt-text); }
+.table-card .sort-btn:focus-visible { outline: 2px solid var(--tpt-accent); outline-offset: 2px; }
+.table-card .sort-btn img { width: 12px; height: 12px; flex-shrink: 0; transition: transform 0.15s, opacity 0.15s; }
+/* Grey arrow when idle, blue arrow on the column currently sorted */
+.table-card .sort-btn .sort-idle { opacity: 0.45; }
+.table-card .sort-btn:hover .sort-idle { opacity: 0.8; }
+.table-card .sort-btn .sort-active { display: none; }
+.table-card th[aria-sort="ascending"] .sort-btn,
+.table-card th[aria-sort="descending"] .sort-btn { color: var(--tpt-accent); }
+.table-card th[aria-sort] .sort-btn .sort-idle { display: none; }
+.table-card th[aria-sort] .sort-btn .sort-active { display: block; }
+.table-card th[aria-sort="descending"] .sort-btn img { transform: rotate(180deg); }
+
+/* ---- Rows ---- */
+.table-card tbody tr { transition: background-color 0.12s; }
+.table-card tbody tr:hover { background: var(--tpt-row-hover); }
+.table-card tbody tr:last-child td { border-bottom: 0; }
+.table-card td { color: var(--tpt-text); }
+.table-card .cell-empty { color: var(--tpt-text-faint); font-style: italic; }
+.table-card td.num { color: var(--tpt-text-faint); font-size: 13px; overflow-wrap: normal; }
+/* Columns with align: 'center' (e.g. Length, Title Equal to H1 ?, Casing): centre the values and their headings */
+.table-card th.col-center, .table-card td.col-center { text-align: center; }
+.table-card td a {
+  color: var(--tpt-accent);
+  font-weight: 500;
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+.table-card td a:hover { text-decoration: underline; }
+.table-card td a:focus-visible { outline: 2px solid var(--tpt-accent); outline-offset: 2px; border-radius: 2px; }
+
+/* (i) help icon next to a header label (column `tooltip`) or inside a cell (ToolsTable.infoTip) */
+.table-card .info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  padding: 0;
+  vertical-align: middle;
+  background: none;
+  border: 0;
+  border-radius: 50%;
+  cursor: help;
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+.table-card .info-tip:hover, .table-card .info-tip:focus-visible { opacity: 1; }
+.table-card .info-tip:focus-visible { outline: 2px solid var(--tpt-accent); outline-offset: 1px; }
+.table-card .info-tip img { width: 14px; height: 14px; }
+/* Header label + (i): the label may wrap between words, the icon always stays beside it */
+.table-card .th-with-tip { display: inline-flex; align-items: center; max-width: 100%; }
+.table-card .th-with-tip > .sort-btn { min-width: 0; }
+.table-card .th-with-tip > .info-tip { flex: none; }
+.table-card th .sort-btn + .info-tip { margin-left: 2px; }
+
+/* The tooltip itself: one element on the page, positioned by tools-page-table.js
+   (outside .table-card, so it uses plain colours rather than the --tpt tokens) */
+.tpt-tooltip {
+  position: fixed;
+  z-index: 1000;
+  max-width: 260px;
+  padding: 8px 10px;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 17px;
+  color: #fff;
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  white-space: normal;
+  background: #101828;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(16, 24, 40, 0.18);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.12s;
+}
+.tpt-tooltip.is-visible { opacity: 1; visibility: visible; }
+/* Small pointer towards the icon (above the tooltip when it opens below) */
+.tpt-tooltip::after {
+  content: "";
+  position: absolute;
+  left: var(--arrow-x, 50%);
+  bottom: -4px;
+  width: 8px;
+  height: 8px;
+  background: #101828;
+  transform: translateX(-50%) rotate(45deg);
+}
+.tpt-tooltip.is-below::after { top: -4px; bottom: auto; }
+
+/* Icon that links to a resource without showing its URL (e.g. Image link) */
+.table-card .icon-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: #fff;
+  border: 1px solid var(--tpt-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.table-card .icon-link:hover { background: var(--tpt-row-hover); border-color: var(--tpt-control-border); }
+.table-card .icon-link:focus-visible { outline: none; border-color: var(--tpt-accent); box-shadow: 0 0 0 4px var(--tpt-accent-ring); }
+.table-card .icon-link img { width: 18px; height: 18px; }
+
+/* ---- Pills ---- */
+.table-card .badge {
+  display: inline-block;
+  min-width: 48px;
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.01em;
+  text-align: center;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+/* Tones: each tool page decides which values are good (green) or bad (red), via ToolsTable.badge() */
+.table-card .badge.good { color: var(--tpt-good-text); background: var(--tpt-good-bg); border-color: var(--tpt-good-border); }
+.table-card .badge.bad { color: var(--tpt-bad-text); background: var(--tpt-bad-bg); border-color: var(--tpt-bad-border); }
+.table-card .badge.info { color: var(--tpt-info-text); background: var(--tpt-info-bg); border-color: var(--tpt-info-border); }
+/* Size modifiers */
+.table-card .badge.length { min-width: 40px; font-variant-numeric: tabular-nums; }
+.table-card .badge.yes-no { min-width: 44px; }
+.table-card .badge.file-size { min-width: 64px; font-variant-numeric: tabular-nums; }
+/* Casing pills: all three share one fixed size, tall enough for the two-line "Neither…" value */
+.table-card .badge.casing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 144px;
+  max-width: 100%;
+  min-height: 40px;
+  letter-spacing: 0;
+  white-space: normal;
+  overflow-wrap: normal;
+  vertical-align: top;
+}
+
+/* ---- Empty state ---- */
+.table-card .empty { padding: 40px 16px; text-align: center; color: var(--tpt-text-muted); display: none; }
+
+/* ---- Footer: row summary (left), rows per page + paging (right) ---- */
+.table-card .table-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px var(--tpt-edge-padding);
+  font-size: 13px;
+  color: var(--tpt-text-muted);
+  background: var(--tpt-footer-bg);
+  border-top: 1px solid var(--tpt-border);
+}
+.table-card .pager { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.table-card .pager label { display: inline-flex; align-items: center; gap: 8px; }
+.table-card .pager select {
+  height: 32px;
+  padding: 0 30px 0 10px;
+  font: inherit;
+  font-weight: 500;
+  color: var(--tpt-text-secondary);
+  background: #fff url("../images/chevron-down.svg") no-repeat right 8px center / 14px 14px;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  appearance: none;
+  cursor: pointer;
+}
+.table-card .pager select:focus-visible { outline: none; border-color: var(--tpt-accent); box-shadow: 0 0 0 4px var(--tpt-accent-ring); }
+.table-card .page-nav { display: inline-flex; align-items: center; gap: 8px; }
+.table-card .page-info { color: var(--tpt-text-secondary); font-weight: 500; font-variant-numeric: tabular-nums; }
+.table-card .icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  font: inherit;
+  color: var(--tpt-text-secondary);
+  background: #fff;
+  border: 1px solid var(--tpt-control-border);
+  border-radius: 8px;
+  box-shadow: var(--tpt-shadow-xs);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+.table-card .icon-btn:hover:not(:disabled) { background: #f9fafb; }
+.table-card .icon-btn:focus-visible { outline: none; border-color: var(--tpt-accent); box-shadow: 0 0 0 4px var(--tpt-accent-ring); }
+.table-card .icon-btn:disabled { background: #f9fafb; border-color: var(--tpt-border); box-shadow: none; cursor: default; }
+.table-card .icon-btn img { width: 16px; height: 16px; }
+.table-card .icon-btn:disabled img { opacity: 0.35; }
+
+@media (max-width: 600px) {
+  .table-card .search, .table-card .search input { width: 100%; }
+}

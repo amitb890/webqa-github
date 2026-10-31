@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools Page Table</title>
+  <link rel="stylesheet" href="../assets/css/page-layout.css">
+  <link rel="stylesheet" href="../assets/css/tools-page-table.css">
+</head>
+<body>
+  <header class="site-header">
+    <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-controls="sidebar" aria-expanded="true" aria-label="Hide sidebar" data-tooltip="Hide sidebar">
+      <img src="../assets/images/sidebar-toggle.svg" alt="">
+    </button>
+    <h1>Tools Page Table CSS Improvement</h1>
+  </header>
+
+  <div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav" aria-label="Tools"></nav>
+  </aside>
+
+  <main class="main">
+  <h2 class="page-title">Robots Meta Tag</h2>
+  <p class="section-intro">This is how the Robots Meta tag tools page table should look. This tool has no optional columns, so there is only one layout.</p>
+  <h3 class="card-title">Test Results</h3>
+  <div id="results"></div>
+  </main>
+  </div>
+
+  <script src="../assets/js/page-layout.js"></script>
+  <script src="../assets/js/vendor/xlsx.full.min.js"></script>
+  <script src="../assets/js/tools-page-table.js"></script>
+  <script src="../assets/js/robots-meta.js"></script>
+</body>
+</html>

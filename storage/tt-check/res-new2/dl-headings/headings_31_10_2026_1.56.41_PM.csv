@@ -1,0 +1,272 @@
+#,URL,Output,Result
+1,"https://example.com/","Your webpage is using0 H1 heading tag, 0 H2 heading tag, and 0 other types of heading tags.
+                        
+                            Show
+                            Hide
+                            details
+                            
+                              
+                            
+                        
+                    
+                    
+                    
+                        
+                          
+                            
+                              Heading
+                              Quantity
+                              Content
+                            
+                          
+                          
+                            
+                            
+                              H1
+                              
+                              0
+                              
+                              The page does not contain any H1 heading tags
+                              
+                            
+
+                              
+
+                            
+                            
+                              H2
+                              
+                              0
+                              
+                              The page does not contain any H2 heading tags
+                              
+                            
+                            
+                            
+
+                            
+                            
+                              H3
+                              
+                              0
+                              
+                              The page does not contain any H3 heading tags
+                              
+                            
+                            
+                            
+
+                            
+                            
+                              H4
+                              
+                              0
+                              
+                              The page does not contain any H4 heading tags
+                              
+                            
+                            
+                            
+
+                            
+                            
+                              H5
+                              
+                              0
+                              
+                              The page does not contain any H5 heading tags",FAIL
+2,"https://www.python.org/","Your webpage is using5 H1 heading tag, 9 H2 heading tag, and 0 other types of heading tags.
+                        
+                            Show
+                            Hide
+                            details
+                            
+                              
+                            
+                        
+                    
+                    
+                    
+                        
+                          
+                            
+                              Heading
+                              Quantity
+                              Content
+                            
+                          
+                          
+                            
+                            
+                              H1
+                              
+                              5
+                              
+
+                                
+                                    Functions Defined
+                                    
+                                
+                                Show
+                                  
+                                    
+                                  
+                                
+                              
+
+                              
+                            
+
+                              
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      All the Flow You’d Expect
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Compound Data Types
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Intuitive Interpretation
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Quick & Easy to Learn
+                                      
+                                    
+                                    
+
+                            
+                            
+                              H2
+                              
+                              9
+                              
+
+                                
+                                    Get Started
+                                    
+                                
+                                Show
+                                  
+                                    
+                                  
+                                
+                              
+                              
+                            
+                            
+                            
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Download
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Docs
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Jobs
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Latest News
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Upcoming Events
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Success Stories
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      Use Python for…
+                                      
+                                    
+                                    
+                                    
+                                      
+                                      
+                                      
+                                      >>> Python Software Foundation
+                                      
+                                    
+                                    
+
+                            
+                            
+                              H3
+                              
+                              0
+                              
+                              The page does not contain any H3 heading tags
+                              
+                            
+                            
+                            
+
+                            
+                            
+                              H4
+                              
+                              0
+                              
+                              The page does not contain any H4 heading tags
+                              
+                            
+                            
+                            
+
+                            
+                            
+                              H5
+                              
+                              0
+                              
+                              The page does not contain any H5 heading tags",PASS

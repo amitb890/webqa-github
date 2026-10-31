@@ -1,0 +1,3 @@
+#,URL,Slug,LEN,Has Numbers?,Special Characters?,Uppercase Characters?,Hyphens Only?,Words Separated By Underscores Only?,Contains Stop Words?,Result
+1,"https://example.com/",-,0,No,No,No,-,Yes,No,PASS
+2,"https://www.python.org/",-,0,No,No,No,-,Yes,No,PASS

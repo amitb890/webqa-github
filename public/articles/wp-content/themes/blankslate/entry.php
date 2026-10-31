@@ -24,7 +24,7 @@ if ( has_tag() ) { // Check if the post has any tags
 }
 ?>
               <h1><?php the_title(); ?></h1>
-              <div style="margin-top:30px;"><?php the_post_thumbnail( 'full' ); ?></div>
+              <div class="post-hero-image" style="margin-top:30px;"><?php the_post_thumbnail( 'full' ); ?></div>
             </div>
             
             <div class="single-post-content single-post-content2"><?php the_content(); ?></div>
