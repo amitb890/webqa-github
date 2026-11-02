@@ -1,3 +1,0 @@
-#,URL,Output,Result
-1,"https://example.com/","We did not detect a Robots.txt file in the root directory of your website, so the current page is not blocked from crawling by any search engine.",PASS
-2,"https://www.python.org/","https://www.python.org/robots.txt",PASS

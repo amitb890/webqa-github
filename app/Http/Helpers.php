@@ -2209,7 +2209,7 @@ public function getContentType($response)
                 'displayName' => 'Meta Description',
                 'name' => 'description',
                 'dbName' => 'meta_desc',
-                'url' => '/test/description',
+                'url' => '/test/meta-description',
                 'slug' => 'meta-description',
                 'route' => 'tools/meta-description',
                 'main_heading' => 'Meta Description Test',

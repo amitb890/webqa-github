@@ -281,6 +281,8 @@ Route::namespace("Test")->prefix('test')->group(function(){
     
     Route::post('/title', [App\Http\Controllers\Test\TestController::class, 'title'])->name('test.title');
     Route::post('/meta-description', [App\Http\Controllers\Test\TestController::class, 'description'])->name('test.meta-description');
+    // Older labels (and test labels saved for existing projects) still post to /test/description
+    Route::post('/description', [App\Http\Controllers\Test\TestController::class, 'description']);
     Route::post('/robots-meta', [App\Http\Controllers\Test\TestController::class, 'robots'])->name('test.robots-meta');
     Route::post('/url-slug', [App\Http\Controllers\Test\TestController::class, 'urlSlug'])->name('test.url-slug');
     Route::post('/canonical-url', [App\Http\Controllers\Test\TestController::class, 'canonical'])->name('test.canonical-url');

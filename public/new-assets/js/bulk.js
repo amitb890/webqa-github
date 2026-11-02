@@ -1792,7 +1792,7 @@ function toggleTestResultAreaVisibility() {
                             <th class="transparent">#</th>
                             <th class="result_header transparent align-left">URL</th>
                             <th class="transparent">Image Link</th>
-                            <th class="transparent" colspan="${colspanAlt}" class="${colspanAlt > 0 ? "" : "d-none hidden-element"}">Alternate Text</th> 
+                            <th class="transparent ${colspanAlt > 0 ? "" : "d-none hidden-element"}" colspan="${colspanAlt || 1}">Alternate Text</th>
                             <th class="transparent" colspan="${colspanName}">File Name</th>
                             <th class="transparent" colspan="1">Result</th>
                         </tr>
@@ -3083,12 +3083,9 @@ function toggleTestResultAreaVisibility() {
                 <span>Show rows:</span>
                 <select name="" id="rows-per-page" class="btn btn-outline-gray">
                     <option value="10">10</option>
-                    <option value="30">30</option>
+                    <option value="25">25</option>
                     <option value="50">50</option>
                     <option value="100">100</option>
-                    <option value="200">200</option>
-                    <option value="500">500</option>
-                    <option value="-1">All</option>
                 </select>
             </div>
         </div>`;
@@ -3103,7 +3100,12 @@ function toggleTestResultAreaVisibility() {
             paging: true,   // Enable pagination
             info: false,    // Hide the info text (optional)
             searching: true, // Disable default searching
-            ordering: false 
+            // Sorting is driven by the header sort buttons in tools-table.js (api.order()).
+            // DataTables' own header clicks stay off, and there is no initial sort.
+            ordering: true,
+            order: [],
+            orderClasses: false,
+            columnDefs: [{ orderable: false, targets: '_all' }]
         });
     
         // Hide default DataTables pagination, info text, and length controls
@@ -3121,8 +3123,9 @@ function toggleTestResultAreaVisibility() {
         // Custom search input
         var $customSearchInput = $("#custom-search");
     
-        // Initial update of custom pagination info
+        // Initial update of custom pagination info, and again after every redraw (e.g. sorting)
         updatePaginationInfo();
+        tableImg.on('draw', updatePaginationInfo);
     
         // Function to update the custom pagination info
         function updatePaginationInfo() {

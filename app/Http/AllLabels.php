@@ -68,7 +68,7 @@ class AllLabels{
                 'display_name' => 'Meta Description',
                 'name' => 'description',
                 'db_name' => 'meta_desc',
-                'url' => '/test/description',
+                'url' => '/test/meta-description',
                 'slug' => 'meta-description',
                 'route' => 'tool/meta-description',
                 'main_heading' => 'Meta Description Test',

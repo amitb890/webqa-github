@@ -1,3 +1,0 @@
-#,URL,Canonical URL,Equal to Actual URL?,Result
-1,"https://example.com/",-,-,FAIL
-2,"https://www.python.org/",-,-,FAIL
