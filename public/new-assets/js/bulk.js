@@ -1155,6 +1155,9 @@ function toggleTestResultAreaVisibility() {
             removeLoader()
             UI.toggleContent(true)
             UI.scrollToSection()
+            if(!replayingArchive){
+                saveToolArchive()
+            }
         }else{
             UI.displayErrorNoTest()
             UI.toggleContent(true)
@@ -3059,6 +3062,100 @@ function toggleTestResultAreaVisibility() {
         e.preventDefault();
         UI.bulkContentRedirect(e.target);
     });
+
+    // ============================================
+    // TEST ARCHIVE - save finished runs, replay archived ones
+    // ============================================
+    var replayingArchive = false
+
+    function saveToolArchive(){
+        try {
+            const urls = String(window.bulkFullUrls || getFullUrlsValue() || "")
+                .split("\n").map(u => u.trim()).filter(Boolean)
+            // label is the same for every row, so it is not stored per result
+            const stripped = results.map(r => {
+                const copy = Object.assign({}, r)
+                delete copy.label
+                return copy
+            })
+            const payload = JSON.stringify({
+                urls: urls,
+                results: stripped,
+                resultsError: resultsError,
+                settings: settings
+            })
+            $.ajax({
+                url: "/tool-archive",
+                type: "POST",
+                data: {
+                    slug: label.slug,
+                    payload: payload,
+                    _token: $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(res){
+                    if(res && res.success && res.url){
+                        showArchiveNote(res.url)
+                    }
+                }
+            })
+        } catch (e) {
+            // Archiving must never break the results the user is looking at
+            console.warn("Could not archive tool results", e)
+        }
+    }
+
+    function showArchiveNote(url){
+        const heading = document.querySelector(".test_result_area h2")
+        if(!heading || document.querySelector(".tool-archive-note")) return
+        const note = document.createElement("p")
+        note.className = "tool-archive-note"
+        note.innerHTML = `Saved to the <a href="/test-archive">test archive</a>. <a href="${url}" class="tool-archive-copy" data-url="${url}">Copy link</a>`
+        heading.insertAdjacentElement("afterend", note)
+        $(note).find(".tool-archive-copy").on("click", function(e){
+            e.preventDefault()
+            const link = this
+            const done = function(){ link.textContent = "Link copied" ; setTimeout(function(){ link.textContent = "Copy link" }, 2000) }
+            if(navigator.clipboard && window.isSecureContext){
+                navigator.clipboard.writeText(link.dataset.url).then(done, function(){ window.prompt("Copy this link", link.dataset.url) })
+            }else{
+                window.prompt("Copy this link", link.dataset.url)
+            }
+        })
+    }
+
+    function replayToolArchive(archive){
+        results = (archive.results || []).map(r => Object.assign({}, r, { label: label }))
+        if(results.length === 0) return
+        resultsPassed = results.filter(r => r.status)
+        resultsFailed = results.filter(r => !r.status)
+        resultsError = Array.isArray(archive.resultsError) ? archive.resultsError : []
+        errorStatus = resultsError.length > 0
+        settings = archive.settings || results[results.length - 1].settings || {}
+        activeURL = results[results.length - 1].tested_url || ""
+
+        const urls = (archive.urls || []).join("\n")
+        const textarea = document.getElementById("urlValue")
+        if(textarea && urls){
+            textarea.value = urls
+            textarea.setAttribute("data-full-value", urls)
+        }
+
+        replayingArchive = true
+        try {
+            endTest()
+        } finally {
+            replayingArchive = false
+        }
+        // Land on the "Archived result" banner rather than just below it
+        if(document.querySelector(".tool-archive-banner")){
+            $('html,body').stop(true)
+            scrollToSection(".tool-archive-banner")
+        }
+    }
+
+    if(window.TOOL_ARCHIVE){
+        replayToolArchive(window.TOOL_ARCHIVE)
+    }
 
     function createDatatableElement() {
         var paginationHtml = `

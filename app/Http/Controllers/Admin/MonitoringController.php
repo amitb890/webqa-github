@@ -106,6 +106,23 @@ class MonitoringController extends Controller
         }
 
         return $query->limit(200)->get()->map(function (CachedTest $test) {
+            // Archived bulk tool runs (see ToolArchiveController)
+            if (\App\Http\Controllers\ToolArchiveController::isToolKey($test->test_key)) {
+                $summary = json_decode((string) $test->test_labels, true) ?: [];
+                $slug = $summary['slug'] ?? '';
+
+                return [
+                    'date' => $test->created_at,
+                    'url' => $test->projectUrl ?: 'Not captured',
+                    'type' => 'Tool: ' . ($summary['name'] ?? $slug),
+                    'source' => self::SOURCE_ANALYSIS_PAGE,
+                    'result' => 'success',
+                    'cached_url' => url('tools/' . $slug . '/archive/' . $test->test_key),
+                    'error_url' => null,
+                    'error_preview' => null,
+                ];
+            }
+
             $context = [
                 'result' => $test->result,
                 'resultsData' => $test->resultsData,

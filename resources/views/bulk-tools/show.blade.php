@@ -1,6 +1,9 @@
 @extends('layouts.master')
 @include("components.test-title")
 @section("css")
+@isset($toolArchive)
+<meta name="robots" content="noindex, follow">
+@endisset
 <link rel="stylesheet" href="{{ asset('new-assets/css/tools-table.css') }}{{ \App\Http\Helpers::getCacheBuster() }}" />
 @endsection
 @section("content")
@@ -2838,6 +2841,22 @@
             </div>
           </div>
 
+          @isset($toolArchive)
+          @php
+            $archivedUrlCount = count($toolArchive['urls'] ?? []) ?: count($toolArchive['results'] ?? []);
+          @endphp
+          <div class="tool-archive-banner" role="status">
+            <div class="tool-archive-banner__text">
+              <strong>Archived result</strong>
+              <span>{{ $toolArchive['createdAt'] ?? '' }} &middot; {{ $archivedUrlCount }} {{ $archivedUrlCount === 1 ? 'URL' : 'URLs' }} tested</span>
+            </div>
+            <div class="tool-archive-banner__links">
+              <a href="{{ url('test-archive') }}">All previous tests</a>
+              <a href="{{ url('tools/' . $d['slug']) }}" class="btn btn_primary">Run a new test</a>
+            </div>
+          </div>
+          @endisset
+
           <!-- Test Result Area Start -->
           <div class="test_result_area">
 
@@ -2955,6 +2974,9 @@
 
 @section("js")
 <script src="/new-assets/js/exceljs.min.js"></script>
+@isset($toolArchive)
+<script>window.TOOL_ARCHIVE = @json($toolArchive);</script>
+@endisset
 <script src="{{ asset('new-assets/js/bulk.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
 <script src="/new-assets/js/exportXlsx.js"></script>
 <script src="{{ asset('new-assets/vendor/datatables/datatables.min.js') }}{{ \App\Http\Helpers::getCacheBuster() }}"></script>
@@ -3006,7 +3028,7 @@
             '/tools/directory-browsing-test': 'Hide what shouldn’t show<br>Disable directory listing.',
         };
 
-        const path = location.pathname.replace(/\/+$/, '');
+        const path = '/tools/{{ $d['slug'] }}';
         const newText = headlines[path];
 
         const h2 = document.querySelector('.trial-content h2');

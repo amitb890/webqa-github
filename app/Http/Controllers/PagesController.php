@@ -282,8 +282,13 @@ class PagesController extends Controller
     {
         $isWebAppArchive = Str::contains($request->path(), 'test-archive-web-app');
         $reportBasePath = $isWebAppArchive ? 'analysis-report/' : 'analysis-report/w/';
+        $toolPrefix = \App\Http\Controllers\ToolArchiveController::KEY_PREFIX;
 
-        $query = CachedTest::query()->orderByDesc('created_at');
+        // Only the light columns are needed for the list
+        $query = CachedTest::query()
+            ->select(['id', 'test_key', 'projectUrl', 'created_at'])
+            ->where('test_key', 'not like', $toolPrefix . '%')
+            ->orderByDesc('created_at');
 
         if ($isWebAppArchive) {
             $query->where('web_app', 1);
@@ -294,28 +299,67 @@ class PagesController extends Controller
             $query->where('web_app', 0);
         }
 
-        $results = $query->get()->map(function ($row) use ($reportBasePath) {
-            $scheme = parse_url($row->projectUrl, PHP_URL_SCHEME);
-            $host = parse_url($row->projectUrl, PHP_URL_HOST);
-            $domain = ($scheme && $host) ? ($scheme . '://' . $host) : $row->projectUrl;
+        $domainOf = function ($url) {
+            $scheme = parse_url((string) $url, PHP_URL_SCHEME);
+            $host = parse_url((string) $url, PHP_URL_HOST);
+            return ($scheme && $host) ? ($scheme . '://' . $host) : $url;
+        };
 
+        $results = $query->get()->map(function ($row) use ($reportBasePath, $domainOf) {
             return [
                 'projectUrl' => $row->projectUrl,
+                'extraUrls' => 0,
+                'testName' => 'Website Analysis',
+                'testType' => 'analysis',
                 'createdAtFormatted' => optional($row->created_at)->format('j M Y, h:i A'),
                 'createdAtSort' => optional($row->created_at)->timestamp ?? 0,
-                'domain' => $domain,
+                'domain' => $domainOf($row->projectUrl),
                 'reportUrl' => url($reportBasePath . $row->test_key),
             ];
         });
 
-        return view('tests.index', compact('results'))
+        // Bulk tool runs only appear in the public archive
+        $toolNames = [];
+        if (! $isWebAppArchive) {
+            $toolRows = CachedTest::query()
+                ->select(['id', 'test_key', 'projectUrl', 'test_labels', 'created_at'])
+                ->where('test_key', 'like', $toolPrefix . '%')
+                ->orderByDesc('created_at')
+                ->get()
+                ->map(function ($row) use ($domainOf) {
+                    $summary = json_decode((string) $row->test_labels, true);
+                    if (! is_array($summary) || empty($summary['slug'])) {
+                        return null;
+                    }
+                    $count = (int) ($summary['url_count'] ?? 1);
+
+                    return [
+                        'projectUrl' => $row->projectUrl,
+                        'extraUrls' => max(0, $count - 1),
+                        'testName' => $summary['name'] ?? $summary['slug'],
+                        'testType' => 'tool',
+                        'createdAtFormatted' => optional($row->created_at)->format('j M Y, h:i A'),
+                        'createdAtSort' => optional($row->created_at)->timestamp ?? 0,
+                        'domain' => $domainOf($row->projectUrl),
+                        'reportUrl' => url('tools/' . $summary['slug'] . '/archive/' . $row->test_key),
+                    ];
+                })
+                ->filter();
+
+            $results = $results->concat($toolRows)->sortByDesc('createdAtSort')->values();
+            $toolNames = $toolRows->pluck('testName')->unique()->sort()->values()->all();
+        }
+
+        return view('tests.index', compact('results', 'toolNames', 'isWebAppArchive'))
             ->with("headerPadding", "public-test-archives");
     }
     
     public function getResults(Request $request)
 {
     $projectUrl = $request->input('projectUrl'); // from DataTables ajax
-    $query = CachedTest::query()->orderBy('created_at', 'desc');
+    $query = CachedTest::query()
+        ->where('test_key', 'not like', \App\Http\Controllers\ToolArchiveController::KEY_PREFIX . '%')
+        ->orderBy('created_at', 'desc');
 
     // ✅ Filter based on projectUrl content
     if ($projectUrl) {

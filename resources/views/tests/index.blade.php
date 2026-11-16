@@ -11,6 +11,22 @@
 webqa - Previous Tests
 @endsection
 
+@section('css')
+<style>
+    .previous-test .archive-filter-li { margin-right: 10px; }
+    .previous-test .archive-type-filter { min-width: 200px; height: 40px; font-size: 14px; border-radius: 8px; border-color: #dfe3ea; color: #1b2533; }
+    .previous-test .archive-url-cell { display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .previous-test .archive-url-cell .table-image-link { display: block; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .previous-test .archive-more-urls { flex-shrink: 0; display: inline-block; padding: 1px 8px; border-radius: 999px; background: #eef2f7; color: #5b6573; font-size: 12px; white-space: nowrap; }
+    .previous-test .archive-test-name { white-space: nowrap; font-size: 13px; }
+    .previous-test .archive-test-analysis { font-weight: 500; }
+    @media (max-width: 767px) {
+        .previous-test .archive-filter-li { margin: 0 0 8px; width: 100%; }
+        .previous-test .archive-type-filter { width: 100%; }
+    }
+</style>
+@endsection
+
 @section('content')
         <main style="{{ request()->path() == 'test-archive-web-app' ? 'padding-top: 60px;' : 'padding-top:88px;' }}">
 
@@ -19,13 +35,26 @@ webqa - Previous Tests
 
                 <!-- Test Result Area Start -->
                 <div class="test_result_area">
-                    <h2>Previous Tests</h2><p>A list of all the previous tests made on the website.</p>
+                    <h2>Previous Tests</h2><p>A list of all the previous tests made on the website{{ empty($isWebAppArchive) ? ', including website analysis reports and tool results' : '' }}.</p>
 
                     <div class="test_result_table">
                         <div class="table-responsive">
                             <!-- Download + Search -->
                             <div class="download_result">
                                 <ul class="datatable_download_result">
+                                    @if(!empty($toolNames))
+                                    <li class="datatable_download_result_li archive-filter-li">
+                                        <select id="archive-type-filter" class="form-select archive-type-filter" aria-label="Filter by test">
+                                            <option value="">All tests</option>
+                                            <option value="Website Analysis">Website Analysis</option>
+                                            <optgroup label="Tools">
+                                                @foreach($toolNames as $toolName)
+                                                    <option value="{{ $toolName }}">{{ $toolName }}</option>
+                                                @endforeach
+                                            </optgroup>
+                                        </select>
+                                    </li>
+                                    @endif
                                     <li class="datatable_download_result_li">
                                         <input type="text" class="form-control" id="custom-search" placeholder="Search">
                                     </li>
@@ -40,6 +69,7 @@ webqa - Previous Tests
                                         <tr>
                                             <th class="text-center">#</th>
                                             <th>URL</th>
+                                            <th>Test</th>
                                             <th>Date</th>
                                             <th>Domain</th>
                                             <th>Report</th>
@@ -50,10 +80,18 @@ webqa - Previous Tests
                                             <tr>
                                                 <td class="text-center row-index"></td>
                                                 <td>
-                                                    <a href="{{ $result['projectUrl'] }}" target="_blank" class="table-image-link">
-                                                        {{ $result['projectUrl'] }}
-                                                    </a>
+                                                    @if(($result['extraUrls'] ?? 0) > 0)
+                                                        <div class="archive-url-cell">
+                                                            <a href="{{ $result['projectUrl'] }}" target="_blank" class="table-image-link" title="{{ $result['projectUrl'] }}">{{ $result['projectUrl'] }}</a>
+                                                            <span class="archive-more-urls">+{{ $result['extraUrls'] }} more</span>
+                                                        </div>
+                                                    @else
+                                                        <a href="{{ $result['projectUrl'] }}" target="_blank" class="table-image-link">
+                                                            {{ $result['projectUrl'] }}
+                                                        </a>
+                                                    @endif
                                                 </td>
+                                                <td><span class="archive-test-name archive-test-{{ $result['testType'] ?? 'analysis' }}">{{ $result['testName'] ?? 'Website Analysis' }}</span></td>
                                                 <td data-order="{{ $result['createdAtSort'] }}">{{ $result['createdAtFormatted'] }}</td>
                                                 <td>{{ $result['domain'] }}</td>
                                                 <td>
@@ -125,10 +163,10 @@ webqa - Previous Tests
                 info: false,
                 searching: true,
                 ordering: true,
-                order: [[2, 'desc']], // Default sort on Date column (index 2) in descending order
+                order: [[3, 'desc']], // Default sort on Date column (index 3) in descending order
                 columnDefs: [
-                    { targets: [0, 1, 3, 4], orderable: false },
-                    { targets: [0, 4], searchable: false }
+                    { targets: [0, 1, 2, 4, 5], orderable: false },
+                    { targets: [0, 5], searchable: false }
                 ],
                 language: {
                     search: "",
@@ -150,8 +188,9 @@ webqa - Previous Tests
 
             function updateRowIndex() {
                 var pageInfo = table.page.info();
-                table.rows({ page: 'current' }).every(function(rowIdx) {
-                    $(this.node()).find('.row-index').text(pageInfo.start + rowIdx + 1);
+                // Number the rows as they appear (after sorting/filtering), not by data index
+                table.rows({ page: 'current', search: 'applied', order: 'applied' }).nodes().each(function(node, i) {
+                    $(node).find('.row-index').text(pageInfo.start + i + 1);
                 });
             }
 
@@ -200,6 +239,13 @@ webqa - Previous Tests
 
             $customSearchInput.on('input', function() {
                 table.search(this.value).draw();
+            });
+
+            // Filter by test type (exact match on the Test column)
+            $('#archive-type-filter').on('change', function() {
+                var value = this.value;
+                var escaped = $.fn.dataTable.util.escapeRegex(value);
+                table.column(2).search(value ? '^' + escaped + '$' : '', true, false).draw();
             });
         }
 

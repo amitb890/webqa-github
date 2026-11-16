@@ -42,6 +42,8 @@ Route::resource('support', App\Http\Controllers\SupportController::class);
 Route::get('/analysis-report/w/{id}', [App\Http\Controllers\PagesController::class, 'analysis'])->name('analysis');
 Route::get('/tools', [App\Http\Controllers\BulkToolsController::class, 'index'])->name('tools-landing');
 Route::get('/tools/{slug}', [App\Http\Controllers\BulkToolsController::class, 'show'])->name('tools');
+Route::get('/tools/{slug}/archive/{key}', [App\Http\Controllers\ToolArchiveController::class, 'show'])->name('tools.archive');
+Route::post('/tool-archive', [App\Http\Controllers\ToolArchiveController::class, 'store'])->middleware('throttle:30,1')->name('tools.archive.store');
 Route::post('/contact', [App\Http\Controllers\ContactController::class, 'store'])->name('contact.store');
 
 
